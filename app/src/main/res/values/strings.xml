@@ -1,0 +1,33 @@
+<resources>
+    <!--    Onboarding screen-->
+    <string name="app_name">Lorem Ispum</string>
+    <string name="app_subtitle">lorea aupum poek jddie outa fpia those knd shpi uei bsui spoke atyle </string>
+    <string name="login_btn"> LOG IN </string>
+    <string name="signup_btn"> SIGN UP </string>
+
+    <!--     Sign up Screen-->
+    <string name="register_headline">Register</string>
+    <string name="register_subheadline">Create your account</string>
+    <string name="username_hint">Username</string>
+    <string name="email_hint">Email address</string>
+    <string name="password_hint">Password</string>
+    <string name="confirm_password_hint">Confirm password</string>
+    <string name="register_button">REGISTER</string>
+    <string name="login_sentence">Already have an account ?</string>
+    <string name="login">Log in</string>
+
+<!--    Details Screen-->
+    <string name="details_headline">Could we get to know you better, please?</string>
+    <string name="letsgo_button">Lets go  🚀</string>
+
+    <!--     Log in Screen-->
+    <string name="login_headline">Log In</string>
+    <string name="login_subheadline">Please enter details below</string>
+
+    <string name="login_button">LOG IN</string>
+    <string name="signup_sentence">Create new account ?</string>
+    <string name="signup">Sign up</string>
+
+
+
+</resources>
