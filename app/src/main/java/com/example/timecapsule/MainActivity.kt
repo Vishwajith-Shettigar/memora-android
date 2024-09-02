@@ -1,10 +1,13 @@
 package com.example.timecapsule
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import com.example.timecapsule.ui.theme.TimeCapsuleTheme
+import com.example.timecapsule.ui.theme.selectcapsule.SelectCapsuleScreen
+import com.example.timecapsule.ui.theme.selectcapsule.ViewCapsule
 import com.example.timecapsule.ui.theme.selectlocation.SelectLocationOptionScreen
 import com.example.timecapsule.ui.theme.selectlocation.SelectLocationScreen
 import com.example.timecapsule.ui.theme.sharewithpeople.ShareOptionScreen
@@ -30,7 +33,8 @@ class MainActivity : ComponentActivity() {
 
 //        ShareScreen()
 //        SelectLocationOptionScreen()
-        SelectLocationScreen()
+//        SelectCapsuleScreen()
+        ViewCapsule()
       }
 
     }

@@ -26,7 +26,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.timecapsule.ui.theme.SubTitleFontColor
-import com.example.timecapsule.ui.theme.createcapsule.NavigationRow
+import com.example.timecapsule.ui.theme.selecttime.NavigationRow
 
 @Preview
 @Composable

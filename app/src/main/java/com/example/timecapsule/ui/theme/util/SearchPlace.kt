@@ -1,5 +1,6 @@
 package com.example.timecapsule.ui.theme.util
 
+import android.util.Log
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest
@@ -14,7 +15,6 @@ fun searchPlace(placesClient: PlacesClient, query: String, onPlaceFound: (LatLng
   placesClient.findAutocompletePredictions(request).addOnSuccessListener { response ->
     if (response.autocompletePredictions.isNotEmpty()) {
       val placeId = response.autocompletePredictions[0].placeId
-
       placesClient.fetchPlace(
         com.google.android.libraries.places.api.net.FetchPlaceRequest.builder(
           placeId,

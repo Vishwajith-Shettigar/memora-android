@@ -1,11 +1,8 @@
 package com.example.timecapsule.ui.theme.selectlocation
 
-import android.util.Log
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,12 +15,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Switch
-import androidx.compose.material3.SwitchColors
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -37,24 +31,18 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import com.example.timecapsule.BuildConfig
 import com.example.timecapsule.R
-import com.example.timecapsule.ui.theme.BottomOnboarding
-import com.example.timecapsule.ui.theme.createcapsule.NavigationRow
+import com.example.timecapsule.ui.theme.selecttime.NavigationRow
 import com.example.timecapsule.ui.theme.util.DeviceType
 import com.example.timecapsule.ui.theme.util.searchPlace
 import com.example.timecapsule.ui.theme.white
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.Marker
 import com.google.android.libraries.places.api.Places
-import com.google.android.libraries.places.api.model.Place
-import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest
-import com.google.android.libraries.places.api.net.PlacesClient
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.MapProperties
 import com.google.maps.android.compose.MapType
@@ -131,9 +119,9 @@ fun MyMapWithSearch(modifier: Modifier = Modifier) {
     }
     Box(
       modifier = Modifier
-          .fillMaxWidth()
-          .padding(0.dp)
-          .align(Alignment.BottomCenter)
+        .fillMaxWidth()
+        .padding(0.dp)
+        .align(Alignment.BottomCenter)
     ) {
       NavigationRow()
     }
@@ -147,10 +135,10 @@ fun SearchBar(isSataliteView: MutableState<Boolean>, onSearch: (String) -> Unit)
   var searchQuery by remember { mutableStateOf(TextFieldValue("")) }
   Row(
     modifier = Modifier
-        .fillMaxWidth()
-        .wrapContentWidth()
-        .zIndex(1f)
-        .padding(vertical = 10.dp, horizontal = 5.dp), horizontalArrangement = Arrangement.Center,
+      .fillMaxWidth()
+      .wrapContentWidth()
+      .zIndex(1f)
+      .padding(vertical = 10.dp, horizontal = 5.dp), horizontalArrangement = Arrangement.Center,
     verticalAlignment = Alignment.CenterVertically
   ) {
     OutlinedTextField(
@@ -167,14 +155,14 @@ fun SearchBar(isSataliteView: MutableState<Boolean>, onSearch: (String) -> Unit)
       },
       modifier =
       if (!isTablet) {
-          Modifier
-              .background(Color.White, RoundedCornerShape(30))
-              .weight(2f)
+        Modifier
+          .background(Color.White, RoundedCornerShape(30))
+          .weight(2f)
       } else {
-          Modifier
-              .widthIn(min = 500.dp, max = 800.dp)
-              .zIndex(2f)
-              .background(Color.White, RoundedCornerShape(40))
+        Modifier
+          .widthIn(min = 500.dp, max = 800.dp)
+          .zIndex(2f)
+          .background(Color.White, RoundedCornerShape(40))
       },
       placeholder = {
         Text(
@@ -191,9 +179,9 @@ fun SearchBar(isSataliteView: MutableState<Boolean>, onSearch: (String) -> Unit)
     )
     Switch(
       modifier = if (!isTablet) {
-          Modifier
-              .padding(horizontal = 4.dp)
-              .weight(1f)
+        Modifier
+          .padding(horizontal = 4.dp)
+          .weight(1f)
       } else {
         Modifier.padding(horizontal = 4.dp)
       },
