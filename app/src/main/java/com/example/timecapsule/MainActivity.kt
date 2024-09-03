@@ -12,6 +12,7 @@ import com.example.timecapsule.ui.theme.selectlocation.SelectLocationOptionScree
 import com.example.timecapsule.ui.theme.selectlocation.SelectLocationScreen
 import com.example.timecapsule.ui.theme.sharewithpeople.ShareOptionScreen
 import com.example.timecapsule.ui.theme.sharewithpeople.ShareScreen
+import com.example.timecapsule.ui.theme.uploadfiles.UploadFilesScreen
 
 class MainActivity : ComponentActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,7 +35,8 @@ class MainActivity : ComponentActivity() {
 //        ShareScreen()
 //        SelectLocationOptionScreen()
 //        SelectCapsuleScreen()
-        ViewCapsule()
+//        ViewCapsule()
+        UploadFilesScreen()
       }
 
     }
