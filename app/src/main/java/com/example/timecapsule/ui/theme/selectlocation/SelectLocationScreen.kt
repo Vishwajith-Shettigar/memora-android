@@ -119,9 +119,9 @@ fun MyMapWithSearch(modifier: Modifier = Modifier) {
     }
     Box(
       modifier = Modifier
-        .fillMaxWidth()
-        .padding(0.dp)
-        .align(Alignment.BottomCenter)
+          .fillMaxWidth()
+          .padding(0.dp)
+          .align(Alignment.BottomCenter)
     ) {
       NavigationRow()
     }
@@ -135,10 +135,10 @@ fun SearchBar(isSataliteView: MutableState<Boolean>, onSearch: (String) -> Unit)
   var searchQuery by remember { mutableStateOf(TextFieldValue("")) }
   Row(
     modifier = Modifier
-      .fillMaxWidth()
-      .wrapContentWidth()
-      .zIndex(1f)
-      .padding(vertical = 10.dp, horizontal = 5.dp), horizontalArrangement = Arrangement.Center,
+        .fillMaxWidth()
+        .wrapContentWidth()
+        .zIndex(1f)
+        .padding(vertical = 10.dp, horizontal = 5.dp), horizontalArrangement = Arrangement.Center,
     verticalAlignment = Alignment.CenterVertically
   ) {
     OutlinedTextField(
@@ -155,14 +155,14 @@ fun SearchBar(isSataliteView: MutableState<Boolean>, onSearch: (String) -> Unit)
       },
       modifier =
       if (!isTablet) {
-        Modifier
-          .background(Color.White, RoundedCornerShape(30))
-          .weight(2f)
+          Modifier
+              .background(Color.White, RoundedCornerShape(30))
+              .weight(2f)
       } else {
-        Modifier
-          .widthIn(min = 500.dp, max = 800.dp)
-          .zIndex(2f)
-          .background(Color.White, RoundedCornerShape(40))
+          Modifier
+              .widthIn(min = 500.dp, max = 800.dp)
+              .zIndex(2f)
+              .background(Color.White, RoundedCornerShape(40))
       },
       placeholder = {
         Text(
@@ -179,9 +179,9 @@ fun SearchBar(isSataliteView: MutableState<Boolean>, onSearch: (String) -> Unit)
     )
     Switch(
       modifier = if (!isTablet) {
-        Modifier
-          .padding(horizontal = 4.dp)
-          .weight(1f)
+          Modifier
+              .padding(horizontal = 4.dp)
+              .weight(1f)
       } else {
         Modifier.padding(horizontal = 4.dp)
       },

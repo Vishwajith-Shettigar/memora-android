@@ -131,7 +131,6 @@ fun CapsuleCard(rowItemSize: Int = 2, modifier: Modifier = Modifier) {
       }
       AnimatedVisibility(
         visible = isPaneVisible,
-
         ) {
         SmallPane()
       }
