@@ -175,9 +175,9 @@ fun MyMapWithSearch(modifier: Modifier = Modifier) {
           state = tmarkerState,
           icon = getScaledBitmapDescriptor(
             LocalContext.current,
-            R.drawable.capsule_image8,
-            100,
-            100
+            R.drawable.capsule_image10,
+            200,
+            200
           ),
           contentDescription = "${markerState.position.latitude}, ${markerState.position.longitude}",
           onClick = {
@@ -210,17 +210,16 @@ fun getScaledBitmapDescriptor(
 @Preview
 @Composable
 fun ShowDialog(closeDialog: () -> Unit = {}) {
-
   val isTablet = DeviceType.isTablet()
   Dialog(onDismissRequest = { closeDialog() }) {
     Box(
       modifier = Modifier
-          .fillMaxWidth()
-          .clip(shape = RoundedCornerShape(10.dp))
-          .background(MaterialTheme.colorScheme.primary)
-          .padding(16.dp)
-          .fillMaxWidth(0.8f)
-          .wrapContentHeight()
+        .fillMaxWidth()
+        .clip(shape = RoundedCornerShape(10.dp))
+        .background(MaterialTheme.colorScheme.primary)
+        .padding(16.dp)
+        .fillMaxWidth(0.8f)
+        .wrapContentHeight()
     ) {
       Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -230,20 +229,20 @@ fun ShowDialog(closeDialog: () -> Unit = {}) {
         IconButton(
           onClick = { closeDialog() },
           modifier = Modifier
-              .align(Alignment.End)
-              .padding(bottom = 16.dp)
+            .align(Alignment.End)
+            .padding(bottom = 16.dp)
         ) {
           Icon(Icons.Filled.Close, contentDescription = "Close")
         }
 
         // Image
         Image(
-          painter = painterResource(id = R.drawable.capsule_image8), // Replace with your image resource
+          painter = painterResource(id = R.drawable.capsule_image10), // Replace with your image resource
           contentDescription = null,
           modifier = if (isTablet) {
-              Modifier
-                  .fillMaxSize(0.5f)
-                  .padding(bottom = 16.dp)
+            Modifier
+              .fillMaxSize(0.5f)
+              .padding(bottom = 16.dp)
           } else {
             Modifier.padding(bottom = 16.dp)
           }
@@ -275,7 +274,6 @@ fun ShowDialog(closeDialog: () -> Unit = {}) {
             onClick = {
             },
             colors = ButtonDefaults.outlinedButtonColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
-
           ) {
             Text(
               "Open",
