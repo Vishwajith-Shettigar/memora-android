@@ -93,4 +93,9 @@ dependencies {
    implementation "io.github.sceneview:sceneview:2.1.0"
 
 
+    // map box
+    implementation 'com.mapbox.maps:android:11.6.0'
+    // If you're using compose also add the compose extension
+    implementation 'com.mapbox.extension:maps-compose:11.6.0'
+
 }

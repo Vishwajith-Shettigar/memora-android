@@ -71,6 +71,8 @@ import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
 
+// Migrated to mapbox mobile sdk from google maps sdk.
+
 @Composable
 fun FindCapsuleScreen() {
   if (!Places.isInitialized()) {
