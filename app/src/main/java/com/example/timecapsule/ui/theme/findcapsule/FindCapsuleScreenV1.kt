@@ -1,8 +1,15 @@
 package com.example.timecapsule.ui.theme.findcapsule
 
+import android.Manifest
 import android.animation.Animator
+import android.content.Context
+import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.location.Location
 import android.util.Log
 import android.view.animation.AnticipateOvershootInterpolator
+import android.widget.Toast
+import androidx.activity.ComponentActivity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -16,16 +23,26 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
+import androidx.core.graphics.drawable.toBitmap
 import com.example.timecapsule.BuildConfig
 import com.example.timecapsule.R
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
+import com.google.android.gms.location.LocationServices
 import com.mapbox.geojson.Feature
 import com.mapbox.geojson.Point
 import com.mapbox.maps.CameraOptions
@@ -37,6 +54,7 @@ import com.mapbox.maps.extension.compose.MapEffect
 import com.mapbox.maps.extension.compose.MapboxMap
 import com.mapbox.maps.extension.compose.animation.viewport.MapViewportState
 import com.mapbox.maps.extension.compose.animation.viewport.rememberMapViewportState
+import com.mapbox.maps.extension.compose.annotation.generated.PointAnnotation
 import com.mapbox.maps.extension.compose.style.DoubleListValue
 import com.mapbox.maps.extension.compose.style.DoubleValue
 import com.mapbox.maps.extension.compose.style.layers.ModelIdValue
@@ -45,12 +63,20 @@ import com.mapbox.maps.extension.compose.style.layers.generated.ModelTypeValue
 import com.mapbox.maps.extension.compose.style.sources.GeoJSONData
 import com.mapbox.maps.extension.compose.style.sources.generated.rememberGeoJsonSourceState
 import com.mapbox.maps.extension.style.expressions.generated.Expression
+import com.mapbox.maps.extension.style.layers.generated.ModelLayer
 import com.mapbox.maps.extension.style.model.addModel
 import com.mapbox.maps.extension.style.model.model
 import com.mapbox.maps.plugin.animation.CameraAnimatorOptions.Companion.cameraAnimatorOptions
+import com.mapbox.maps.plugin.animation.MapAnimationOptions
 import com.mapbox.maps.plugin.animation.MapAnimationOptions.Companion.mapAnimationOptions
 import com.mapbox.maps.plugin.animation.animator.CameraAnimator
 import com.mapbox.maps.plugin.animation.camera
+import com.mapbox.maps.plugin.annotation.AnnotationType
+import com.mapbox.maps.plugin.annotation.annotations
+import com.mapbox.maps.plugin.annotation.generated.PointAnnotationManager
+import com.mapbox.maps.plugin.annotation.generated.PointAnnotationOptions
+import com.mapbox.maps.plugin.annotation.generated.PolylineAnnotation
+import com.mapbox.maps.plugin.annotation.generated.createPointAnnotationManager
 import com.mapbox.maps.plugin.gestures.addOnMapClickListener
 import kotlin.math.atan2
 import kotlin.math.cos
@@ -59,18 +85,48 @@ import kotlin.math.sin
 import kotlin.math.sqrt
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import okhttp3.internal.concurrent.formatDuration
 
 
+fun getInitialLocation(context: Context): Point {
+  val location = if (ActivityCompat.checkSelfPermission(
+      context,
+      Manifest.permission.ACCESS_FINE_LOCATION
+    ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+      context,
+      Manifest.permission.ACCESS_COARSE_LOCATION
+    ) != PackageManager.PERMISSION_GRANTED
+  ) {
+    val location = LocationServices.getFusedLocationProviderClient(context).lastLocation.result
+    return Point.fromLngLat(74.65932213633747, 13.68945525955631)
+  } else {
+    Unit
+  }
+
+  return Point.fromLngLat(0.0, 0.0)
+}
+
 @Composable
 fun FindCapsuleScreenV1() {
 
-  val initialCameraPoint =
-    Point.fromLngLat(74.65932213633747, 13.68945525955631)
+  var locationTypeState by remember { mutableStateOf(LOCATIONTYPE.USER_LOCATION) }
 
-  var initialCamera = rememberMapViewportState {
-    mutableStateOf(setCameraOptions {
+  var flagCapsuleLocationType by remember {
+    mutableStateOf(false)
+  }
+  var userLocationPoint by remember {
+    mutableStateOf<Point?>(null)
+  }
+
+  val context = LocalContext.current
+
+
+  val initialCameraPoint = Point.fromLngLat(74.65932213633747, 13.68945525955631)
+
+  val initialCamera = rememberMapViewportState {
+    (setCameraOptions {
       zoom(17.0)
       center(initialCameraPoint)
       pitch(60.0)
@@ -78,44 +134,34 @@ fun FindCapsuleScreenV1() {
     })
   }
 
-  var newCameraPoint =
-    rememberMapViewportState {
-      mutableStateOf(setCameraOptions {
-        zoom(17.0)
-        center(initialCameraPoint)
-        pitch(60.0)
-        bearing(16.0)
-      })
-    }
 
 
   Scaffold(floatingActionButton = {
-    VerticalFABs() {
-      when (it) {
-        LOCATIONTYPE.USER_LOCATION -> {
-          initialCamera.setCameraOptions {
-            zoom(17.0)
-            center(initialCameraPoint)
-            pitch(60.0)
-            bearing(16.0)
-          }
-        }
+    VerticalFABs { locationType ->
 
-        LOCATIONTYPE.CAPSULE_LOCATION -> {
-          initialCamera.setCameraOptions {
-            zoom(17.0)
-            center(MODEL1_COORDINATES)
-            pitch(60.0)
-            bearing(16.0)
-          }
-        }
-      }
+      locationTypeState = locationType
 
     }
   }) { innerPadding ->
-    MapView(Modifier.padding(innerPadding), initialCamera)
+
+    LaunchedEffect(locationTypeState, userLocationPoint) {
+      if (locationTypeState == LOCATIONTYPE.USER_LOCATION) {
+        animateCamera(initialCamera, userLocationPoint ?: initialCameraPoint)
+        flagCapsuleLocationType = false
+      } else if (!flagCapsuleLocationType) {
+        flagCapsuleLocationType = true
+        animateCamera(initialCamera, MODEL1_COORDINATES)
+      }
+    }
+    MapView(
+      Modifier.padding(innerPadding), initialCamera, initialCameraPoint, context,
+      userLocationPoint
+    ) {
+      userLocationPoint = it
+    }
   }
 }
+
 
 val MODEL_ID_1 = "model-id-1"
 
@@ -125,6 +171,8 @@ val SAMPLE_MODEL_URI_1 =
   "asset://testmodel.glb"
 val MODEL1_COORDINATES: Point =
   Point.fromLngLat(77.69932213633747, 13.68945525955631)
+val MODEL2_COORDINATES: Point =
+  Point.fromLngLat(77.69939213633747, 13.68945525955631)
 
 val MODEL_ID_KEY = "model-id-key"
 
@@ -132,8 +180,11 @@ val MODEL_ID_KEY = "model-id-key"
 @Composable
 fun MapView(
   modifier: Modifier = Modifier,
-  cameraView: MapViewportState,
+  cameraView: MapViewportState, initialPoint: Point, context: Context,
+  locationPoint: Point?, updateLocation: (Point) -> Unit
 ) {
+  var pointAnnotationManager by remember { mutableStateOf<PointAnnotationManager?>(null) }
+
   var is3dModelSelected by remember {
     mutableStateOf(false)
   }
@@ -153,12 +204,23 @@ fun MapView(
       true
     }
   ) {
+
     MapEffect(Unit) { mapView ->
       mapView.mapboxMap.apply {
         addModel(model(MODEL_ID_1) { uri(SAMPLE_MODEL_URI_1) })
       }
       mapView.mapboxMap.loadStyle(BuildConfig.STYLE_URI)
+
+      startLocationUpdates(context) {
+
+        updateLocation(Point.fromLngLat(it.longitude, it.latitude))
+      }
+
+      pointAnnotationManager = mapView.annotations.createPointAnnotationManager()
+
     }
+
+
 
     ModelLayer(
       sourceState = rememberGeoJsonSourceState {
@@ -178,8 +240,17 @@ fun MapView(
       modelOpacity = DoubleValue(1.0)
       modelAmbientOcclusionIntensity = DoubleValue(1.0)
     }
+
+
   }
 
+  LaunchedEffect(locationPoint) {
+    AddPointer(
+      context = context,
+      point = locationPoint,
+      pointAnnotationManager = pointAnnotationManager
+    )
+  }
 
 }
 
@@ -244,4 +315,79 @@ fun VerticalFABs(onClick: (type: LOCATIONTYPE) -> Unit) {
 enum class LOCATIONTYPE {
   CAPSULE_LOCATION,
   USER_LOCATION
+}
+
+fun animateCamera(initialCamera: MapViewportState, center: Point) {
+  val mapAnimationOptions = MapAnimationOptions.Builder().duration(2500L).build()
+  initialCamera.flyTo(
+    CameraOptions.Builder()
+      .zoom(17.0)
+      .center(center)
+      .pitch(60.0)
+      .bearing(16.0)
+      .build(),
+    mapAnimationOptions
+  )
+}
+
+
+fun AddPointer(context: Context, point: Point?, pointAnnotationManager: PointAnnotationManager?) {
+  // Get the context and drawable
+  pointAnnotationManager?.deleteAll()
+  val drawable = ResourcesCompat.getDrawable(context.resources, R.drawable.testimg, null)
+
+  // Safely convert drawable to bitmap
+  drawable?.let {
+    val bitmap = it.toBitmap(70, 70, Bitmap.Config.ARGB_8888)
+
+    // Add the PointAnnotation with the bitmap
+    val annotationOptions = point?.let { it1 ->
+      PointAnnotationOptions()
+        .withPoint(it1)
+        .withIconImage(bitmap)
+    }
+
+    if (annotationOptions != null) {
+      pointAnnotationManager?.create(annotationOptions)
+    }
+
+  } ?: run {
+    // Handle case where drawable is null
+    Log.e("AddPointer", "Drawable resource not found.")
+  }
+}
+
+fun startLocationUpdates(context: Context, onLocationUpdate: (Location) -> Unit) {
+  val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
+  val locationRequest = LocationRequest.create().apply {
+    interval = 10000 // 10 seconds
+    fastestInterval = 5000 // 5 seconds
+    priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+  }
+
+  val locationCallback = object : LocationCallback() {
+    override fun onLocationResult(locationResult: LocationResult) {
+      locationResult.let {
+        val location = it.lastLocation
+        if (location != null) {
+          onLocationUpdate(location)
+        }
+      }
+    }
+  }
+
+  if (ContextCompat.checkSelfPermission(
+      context,
+      Manifest.permission.ACCESS_FINE_LOCATION
+    ) == PackageManager.PERMISSION_GRANTED
+  ) {
+    fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null)
+  } else {
+    // Request permissions
+    ActivityCompat.requestPermissions(
+      context as ComponentActivity,
+      arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+      1
+    )
+  }
 }
