@@ -24,6 +24,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.example.timecapsule.BuildConfig
 import com.example.timecapsule.R
 import com.mapbox.geojson.Feature
 import com.mapbox.geojson.Point
@@ -156,7 +157,7 @@ fun MapView(
       mapView.mapboxMap.apply {
         addModel(model(MODEL_ID_1) { uri(SAMPLE_MODEL_URI_1) })
       }
-      mapView.mapboxMap.loadStyle("mapbox://styles/dark-vish1/cm0pf1i3z00iz01qughq744ex")
+      mapView.mapboxMap.loadStyle(BuildConfig.STYLE_URI)
     }
 
     ModelLayer(
