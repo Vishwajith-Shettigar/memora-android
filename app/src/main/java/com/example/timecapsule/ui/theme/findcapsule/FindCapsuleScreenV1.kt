@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.location.Location
+import android.location.LocationManager
 import android.util.Log
 import android.view.animation.AnticipateOvershootInterpolator
 import android.widget.Toast
@@ -83,29 +84,37 @@ import kotlin.math.cos
 import kotlin.math.pow
 import kotlin.math.sin
 import kotlin.math.sqrt
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
-import okhttp3.internal.concurrent.formatDuration
 
-
-fun getInitialLocation(context: Context): Point {
-  val location = if (ActivityCompat.checkSelfPermission(
+fun getInitialLocation(context: Context, onLocationFetched: (Point) -> Unit) {
+  if (ActivityCompat.checkSelfPermission(
       context,
       Manifest.permission.ACCESS_FINE_LOCATION
-    ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+    ) != PackageManager.PERMISSION_GRANTED &&
+    ActivityCompat.checkSelfPermission(
       context,
       Manifest.permission.ACCESS_COARSE_LOCATION
     ) != PackageManager.PERMISSION_GRANTED
   ) {
-    val location = LocationServices.getFusedLocationProviderClient(context).lastLocation.result
-    return Point.fromLngLat(74.65932213633747, 13.68945525955631)
-  } else {
-    Unit
+    // Request location permissions if not granted
+    ActivityCompat.requestPermissions(
+      context as ComponentActivity,
+      arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+      1
+    )
+    return
   }
 
-  return Point.fromLngLat(0.0, 0.0)
+  // Fetch the last known location asynchronously
+  LocationServices.getFusedLocationProviderClient(context).lastLocation.addOnSuccessListener { location ->
+    if (location != null) {
+      val point = Point.fromLngLat(location.longitude, location.latitude)
+      onLocationFetched(point)
+    } else {
+      onLocationFetched(Point.fromLngLat(0.0, 0.0))
+    }
+  }.addOnFailureListener { exception ->
+    onLocationFetched(Point.fromLngLat(0.0, 0.0))
+  }
 }
 
 @Composable
@@ -120,11 +129,9 @@ fun FindCapsuleScreenV1() {
     mutableStateOf<Point?>(null)
   }
 
+  var initialCameraPoint = Point.fromLngLat(0.0, 0.0)
+
   val context = LocalContext.current
-
-
-  val initialCameraPoint = Point.fromLngLat(74.65932213633747, 13.68945525955631)
-
   val initialCamera = rememberMapViewportState {
     (setCameraOptions {
       zoom(17.0)
@@ -134,16 +141,19 @@ fun FindCapsuleScreenV1() {
     })
   }
 
+  getInitialLocation(context) {
+    initialCameraPoint = it
+    userLocationPoint = it
+    animateCamera(initialCamera = initialCamera, center = it)
+  }
 
+//    Point.fromLngLat(74.65932213633747, 13.68945525955631)
 
   Scaffold(floatingActionButton = {
     VerticalFABs { locationType ->
-
       locationTypeState = locationType
-
     }
   }) { innerPadding ->
-
     LaunchedEffect(locationTypeState, userLocationPoint) {
       if (locationTypeState == LOCATIONTYPE.USER_LOCATION) {
         animateCamera(initialCamera, userLocationPoint ?: initialCameraPoint)
@@ -162,7 +172,6 @@ fun FindCapsuleScreenV1() {
   }
 }
 
-
 val MODEL_ID_1 = "model-id-1"
 
 //  val SAMPLE_MODEL_URI_1 =
@@ -170,9 +179,7 @@ val MODEL_ID_1 = "model-id-1"
 val SAMPLE_MODEL_URI_1 =
   "asset://testmodel.glb"
 val MODEL1_COORDINATES: Point =
-  Point.fromLngLat(77.69932213633747, 13.68945525955631)
-val MODEL2_COORDINATES: Point =
-  Point.fromLngLat(77.69939213633747, 13.68945525955631)
+  Point.fromLngLat(74.65992213633747, 13.68945525955631)
 
 val MODEL_ID_KEY = "model-id-key"
 
@@ -204,7 +211,6 @@ fun MapView(
       true
     }
   ) {
-
     MapEffect(Unit) { mapView ->
       mapView.mapboxMap.apply {
         addModel(model(MODEL_ID_1) { uri(SAMPLE_MODEL_URI_1) })
@@ -212,15 +218,11 @@ fun MapView(
       mapView.mapboxMap.loadStyle(BuildConfig.STYLE_URI)
 
       startLocationUpdates(context) {
-
         updateLocation(Point.fromLngLat(it.longitude, it.latitude))
       }
 
       pointAnnotationManager = mapView.annotations.createPointAnnotationManager()
-
     }
-
-
 
     ModelLayer(
       sourceState = rememberGeoJsonSourceState {
@@ -240,8 +242,6 @@ fun MapView(
       modelOpacity = DoubleValue(1.0)
       modelAmbientOcclusionIntensity = DoubleValue(1.0)
     }
-
-
   }
 
   LaunchedEffect(locationPoint) {
@@ -251,7 +251,6 @@ fun MapView(
       pointAnnotationManager = pointAnnotationManager
     )
   }
-
 }
 
 fun is3dModelClicked(
@@ -287,8 +286,8 @@ fun is3dModelClicked(
 @Composable
 fun VerticalFABs(onClick: (type: LOCATIONTYPE) -> Unit) {
   Column(
-    modifier = Modifier.padding(16.dp), // Padding to keep some space from the screen edges
-    verticalArrangement = Arrangement.spacedBy(16.dp) // Space between the two FABs
+    modifier = Modifier.padding(16.dp),
+    verticalArrangement = Arrangement.spacedBy(16.dp)
   ) {
     FloatingActionButton(
       onClick = { onClick(LOCATIONTYPE.CAPSULE_LOCATION) },
@@ -330,17 +329,15 @@ fun animateCamera(initialCamera: MapViewportState, center: Point) {
   )
 }
 
-
 fun AddPointer(context: Context, point: Point?, pointAnnotationManager: PointAnnotationManager?) {
-  // Get the context and drawable
-  pointAnnotationManager?.deleteAll()
-  val drawable = ResourcesCompat.getDrawable(context.resources, R.drawable.testimg, null)
 
-  // Safely convert drawable to bitmap
+  pointAnnotationManager?.deleteAll()
+
+  val drawable = ResourcesCompat.getDrawable(context.resources, R.drawable.direction, null)
+
   drawable?.let {
     val bitmap = it.toBitmap(70, 70, Bitmap.Config.ARGB_8888)
 
-    // Add the PointAnnotation with the bitmap
     val annotationOptions = point?.let { it1 ->
       PointAnnotationOptions()
         .withPoint(it1)
@@ -350,18 +347,15 @@ fun AddPointer(context: Context, point: Point?, pointAnnotationManager: PointAnn
     if (annotationOptions != null) {
       pointAnnotationManager?.create(annotationOptions)
     }
-
   } ?: run {
-    // Handle case where drawable is null
-    Log.e("AddPointer", "Drawable resource not found.")
   }
 }
 
 fun startLocationUpdates(context: Context, onLocationUpdate: (Location) -> Unit) {
   val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
   val locationRequest = LocationRequest.create().apply {
-    interval = 10000 // 10 seconds
-    fastestInterval = 5000 // 5 seconds
+    interval = 1000
+    fastestInterval = 1000
     priority = LocationRequest.PRIORITY_HIGH_ACCURACY
   }
 
@@ -390,4 +384,16 @@ fun startLocationUpdates(context: Context, onLocationUpdate: (Location) -> Unit)
       1
     )
   }
+
+//  val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+//
+//  if (ActivityCompat.checkSelfPermission(
+//      context,
+//      Manifest.permission.ACCESS_FINE_LOCATION
+//    ) == PackageManager.PERMISSION_GRANTED
+//  ) {
+//    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10L, 1f) { location ->
+//      onLocationUpdate(location)
+//    }
+//  }
 }
