@@ -43,11 +43,13 @@ import com.example.timecapsule.ui.theme.ReviewScreenCommondColor
 import com.example.timecapsule.ui.theme.RubikBubble
 import com.example.timecapsule.ui.theme.sharewithpeople.ShowSelectedPeople
 import com.example.timecapsule.ui.theme.uploadfiles.UploadedFileItem
+import com.example.timecapsule.ui.theme.util.DeviceType
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
 fun ReviewScreen() {
+  val isTablet = DeviceType.isTablet()
   val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
   val bottomScrollBehavior = BottomAppBarDefaults.exitAlwaysScrollBehavior()
 
@@ -75,7 +77,7 @@ fun ReviewScreen() {
             modifier = Modifier.padding(vertical = 40.dp),
             text = stringResource(id = R.string.review_your_details),
             style = MaterialTheme.typography.titleLarge.copy(
-              fontSize = 26.sp,
+              fontSize = if (isTablet) 26.sp else 20.sp,
               fontWeight = FontWeight.Bold
             ),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
