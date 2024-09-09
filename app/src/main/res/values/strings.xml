@@ -29,5 +29,17 @@
     <string name="signup">Sign up</string>
 
 
+<!--    Review Screen-->
+
+        <string name="review_your_details">Review your details</string>
+        <string name="shared_with">You have shared with</string>
+        <string name="date_and_time">Date and time</string>
+        <string name="date">10–08–2089</string>
+        <string name="time">4:30 PM</string>
+        <string name="selected_capsule">Selected Capsule</string>
+        <string name="shared_content">Content You\'ve Shared</string>
+        <string name="edit_button">Edit</string>
+        <string name="done_button">Done</string>
+
 
 </resources>

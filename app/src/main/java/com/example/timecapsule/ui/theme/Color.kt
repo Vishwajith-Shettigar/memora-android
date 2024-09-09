@@ -43,4 +43,4 @@ val SubTitleFontColor =Color(0xFFABA5A5)
 val LightBlue= Color(0xFF638BF8)
 
 
-val DateTimeFontColor= Color(0xFF2B00FF)
+val ReviewScreenCommondColor= Color(0xFF5C82EB)

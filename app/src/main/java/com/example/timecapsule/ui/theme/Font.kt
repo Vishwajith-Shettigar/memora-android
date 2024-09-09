@@ -13,3 +13,7 @@ val DMSerifText = FontFamily(
 val Inter = FontFamily(
   Font(R.font.inter, FontWeight.Normal, FontStyle.Normal)
 )
+
+val RubikBubble = FontFamily(
+  Font(R.font.rubikbubblesregular, FontWeight.ExtraBold, FontStyle.Normal)
+)

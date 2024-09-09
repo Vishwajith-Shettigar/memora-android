@@ -215,7 +215,7 @@ fun OngoingUpload() {
 fun UploadedFileItem(
   title: String = "Project Reports",
   fileSize: String = "21.8 MB of 21.8 MB",
-  icon: Int = R.drawable.doc,
+  icon: Int = R.drawable.doc, disableDeleteBtn: Boolean = false,
   onDeleteClick: () -> Unit = {}
 ) {
   Row(
@@ -254,21 +254,22 @@ fun UploadedFileItem(
 
     Spacer(modifier = Modifier.width(8.dp))
 
-    IconButton(
-      onClick = onDeleteClick,
-      modifier = Modifier
-        .size(40.dp)
-        .background(
-          color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.6F),
-          shape = CircleShape
+    if (!disableDeleteBtn)
+      IconButton(
+        onClick = onDeleteClick,
+        modifier = Modifier
+          .size(40.dp)
+          .background(
+            color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.6F),
+            shape = CircleShape
+          )
+      ) {
+        Icon(
+          painter = painterResource(id = R.drawable.ic_delete), // Replace with your actual delete icon resource
+          contentDescription = "Delete File",
+          tint = Color.LightGray
         )
-    ) {
-      Icon(
-        painter = painterResource(id = R.drawable.ic_delete), // Replace with your actual delete icon resource
-        contentDescription = "Delete File",
-        tint = Color.LightGray
-      )
-    }
+      }
   }
 }
 

@@ -199,7 +199,7 @@ fun UserInfo(
 
 @Preview
 @Composable
-fun ShowSelectedPeople(modifier: Modifier = Modifier) {
+fun ShowSelectedPeople(modifier: Modifier = Modifier, disableCrossBtn: Boolean = false) {
   LazyHorizontalGrid(
     modifier = modifier
         .wrapContentSize()
@@ -207,14 +207,14 @@ fun ShowSelectedPeople(modifier: Modifier = Modifier) {
     rows = GridCells.Fixed(1)
   ) {
     items(userList + userList) { user ->
-      Profile(user.imageResId)
+      Profile(user.imageResId, disableCrossBtn)
     }
   }
 }
 
 @Preview
 @Composable
-fun Profile(imageId: Int = R.drawable.testimg1) {
+fun Profile(imageId: Int = R.drawable.testimg1, disableCrossBtn: Boolean = false) {
 
   Column(
     modifier = Modifier
@@ -244,21 +244,22 @@ fun Profile(imageId: Int = R.drawable.testimg1) {
             .align(Alignment.Center),
         contentScale = ContentScale.Crop
       )
-      IconButton(
-        onClick = { /*TODO*/ }, modifier = Modifier
-              .height(30.dp)
-              .width(30.dp)
-              .align(Alignment.TopEnd)
-      ) {
-        Icon(
-          painter = painterResource(id = R.drawable.ic_close),
-          contentDescription = "seleccted people",
-          tint = Color.Gray, modifier = Modifier
+      if (!disableCrossBtn)
+        IconButton(
+          onClick = { /*TODO*/ }, modifier = Modifier
                 .height(30.dp)
                 .width(30.dp)
-                .align(Alignment.Center)
-        )
-      }
+                .align(Alignment.TopEnd)
+        ) {
+          Icon(
+            painter = painterResource(id = R.drawable.ic_close),
+            contentDescription = "seleccted people",
+            tint = Color.Gray, modifier = Modifier
+                  .height(30.dp)
+                  .width(30.dp)
+                  .align(Alignment.Center)
+          )
+        }
 
     }
     Text(

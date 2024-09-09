@@ -44,6 +44,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
+import com.example.timecapsule.R
+import com.example.timecapsule.ui.theme.review.SelectedCapsule
 import com.example.timecapsule.ui.theme.selecttime.NavigationRow
 import com.example.timecapsule.ui.theme.util.DeviceType
 import com.example.timecapsule.ui.theme.util.createCapsuleImageList
@@ -83,24 +85,24 @@ fun SelectCapsuleScreen(modifier: Modifier = Modifier) {
   ) { innerPadding ->
     Column(
       modifier = modifier
-        .padding(innerPadding)
-        .background(Color.Transparent)
-        .fillMaxSize()
-        .fillMaxHeight()
-    ) {
-      Box(
-        modifier = modifier
+          .padding(innerPadding)
           .background(Color.Transparent)
           .fillMaxSize()
           .fillMaxHeight()
+    ) {
+      Box(
+        modifier = modifier
+            .background(Color.Transparent)
+            .fillMaxSize()
+            .fillMaxHeight()
       ) {
         CapsuleList(Modifier.nestedScroll(scrollBehavior.nestedScrollConnection))
         Box(
           modifier = Modifier
-            .fillMaxWidth()
-            .padding(0.dp)
-            .align(Alignment.BottomCenter)
-            .zIndex(2f)
+              .fillMaxWidth()
+              .padding(0.dp)
+              .align(Alignment.BottomCenter)
+              .zIndex(2f)
         ) {
           NavigationRow()
         }
@@ -146,8 +148,8 @@ fun CapsuleListTablet(modifier: Modifier = Modifier) {
   LazyVerticalStaggeredGrid(
     columns = StaggeredGridCells.Adaptive(minSize = 400.dp),
     modifier = modifier
-      .fillMaxSize()
-      .background(Color.Transparent),
+        .fillMaxSize()
+        .background(Color.Transparent),
     contentPadding = PaddingValues(8.dp),
     horizontalArrangement = Arrangement.spacedBy(10.dp),
     verticalItemSpacing = 8.dp,
@@ -162,7 +164,11 @@ fun CapsuleListTablet(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun Capsule(capsuleImage: CapsuleImage, isSelected: Boolean, onSelect: () -> Unit) {
+fun Capsule(
+  capsuleImage: CapsuleImage = CapsuleImage("capsule_image1", R.drawable.capsule_image1),
+  isSelected: Boolean = false,
+  onSelect: () -> Unit = {}
+) {
   Card(
     colors =
     if (isSelected) {
@@ -172,8 +178,8 @@ fun Capsule(capsuleImage: CapsuleImage, isSelected: Boolean, onSelect: () -> Uni
 
     },
     modifier = Modifier
-      .wrapContentHeight()
-      .fillMaxWidth(),
+        .wrapContentHeight()
+        .fillMaxWidth(),
     elevation = CardDefaults.cardElevation(4.dp),
     shape = RoundedCornerShape(6.dp),
     onClick = {
@@ -184,10 +190,10 @@ fun Capsule(capsuleImage: CapsuleImage, isSelected: Boolean, onSelect: () -> Uni
       horizontalAlignment = Alignment.CenterHorizontally,
       verticalArrangement = Arrangement.Center,
       modifier = Modifier
-        .padding(vertical = 15.dp)
-        .fillMaxSize()
-        .clip(shape = RoundedCornerShape(6.dp))
-        .background(Color.Transparent)
+          .padding(vertical = 15.dp)
+          .fillMaxSize()
+          .clip(shape = RoundedCornerShape(6.dp))
+          .background(Color.Transparent)
     ) {
       Image(
         painter = painterResource(id = capsuleImage.imageName),
@@ -196,8 +202,8 @@ fun Capsule(capsuleImage: CapsuleImage, isSelected: Boolean, onSelect: () -> Uni
       OutlinedButton(
         onClick = { },
         modifier = Modifier
-          .height(40.dp)
-          .width(100.dp),
+            .height(40.dp)
+            .width(100.dp),
         colors = ButtonDefaults.outlinedButtonColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
       ) {
         Text(
