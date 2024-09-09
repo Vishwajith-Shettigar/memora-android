@@ -8,6 +8,7 @@ import androidx.activity.enableEdgeToEdge
 import com.example.timecapsule.ui.theme.TimeCapsuleTheme
 import com.example.timecapsule.ui.theme.findcapsule.FindCapsuleScreen
 import com.example.timecapsule.ui.theme.findcapsule.FindCapsuleScreenV1
+import com.example.timecapsule.ui.theme.review.ReviewScreen
 import com.example.timecapsule.ui.theme.selectcapsule.SelectCapsuleScreen
 import com.example.timecapsule.ui.theme.selectcapsule.ViewCapsule
 import com.example.timecapsule.ui.theme.selectlocation.SelectLocationOptionScreen
@@ -41,7 +42,8 @@ class MainActivity : ComponentActivity() {
 //        SelectCapsuleScreen()
 //        ViewCapsule()
 //        UploadFilesScreen()
-        FindCapsuleScreenV1()
+//        FindCapsuleScreenV1()
+        ReviewScreen()
       }
     }
   }

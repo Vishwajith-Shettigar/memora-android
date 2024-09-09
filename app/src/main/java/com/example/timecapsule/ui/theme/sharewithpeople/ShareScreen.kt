@@ -55,17 +55,17 @@ import com.example.timecapsule.ui.theme.util.DeviceType
 @Composable
 fun ShareScreen() {
   Scaffold(modifier = Modifier
-    .fillMaxSize()
-    .background(MaterialTheme.colorScheme.primary),
+      .fillMaxSize()
+      .background(MaterialTheme.colorScheme.primary),
     containerColor = MaterialTheme.colorScheme.primary,
     bottomBar = {
       NavigationRow()
     }
   ) { padding ->
     Column(
-      Modifier
-        .fillMaxSize()
-        .padding(padding),
+        Modifier
+            .fillMaxSize()
+            .padding(padding),
       verticalArrangement = Arrangement.Center,
       horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -80,9 +80,9 @@ fun ShareScreen() {
 fun SearchPeople() {
   val isTablet = DeviceType.isTablet()
   Column(
-    Modifier
-      .wrapContentSize()
-      .padding(20.dp),
+      Modifier
+          .wrapContentSize()
+          .padding(20.dp),
     horizontalAlignment = Alignment.CenterHorizontally
   ) {
     OutlinedTextField(
@@ -90,13 +90,13 @@ fun SearchPeople() {
       onValueChange = {},
       modifier =
       if (!isTablet) {
-        Modifier
-          .background(Color.White, RoundedCornerShape(30))
-          .fillMaxWidth()
+          Modifier
+              .background(Color.White, RoundedCornerShape(30))
+              .fillMaxWidth()
       } else {
-        Modifier
-          .widthIn(min = 500.dp, max = 800.dp)
-          .background(Color.White, RoundedCornerShape(40))
+          Modifier
+              .widthIn(min = 500.dp, max = 800.dp)
+              .background(Color.White, RoundedCornerShape(40))
       },
       placeholder = {
         Text(
@@ -112,22 +112,22 @@ fun SearchPeople() {
     )
     LazyColumn(
       modifier = if (!isTablet) {
-        Modifier
-          .fillMaxWidth()
-          .wrapContentHeight()
-          .clip(shape = RoundedCornerShape(10.dp))
-          .padding(top = 5.dp)
-          .background(MaterialTheme.colorScheme.primary)
+          Modifier
+              .fillMaxWidth()
+              .wrapContentHeight()
+              .clip(shape = RoundedCornerShape(10.dp))
+              .padding(top = 5.dp)
+              .background(MaterialTheme.colorScheme.primary)
       } else {
-        Modifier
-          .wrapContentSize()
-          .heightIn(max = 600.dp)
-          .wrapContentHeight()
-          .clip(shape = RoundedCornerShape(10.dp))
-          .padding(top = 5.dp)
-          .background(MaterialTheme.colorScheme.primary)
+          Modifier
+              .wrapContentSize()
+              .heightIn(max = 600.dp)
+              .wrapContentHeight()
+              .clip(shape = RoundedCornerShape(10.dp))
+              .padding(top = 5.dp)
+              .background(MaterialTheme.colorScheme.primary)
       },
-      ) {
+    ) {
       items(userList) { user ->
         UserInfo(user.username, user.name, user.imageResId)
       }
@@ -145,14 +145,14 @@ fun UserInfo(
   val isTablet = DeviceType.isTablet()
   val interactionSource = remember { MutableInteractionSource() }
   Row(
-    Modifier
-      .wrapContentWidth()
-      .wrapContentHeight()
-      .padding(5.dp)
-      .clickable(
-        onClick = {}, interactionSource = interactionSource,
-        indication = rememberRipple(true)
-      ),
+      Modifier
+          .wrapContentWidth()
+          .wrapContentHeight()
+          .padding(5.dp)
+          .clickable(
+              onClick = {}, interactionSource = interactionSource,
+              indication = rememberRipple(true)
+          ),
     verticalAlignment = Alignment.CenterVertically,
     horizontalArrangement = Arrangement.Start,
   ) {
@@ -160,22 +160,22 @@ fun UserInfo(
       painter = painterResource(id = image),
       contentDescription = "seleccted people",
       modifier = Modifier
-        .height(50.dp)
-        .width(50.dp)
-        .clip(shape = CircleShape),
+          .height(50.dp)
+          .width(50.dp)
+          .clip(shape = CircleShape),
       contentScale = ContentScale.Crop
     )
     Column(
       modifier = if (!isTablet) {
-        Modifier
-          .fillMaxWidth()
-          .wrapContentHeight()
-          .padding(horizontal = 10.dp)
+          Modifier
+              .fillMaxWidth()
+              .wrapContentHeight()
+              .padding(horizontal = 10.dp)
       } else {
-        Modifier
-          .widthIn(min = 500.dp, max = 900.dp)
-          .wrapContentHeight()
-          .padding(horizontal = 10.dp)
+          Modifier
+              .widthIn(min = 500.dp, max = 900.dp)
+              .wrapContentHeight()
+              .padding(horizontal = 10.dp)
 
       }
     ) {
@@ -202,8 +202,8 @@ fun UserInfo(
 fun ShowSelectedPeople(modifier: Modifier = Modifier) {
   LazyHorizontalGrid(
     modifier = modifier
-      .wrapContentSize()
-      .height(120.dp),
+        .wrapContentSize()
+        .height(120.dp),
     rows = GridCells.Fixed(1)
   ) {
     items(userList + userList) { user ->
@@ -216,39 +216,58 @@ fun ShowSelectedPeople(modifier: Modifier = Modifier) {
 @Composable
 fun Profile(imageId: Int = R.drawable.testimg1) {
 
-  Box(
+  Column(
     modifier = Modifier
-      .wrapContentHeight()
-      .wrapContentWidth()
-      .padding(horizontal = 4.dp)
-      .background(Color.Transparent),
+        .wrapContentHeight()
+        .wrapContentWidth()
+        .padding(horizontal = 4.dp)
+        .background(Color.Transparent),
+    horizontalAlignment = Alignment.CenterHorizontally
+  ) {
 
-    )
-  {
-    Image(
-      painter = painterResource(id = imageId),
-      contentDescription = "seleccted people",
+    Box(
       modifier = Modifier
-        .height(70.dp)
-        .width(70.dp)
-        .clip(shape = CircleShape)
-        .align(Alignment.Center),
-      contentScale = ContentScale.Crop
-    )
-    IconButton(
-      onClick = { /*TODO*/ }, modifier = Modifier
-        .height(30.dp)
-        .width(30.dp)
-        .align(Alignment.TopEnd)
-    ) {
-      Icon(
-        painter = painterResource(id = R.drawable.ic_close),
-        contentDescription = "seleccted people",
-        tint = Color.Gray, modifier = Modifier
-          .height(30.dp)
-          .width(30.dp)
-          .align(Alignment.Center)
+          .wrapContentHeight()
+          .wrapContentWidth()
+          .padding(horizontal = 4.dp)
+          .background(Color.Transparent),
+
       )
+    {
+      Image(
+        painter = painterResource(id = imageId),
+        contentDescription = "seleccted people",
+        modifier = Modifier
+            .height(70.dp)
+            .width(70.dp)
+            .clip(shape = CircleShape)
+            .align(Alignment.Center),
+        contentScale = ContentScale.Crop
+      )
+      IconButton(
+        onClick = { /*TODO*/ }, modifier = Modifier
+              .height(30.dp)
+              .width(30.dp)
+              .align(Alignment.TopEnd)
+      ) {
+        Icon(
+          painter = painterResource(id = R.drawable.ic_close),
+          contentDescription = "seleccted people",
+          tint = Color.Gray, modifier = Modifier
+                .height(30.dp)
+                .width(30.dp)
+                .align(Alignment.Center)
+        )
+      }
+
     }
+    Text(
+      text = "Darkx6",
+      style = MaterialTheme.typography.titleLarge.copy(
+        fontSize =
+        17.sp
+      ),
+      color = MaterialTheme.colorScheme.onSurfaceVariant,
+    )
   }
 }
