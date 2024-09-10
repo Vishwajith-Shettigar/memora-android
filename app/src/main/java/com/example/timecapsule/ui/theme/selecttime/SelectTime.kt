@@ -51,10 +51,11 @@ fun NavigationRow() {
   val isTablet = DeviceType.isTablet()
 
   Row(
-    modifier = Modifier.zIndex(2f)
-      .fillMaxWidth()
-      .padding(start = 20.dp, end = 20.dp, bottom = 50.dp, top = 3.dp)
-      .background(Color.Transparent),
+    modifier = Modifier
+        .zIndex(2f)
+        .fillMaxWidth()
+        .padding(start = 20.dp, end = 20.dp, bottom = 50.dp, top = 3.dp)
+        .background(Color.Transparent),
     horizontalArrangement =
     if (isTablet)
       Arrangement.Absolute.SpaceEvenly
@@ -65,11 +66,11 @@ fun NavigationRow() {
     Box(
       modifier =
       Modifier
-        .size(50.dp)
-        .clip(CircleShape)
-        .padding(0.dp)
-        .background(brush = Brush.horizontalGradient(NavigatioButtons))
-        .align(Alignment.CenterVertically)
+          .size(50.dp)
+          .clip(CircleShape)
+          .padding(0.dp)
+          .background(brush = Brush.horizontalGradient(NavigatioButtons))
+          .align(Alignment.CenterVertically)
     )
     {
       IconButton(
@@ -87,11 +88,11 @@ fun NavigationRow() {
     Box(
       modifier =
       Modifier
-        .size(50.dp)
-        .clip(CircleShape)
-        .padding(0.dp)
-        .background(brush = Brush.horizontalGradient(NavigatioButtons))
-        .align(Alignment.CenterVertically)
+          .size(50.dp)
+          .clip(CircleShape)
+          .padding(0.dp)
+          .background(brush = Brush.horizontalGradient(NavigatioButtons))
+          .align(Alignment.CenterVertically)
     )
     {
       IconButton(
@@ -112,17 +113,17 @@ fun NavigationRow() {
 fun BackRow() {
   Row(
     modifier = Modifier
-      .fillMaxWidth()
-      .padding(20.dp)
-      .background(MaterialTheme.colorScheme.primary),
+        .fillMaxWidth()
+        .padding(20.dp)
+        .background(Color.Transparent),
     horizontalArrangement = Arrangement.Start
   ) {
     IconButton(
       onClick = { }, modifier =
-      Modifier
-        .size(40.dp)
-        .clip(CircleShape)
-        .border(1.dp, Color.Gray, CircleShape)
+        Modifier
+            .size(40.dp)
+            .clip(CircleShape)
+            .border(1.dp, Color.DarkGray, CircleShape)
     ) {
       Icon(
         painter = painterResource(id = R.drawable.ic_back_arrow), contentDescription = "back",
@@ -130,7 +131,6 @@ fun BackRow() {
       )
     }
   }
-
 }
 
 @Composable
@@ -160,9 +160,9 @@ fun DateTimePicker(modifier: Modifier = Modifier) {
 
   Column(
     modifier = modifier
-      .fillMaxSize()
-      .padding(horizontal = 15.dp)
-      .background(MaterialTheme.colorScheme.primary),
+        .fillMaxSize()
+        .padding(horizontal = 15.dp)
+        .background(MaterialTheme.colorScheme.primary),
 
     ) {
 
@@ -180,11 +180,11 @@ fun DateTimePicker(modifier: Modifier = Modifier) {
             },
             modifier =
             if (showDatePicker) {
-              Modifier
-                .size(40.dp)
-                .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.secondaryContainer)
-                .padding(1.dp)
+                Modifier
+                    .size(40.dp)
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.secondaryContainer)
+                    .padding(1.dp)
             } else {
               Modifier
             }
@@ -196,8 +196,8 @@ fun DateTimePicker(modifier: Modifier = Modifier) {
           }
         },
         modifier = Modifier
-          .weight(2F)
-          .height(64.dp)
+            .weight(2F)
+            .height(64.dp)
       )
 
       OutlinedTextField(
@@ -211,11 +211,11 @@ fun DateTimePicker(modifier: Modifier = Modifier) {
             onClick = { showDatePicker = false },
             modifier =
             if (!showDatePicker) {
-              Modifier
-                .size(40.dp)
-                .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.secondaryContainer)
-                .padding(1.dp)
+                Modifier
+                    .size(40.dp)
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.secondaryContainer)
+                    .padding(1.dp)
             } else {
               Modifier
             }
@@ -228,18 +228,18 @@ fun DateTimePicker(modifier: Modifier = Modifier) {
           }
         },
         modifier = Modifier
-          .weight(1.5F)
-          .height(64.dp)
+            .weight(1.5F)
+            .height(64.dp)
       )
     }
 
     Box(
       modifier = Modifier
-        .wrapContentSize()
-        .shadow(elevation = 4.dp)
-        .background(MaterialTheme.colorScheme.surface)
-        .padding(10.dp)
-        .align(Alignment.CenterHorizontally)
+          .wrapContentSize()
+          .shadow(elevation = 4.dp)
+          .background(MaterialTheme.colorScheme.surface)
+          .padding(10.dp)
+          .align(Alignment.CenterHorizontally)
     ) {
       if (showDatePicker) {
         DatePicker(
@@ -248,13 +248,13 @@ fun DateTimePicker(modifier: Modifier = Modifier) {
 
           modifier =
           if (isTablet) {
-            Modifier
-              .size(700.dp)
-              .padding(vertical = 5.dp)
+              Modifier
+                  .size(700.dp)
+                  .padding(vertical = 5.dp)
           } else {
-            Modifier
-              .padding(vertical = 0.dp)
-              .scale(1f)
+              Modifier
+                  .padding(vertical = 0.dp)
+                  .scale(1f)
           },
           colors = DatePickerDefaults.colors(selectedDayContainerColor = NavigatioButtons.get(0))
         )
@@ -263,13 +263,13 @@ fun DateTimePicker(modifier: Modifier = Modifier) {
           state = timePickerState,
           modifier =
           if (isTablet) {
-            Modifier
-              .size(700.dp)
-              .padding(vertical = 5.dp)
+              Modifier
+                  .size(700.dp)
+                  .padding(vertical = 5.dp)
           } else {
-            Modifier
-              .size(400.dp)
-              .padding(vertical = 5.dp)
+              Modifier
+                  .size(400.dp)
+                  .padding(vertical = 5.dp)
           },
         )
       }

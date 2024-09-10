@@ -16,7 +16,7 @@
     <string name="login_sentence">Already have an account ?</string>
     <string name="login">Log in</string>
 
-<!--    Details Screen-->
+    <!--    Details Screen-->
     <string name="details_headline">Could we get to know you better, please?</string>
     <string name="letsgo_button">Lets go  🚀</string>
 
@@ -29,17 +29,22 @@
     <string name="signup">Sign up</string>
 
 
-<!--    Review Screen-->
+    <!--    Review Screen-->
 
-        <string name="review_your_details">Overview of Your Capsule</string>
-        <string name="shared_with">You have shared with</string>
-        <string name="date_and_time">Date and time</string>
-        <string name="date">10–08–2089</string>
-        <string name="time">4:30 PM</string>
-        <string name="selected_capsule">Selected Capsule</string>
-        <string name="shared_content">Content You\'ve Shared</string>
-        <string name="edit_button">Edit</string>
-        <string name="done_button">Done</string>
+    <string name="review_your_details">Overview of Your Capsule</string>
+    <string name="shared_with">You have shared with</string>
+    <string name="date_and_time">Date and time</string>
+    <string name="date">10–08–2089</string>
+    <string name="time">4:30 PM</string>
+    <string name="selected_capsule">Selected Capsule</string>
+    <string name="shared_content">Content You\'ve Shared</string>
+    <string name="edit_button">Edit</string>
+    <string name="done_button">Done</string>
 
-
+    <!--    Capsule Details Screen-->
+    <string name="capsule_details">Capsule Details</string>
+    <string name="date_created">Date Created</string>
+    <string name="creator">Creator</string>
+    <string name="opening_date">Opening Date</string>
+    <string name="shared_with_capsule_details_screen">Shared With the Following</string>
 </resources>
