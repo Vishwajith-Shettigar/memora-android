@@ -43,8 +43,8 @@
 
     <!--    Capsule Details Screen-->
     <string name="capsule_details">Capsule Details</string>
-    <string name="date_created">Date Created</string>
-    <string name="creator">Creator</string>
+    <string name="date_created">Created On</string>
+    <string name="creator">Created By</string>
     <string name="opening_date">Opening Date</string>
     <string name="shared_with_capsule_details_screen">Shared With the Following</string>
 </resources>

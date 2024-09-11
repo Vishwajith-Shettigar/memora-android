@@ -6,12 +6,14 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import com.example.timecapsule.ui.theme.TimeCapsuleTheme
+import com.example.timecapsule.ui.theme.ar.ArScreen
 import com.example.timecapsule.ui.theme.capsuledetails.CapsuleDetailsScreen
 import com.example.timecapsule.ui.theme.findcapsule.FindCapsuleScreen
 import com.example.timecapsule.ui.theme.findcapsule.FindCapsuleScreenV1
+import com.example.timecapsule.ui.theme.profile.ProfileScreen
 import com.example.timecapsule.ui.theme.review.ReviewScreen
 import com.example.timecapsule.ui.theme.selectcapsule.SelectCapsuleScreen
-import com.example.timecapsule.ui.theme.selectcapsule.ViewCapsule
+//import com.example.timecapsule.ui.theme.selectcapsule.ViewCapsule
 import com.example.timecapsule.ui.theme.selectlocation.SelectLocationOptionScreen
 import com.example.timecapsule.ui.theme.selectlocation.SelectLocationScreen
 import com.example.timecapsule.ui.theme.sharewithpeople.ShareOptionScreen
@@ -45,7 +47,9 @@ class MainActivity : ComponentActivity() {
 //        UploadFilesScreen()
 //        FindCapsuleScreenV1()
 //        ReviewScreen()
-        CapsuleDetailsScreen()
+//        CapsuleDetailsScreen()
+//        ArScreen()
+        ProfileScreen()
       }
     }
   }

@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import com.example.timecapsule.R
+import com.example.timecapsule.ui.theme.DMSerifText
 import com.example.timecapsule.ui.theme.LightBlue
 import com.example.timecapsule.ui.theme.RubikBubble
 import com.example.timecapsule.ui.theme.capsulelist.TimerPlaceholder
@@ -147,7 +148,8 @@ fun BottomPart() {
         text = stringResource(id = R.string.date_created),
         style = MaterialTheme.typography.titleMedium.copy(
           fontSize = 20.sp,
-          color = MaterialTheme.colorScheme.onSurfaceVariant
+          color = MaterialTheme.colorScheme.onSurfaceVariant,
+          fontFamily = DMSerifText
         )
       )
       Text(
@@ -171,7 +173,8 @@ fun BottomPart() {
         text = stringResource(id = R.string.creator),
         style = MaterialTheme.typography.titleMedium.copy(
           fontSize = 20.sp,
-          color = MaterialTheme.colorScheme.onSurfaceVariant
+          color = MaterialTheme.colorScheme.onSurfaceVariant,
+          fontFamily = DMSerifText
         )
       )
       Text(
@@ -195,7 +198,8 @@ fun BottomPart() {
         text = stringResource(id = R.string.opening_date),
         style = MaterialTheme.typography.titleMedium.copy(
           fontSize = 20.sp,
-          color = MaterialTheme.colorScheme.onSurfaceVariant
+          color = MaterialTheme.colorScheme.onSurfaceVariant,
+          fontFamily = DMSerifText
         )
       )
       Text(
@@ -205,7 +209,6 @@ fun BottomPart() {
           color = LightBlue
         )
       )
-
     }
 
     Column(
@@ -219,7 +222,8 @@ fun BottomPart() {
         text = stringResource(id = R.string.shared_with_capsule_details_screen),
         style = MaterialTheme.typography.titleMedium.copy(
           fontSize = 20.sp,
-          color = MaterialTheme.colorScheme.onSurfaceVariant
+          color = MaterialTheme.colorScheme.onSurfaceVariant,
+          fontFamily = DMSerifText
         )
       )
       ShowSelectedPeople(disableCrossBtn = true)

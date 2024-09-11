@@ -107,7 +107,7 @@ fun BackRow() {
 @Composable
 fun Display3DModel(
   modifier: Modifier = Modifier,
-  modelFileName: String = "testmodel2folder/scene.gltf"
+  modelFileName: String = "testmodel.glb"
 ) {
   Box(
     modifier = Modifier
