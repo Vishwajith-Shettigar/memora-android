@@ -112,7 +112,7 @@ fun ProfileScreen() {
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Name and Email
+        // Username and full name
         Text(
           "DarkX12", style = MaterialTheme.typography.titleLarge.copy(
             fontWeight = FontWeight.Bold,
@@ -130,7 +130,6 @@ fun ProfileScreen() {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Settings Options
         SettingsOption(icon = R.drawable.ic_darkmode, text = "Dark Mode", true)
         SettingsOption(icon = R.drawable.ic_setting, text = "Setting")
         SettingsOption(icon = R.drawable.ic_contactus, text = "Contact Us")
@@ -145,7 +144,6 @@ fun ProfileScreen() {
 fun SettingsOption(icon: Int, text: String, isDarkModeOption: Boolean = false) {
   val interactionSource = remember { MutableInteractionSource() }
   val isTablet = DeviceType.isTablet()
-
   Row(
     modifier =
     if (isTablet)
@@ -192,7 +190,7 @@ fun SettingsOption(icon: Int, text: String, isDarkModeOption: Boolean = false) {
       )
     }
     if (isDarkModeOption)
-      Switch(checked = false, onCheckedChange = {})
+      Switch(checked = true, onCheckedChange = {})
     else
       Icon(
         painter = painterResource(id = R.drawable.ic_forward), contentDescription = "open option",
