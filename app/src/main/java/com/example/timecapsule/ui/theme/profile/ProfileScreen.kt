@@ -24,6 +24,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.ripple
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -47,6 +48,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import androidx.palette.graphics.Palette
 import com.example.timecapsule.R
 import com.example.timecapsule.ui.theme.SubTitleFontColor
@@ -54,7 +57,7 @@ import com.example.timecapsule.ui.theme.util.DeviceType
 
 @Preview
 @Composable
-fun ProfileScreen() {
+fun ProfileScreen(navController: NavController = rememberNavController(),) {
 
   val defaultColor = MaterialTheme.colorScheme.primary
   // State to hold the background color
@@ -153,7 +156,7 @@ fun SettingsOption(icon: Int, text: String, isDarkModeOption: Boolean = false) {
             .clickable(
                 onClick = {},
                 interactionSource = interactionSource,
-                indication = rememberRipple()
+                indication = ripple()
             )
             .padding(horizontal = 16.dp)
     else
@@ -163,7 +166,7 @@ fun SettingsOption(icon: Int, text: String, isDarkModeOption: Boolean = false) {
             .clickable(
                 onClick = {},
                 interactionSource = interactionSource,
-                indication = rememberRipple()
+                indication = ripple()
             )
             .padding(horizontal = 16.dp),
     verticalAlignment = Alignment.CenterVertically,

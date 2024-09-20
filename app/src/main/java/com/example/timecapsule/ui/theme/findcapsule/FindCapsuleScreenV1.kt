@@ -38,6 +38,8 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.drawable.toBitmap
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.timecapsule.BuildConfig
 import com.example.timecapsule.R
 import com.google.android.gms.location.LocationCallback
@@ -118,7 +120,7 @@ fun getInitialLocation(context: Context, onLocationFetched: (Point) -> Unit) {
 }
 
 @Composable
-fun FindCapsuleScreenV1() {
+fun FindCapsuleScreenV1(navController: NavController = rememberNavController(),) {
 
   var locationTypeState by remember { mutableStateOf(LOCATIONTYPE.USER_LOCATION) }
 

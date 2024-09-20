@@ -47,6 +47,8 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.max
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.timecapsule.R
 import com.example.timecapsule.ui.theme.LightBlue
 import com.example.timecapsule.ui.theme.util.DeviceType
@@ -54,7 +56,7 @@ import com.example.timecapsule.ui.theme.util.DeviceType
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
-fun NotificationScreen() {
+fun NotificationScreen(navController: NavController = rememberNavController(),) {
   val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
   val isTablet = DeviceType.isTablet()
 

@@ -72,7 +72,7 @@ fun LetterWritingScreen() {
     modifier = Modifier
       .fillMaxSize(),
     horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center,
-    ) {
+  ) {
     items(1) {
       Text(
         text = "Would you like to leave a letter? ",

@@ -34,6 +34,8 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.timecapsule.BuildConfig
 import com.example.timecapsule.R
 import com.example.timecapsule.ui.theme.selecttime.NavigationRow
@@ -53,7 +55,7 @@ import com.google.maps.android.compose.rememberCameraPositionState
 
 
 @Composable
-fun SelectLocationScreen() {
+fun SelectLocationScreen(navController: NavController = rememberNavController()) {
   if (!Places.isInitialized()) {
     Places.initialize(LocalContext.current, BuildConfig.MAPS_API_KEY)
   }

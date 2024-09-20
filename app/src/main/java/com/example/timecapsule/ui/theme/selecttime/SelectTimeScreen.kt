@@ -9,10 +9,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 
 @Preview
 @Composable
-fun SelectTimeScreen() {
+fun SelectTimeScreen(navController: NavController = rememberNavController(),) {
   Scaffold(modifier = Modifier
     .fillMaxSize()
     .background(MaterialTheme.colorScheme.primary)

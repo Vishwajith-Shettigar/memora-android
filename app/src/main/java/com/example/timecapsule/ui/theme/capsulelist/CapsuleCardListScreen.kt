@@ -42,6 +42,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.max
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.example.timecapsule.R
 import com.example.timecapsule.ui.theme.Purple80
@@ -52,7 +54,10 @@ import com.example.timecapsule.ui.theme.util.DeviceType
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
-fun CapsuleCardListScreen(modifier: Modifier = Modifier) {
+fun CapsuleCardListScreen(
+  navController: NavController = rememberNavController(),
+  modifier: Modifier = Modifier
+) {
   val isTablet = DeviceType.isTablet()
   val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 

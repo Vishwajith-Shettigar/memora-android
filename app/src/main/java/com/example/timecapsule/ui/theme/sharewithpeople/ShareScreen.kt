@@ -25,6 +25,7 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ripple
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -151,7 +152,7 @@ fun UserInfo(
           .padding(5.dp)
           .clickable(
               onClick = {}, interactionSource = interactionSource,
-              indication = rememberRipple(true)
+              indication = ripple()
           ),
     verticalAlignment = Alignment.CenterVertically,
     horizontalArrangement = Arrangement.Start,

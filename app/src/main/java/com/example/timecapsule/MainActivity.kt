@@ -53,7 +53,8 @@ class MainActivity : ComponentActivity() {
 //        ArScreen()
 //        ProfileScreen()
 //        NotificationScreen()
-        LetterScreen()
+//        LetterScreen()
+        AppNavGraph()
       }
     }
   }

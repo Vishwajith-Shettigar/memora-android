@@ -1,5 +1,6 @@
 package com.example.timecapsule.ui.theme.onboarding
 
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -39,7 +40,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.timecapsule.R
+import com.example.timecapsule.routes.Screen
 import com.example.timecapsule.ui.theme.BottomOnboarding
 import com.example.timecapsule.ui.theme.DMSerifText
 import com.example.timecapsule.ui.theme.LoginBtnLeft
@@ -49,18 +53,39 @@ import com.example.timecapsule.ui.theme.util.Device
 import com.example.timecapsule.ui.theme.util.DeviceType
 import com.example.timecapsule.ui.theme.white
 
+enum class ButtonName {
+  LOG_IN,
+  SIGN_UP
+}
+
 @Composable
-fun OnboardingScreen(modifier: Modifier = Modifier) {
+fun OnboardingScreen(
+  navController: NavController = rememberNavController(),
+  modifier: Modifier = Modifier
+) {
 
   if (DeviceType.getDeviceType() == Device.TABLET) {
-    OnboardingScreenTablet(modifier)
+    OnboardingScreenTablet(modifier) { buttonName ->
+      when (buttonName) {
+        ButtonName.SIGN_UP -> navController.navigate(Screen.Signup.route)
+        ButtonName.LOG_IN -> navController.navigate(Screen.Login.route)
+      }
+    }
   } else {
-    OnboardingScreenMobile(modifier)
+    OnboardingScreenMobile(modifier) { buttonName ->
+      when (buttonName) {
+        ButtonName.SIGN_UP -> navController.navigate(Screen.Signup.route)
+        ButtonName.LOG_IN -> navController.navigate(Screen.Login.route)
+      }
+    }
   }
 }
 
 @Composable
-fun OnboardingScreenMobile(modifier: Modifier = Modifier) {
+fun OnboardingScreenMobile(
+  modifier: Modifier = Modifier,
+  buttonClicked: (ButtonName) -> Unit = {}
+) {
   Column(
     horizontalAlignment = Alignment.CenterHorizontally,
     verticalArrangement = Arrangement.SpaceBetween,
@@ -87,18 +112,21 @@ fun OnboardingScreenMobile(modifier: Modifier = Modifier) {
       horizontalAlignment = Alignment.CenterHorizontally,
       modifier = Modifier.height(200.dp)
     ) {
-      LoginButton()
+      LoginButton(buttonClicked = buttonClicked)
 
       Spacer(modifier = Modifier.height(16.dp))
 
-      SignupButton()
+      SignupButton(buttonClicked = buttonClicked)
     }
   }
 }
 
 @Preview
 @Composable
-fun OnboardingScreenTablet(modifier: Modifier = Modifier) {
+fun OnboardingScreenTablet(
+  modifier: Modifier = Modifier,
+  buttonClicked: (ButtonName) -> Unit = {}
+) {
   Row(
     horizontalArrangement = Arrangement.SpaceEvenly,
     verticalAlignment = Alignment.CenterVertically,
@@ -125,11 +153,11 @@ fun OnboardingScreenTablet(modifier: Modifier = Modifier) {
 
       Spacer(modifier = Modifier.height(32.dp))
 
-      LoginButton()
+      LoginButton(buttonClicked = buttonClicked)
 
       Spacer(modifier = Modifier.height(16.dp))
 
-      SignupButton()
+      SignupButton(buttonClicked = buttonClicked)
     }
 
     TopImage(modifier = Modifier.weight(1f))
@@ -186,7 +214,7 @@ fun TitleAndSubtitle(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun LoginButton(modifier: Modifier = Modifier) {
+fun LoginButton(modifier: Modifier = Modifier, buttonClicked: (ButtonName) -> Unit = {}) {
   val normalColors = listOf(Color(LoginBtnLeft.value), Color(LoginBtnRight.value))
   Box(
     modifier = modifier
@@ -207,6 +235,7 @@ fun LoginButton(modifier: Modifier = Modifier) {
   ) {
     Button(
       onClick = {
+        buttonClicked(ButtonName.LOG_IN)
       },
       shape = RoundedCornerShape(20.dp),
       colors = ButtonDefaults.buttonColors(
@@ -226,9 +255,9 @@ fun LoginButton(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun SignupButton(modifier: Modifier = Modifier) {
+fun SignupButton(modifier: Modifier = Modifier, buttonClicked: (ButtonName) -> Unit = {}) {
   OutlinedButton(
-    onClick = { },
+    onClick = { buttonClicked(ButtonName.SIGN_UP) },
     shape = RoundedCornerShape(20.dp),
     border = BorderStroke(1.dp, Color.Black),
     modifier = modifier
