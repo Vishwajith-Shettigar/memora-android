@@ -282,7 +282,7 @@ fun LogInScreenTablet(modifier: Modifier = Modifier, buttonClicked: (ButtonName)
     TopImage(true)
 
     Spacer(modifier = Modifier.height(5.dp))
-    BodyPart(true)
+    BodyPart(true, buttonClicked = buttonClicked)
 
   }
 }
