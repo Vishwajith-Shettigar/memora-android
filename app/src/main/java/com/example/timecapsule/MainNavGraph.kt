@@ -24,6 +24,7 @@ import androidx.compose.material3.*
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.ui.res.painterResource
+import com.example.timecapsule.ui.theme.LightBlue
 
 @Composable
 fun MainNavGraph() {
@@ -85,10 +86,20 @@ fun MainNavGraph() {
 @Composable
 fun BottomNavigationBar(navController: NavController) {
   val items = listOf(
-    NavItem(Screen.Home, R.drawable.ic_home, "home"),
-    NavItem(Screen.Location, R.drawable.ic_location_search, "location"),
-    NavItem(Screen.Notification, R.drawable.ic_notification, "notification"),
-    NavItem(Screen.Profile, R.drawable.ic_person, "profile"),
+    NavItem(Screen.Home, R.drawable.ic_home, R.drawable.ic_outline_home, "home"),
+    NavItem(
+      Screen.Location,
+      R.drawable.ic_location_outlined,
+      R.drawable.ic_location_search,
+      "location"
+    ),
+    NavItem(
+      Screen.Notification,
+      R.drawable.ic_notification,
+      R.drawable.ic_outline_notifications,
+      "notification"
+    ),
+    NavItem(Screen.Profile, R.drawable.ic_person, R.drawable.ic_outline_person, "profile"),
   )
   BottomNavigation(
     backgroundColor = MaterialTheme.colorScheme.primary,
@@ -98,15 +109,19 @@ fun BottomNavigationBar(navController: NavController) {
     items.forEach { item ->
       BottomNavigationItem(
         icon = {
+          val icon: Int =
+            if (currentRoute == item.screen.route)
+              item.selectedIcon
+            else
+              item.icon
           Icon(
-            painter = painterResource(id = item.icon),
+            painter = painterResource(id = icon),
             contentDescription = null
           )
         },
         selected = currentRoute == item.screen.route,
         onClick = {
           navController.navigate(item.screen.route) {
-            Log.e("pokemon", navController.graph.startDestinationId.toString())
             popUpTo(navController.graph.startDestinationId) { saveState = true }
             launchSingleTop = true
             restoreState = true
@@ -117,5 +132,10 @@ fun BottomNavigationBar(navController: NavController) {
   }
 }
 
-data class NavItem(val screen: Screen, val icon: Int, val contentDescription: String)
+data class NavItem(
+  val screen: Screen,
+  val selectedIcon: Int,
+  val icon: Int,
+  val contentDescription: String
+)
 
