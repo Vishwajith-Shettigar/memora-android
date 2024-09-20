@@ -7,6 +7,10 @@ sealed class Screen(val route: String) {
   object Login : Screen("login")
   object Signup : Screen("signup")
 
+  //Main Screen
+
+  object Main : Screen("main")
+
   // Main Flow with Bottom Nav
   object Home : Screen("home")
   object Location : Screen("location")

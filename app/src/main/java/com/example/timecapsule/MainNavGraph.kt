@@ -1,7 +1,9 @@
 package com.example.timecapsule
 
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
+import android.util.Log
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -15,22 +17,16 @@ import com.example.timecapsule.routes.Screen
 import com.example.timecapsule.ui.theme.capsulelist.CapsuleCardListScreen
 import com.example.timecapsule.ui.theme.findcapsule.FindCapsuleScreenV1
 import com.example.timecapsule.ui.theme.notification.NotificationScreen
-import com.example.timecapsule.ui.theme.onboarding.OnboardingScreen
 import com.example.timecapsule.ui.theme.profile.ProfileScreen
-import com.example.timecapsule.ui.theme.selectlocation.SelectLocationOptionScreen
 import com.example.timecapsule.ui.theme.selectlocation.SelectLocationScreen
-import com.example.timecapsule.ui.theme.selectlocation.SelectionScreen
 import com.example.timecapsule.ui.theme.selecttime.SelectTimeScreen
 import androidx.compose.material3.*
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.ui.res.painterResource
-import com.example.timecapsule.ui.theme.login.LogInScreen
-import com.example.timecapsule.ui.theme.signup.SignUpScreen
-import java.util.Locale
 
 @Composable
-fun AppNavGraph() {
+fun MainNavGraph() {
   val navController = rememberNavController()
 
   // List of screens that should display the Bottom Navigation Bar
@@ -51,14 +47,21 @@ fun AppNavGraph() {
   ) { paddingValues ->
     NavHost(
       navController = navController,
-      startDestination = Screen.Onboarding.route,
-      modifier = Modifier.padding(paddingValues)
+      enterTransition = {
+        slideIntoContainer(
+          AnimatedContentTransitionScope.SlideDirection.Start,
+          tween(1000)
+        )
+      },
+      popEnterTransition = {
+        slideIntoContainer(
+          AnimatedContentTransitionScope.SlideDirection.End,
+          tween(1000)
+        )
+      },
+      startDestination = Screen.Home.route,
+      modifier = Modifier.padding(bottom = paddingValues.calculateBottomPadding())
     ) {
-      // Splash, Onboarding, and Authentication Flow
-//      composable(Screen.Splash.route) { SplashScreen(navController) }
-      composable(Screen.Onboarding.route) { OnboardingScreen(navController) }
-      composable(Screen.Login.route) { LogInScreen(navController) }
-      composable(Screen.Signup.route) { SignUpScreen(navController) }
 
       // Main Flow with Bottom Nav
       composable(Screen.Home.route) { CapsuleCardListScreen(navController) }
@@ -87,7 +90,10 @@ fun BottomNavigationBar(navController: NavController) {
     NavItem(Screen.Notification, R.drawable.ic_notification, "notification"),
     NavItem(Screen.Profile, R.drawable.ic_person, "profile"),
   )
-  BottomNavigation {
+  BottomNavigation(
+    backgroundColor = MaterialTheme.colorScheme.primary,
+    modifier = Modifier.background(MaterialTheme.colorScheme.primary)
+  ) {
     val currentRoute = navController.currentDestination?.route
     items.forEach { item ->
       BottomNavigationItem(
@@ -97,10 +103,10 @@ fun BottomNavigationBar(navController: NavController) {
             contentDescription = null
           )
         },
-        label = { Text(item.screen.route.capitalize(Locale.ROOT)) },
         selected = currentRoute == item.screen.route,
         onClick = {
           navController.navigate(item.screen.route) {
+            Log.e("pokemon", navController.graph.startDestinationId.toString())
             popUpTo(navController.graph.startDestinationId) { saveState = true }
             launchSingleTop = true
             restoreState = true

@@ -54,7 +54,7 @@ class MainActivity : ComponentActivity() {
 //        ProfileScreen()
 //        NotificationScreen()
 //        LetterScreen()
-        AppNavGraph()
+        OnBoardingNavGraph()
       }
     }
   }

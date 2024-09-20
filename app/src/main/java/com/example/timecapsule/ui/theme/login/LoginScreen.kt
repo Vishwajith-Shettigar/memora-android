@@ -1,5 +1,6 @@
 package com.example.timecapsule.ui.theme.login
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -63,9 +64,11 @@ fun LogInScreen(
         }
 
         ButtonName.LOG_IN -> navController.navigate(
-          Screen.Login.route
+          Screen.Main.route
         ) {
-          popUpTo(navController.graph.startDestinationId)
+          popUpTo(navController.graph.startDestinationId) {
+            inclusive = true
+          }
         }
       }
     }
@@ -79,13 +82,16 @@ fun LogInScreen(
         }
 
         ButtonName.LOG_IN -> navController.navigate(
-          Screen.Login.route
+          Screen.Main.route
         ) {
-          popUpTo(navController.graph.startDestinationId)
+          Log.e("pokemon", navController.graph.startDestinationId.toString())
+
+          popUpTo(navController.graph.startDestinationId) {
+            inclusive = true
+          }
         }
       }
     }
-
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
