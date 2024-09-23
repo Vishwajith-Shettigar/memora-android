@@ -2,6 +2,7 @@ package com.example.timecapsule.ui.theme.sharewithpeople
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -27,6 +28,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import com.example.timecapsule.ui.theme.SubTitleFontColor
 import com.example.timecapsule.ui.theme.selecttime.NavigationAddCapsule
 import com.example.timecapsule.ui.theme.selecttime.NavigationRow
@@ -42,20 +44,28 @@ enum class SharePeopleOptions {
 fun ShareOptionScreen(onNavigate: (NavigationAddCapsule, SharePeopleOptions) -> Unit = { _, _ -> }) {
   var selectedOption by rememberSaveable { mutableStateOf(SharePeopleOptions.NONE) }
   Scaffold(modifier = Modifier
-      .fillMaxSize()
-      .background(MaterialTheme.colorScheme.primary)
-      .padding(vertical = 30.dp),
+    .fillMaxSize()
+    .background(MaterialTheme.colorScheme.primary)
+    .padding(vertical = 30.dp),
     containerColor = MaterialTheme.colorScheme.primary,
-    bottomBar = {
-      NavigationRow { navigationFlow ->
-        onNavigate(navigationFlow, selectedOption)
+  ) { padding ->
+    Box(modifier = Modifier.padding(padding).fillMaxSize()){
+      SelectionScreen(modifier = Modifier, selectedOption) {
+        selectedOption = it
 
       }
-    }
-  ) { padding ->
-    SelectionScreen(modifier = Modifier.padding(padding), selectedOption) {
-      selectedOption = it
-    }
+      Box(
+        modifier = Modifier
+          .fillMaxWidth()
+          .padding(0.dp)
+          .align(Alignment.BottomCenter)
+          .zIndex(2f)
+      ) {
+        NavigationRow() { navigationFlow ->
+          onNavigate(navigationFlow, selectedOption)
+        }
+      }
+ }
   }
 }
 
@@ -68,17 +78,17 @@ fun SelectionScreen(
 
   Column(
     modifier = modifier
-        .fillMaxSize()
-        .padding(16.dp),
+      .fillMaxSize()
+      .padding(16.dp),
     horizontalAlignment = Alignment.CenterHorizontally,
     verticalArrangement = Arrangement.Center
   ) {
 
     Row(
       modifier = Modifier
-          .fillMaxWidth()
-          .wrapContentHeight()
-          .weight(1f),
+        .fillMaxWidth()
+        .wrapContentHeight()
+        .weight(1f),
       horizontalArrangement = Arrangement.Start
     ) {
       Column {
@@ -131,9 +141,9 @@ fun SelectionScreen(
 fun RadioButtonOption(text: String, description: String, selected: Boolean, onClick: () -> Unit) {
   Column(
     modifier = Modifier
-        .padding(vertical = 10.dp)
-        .fillMaxWidth()
-        .wrapContentHeight()
+      .padding(vertical = 10.dp)
+      .fillMaxWidth()
+      .wrapContentHeight()
   ) {
     Row(
       modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically,

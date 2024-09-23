@@ -22,10 +22,11 @@ fun SelectTimeScreen(
   navController: NavController = rememberNavController(),
   onNavigate: (NavigationAddCapsule) -> Unit = {}
 ) {
-  Scaffold(modifier = Modifier
-      .fillMaxSize()
-      .background(MaterialTheme.colorScheme.primary)
-      .padding(vertical = 30.dp),
+  Scaffold(
+    modifier = Modifier
+        .fillMaxSize()
+        .background(MaterialTheme.colorScheme.primary)
+        .padding(vertical = 30.dp),
     containerColor = MaterialTheme.colorScheme.primary,
     topBar = {
       BackRow {

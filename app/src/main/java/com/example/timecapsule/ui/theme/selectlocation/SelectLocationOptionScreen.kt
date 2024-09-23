@@ -2,6 +2,7 @@ package com.example.timecapsule.ui.theme.selectlocation
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -25,6 +26,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.timecapsule.ui.theme.SubTitleFontColor
@@ -38,12 +40,24 @@ fun SelectLocationOptionScreen(navController: NavController = rememberNavControl
       .background(MaterialTheme.colorScheme.primary)
       .padding(vertical = 30.dp),
     containerColor = MaterialTheme.colorScheme.primary,
-    bottomBar = {
-      NavigationRow()
-    }
   ) { padding ->
 
-    SelectionScreen(modifier = Modifier.padding(padding))
+    Box(
+      modifier = Modifier
+          .padding(padding)
+          .fillMaxSize()
+    ) {
+      SelectionScreen(modifier = Modifier.padding(padding))
+      Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(0.dp)
+            .align(Alignment.BottomCenter)
+            .zIndex(2f)
+      ) {
+        NavigationRow()
+      }
+    }
   }
 }
 

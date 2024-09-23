@@ -46,6 +46,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import com.example.timecapsule.R
 import com.example.timecapsule.ui.theme.SubTitleFontColor
 import com.example.timecapsule.ui.theme.selecttime.NavigationRow
@@ -55,23 +56,36 @@ import com.example.timecapsule.ui.theme.util.DeviceType
 @Preview
 @Composable
 fun ShareScreen() {
-  Scaffold(modifier = Modifier
-      .fillMaxSize()
-      .background(MaterialTheme.colorScheme.primary),
+  Scaffold(
+    modifier = Modifier
+        .fillMaxSize()
+        .background(MaterialTheme.colorScheme.primary),
     containerColor = MaterialTheme.colorScheme.primary,
-    bottomBar = {
-      NavigationRow()
-    }
   ) { padding ->
-    Column(
+    Box(
+      modifier = Modifier
+          .padding(padding)
+          .fillMaxSize()
+    )
+    {
+      Column(
         Modifier
-            .fillMaxSize()
-            .padding(padding),
-      verticalArrangement = Arrangement.Center,
-      horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-      ShowSelectedPeople(Modifier)
-      SearchPeople()
+          .fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+      ) {
+        ShowSelectedPeople(Modifier)
+        SearchPeople()
+      }
+      Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(0.dp)
+            .align(Alignment.BottomCenter)
+            .zIndex(2f)
+      ) {
+        NavigationRow()
+      }
     }
   }
 }
