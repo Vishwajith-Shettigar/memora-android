@@ -83,7 +83,6 @@ dependencies {
     debugImplementation libs.androidx.ui.tooling
     debugImplementation libs.androidx.ui.test.manifest
 
-
     implementation libs.coil.compose
 
     implementation libs.ui
@@ -94,22 +93,19 @@ dependencies {
 
     implementation "com.google.accompanist:accompanist-permissions:0.34.0"
 
-//    SceneView
-    implementation ("io.github.sceneview:sceneview:2.1.0")
+    //    SceneView
+    implementation("io.github.sceneview:sceneview:2.1.0")
     implementation 'io.github.sceneview:arsceneview:2.2.1'
 
     // map box
     implementation 'com.mapbox.maps:android:11.6.0'
-    // If you're using compose also add the compose extension
+    // compose extension
     implementation 'com.mapbox.extension:maps-compose:11.6.0'
 
     // image dominnat color extractor
     implementation 'androidx.palette:palette-ktx:1.0.0'
 
-    def nav_version = "2.8.1"
-
     implementation libs.androidx.navigation.compose
 
     implementation "androidx.compose.material:material:1.7.2"
-
 }

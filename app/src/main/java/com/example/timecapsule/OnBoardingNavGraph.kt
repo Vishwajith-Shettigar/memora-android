@@ -37,6 +37,6 @@ fun OnBoardingNavGraph() {
     composable(Screen.Onboarding.route) { OnboardingScreen(navController) }
     composable(Screen.Login.route) { LogInScreen(navController) }
     composable(Screen.Signup.route) { SignUpScreen(navController) }
-    composable(Screen.Main.route) { MainNavGraph() }
+    composable(Screen.MainScreens.route) { MainNavGraph() }
   }
 }

@@ -56,7 +56,7 @@ import com.example.timecapsule.ui.theme.util.DeviceType
 @Composable
 fun CapsuleCardListScreen(
   navController: NavController = rememberNavController(),
-  modifier: Modifier = Modifier
+  modifier: Modifier = Modifier, addCapsuleBtnClicked:()->Unit={}
 ) {
   val isTablet = DeviceType.isTablet()
   val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
@@ -83,7 +83,7 @@ fun CapsuleCardListScreen(
     },
     floatingActionButton = {
       FloatingActionButton(
-        onClick = {},
+        onClick = {addCapsuleBtnClicked()},
         containerColor = MaterialTheme.colorScheme.secondaryContainer
       ) {
         Icon(

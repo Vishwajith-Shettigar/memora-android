@@ -64,7 +64,7 @@ fun LogInScreen(
         }
 
         ButtonName.LOG_IN -> navController.navigate(
-          Screen.Main.route
+          Screen.MainScreens.route
         ) {
           popUpTo(navController.graph.startDestinationId) {
             inclusive = true
@@ -82,10 +82,8 @@ fun LogInScreen(
         }
 
         ButtonName.LOG_IN -> navController.navigate(
-          Screen.Main.route
+          Screen.MainScreens.route
         ) {
-          Log.e("pokemon", navController.graph.startDestinationId.toString())
-
           popUpTo(navController.graph.startDestinationId) {
             inclusive = true
           }
@@ -129,13 +127,13 @@ fun CustomTextField(
     modifier =
 
     if (!isTablet)
-        modifier
-            .fillMaxWidth()
-            .padding(vertical = 3.dp)
+      modifier
+        .fillMaxWidth()
+        .padding(vertical = 3.dp)
     else
-        modifier
-            .width(600.dp)
-            .padding(vertical = 3.dp)
+      modifier
+        .width(600.dp)
+        .padding(vertical = 3.dp)
   )
 }
 
@@ -151,13 +149,13 @@ fun LogInScreenMobile(modifier: Modifier = Modifier, buttonClicked: (ButtonName)
     horizontalAlignment = Alignment.CenterHorizontally,
     verticalArrangement = Arrangement.SpaceBetween,
     modifier = modifier
-        .fillMaxSize()
-        .background(
-            Brush.verticalGradient(
-                SignUpBackground
-            )
+      .fillMaxSize()
+      .background(
+        Brush.verticalGradient(
+          SignUpBackground
         )
-        .padding(horizontal = 16.dp)
+      )
+      .padding(horizontal = 16.dp)
   ) {
 
     Spacer(modifier = Modifier.height(5.dp))
@@ -215,18 +213,18 @@ fun LogInButton(buttonClicked: (ButtonName) -> Unit = {}) {
       containerColor = Color.Transparent
     ),
     modifier = Modifier
-        .width(270.dp)
-        .height(46.dp)
-        .shadow(
-            elevation = 10.dp, // Shadow size
-            shape = RoundedCornerShape(20.dp)
-        )
-        .background(
-            brush = Brush.horizontalGradient(
-                colors = listOf(Color(0xFF4F46E5), Color(0xFF3B82F6))
-            ),
-            shape = RoundedCornerShape(20.dp)
-        )
+      .width(270.dp)
+      .height(46.dp)
+      .shadow(
+        elevation = 10.dp, // Shadow size
+        shape = RoundedCornerShape(20.dp)
+      )
+      .background(
+        brush = Brush.horizontalGradient(
+          colors = listOf(Color(0xFF4F46E5), Color(0xFF3B82F6))
+        ),
+        shape = RoundedCornerShape(20.dp)
+      )
   ) {
     Text(
       text = stringResource(id = R.string.login_button),
@@ -254,12 +252,11 @@ fun LogInButton(buttonClicked: (ButtonName) -> Unit = {}) {
         color = Color.White.copy(alpha = 0.8f)
       ),
       modifier = Modifier
-          .padding(horizontal = 3.dp)
-          .clickable(onClick = { buttonClicked(ButtonName.SIGN_UP) }),
+        .padding(horizontal = 3.dp)
+        .clickable(onClick = { buttonClicked(ButtonName.SIGN_UP) }),
     )
   }
 }
-
 
 @Composable
 fun LogInScreenTablet(modifier: Modifier = Modifier, buttonClicked: (ButtonName) -> Unit = {}) {
@@ -267,13 +264,13 @@ fun LogInScreenTablet(modifier: Modifier = Modifier, buttonClicked: (ButtonName)
     verticalAlignment = Alignment.CenterVertically,
     horizontalArrangement = Arrangement.SpaceBetween,
     modifier = modifier
-        .fillMaxSize()
-        .background(
-            Brush.horizontalGradient(
-                SignUpBackground
-            )
+      .fillMaxSize()
+      .background(
+        Brush.horizontalGradient(
+          SignUpBackground
         )
-        .padding(horizontal = 16.dp)
+      )
+      .padding(horizontal = 16.dp)
   ) {
 
     Spacer(modifier = Modifier.width(5.dp))

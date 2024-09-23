@@ -9,7 +9,8 @@ sealed class Screen(val route: String) {
 
   //Main Screen
 
-  object Main : Screen("main")
+  object MainScreens : Screen("main_screens")
+
 
   // Main Flow with Bottom Nav
   object Home : Screen("home")
@@ -17,11 +18,19 @@ sealed class Screen(val route: String) {
   object Notification : Screen("notification")
   object Profile : Screen("profile")
 
+  object AddCapsuleScreens : Screen("add_Capsule_screns")
+
+
   // Subscreens in Home
   object SelectTime : Screen("select_time")
   object SelectLocation : Screen("select_location")
   object UploadContent : Screen("upload_content")
   object ReviewContent : Screen("review_content")
+  object ShareWithPeopleOptions : Screen("share_with_people_options")
+  object ShareWithPeople : Screen("share_with_people")
+  object ChooseCapsuleModel : Screen("choose_capsule_model")
+  object LocationSelectionOptions : Screen("location_selection_options")
+
 
   // Subscreens in Profile
   object Settings : Screen("settings")

@@ -46,9 +46,19 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
+enum class NavigationAddCapsule {
+  NEXT,
+  BACK
+}
+
 @Composable
-fun NavigationRow() {
+fun NavigationRow(showBackBtn: Boolean = true, onClick: (NavigationAddCapsule) -> Unit = {}) {
   val isTablet = DeviceType.isTablet()
+
+  val horizontalArrangement = if (showBackBtn)
+    Arrangement.SpaceBetween
+  else
+    Arrangement.End
 
   Row(
     modifier = Modifier
@@ -60,28 +70,30 @@ fun NavigationRow() {
     if (isTablet)
       Arrangement.Absolute.SpaceEvenly
     else
-      Arrangement.SpaceBetween,
+      horizontalArrangement,
     verticalAlignment = Alignment.CenterVertically
   ) {
-    Box(
-      modifier =
-      Modifier
-          .size(50.dp)
-          .clip(CircleShape)
-          .padding(0.dp)
-          .background(brush = Brush.horizontalGradient(NavigatioButtons))
-          .align(Alignment.CenterVertically)
-    )
-    {
-      IconButton(
-        onClick = { },
-        modifier = Modifier.align(Alignment.Center)
+    if (showBackBtn) {
+      Box(
+        modifier =
+        Modifier
+            .size(50.dp)
+            .clip(CircleShape)
+            .padding(0.dp)
+            .background(brush = Brush.horizontalGradient(NavigatioButtons))
+            .align(Alignment.CenterVertically)
+      )
+      {
+        IconButton(
+          onClick = { onClick(NavigationAddCapsule.BACK) },
+          modifier = Modifier.align(Alignment.Center)
 
-      ) {
-        Icon(
-          painter = painterResource(id = R.drawable.ic_back_arrow), contentDescription = "back",
-          tint = Color.White
-        )
+        ) {
+          Icon(
+            painter = painterResource(id = R.drawable.ic_back_arrow), contentDescription = "back",
+            tint = Color.White
+          )
+        }
       }
     }
 
@@ -96,7 +108,7 @@ fun NavigationRow() {
     )
     {
       IconButton(
-        onClick = { },
+        onClick = { onClick(NavigationAddCapsule.NEXT) },
         modifier = Modifier.align(Alignment.Center)
       ) {
         Icon(
@@ -106,11 +118,10 @@ fun NavigationRow() {
       }
     }
   }
-
 }
 
 @Composable
-fun BackRow() {
+fun BackRow(clickedBack: () -> Unit = {}) {
   Row(
     modifier = Modifier
         .fillMaxWidth()
@@ -119,7 +130,7 @@ fun BackRow() {
     horizontalArrangement = Arrangement.Start
   ) {
     IconButton(
-      onClick = { }, modifier =
+      onClick = { clickedBack() }, modifier =
         Modifier
             .size(40.dp)
             .clip(CircleShape)
@@ -252,9 +263,9 @@ fun DateTimePicker(modifier: Modifier = Modifier) {
                   .size(700.dp)
                   .padding(vertical = 5.dp)
           } else {
-              Modifier
+              Modifier.wrapContentSize()
                   .padding(vertical = 0.dp)
-                  .scale(1f)
+
           },
           colors = DatePickerDefaults.colors(selectedDayContainerColor = NavigatioButtons.get(0))
         )

@@ -65,14 +65,21 @@ fun MainNavGraph() {
     ) {
 
       // Main Flow with Bottom Nav
-      composable(Screen.Home.route) { CapsuleCardListScreen(navController) }
+      composable(Screen.Home.route) {
+        CapsuleCardListScreen(navController) {
+          navController.navigate(Screen.AddCapsuleScreens.route)
+        }
+      }
       composable(Screen.Location.route) { FindCapsuleScreenV1(navController) }
       composable(Screen.Notification.route) { NotificationScreen(navController) }
       composable(Screen.Profile.route) { ProfileScreen(navController) }
 
+      composable(Screen.AddCapsuleScreens.route) { AddCapsuleNavGraph() }
+
+
       // Subscreens in Home (no Bottom Nav)
-      composable(Screen.SelectTime.route) { SelectTimeScreen(navController) }
-      composable(Screen.SelectLocation.route) { SelectLocationScreen(navController) }
+//      composable(Screen.SelectTime.route) { SelectTimeScreen(navController) }
+//      composable(Screen.SelectLocation.route) { SelectLocationScreen(navController) }
 //      composable(Screen.UploadContent.route) { UploadContentScreen(navController) }
 //      composable(Screen.ReviewContent.route) { ReviewContentScreen(navController) }
 

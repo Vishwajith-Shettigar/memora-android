@@ -14,9 +14,11 @@ import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -26,28 +28,43 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.timecapsule.ui.theme.SubTitleFontColor
+import com.example.timecapsule.ui.theme.selecttime.NavigationAddCapsule
 import com.example.timecapsule.ui.theme.selecttime.NavigationRow
+
+enum class SharePeopleOptions {
+  SELECTED_PEOPLE,
+  ALL,
+  NONE,
+}
 
 @Preview
 @Composable
-fun ShareOptionScreen() {
+fun ShareOptionScreen(onNavigate: (NavigationAddCapsule, SharePeopleOptions) -> Unit = { _, _ -> }) {
+  var selectedOption by rememberSaveable { mutableStateOf(SharePeopleOptions.NONE) }
   Scaffold(modifier = Modifier
       .fillMaxSize()
       .background(MaterialTheme.colorScheme.primary)
       .padding(vertical = 30.dp),
     containerColor = MaterialTheme.colorScheme.primary,
     bottomBar = {
-      NavigationRow()
+      NavigationRow { navigationFlow ->
+        onNavigate(navigationFlow, selectedOption)
+
+      }
     }
   ) { padding ->
-
-    SelectionScreen(modifier = Modifier.padding(padding))
+    SelectionScreen(modifier = Modifier.padding(padding), selectedOption) {
+      selectedOption = it
+    }
   }
 }
 
 @Composable
-fun SelectionScreen(modifier: Modifier = Modifier) {
-  var selectedOption by remember { mutableStateOf("") }
+fun SelectionScreen(
+  modifier: Modifier = Modifier,
+  selectedOption: SharePeopleOptions = SharePeopleOptions.NONE,
+  onOptionChange: (SharePeopleOptions) -> Unit = {}
+) {
 
   Column(
     modifier = modifier
@@ -89,22 +106,22 @@ fun SelectionScreen(modifier: Modifier = Modifier) {
       RadioButtonOption(
         text = "Share with selected members",
         description = "You can share with selected people on the next screen.",
-        selected = selectedOption == "Option 1",
-        onClick = { selectedOption = "Option 1" }
+        selected = selectedOption == SharePeopleOptions.SELECTED_PEOPLE,
+        onClick = { onOptionChange(SharePeopleOptions.SELECTED_PEOPLE) }
       )
 
       RadioButtonOption(
         text = "Don't share with anyone",
         description = "You are not sharing with anyone.",
-        selected = selectedOption == "Option 2",
-        onClick = { selectedOption = "Option 2" }
+        selected = selectedOption == SharePeopleOptions.NONE,
+        onClick = { onOptionChange(SharePeopleOptions.NONE) }
       )
 
       RadioButtonOption(
         text = "Share with all",
         description = "Anyone near your time capsule can see it.",
-        selected = selectedOption == "Option 3",
-        onClick = { selectedOption = "Option 3" }
+        selected = selectedOption == SharePeopleOptions.ALL,
+        onClick = { onOptionChange(SharePeopleOptions.ALL) }
       )
     }
   }
@@ -148,5 +165,5 @@ fun RadioButtonOption(text: String, description: String, selected: Boolean, onCl
 @Preview(showBackground = true)
 @Composable
 fun PreviewSelectionScreen() {
-  SelectionScreen()
+  SelectionScreen() {}
 }
