@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
+import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -27,29 +28,20 @@ import com.example.timecapsule.ui.theme.uploadfiles.UploadFilesScreen
 @Composable
 fun AddCapsuleNavGraph() {
   val navController = rememberNavController()
-  val activity = (LocalContext.current as? Activity)
+  val activity = (LocalContext.current as Activity)
 
   NavHost(navController = navController, startDestination = Screen.SelectTime.route) {
 
     composable(route = Screen.SelectTime.route) {
       SelectTimeScreen { navigationFlow ->
-        when (navigationFlow) {
-          NavigationAddCapsule.BACK -> {
-            // Todo: Deprecated, replace with alternative.
-            activity?.onBackPressed()
-          }
-
-          NavigationAddCapsule.NEXT -> {
-            navController.navigate(Screen.ShareWithPeopleOptions.route) {
-              popUpTo(route = Screen.SelectTime.route) {
-                inclusive = true
-                saveState = true
-              }
-              restoreState = true
-              launchSingleTop = true
-            }
-          }
-        }
+        handleNavigation(
+          activity = activity,
+          navController = navController,
+          navigationFlow = navigationFlow,
+          navigateToScreenRouteBack = null,
+          navigateToScreenRouteNext = Screen.ShareWithPeopleOptions,
+          popScreenRoute = Screen.SelectTime
+        )
       }
     }
 
@@ -94,29 +86,14 @@ fun AddCapsuleNavGraph() {
     }
     composable(route = Screen.ShareWithPeople.route) {
       ShareScreen() { navigationFlow ->
-        when (navigationFlow) {
-          NavigationAddCapsule.BACK -> {
-            navController.navigate(Screen.ShareWithPeopleOptions.route) {
-              popUpTo(route = Screen.ShareWithPeople.route) {
-                inclusive = true
-                saveState = true
-              }
-              restoreState = true
-              launchSingleTop = true
-            }
-          }
-
-          NavigationAddCapsule.NEXT -> {
-            navController.navigate(Screen.LocationSelectionOptions.route) {
-              popUpTo(route = Screen.ShareWithPeople.route) {
-                inclusive = true
-                saveState = true
-              }
-              restoreState = true
-              launchSingleTop = true
-            }
-          }
-        }
+        handleNavigation(
+          activity = activity,
+          navController = navController,
+          navigationFlow = navigationFlow,
+          navigateToScreenRouteBack = Screen.ShareWithPeopleOptions,
+          navigateToScreenRouteNext = Screen.LocationSelectionOptions,
+          popScreenRoute = Screen.ShareWithPeople
+        )
       }
     }
     composable(route = Screen.LocationSelectionOptions.route) {
@@ -161,105 +138,94 @@ fun AddCapsuleNavGraph() {
     }
     composable(route = Screen.SelectLocation.route) {
       SelectLocationScreen() { navigationFlow ->
-        when (navigationFlow) {
-          NavigationAddCapsule.BACK -> {
-            navController.navigate(Screen.LocationSelectionOptions.route) {
-              popUpTo(route = Screen.SelectLocation.route) {
-                inclusive = true
-                saveState = true
-              }
-              restoreState = true
-              launchSingleTop = true
-            }
-          }
-
-          NavigationAddCapsule.NEXT -> {
-            navController.navigate(Screen.ChooseCapsuleModel.route) {
-              popUpTo(route = Screen.SelectLocation.route) {
-                inclusive = true
-                saveState = true
-              }
-              restoreState = true
-              launchSingleTop = true
-            }
-          }
-        }
+        handleNavigation(
+          activity = activity,
+          navController = navController,
+          navigationFlow = navigationFlow,
+          navigateToScreenRouteBack = Screen.LocationSelectionOptions,
+          navigateToScreenRouteNext = Screen.ChooseCapsuleModel,
+          popScreenRoute = Screen.SelectLocation
+        )
       }
     }
     composable(route = Screen.ChooseCapsuleModel.route) {
+      // Todo: Decide previous route based on LocationSelectionOptions selection
+      val previousRoute = Screen.SelectLocation
       SelectCapsuleScreen() { navigationFlow ->
 
-        when (navigationFlow) {
-          NavigationAddCapsule.BACK -> {
-            // Todo: Decide previous route based on LocationSelectionOptions selection
-            val previousRoute = Screen.SelectLocation.route
-            navController.navigate(previousRoute) {
-              popUpTo(route = Screen.ChooseCapsuleModel.route) {
-                inclusive = true
-                saveState = true
-              }
-              restoreState = true
-              launchSingleTop = true
-            }
-          }
-
-          NavigationAddCapsule.NEXT -> {
-            navController.navigate(Screen.UploadContent.route) {
-              popUpTo(route = Screen.ChooseCapsuleModel.route) {
-                inclusive = true
-                saveState = true
-              }
-              restoreState = true
-              launchSingleTop = true
-            }
-          }
-        }
+        handleNavigation(
+          activity = activity,
+          navController = navController,
+          navigationFlow = navigationFlow,
+          navigateToScreenRouteBack = previousRoute,
+          navigateToScreenRouteNext = Screen.UploadContent,
+          popScreenRoute = Screen.ChooseCapsuleModel
+        )
       }
     }
     composable(route = Screen.UploadContent.route) {
       UploadFilesScreen() { navigationFlow ->
-        when (navigationFlow) {
-          NavigationAddCapsule.BACK -> {
-            navController.navigate(Screen.ChooseCapsuleModel.route) {
-              popUpTo(route = Screen.UploadContent.route) {
-                inclusive = true
-                saveState = true
-              }
-              restoreState = true
-              launchSingleTop = true
-            }
-          }
 
-          NavigationAddCapsule.NEXT -> {
-            navController.navigate(Screen.ReviewContent.route) {
-              popUpTo(route = Screen.UploadContent.route) {
-                inclusive = true
-                saveState = true
-              }
-              restoreState = true
-              launchSingleTop = true
-            }
-          }
-        }
+        handleNavigation(
+          activity = activity,
+          navController = navController,
+          navigationFlow = navigationFlow,
+          navigateToScreenRouteBack = Screen.ChooseCapsuleModel,
+          navigateToScreenRouteNext = Screen.ReviewContent,
+          popScreenRoute = Screen.UploadContent
+        )
       }
     }
     composable(route = Screen.ReviewContent.route) {
-      ReviewScreen() { navigationFlow ->
-        when (navigationFlow) {
-          NavigationAddCapsule.BACK -> {
-            navController.navigate(Screen.UploadContent.route) {
-              popUpTo(route = Screen.ReviewContent.route) {
-                inclusive = true
-                saveState = true
-              }
-              restoreState = true
-              launchSingleTop = true
-            }
-          }
+      ReviewScreen { navigationFlow ->
+        handleNavigation(
+          activity = activity,
+          navController = navController,
+          navigationFlow = navigationFlow,
+          navigateToScreenRouteBack = Screen.UploadContent,
+          navigateToScreenRouteNext = null,
+          popScreenRoute = Screen.ReviewContent
+        )
+      }
+    }
+  }
+}
 
-          NavigationAddCapsule.NEXT -> {
-            activity?.onBackPressed()
+fun handleNavigation(
+  activity: Activity,
+  navController: NavController,
+  navigationFlow: NavigationAddCapsule, navigateToScreenRouteBack: Screen?,
+  navigateToScreenRouteNext: Screen?,
+  popScreenRoute: Screen
+) {
+
+  when (navigationFlow) {
+    NavigationAddCapsule.BACK -> {
+      if (navigateToScreenRouteBack == null) {
+        activity.onBackPressed()
+      } else {
+        navController.navigate(navigateToScreenRouteBack.route) {
+          popUpTo(route = popScreenRoute.route) {
+            inclusive = true
+            saveState = true
           }
+          restoreState = true
+          launchSingleTop = true
+        }
+      }
+    }
+
+    NavigationAddCapsule.NEXT -> {
+      if (navigateToScreenRouteNext == null) {
+        activity.onBackPressed()
+      } else {
+        navController.navigate(navigateToScreenRouteNext.route) {
+          popUpTo(route = popScreenRoute.route) {
+            inclusive = true
+            saveState = true
+          }
+          restoreState = true
+          launchSingleTop = true
         }
       }
     }
