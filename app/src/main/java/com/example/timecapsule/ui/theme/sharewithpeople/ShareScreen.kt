@@ -51,11 +51,12 @@ import com.example.timecapsule.R
 import com.example.timecapsule.ui.theme.SubTitleFontColor
 import com.example.timecapsule.ui.theme.selecttime.NavigationRow
 import com.example.timecapsule.ui.theme.fakedata.userList
+import com.example.timecapsule.ui.theme.selecttime.NavigationAddCapsule
 import com.example.timecapsule.ui.theme.util.DeviceType
 
 @Preview
 @Composable
-fun ShareScreen() {
+fun ShareScreen(onNavigate: (NavigationAddCapsule) -> Unit = {}) {
   Scaffold(
     modifier = Modifier
         .fillMaxSize()
@@ -84,7 +85,9 @@ fun ShareScreen() {
             .align(Alignment.BottomCenter)
             .zIndex(2f)
       ) {
-        NavigationRow()
+        NavigationRow { navigationFlow ->
+          onNavigate(navigationFlow)
+        }
       }
     }
   }

@@ -17,7 +17,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -27,18 +27,25 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
-import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.example.timecapsule.ui.theme.SubTitleFontColor
+import com.example.timecapsule.ui.theme.selecttime.NavigationAddCapsule
 import com.example.timecapsule.ui.theme.selecttime.NavigationRow
+
+enum class LocationOptions {
+  SELECTED,
+  NONE
+}
 
 @Preview
 @Composable
-fun SelectLocationOptionScreen(navController: NavController = rememberNavController()) {
-  Scaffold(modifier = Modifier
-      .fillMaxSize()
-      .background(MaterialTheme.colorScheme.primary)
-      .padding(vertical = 30.dp),
+fun SelectLocationOptionScreen(onNavigate: (NavigationAddCapsule, LocationOptions) -> Unit = { _, _ -> }) {
+  var selectedOption by rememberSaveable { mutableStateOf(LocationOptions.NONE) }
+
+  Scaffold(
+    modifier = Modifier
+        .fillMaxSize()
+        .background(MaterialTheme.colorScheme.primary)
+        .padding(vertical = 30.dp),
     containerColor = MaterialTheme.colorScheme.primary,
   ) { padding ->
 
@@ -47,7 +54,9 @@ fun SelectLocationOptionScreen(navController: NavController = rememberNavControl
           .padding(padding)
           .fillMaxSize()
     ) {
-      SelectionScreen(modifier = Modifier.padding(padding))
+      SelectionScreen(modifier = Modifier.padding(padding), selectedOption) {
+        selectedOption = it
+      }
       Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -55,15 +64,20 @@ fun SelectLocationOptionScreen(navController: NavController = rememberNavControl
             .align(Alignment.BottomCenter)
             .zIndex(2f)
       ) {
-        NavigationRow()
+        NavigationRow { navigationFlow ->
+          onNavigate(navigationFlow, selectedOption)
+        }
       }
     }
   }
 }
 
 @Composable
-fun SelectionScreen(modifier: Modifier = Modifier) {
-  var selectedOption by remember { mutableStateOf("") }
+fun SelectionScreen(
+  modifier: Modifier = Modifier,
+  selectedOption: LocationOptions,
+  onSelectionChange: (LocationOptions) -> Unit
+) {
 
   Column(
     modifier = modifier
@@ -105,14 +119,14 @@ fun SelectionScreen(modifier: Modifier = Modifier) {
       RadioButtonOption(
         text = "Select a location",
         description = "You can choose a location on the next screen.",
-        selected = selectedOption == "Option 1",
-        onClick = { selectedOption = "Option 1" }
+        selected = selectedOption == LocationOptions.SELECTED,
+        onClick = { onSelectionChange(LocationOptions.SELECTED) }
       )
       RadioButtonOption(
         text = "Don't select a location",
         description = "You are not placing the time capsule anywhere.",
-        selected = selectedOption == "Option 2",
-        onClick = { selectedOption = "Option 2" }
+        selected = selectedOption == LocationOptions.NONE,
+        onClick = { onSelectionChange(LocationOptions.NONE) }
       )
     }
   }
@@ -151,10 +165,4 @@ fun RadioButtonOption(text: String, description: String, selected: Boolean, onCl
       modifier = Modifier.padding(start = 40.dp)
     )
   }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun PreviewSelectionScreen() {
-  SelectionScreen()
 }

@@ -41,6 +41,7 @@ import androidx.compose.ui.unit.sp
 import com.example.timecapsule.R
 import com.example.timecapsule.ui.theme.ReviewScreenCommondColor
 import com.example.timecapsule.ui.theme.RubikBubble
+import com.example.timecapsule.ui.theme.selecttime.NavigationAddCapsule
 import com.example.timecapsule.ui.theme.sharewithpeople.ShowSelectedPeople
 import com.example.timecapsule.ui.theme.uploadfiles.UploadedFileItem
 import com.example.timecapsule.ui.theme.util.DeviceType
@@ -48,24 +49,24 @@ import com.example.timecapsule.ui.theme.util.DeviceType
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
-fun ReviewScreen() {
+fun ReviewScreen(onNavigate: (NavigationAddCapsule) -> Unit = {}) {
   val isTablet = DeviceType.isTablet()
   val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
   val bottomScrollBehavior = BottomAppBarDefaults.exitAlwaysScrollBehavior()
 
   Scaffold(
     modifier = Modifier
-      .fillMaxSize()
-      .background(MaterialTheme.colorScheme.primary),
+        .fillMaxSize()
+        .background(MaterialTheme.colorScheme.primary),
     containerColor = MaterialTheme.colorScheme.primary,
     bottomBar = {
       BottomAppBar(
         containerColor = Color.Transparent,
         modifier = Modifier
-          .fillMaxWidth()
-          .wrapContentHeight()
-          .background(Color.Transparent),
-        content = { BottomRow() },
+            .fillMaxWidth()
+            .wrapContentHeight()
+            .background(Color.Transparent),
+        content = { BottomRow(onNavigate) },
         scrollBehavior = bottomScrollBehavior
       )
     },
@@ -89,10 +90,10 @@ fun ReviewScreen() {
   ) { innerPadding ->
     LazyColumn(
       modifier = Modifier
-        .padding(innerPadding)
-        .padding(horizontal = 10.dp)
-        .nestedScroll(scrollBehavior.nestedScrollConnection)
-        .nestedScroll(bottomScrollBehavior.nestedScrollConnection),
+          .padding(innerPadding)
+          .padding(horizontal = 10.dp)
+          .nestedScroll(scrollBehavior.nestedScrollConnection)
+          .nestedScroll(bottomScrollBehavior.nestedScrollConnection),
     ) {
       item { SharedPeople() }
       item { DateAndTime() }
@@ -106,9 +107,9 @@ fun ReviewScreen() {
 fun SharedPeople() {
   Column(
     modifier = Modifier
-      .fillMaxWidth()
-      .wrapContentHeight()
-      .padding(vertical = 10.dp)
+        .fillMaxWidth()
+        .wrapContentHeight()
+        .padding(vertical = 10.dp)
   ) {
     Text(
       text = stringResource(id = R.string.shared_with),
@@ -123,9 +124,9 @@ fun SharedPeople() {
 fun DateAndTime() {
   Column(
     modifier = Modifier
-      .fillMaxWidth()
-      .wrapContentHeight()
-      .padding(vertical = 10.dp)
+        .fillMaxWidth()
+        .wrapContentHeight()
+        .padding(vertical = 10.dp)
   ) {
     Text(
       text = stringResource(id = R.string.date_and_time),
@@ -135,8 +136,8 @@ fun DateAndTime() {
   }
   Row(
     modifier = Modifier
-      .fillMaxWidth()
-      .wrapContentHeight()
+        .fillMaxWidth()
+        .wrapContentHeight()
   ) {
     Text(
       modifier = Modifier.padding(10.dp),
@@ -165,9 +166,9 @@ fun DateAndTime() {
 fun SelectedCapsule() {
   Column(
     modifier = Modifier
-      .fillMaxWidth()
-      .wrapContentHeight()
-      .padding(vertical = 10.dp)
+        .fillMaxWidth()
+        .wrapContentHeight()
+        .padding(vertical = 10.dp)
   ) {
     Text(
       text = stringResource(id = R.string.selected_capsule),
@@ -175,10 +176,10 @@ fun SelectedCapsule() {
       color = MaterialTheme.colorScheme.onSurfaceVariant
     )
     Box(
-      Modifier
-        .height(200.dp)
-        .width(200.dp)
-        .align(Alignment.CenterHorizontally)
+        Modifier
+            .height(200.dp)
+            .width(200.dp)
+            .align(Alignment.CenterHorizontally)
     ) {
       Image(
         painter = painterResource(id = R.drawable.testimg),
@@ -192,9 +193,9 @@ fun SelectedCapsule() {
 fun SharedContent() {
   Column(
     modifier = Modifier
-      .fillMaxWidth()
-      .wrapContentHeight()
-      .padding(vertical = 10.dp)
+        .fillMaxWidth()
+        .wrapContentHeight()
+        .padding(vertical = 10.dp)
   ) {
     Text(
       modifier = Modifier.padding(bottom = 10.dp),
@@ -213,23 +214,23 @@ fun SharedContent() {
 }
 
 @Composable
-fun BottomRow() {
+fun BottomRow(onClick:(NavigationAddCapsule)->Unit={}) {
   Row(
     modifier = Modifier
-      .fillMaxWidth()
-      .wrapContentHeight()
-      .background(Color.Transparent)
-      .padding(horizontal = 30.dp),
+        .fillMaxWidth()
+        .wrapContentHeight()
+        .background(Color.Transparent)
+        .padding(horizontal = 30.dp),
     horizontalArrangement = Arrangement.SpaceBetween,
     verticalAlignment = Alignment.Top
   ) {
     OutlinedButton(
-      onClick = { },
+      onClick = {onClick(NavigationAddCapsule.BACK) },
       shape = RoundedCornerShape(10.dp),
       border = BorderStroke(1.dp, MaterialTheme.colorScheme.onSurfaceVariant),
       modifier = Modifier
-        .wrapContentWidth()
-        .height(46.dp)
+          .wrapContentWidth()
+          .height(46.dp)
     ) {
       Text(
         text = stringResource(id = R.string.edit_button),
@@ -239,11 +240,11 @@ fun BottomRow() {
     }
 
     Button(
-      onClick = { },
+      onClick = {onClick(NavigationAddCapsule.NEXT) },
       border = BorderStroke(1.dp, Color.Black),
       modifier = Modifier
-        .wrapContentWidth()
-        .height(46.dp),
+          .wrapContentWidth()
+          .height(46.dp),
       shape = RoundedCornerShape(10.dp),
       colors = ButtonDefaults.buttonColors(containerColor = ReviewScreenCommondColor)
     ) {

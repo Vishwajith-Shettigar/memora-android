@@ -38,6 +38,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.timecapsule.BuildConfig
 import com.example.timecapsule.R
+import com.example.timecapsule.ui.theme.selecttime.NavigationAddCapsule
 import com.example.timecapsule.ui.theme.selecttime.NavigationRow
 import com.example.timecapsule.ui.theme.util.DeviceType
 import com.example.timecapsule.ui.theme.util.searchPlace
@@ -55,17 +56,17 @@ import com.google.maps.android.compose.rememberCameraPositionState
 
 
 @Composable
-fun SelectLocationScreen(navController: NavController = rememberNavController()) {
+fun SelectLocationScreen(onNavigate: (NavigationAddCapsule) -> Unit) {
   if (!Places.isInitialized()) {
     Places.initialize(LocalContext.current, BuildConfig.MAPS_API_KEY)
   }
   Scaffold { padding ->
-    MyMapWithSearch(Modifier.padding(padding))
+    MyMapWithSearch(Modifier.padding(padding), onNavigate)
   }
 }
 
 @Composable
-fun MyMapWithSearch(modifier: Modifier = Modifier) {
+fun MyMapWithSearch(modifier: Modifier = Modifier, onNavigate: (NavigationAddCapsule) -> Unit) {
   val context = LocalContext.current
   val placesClient = remember { Places.createClient(context) }
   val cameraPositionState = rememberCameraPositionState {
@@ -125,7 +126,9 @@ fun MyMapWithSearch(modifier: Modifier = Modifier) {
           .padding(0.dp)
           .align(Alignment.BottomCenter)
     ) {
-      NavigationRow()
+      NavigationRow { navigationFlow ->
+        onNavigate(navigationFlow)
+      }
     }
   }
 }

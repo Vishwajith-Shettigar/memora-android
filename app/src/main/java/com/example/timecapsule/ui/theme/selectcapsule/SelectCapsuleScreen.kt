@@ -32,6 +32,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -46,6 +47,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import com.example.timecapsule.R
 import com.example.timecapsule.ui.theme.review.SelectedCapsule
+import com.example.timecapsule.ui.theme.selecttime.NavigationAddCapsule
 import com.example.timecapsule.ui.theme.selecttime.NavigationRow
 import com.example.timecapsule.ui.theme.util.DeviceType
 import com.example.timecapsule.ui.theme.util.createCapsuleImageList
@@ -53,7 +55,10 @@ import com.example.timecapsule.ui.theme.util.createCapsuleImageList
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
-fun SelectCapsuleScreen(modifier: Modifier = Modifier) {
+fun SelectCapsuleScreen(
+  modifier: Modifier = Modifier,
+  onNavigate: (NavigationAddCapsule) -> Unit = {}
+) {
   val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
   val isTablet = DeviceType.isTablet()
 
@@ -104,7 +109,9 @@ fun SelectCapsuleScreen(modifier: Modifier = Modifier) {
               .align(Alignment.BottomCenter)
               .zIndex(2f)
         ) {
-          NavigationRow()
+          NavigationRow() { navigationFlow ->
+            onNavigate(navigationFlow)
+          }
         }
       }
     }
@@ -123,7 +130,7 @@ fun CapsuleList(modifier: Modifier) {
 
 @Composable
 fun CapsuleListMobile(modifier: Modifier = Modifier) {
-  var selectedCapsuleId by remember { mutableStateOf<String>("") }
+  var selectedCapsuleId by rememberSaveable { mutableStateOf<String>("") }
   LazyVerticalStaggeredGrid(
     modifier = modifier
       .background(Color.Transparent),
