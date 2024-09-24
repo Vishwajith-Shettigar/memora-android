@@ -88,35 +88,28 @@ fun SelectCapsuleScreen(
 
     }
   ) { innerPadding ->
-    Column(
+    Box(
       modifier = modifier
           .padding(innerPadding)
-          .background(Color.Transparent)
           .fillMaxSize()
-          .fillMaxHeight()
+
     ) {
+      CapsuleList(Modifier.nestedScroll(scrollBehavior.nestedScrollConnection))
       Box(
-        modifier = modifier
-            .background(Color.Transparent)
-            .fillMaxSize()
-            .fillMaxHeight()
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(0.dp)
+            .align(Alignment.BottomCenter)
+            .zIndex(2f)
       ) {
-        CapsuleList(Modifier.nestedScroll(scrollBehavior.nestedScrollConnection))
-        Box(
-          modifier = Modifier
-              .fillMaxWidth()
-              .padding(0.dp)
-              .align(Alignment.BottomCenter)
-              .zIndex(2f)
-        ) {
-          NavigationRow() { navigationFlow ->
-            onNavigate(navigationFlow)
-          }
+        NavigationRow { navigationFlow ->
+          onNavigate(navigationFlow)
         }
       }
     }
   }
 }
+
 
 @Composable
 fun CapsuleList(modifier: Modifier) {

@@ -71,8 +71,8 @@ fun UploadFilesScreen(onNavigate: (NavigationAddCapsule) -> Unit = {}) {
         title = {
           Box(
             modifier = Modifier
-                .fillMaxWidth()
-                .background(MaterialTheme.colorScheme.primary),
+              .fillMaxWidth()
+              .background(MaterialTheme.colorScheme.primary),
             contentAlignment = Alignment.Center
           ) {
             Text(
@@ -91,20 +91,20 @@ fun UploadFilesScreen(onNavigate: (NavigationAddCapsule) -> Unit = {}) {
     },
     containerColor = MaterialTheme.colorScheme.primary
   ) { innerPadding ->
-    Box(modifier = Modifier.fillMaxSize())
+    Box(modifier = Modifier
+      .fillMaxSize()
+      .padding(innerPadding))
     {
       LazyColumn(
         modifier = if (isTablet)
-            Modifier
-                .padding(innerPadding)
-                .padding(horizontal = 10.dp)
-                .width(800.dp)
-                .align(Alignment.Center)
+          Modifier
+            .padding(horizontal = 10.dp)
+            .width(800.dp)
+            .align(Alignment.Center)
         else
-            Modifier
-                .padding(innerPadding)
-                .padding(horizontal = 10.dp)
-                .fillMaxSize(),
+          Modifier
+            .padding(horizontal = 10.dp)
+            .fillMaxSize(),
       ) {
 
         item { UploadFileCard() }
@@ -114,10 +114,10 @@ fun UploadFilesScreen(onNavigate: (NavigationAddCapsule) -> Unit = {}) {
       }
       Box(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(0.dp)
-            .align(Alignment.BottomCenter)
-            .zIndex(2f)
+          .fillMaxWidth()
+          .padding(0.dp)
+          .align(Alignment.BottomCenter)
+          .zIndex(2f)
       ) {
         NavigationRow() {
           onNavigate(it)
@@ -132,10 +132,10 @@ fun UploadFilesScreen(onNavigate: (NavigationAddCapsule) -> Unit = {}) {
 fun Uploaded() {
   Column(
     modifier = Modifier
-        .fillMaxWidth()
-        .wrapContentHeight()
-        .background(MaterialTheme.colorScheme.primary)
-        .padding(start = 10.dp, end = 10.dp, top = 20.dp, bottom = 50.dp)
+      .fillMaxWidth()
+      .wrapContentHeight()
+      .background(MaterialTheme.colorScheme.primary)
+      .padding(start = 10.dp, end = 10.dp, top = 20.dp, bottom = 50.dp)
   )
   {
     Text(
@@ -148,9 +148,9 @@ fun Uploaded() {
     )
     Column(
       modifier = Modifier
-          .fillMaxWidth()
-          .wrapContentHeight()
-          .padding(vertical = 5.dp)
+        .fillMaxWidth()
+        .wrapContentHeight()
+        .padding(vertical = 5.dp)
     ) {
       UploadedFileItem(title = "Lorem ipsum", "21.9 MB", R.drawable.pdf)
       UploadedFileItem(title = "Lorem ipsum puioka", "11.9 MB", R.drawable.xls)
@@ -166,11 +166,11 @@ fun Uploaded() {
 fun OngoingUpload() {
   Column(
     modifier = Modifier
-        .fillMaxWidth()
-        .wrapContentHeight()
-        .clip(shape = RoundedCornerShape(10.dp))
-        .background(MaterialTheme.colorScheme.primaryContainer)
-        .padding(horizontal = 10.dp, vertical = 20.dp)
+      .fillMaxWidth()
+      .wrapContentHeight()
+      .clip(shape = RoundedCornerShape(10.dp))
+      .background(MaterialTheme.colorScheme.primaryContainer)
+      .padding(horizontal = 10.dp, vertical = 20.dp)
   )
   {
     Text(
@@ -183,9 +183,9 @@ fun OngoingUpload() {
     )
     Column(
       modifier = Modifier
-          .fillMaxWidth()
-          .wrapContentHeight()
-          .padding(vertical = 5.dp)
+        .fillMaxWidth()
+        .wrapContentHeight()
+        .padding(vertical = 5.dp)
     ) {
       UploadingFileItem(
         title = "Family time", icon = R.drawable.videocamera, uploadProgress = 6F,
@@ -224,9 +224,9 @@ fun UploadedFileItem(
   Row(
     verticalAlignment = Alignment.CenterVertically,
     modifier = Modifier
-        .fillMaxWidth()
-        .background(MaterialTheme.colorScheme.primary)
-        .padding(5.dp)
+      .fillMaxWidth()
+      .background(MaterialTheme.colorScheme.primary)
+      .padding(5.dp)
   ) {
     Image(
       painter = painterResource(id = icon),
@@ -261,11 +261,11 @@ fun UploadedFileItem(
       IconButton(
         onClick = onDeleteClick,
         modifier = Modifier
-            .size(40.dp)
-            .background(
-                color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.6F),
-                shape = CircleShape
-            )
+          .size(40.dp)
+          .background(
+            color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.6F),
+            shape = CircleShape
+          )
       ) {
         Icon(
           painter = painterResource(id = R.drawable.ic_delete), // Replace with your actual delete icon resource
@@ -286,8 +286,8 @@ fun UploadingFileItem(
   Row(
     verticalAlignment = Alignment.CenterVertically,
     modifier = Modifier
-        .background(MaterialTheme.colorScheme.primaryContainer)
-        .padding(5.dp)
+      .background(MaterialTheme.colorScheme.primaryContainer)
+      .padding(5.dp)
   ) {
     Image(
       painter = painterResource(id = icon),
@@ -355,21 +355,21 @@ fun UploadFileCard() {
     colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary),
     shape = RoundedCornerShape(8.dp),
     modifier = Modifier
-        .fillMaxWidth()
-        .height(150.dp)
-        .padding(horizontal = 3.dp, vertical = 10.dp)
-        .drawBehind {
-            drawRoundRect(
-                color = LightBlue,
-                style = stroke,
-                cornerRadius = CornerRadius(8.dp.toPx())
-            )
-        }
+      .fillMaxWidth()
+      .height(150.dp)
+      .padding(horizontal = 3.dp, vertical = 10.dp)
+      .drawBehind {
+        drawRoundRect(
+          color = LightBlue,
+          style = stroke,
+          cornerRadius = CornerRadius(8.dp.toPx())
+        )
+      }
   ) {
     Column(
       modifier = Modifier
-          .fillMaxSize()
-          .padding(vertical = 20.dp),
+        .fillMaxSize()
+        .padding(vertical = 20.dp),
       horizontalAlignment = Alignment.CenterHorizontally,
       verticalArrangement = Arrangement.SpaceBetween
     ) {

@@ -26,7 +26,7 @@ fun SelectTimeScreen(
     modifier = Modifier
         .fillMaxSize()
         .background(MaterialTheme.colorScheme.primary)
-        .padding(vertical = 30.dp),
+        .padding(top = 30.dp),
     containerColor = MaterialTheme.colorScheme.primary,
     topBar = {
       BackRow {
