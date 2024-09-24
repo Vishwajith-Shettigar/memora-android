@@ -30,18 +30,11 @@ import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.ui.focus.focusModifier
 import androidx.compose.ui.res.painterResource
+import androidx.navigation.NavGraphBuilder
+import androidx.navigation.compose.navigation
 import com.example.timecapsule.ui.theme.LightBlue
 import com.example.timecapsule.ui.theme.capsuledetails.CapsuleDetailsScreen
 import com.example.timecapsule.ui.theme.util.DeviceType
-
-@Composable
-fun MainNavGraph() {
-  val isTablet = DeviceType.isTablet()
-  if (isTablet)
-    TabletLayout()
-  else
-    MobileLayout()
-}
 
 fun getNavigationItems(): List<NavItem> {
   return listOf(
@@ -84,7 +77,7 @@ fun NavigationRail(navController: NavController) {
         selected = currentRoute == item.screen.route,
         onClick = {
           navController.navigate(item.screen.route) {
-            popUpTo(navController.graph.startDestinationId) { saveState = true }
+            popUpTo(Screen.Home.route) { saveState = true }
             launchSingleTop = true
             restoreState = true
           }
@@ -119,7 +112,7 @@ fun BottomNavigationBar(navController: NavController) {
         selected = currentRoute == item.screen.route,
         onClick = {
           navController.navigate(item.screen.route) {
-            popUpTo(navController.graph.startDestinationId) { saveState = true }
+            popUpTo(Screen.Home.route) { saveState = true }
             launchSingleTop = true
             restoreState = true
           }
@@ -136,124 +129,28 @@ data class NavItem(
   val contentDescription: String
 )
 
-@Composable
-fun MobileLayout() {
-  val navController = rememberNavController()
-
-  // List of screens that should display the Bottom Navigation Bar
-  val bottomNavScreens = listOf(
-    Screen.Home.route,
-    Screen.Location.route,
-    Screen.Notification.route,
-    Screen.Profile.route
-  )
-
-  Scaffold(
-    bottomBar = {
-      val currentBackStackEntry = navController.currentBackStackEntryAsState().value
-      if (currentBackStackEntry?.destination?.route in bottomNavScreens) {
-        BottomNavigationBar(navController)
-      }
+// Helper method for Main Flow (Mobile or Tablet layouts)
+fun NavGraphBuilder.mainNavGraph(navController: NavController) {
+  navigation(
+    startDestination = Screen.Home.route,
+    route = Screen.MainScreens.route // Optional route for separation
+  ) {
+    composable(Screen.Home.route) {
+      CapsuleCardListScreen(navController, addCapsuleBtnClicked = {
+        navController.navigate(Screen.AddCapsuleScreens.route) // Start AddCapsule flow
+      }, onCapsuleClicked = { id ->
+        navController.navigate(Screen.CapsuleDetails.createRoute(id)) // Capsule details
+      })
     }
-  ) { paddingValues ->
-    NavHost(
-      navController = navController,
-      enterTransition = {
-        slideIntoContainer(
-          AnimatedContentTransitionScope.SlideDirection.Start,
-          tween(1000)
-        )
-      },
-      popEnterTransition = {
-        slideIntoContainer(
-          AnimatedContentTransitionScope.SlideDirection.End,
-          tween(1000)
-        )
-      },
-      startDestination = Screen.Home.route,
-      modifier = Modifier.padding(bottom = paddingValues.calculateBottomPadding())
-    ) {
+    composable(Screen.Location.route) { FindCapsuleScreenV1(navController) }
+    composable(Screen.Notification.route) { NotificationScreen(navController) }
+    composable(Screen.Profile.route) { ProfileScreen(navController) }
 
-      // Main Flow with Bottom Nav
-      composable(Screen.Home.route) {
-        CapsuleCardListScreen(navController, addCapsuleBtnClicked = {
-          navController.navigate(Screen.AddCapsuleScreens.route)
-        }, onCapsuleClicked = { id ->
-          navController.navigate(Screen.CapsuleDetails.createRoute(id))
-
-        })
-      }
-      composable(Screen.Location.route) { FindCapsuleScreenV1(navController) }
-      composable(Screen.Notification.route) { NotificationScreen(navController) }
-      composable(Screen.Profile.route) { ProfileScreen(navController) }
-      composable(Screen.AddCapsuleScreens.route) { AddCapsuleNavGraph() }
-
-      composable(Screen.CapsuleDetails.route) { navBackStackEntry ->
-        val id = navBackStackEntry.arguments?.getString("id")
-        CapsuleDetailsScreen {
-          navController.popBackStack()
-        }
-      }
-
-      // Subscreens in Profile (no Bottom Nav)
-//      composable(Screen.Settings.route) { SettingsScreen(navController) }
-//      composable(Screen.Help.route) { HelpScreen(navController) }
-    }
-  }
-}
-
-
-@Composable
-fun TabletLayout() {
-  val navController = rememberNavController()
-
-  // List of screens that should display the Bottom Navigation Bar
-  val bottomNavScreens = listOf(
-    Screen.Home.route,
-    Screen.Location.route,
-    Screen.Notification.route,
-    Screen.Profile.route
-  )
-
-  Scaffold { paddingValues ->
-    Row(modifier = Modifier.padding()) {
-      val currentBackStackEntry = navController.currentBackStackEntryAsState().value
-      if (currentBackStackEntry?.destination?.route in bottomNavScreens) {
-        NavigationRail(navController)
-      }
-      Box(modifier = Modifier.fillMaxSize())
-      {
-        NavHost(
-          navController = navController,
-          startDestination = Screen.Home.route,
-          modifier = Modifier
-        ) {
-
-          // Main Flow with Bottom Nav
-          composable(Screen.Home.route) {
-            CapsuleCardListScreen(navController, addCapsuleBtnClicked = {
-              navController.navigate(Screen.AddCapsuleScreens.route)
-            }, onCapsuleClicked = { id ->
-              navController.navigate(Screen.CapsuleDetails.createRoute(id))
-
-            })
-          }
-          composable(Screen.Location.route) { FindCapsuleScreenV1(navController) }
-          composable(Screen.Notification.route) { NotificationScreen(navController) }
-          composable(Screen.Profile.route) { ProfileScreen(navController) }
-          composable(Screen.AddCapsuleScreens.route) { AddCapsuleNavGraph() }
-
-          composable(Screen.CapsuleDetails.route) { navBackStackEntry ->
-            val id = navBackStackEntry.arguments?.getString("id")
-            CapsuleDetailsScreen {
-              navController.popBackStack()
-            }
-          }
-
-          // Subscreens in Profile (no Bottom Nav)
-//      composable(Screen.Settings.route) { SettingsScreen(navController) }
-//      composable(Screen.Help.route) { HelpScreen(navController) }
-        }
+    // Capsule Details Screen (inside Main flow)
+    composable(Screen.CapsuleDetails.route) { navBackStackEntry ->
+      val id = navBackStackEntry.arguments?.getString("id")
+      CapsuleDetailsScreen {
+        navController.popBackStack() // Return to previous screen
       }
     }
   }

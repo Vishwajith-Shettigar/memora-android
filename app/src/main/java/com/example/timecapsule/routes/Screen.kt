@@ -9,7 +9,7 @@ sealed class Screen(val route: String) {
 
   //Main Screen
 
-  object MainScreens : Screen("main_screens")
+//  object MainScreens : Screen("main_screens")
 
 
   // Main Flow with Bottom Nav
@@ -22,7 +22,11 @@ sealed class Screen(val route: String) {
   }
 
 
-  object AddCapsuleScreens : Screen("add_Capsule_screns")
+  object AddCapsuleScreens : Screen("add_capsule_screns")
+
+  object MainScreens : Screen("main_screns")
+
+  object OnboardingScreens : Screen("onboardingscrens")
 
 
   // Subscreens in Home

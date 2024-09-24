@@ -6,8 +6,10 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
+import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.example.timecapsule.routes.Screen
@@ -25,13 +27,12 @@ import com.example.timecapsule.ui.theme.sharewithpeople.SharePeopleOptions
 import com.example.timecapsule.ui.theme.sharewithpeople.ShareScreen
 import com.example.timecapsule.ui.theme.uploadfiles.UploadFilesScreen
 
-@Composable
-fun AddCapsuleNavGraph() {
-  val navController = rememberNavController()
-  val activity = (LocalContext.current as Activity)
-
-  NavHost(navController = navController, startDestination = Screen.SelectTime.route) {
-
+// Helper method for Add Capsule Flow
+fun NavGraphBuilder.addCapsuleNavGraph(navController: NavController, activity: Activity) {
+  navigation(
+    startDestination = Screen.SelectTime.route,
+    route = Screen.AddCapsuleScreens.route // Separate route for Add Capsule
+  ) {
     composable(route = Screen.SelectTime.route) {
       SelectTimeScreen { navigationFlow ->
         handleNavigation(
@@ -198,7 +199,6 @@ fun handleNavigation(
   navigateToScreenRouteNext: Screen?,
   popScreenRoute: Screen
 ) {
-
   when (navigationFlow) {
     NavigationAddCapsule.BACK -> {
       if (navigateToScreenRouteBack == null) {

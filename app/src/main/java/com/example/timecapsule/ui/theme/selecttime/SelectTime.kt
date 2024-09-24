@@ -55,11 +55,10 @@ enum class NavigationAddCapsule {
 fun NavigationRow(showBackBtn: Boolean = true, onClick: (NavigationAddCapsule) -> Unit = {}) {
   val isTablet = DeviceType.isTablet()
 
-  val horizontalArrangement = if (showBackBtn)
-    Arrangement.SpaceBetween
+  val navigationButtonBgcolor = if (showBackBtn)
+    Brush.horizontalGradient(NavigatioButtons)
   else
-    Arrangement.End
-
+    Brush.horizontalGradient(listOf(Color.Transparent, Color.Transparent))
   Row(
     modifier = Modifier
         .zIndex(2f)
@@ -70,20 +69,21 @@ fun NavigationRow(showBackBtn: Boolean = true, onClick: (NavigationAddCapsule) -
     if (isTablet)
       Arrangement.Absolute.SpaceEvenly
     else
-      horizontalArrangement,
+      Arrangement.SpaceBetween,
     verticalAlignment = Alignment.CenterVertically
   ) {
-    if (showBackBtn) {
-      Box(
-        modifier =
-        Modifier
-            .size(50.dp)
-            .clip(CircleShape)
-            .padding(0.dp)
-            .background(brush = Brush.horizontalGradient(NavigatioButtons))
-            .align(Alignment.CenterVertically)
-      )
-      {
+
+    Box(
+      modifier =
+      Modifier
+          .size(50.dp)
+          .clip(CircleShape)
+          .padding(0.dp)
+          .background(brush = navigationButtonBgcolor)
+          .align(Alignment.CenterVertically)
+    )
+    {
+      if (showBackBtn) {
         IconButton(
           onClick = { onClick(NavigationAddCapsule.BACK) },
           modifier = Modifier.align(Alignment.Center)
@@ -263,7 +263,8 @@ fun DateTimePicker(modifier: Modifier = Modifier) {
                   .size(700.dp)
                   .padding(vertical = 5.dp)
           } else {
-              Modifier.wrapContentSize()
+              Modifier
+                  .wrapContentSize()
                   .padding(vertical = 0.dp)
 
           },
