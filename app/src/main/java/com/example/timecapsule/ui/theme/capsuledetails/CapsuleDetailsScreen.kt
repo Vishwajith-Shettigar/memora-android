@@ -44,7 +44,7 @@ import com.example.timecapsule.ui.theme.sharewithpeople.ShowSelectedPeople
 
 @Preview
 @Composable
-fun CapsuleDetailsScreen() {
+fun CapsuleDetailsScreen(onBack: () -> Unit = {}) {
   Scaffold(
     containerColor = LightBlue,
   ) { innerpadding ->
@@ -55,7 +55,7 @@ fun CapsuleDetailsScreen() {
           .background(MaterialTheme.colorScheme.primary)
     ) {
       item {
-        TopPart()
+        TopPart(onBack = onBack)
       }
       item {
         BottomPart()
@@ -67,7 +67,7 @@ fun CapsuleDetailsScreen() {
 }
 
 @Composable
-fun TopPart(modifier: Modifier = Modifier) {
+fun TopPart(modifier: Modifier = Modifier, onBack: () -> Unit) {
   Box(
     modifier = modifier
         .fillMaxWidth()
@@ -85,7 +85,9 @@ fun TopPart(modifier: Modifier = Modifier) {
           .background(LightBlue)
           .zIndex(1f),
     ) {
-      BackRow()
+      BackRow {
+        onBack()
+      }
       Image(
         painter = painterResource(id = R.drawable.testimg),
         contentDescription = null,

@@ -63,7 +63,11 @@ import com.example.timecapsule.ui.theme.darkCardBackground
 import com.example.timecapsule.ui.theme.util.DeviceType
 
 @Composable
-fun CapsuleCard(rowItemSize: Int = 2, modifier: Modifier = Modifier) {
+fun CapsuleCard(
+  rowItemSize: Int = 2,
+  modifier: Modifier = Modifier,
+  onCapsuleClicked: (id: String) -> Unit = {}
+) {
   // State to toggle the visibility of the pane
   var isPaneVisible by remember { mutableStateOf(false) }
 
@@ -75,6 +79,7 @@ fun CapsuleCard(rowItemSize: Int = 2, modifier: Modifier = Modifier) {
         .fillMaxWidth(),
     elevation = CardDefaults.cardElevation(10.dp),
     shape = RoundedCornerShape(6.dp),
+    onClick = { onCapsuleClicked("1234") }
   ) {
     Column(
       modifier =
@@ -131,7 +136,7 @@ fun CapsuleCard(rowItemSize: Int = 2, modifier: Modifier = Modifier) {
       }
       AnimatedVisibility(
         visible = isPaneVisible,
-        ) {
+      ) {
         SmallPane()
       }
     }

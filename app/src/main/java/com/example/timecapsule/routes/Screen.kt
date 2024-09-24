@@ -17,6 +17,10 @@ sealed class Screen(val route: String) {
   object Location : Screen("location")
   object Notification : Screen("notification")
   object Profile : Screen("profile")
+  object CapsuleDetails : Screen("capsule_Details/{id}") {
+    fun createRoute(id: String) = "capsule_Details/${id}"
+  }
+
 
   object AddCapsuleScreens : Screen("add_Capsule_screns")
 

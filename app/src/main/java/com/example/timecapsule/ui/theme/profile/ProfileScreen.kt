@@ -69,10 +69,8 @@ fun ProfileScreen(navController: NavController = rememberNavController(),) {
     val myBitmap = BitmapFactory.decodeResource(context.resources, R.drawable.testimg1)
     val palette = Palette.from(myBitmap).generate()
     backgroundColor = Color(palette.getVibrantColor(android.graphics.Color.RED))
-    Log.e("pokemon", backgroundColor.toString())
   }
   Scaffold { innerPadding ->
-    Log.e("pokemon", backgroundColor.toString())
     Column(
       modifier = Modifier
           .padding(bottom = innerPadding.calculateBottomPadding())

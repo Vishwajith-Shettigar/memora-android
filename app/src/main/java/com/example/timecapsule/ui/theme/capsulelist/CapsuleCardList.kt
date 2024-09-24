@@ -13,16 +13,19 @@ import androidx.compose.ui.unit.dp
 import com.example.timecapsule.ui.theme.util.DeviceType
 
 @Composable
-fun CapsuleCardList(modifier: Modifier = Modifier) {
+fun CapsuleCardList(modifier: Modifier = Modifier, onCapsuleClicked: (id: String) -> Unit = {}) {
   if (DeviceType.isTablet()) {
-    CapsuleCardListTablet(modifier)
+    CapsuleCardListTablet(modifier, onCapsuleClicked)
   } else {
-    CapsuleCardListMobile(modifier)
+    CapsuleCardListMobile(modifier, onCapsuleClicked)
   }
 }
 
 @Composable
-fun CapsuleCardListMobile(modifier: Modifier = Modifier) {
+fun CapsuleCardListMobile(
+  modifier: Modifier = Modifier,
+  onCapsuleClicked: (id: String) -> Unit = {}
+) {
   LazyVerticalStaggeredGrid(
     modifier = modifier.background(Color.Transparent), columns = StaggeredGridCells.Fixed(2),
     contentPadding = PaddingValues(8.dp),
@@ -30,15 +33,18 @@ fun CapsuleCardListMobile(modifier: Modifier = Modifier) {
     verticalItemSpacing = 8.dp
   ) {
     items(10) {
-      CapsuleCard(2)
+      CapsuleCard(2, onCapsuleClicked = onCapsuleClicked)
     }
   }
 }
 
 @Composable
-fun CapsuleCardListTablet(modifier: Modifier = Modifier) {
+fun CapsuleCardListTablet(
+  modifier: Modifier = Modifier,
+  onCapsuleClicked: (id: String) -> Unit = {}
+) {
   LazyVerticalStaggeredGrid(
-    columns = StaggeredGridCells.Adaptive(minSize = 400.dp),
+    columns = StaggeredGridCells.Adaptive(minSize = 350.dp),
     modifier = modifier
         .fillMaxSize()
         .background(Color.Transparent),
@@ -47,7 +53,7 @@ fun CapsuleCardListTablet(modifier: Modifier = Modifier) {
     verticalItemSpacing = 8.dp,
     content = {
       items(10) { index ->
-        CapsuleCard(1)
+        CapsuleCard(1, onCapsuleClicked = onCapsuleClicked)
       }
     }
   )

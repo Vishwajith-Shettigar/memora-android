@@ -212,7 +212,6 @@ fun createAnchorNode(
   val kModelFile = "testmodel.glb"
   val kMaxModelInstances = 1
   val anchorNode = AnchorNode(engine = engine, anchor = anchor)
-  Log.e("pokemon","heeloo")
   val modelNode = ModelNode(
     modelInstance = modelInstances.apply {
       if (isEmpty()) {
