@@ -38,3 +38,7 @@ dependencyResolutionManagement {
 
 rootProject.name = "Time Capsule"
 include ':app'
+include ':domain'
+include ':data'
+include ':di'
+include ':util'

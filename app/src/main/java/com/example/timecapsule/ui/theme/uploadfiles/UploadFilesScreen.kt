@@ -91,9 +91,11 @@ fun UploadFilesScreen(onNavigate: (NavigationAddCapsule) -> Unit = {}) {
     },
     containerColor = MaterialTheme.colorScheme.primary
   ) { innerPadding ->
-    Box(modifier = Modifier
-      .fillMaxSize()
-      .padding(innerPadding))
+    Box(
+      modifier = Modifier
+        .fillMaxSize()
+        .padding(innerPadding)
+    )
     {
       LazyColumn(
         modifier = if (isTablet)

@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     id 'com.google.android.libraries.mapsplatform.secrets-gradle-plugin'
+    id 'com.google.gms.google-services'
 
 }
 
@@ -82,9 +83,7 @@ dependencies {
     androidTestImplementation libs.androidx.ui.test.junit4
     debugImplementation libs.androidx.ui.tooling
     debugImplementation libs.androidx.ui.test.manifest
-
     implementation libs.coil.compose
-
     implementation libs.ui
     implementation libs.androidx.runtime
 
@@ -93,7 +92,7 @@ dependencies {
 
     implementation "com.google.accompanist:accompanist-permissions:0.34.0"
 
-    //    SceneView
+    //  SceneView
     implementation("io.github.sceneview:sceneview:2.1.0")
     implementation 'io.github.sceneview:arsceneview:2.2.1'
 
@@ -108,4 +107,16 @@ dependencies {
     implementation libs.androidx.navigation.compose
 
     implementation "androidx.compose.material:material:1.7.2"
+
+    // Firebase
+    implementation platform('com.google.firebase:firebase-bom:33.3.0')
+    implementation 'com.google.firebase:firebase-analytics'
+    // Firebase Firestore dependency
+    implementation(libs.firebase.firestore.ktx)
+
+    // Firebase Storage dependency
+    implementation(libs.firebase.storage.ktx)
+
+    // Firebase Authentication dependency
+    implementation(libs.firebase.auth.ktx)
 }

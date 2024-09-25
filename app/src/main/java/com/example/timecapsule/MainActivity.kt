@@ -37,11 +37,8 @@ class MainActivity : ComponentActivity() {
 //          CapsuleCardListScreen()
 //        Scaffold { innerPadding->
 //          SelectTime(Modifier.padding(innerPadding))
-
 //        SelectTimeScreen()
-
 //        ShareOptionScreen()
-
 //        ShareScreen()
 //        SelectLocationOptionScreen()
 //        SelectCapsuleScreen()
@@ -55,7 +52,7 @@ class MainActivity : ComponentActivity() {
 //        NotificationScreen()
 //        LetterScreen()
 //        OnBoardingNavGraph()
-        NavGraph()
+          NavGraph()
       }
     }
   }
