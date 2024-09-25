@@ -13,19 +13,19 @@ import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.example.timecapsule.routes.Screen
-import com.example.timecapsule.ui.theme.review.ReviewScreen
-import com.example.timecapsule.ui.theme.review.SharedPeople
-import com.example.timecapsule.ui.theme.selectcapsule.SelectCapsuleScreen
-import com.example.timecapsule.ui.theme.selectlocation.LocationOptions
-import com.example.timecapsule.ui.theme.selectlocation.SelectLocationOptionScreen
-import com.example.timecapsule.ui.theme.selectlocation.SelectLocationScreen
-import com.example.timecapsule.ui.theme.selecttime.NavigationAddCapsule
-import com.example.timecapsule.ui.theme.selecttime.SelectTimeScreen
-import com.example.timecapsule.ui.theme.sharewithpeople.SearchPeople
-import com.example.timecapsule.ui.theme.sharewithpeople.ShareOptionScreen
-import com.example.timecapsule.ui.theme.sharewithpeople.SharePeopleOptions
-import com.example.timecapsule.ui.theme.sharewithpeople.ShareScreen
-import com.example.timecapsule.ui.theme.uploadfiles.UploadFilesScreen
+import com.example.timecapsule.ui.review.ReviewScreen
+import com.example.timecapsule.ui.review.SharedPeople
+import com.example.timecapsule.ui.selectcapsule.SelectCapsuleScreen
+import com.example.timecapsule.ui.selectlocation.LocationOptions
+import com.example.timecapsule.ui.selectlocation.SelectLocationOptionScreen
+import com.example.timecapsule.ui.selectlocation.SelectLocationScreen
+import com.example.timecapsule.ui.selecttime.NavigationAddCapsule
+import com.example.timecapsule.ui.selecttime.SelectTimeScreen
+import com.example.timecapsule.ui.sharewithpeople.SearchPeople
+import com.example.timecapsule.ui.sharewithpeople.ShareOptionScreen
+import com.example.timecapsule.ui.sharewithpeople.SharePeopleOptions
+import com.example.timecapsule.ui.sharewithpeople.ShareScreen
+import com.example.timecapsule.ui.uploadfiles.UploadFilesScreen
 
 // Helper method for Add Capsule Flow
 fun NavGraphBuilder.addCapsuleNavGraph(navController: NavController, activity: Activity) {

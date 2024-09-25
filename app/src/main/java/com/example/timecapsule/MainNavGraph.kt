@@ -1,40 +1,24 @@
 package com.example.timecapsule
 
-import android.util.Log
-import androidx.compose.animation.AnimatedContentTransitionScope
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
-import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
 import com.example.timecapsule.routes.Screen
-import com.example.timecapsule.ui.theme.capsulelist.CapsuleCardListScreen
-import com.example.timecapsule.ui.theme.findcapsule.FindCapsuleScreenV1
-import com.example.timecapsule.ui.theme.notification.NotificationScreen
-import com.example.timecapsule.ui.theme.profile.ProfileScreen
-import com.example.timecapsule.ui.theme.selectlocation.SelectLocationScreen
-import com.example.timecapsule.ui.theme.selecttime.SelectTimeScreen
+import com.example.timecapsule.ui.capsulelist.CapsuleCardListScreen
+import com.example.timecapsule.ui.findcapsule.FindCapsuleScreenV1
+import com.example.timecapsule.ui.notification.NotificationScreen
+import com.example.timecapsule.ui.profile.ProfileScreen
 import androidx.compose.material3.*
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
-import androidx.compose.ui.focus.focusModifier
 import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.navigation
-import com.example.timecapsule.ui.theme.LightBlue
-import com.example.timecapsule.ui.theme.capsuledetails.CapsuleDetailsScreen
-import com.example.timecapsule.ui.theme.util.DeviceType
+import com.example.timecapsule.ui.capsuledetails.CapsuleDetailsScreen
 
 fun getNavigationItems(): List<NavItem> {
   return listOf(
