@@ -1,9 +1,37 @@
 plugins {
-    id 'java-library'
-    alias(libs.plugins.jetbrains.kotlin.jvm)
+    id 'com.android.library'
+    id 'kotlin-android'
+    id 'kotlin-kapt'
+    id 'dagger.hilt.android.plugin'
+    id 'org.jetbrains.kotlin.android'
+
 }
 
-java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+android {
+    namespace 'com.example.timecapsule'
+    compileSdkVersion 34
+    defaultConfig {
+        minSdkVersion 24
+        targetSdkVersion 34
+    }
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_17
+    }
+}
+
+dependencies {
+    implementation project(':data')
+    implementation project(':domain')
+
+    implementation libs.firebase.auth.ktx
+    implementation(libs.hilt.android)
+    implementation project(':util')
+    kapt(libs.hilt.android.compiler)
 }

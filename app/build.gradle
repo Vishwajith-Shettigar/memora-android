@@ -3,7 +3,8 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.android)
     id 'com.google.android.libraries.mapsplatform.secrets-gradle-plugin'
     id 'com.google.gms.google-services'
-
+    id 'kotlin-kapt'
+    id 'dagger.hilt.android.plugin'
 }
 
 android {
@@ -59,8 +60,13 @@ secrets {
     ignoreList.add("keyToIgnore") // Ignore the key "keyToIgnore"
     ignoreList.add("sdk.*")       // Ignore all keys matching the regexp "sdk.*"
 }
-
+kapt {
+    correctErrorTypes true
+}
 dependencies {
+    implementation project(':domain')
+    implementation project(':util')
+    implementation project(':di')
 
     implementation libs.androidx.core.ktx
     implementation libs.androidx.lifecycle.runtime.ktx
@@ -76,6 +82,7 @@ dependencies {
     implementation libs.androidx.activity
     implementation libs.androidx.constraintlayout
     implementation libs.androidx.navigation.compose
+    implementation project(':data')
     testImplementation libs.junit
     androidTestImplementation libs.androidx.junit
     androidTestImplementation libs.androidx.espresso.core
@@ -108,15 +115,7 @@ dependencies {
 
     implementation "androidx.compose.material:material:1.7.2"
 
-    // Firebase
-    implementation platform('com.google.firebase:firebase-bom:33.3.0')
-    implementation 'com.google.firebase:firebase-analytics'
-    // Firebase Firestore dependency
-    implementation(libs.firebase.firestore.ktx)
-
-    // Firebase Storage dependency
-    implementation(libs.firebase.storage.ktx)
-
-    // Firebase Authentication dependency
-    implementation(libs.firebase.auth.ktx)
+    // Hilt
+    implementation(libs.hilt.android)
+    kapt(libs.hilt.android.compiler)
 }

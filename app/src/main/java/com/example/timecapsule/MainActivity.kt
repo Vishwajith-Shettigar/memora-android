@@ -6,7 +6,11 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import com.example.timecapsule.ui.theme.TimeCapsuleTheme
 import com.mapbox.common.MapboxOptions
+import dagger.hilt.EntryPoint
+import dagger.hilt.android.AndroidEntryPoint
 
+
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
