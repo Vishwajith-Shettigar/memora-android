@@ -2,6 +2,8 @@ package com.example.di
 
 import com.example.data.repository.AuthRepository
 import com.example.data.repository.AuthRepositoryImpl
+import com.example.data.repository.UserRepository
+import com.example.domain.usecase.SaveUserDetailsUseCase
 import com.example.domain.usecase.SignInUseCase
 import com.example.domain.usecase.SignUpUseCase
 import dagger.Binds
@@ -17,13 +19,19 @@ class ViewModelModule {
 
   @Provides
   @ViewModelScoped
-  fun provideSignUpUseCase(authRepository: AuthRepository): SignUpUseCase {
-    return SignUpUseCase(authRepository)
+  fun provideSignUpUseCase(authRepository: AuthRepository,saveUserDetailsUseCase: SaveUserDetailsUseCase): SignUpUseCase {
+    return SignUpUseCase(authRepository,saveUserDetailsUseCase)
   }
 
   @Provides
   @ViewModelScoped
   fun provideSignInUseCase(authRepository: AuthRepository): SignInUseCase {
     return SignInUseCase(authRepository)
+  }
+
+  @Provides
+  @ViewModelScoped
+  fun provideSaveUserDetailsUseCase(userRepository: UserRepository): SaveUserDetailsUseCase {
+    return SaveUserDetailsUseCase(userRepository)
   }
 }

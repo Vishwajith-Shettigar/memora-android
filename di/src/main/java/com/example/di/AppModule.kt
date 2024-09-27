@@ -1,9 +1,13 @@
 package com.example.di
 
 import com.example.data.remote.AuthRemoteDataSource
+import com.example.data.remote.UserRemoteDataSource
 import com.example.data.repository.AuthRepository
 import com.example.data.repository.AuthRepositoryImpl
+import com.example.data.repository.UserRepository
+import com.example.data.repository.UserRepositoryImpl
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -17,7 +21,11 @@ abstract class AppModule {
 
   @Binds
   @Singleton
-  abstract fun provideAuthRepository(authRepositoryImpl: AuthRepositoryImpl): AuthRepository
+  abstract fun bindAuthRepository(authRepositoryImpl: AuthRepositoryImpl): AuthRepository
+
+  @Binds
+  @Singleton
+  abstract fun bindUserRepository(userRepositoryImpl: UserRepositoryImpl): UserRepository
 
   companion object {
     @Provides
@@ -28,10 +36,24 @@ abstract class AppModule {
 
     @Provides
     @Singleton
+    fun provideFirebaseFirestore(): FirebaseFirestore {
+      return FirebaseFirestore.getInstance()
+    }
+
+    @Provides
+    @Singleton
     fun provideAuthRemoteDataSource(
       firebaseAuth: FirebaseAuth
     ): AuthRemoteDataSource {
       return AuthRemoteDataSource(firebaseAuth)
+    }
+
+    @Provides
+    @Singleton
+    fun provideUserRemoteDataSource(
+      firestore: FirebaseFirestore
+    ): UserRemoteDataSource {
+      return UserRemoteDataSource(firestore)
     }
   }
 }

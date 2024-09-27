@@ -14,16 +14,24 @@ class AuthRemoteDataSource @Inject constructor(
       firebaseAuth.signInWithEmailAndPassword(email, password).await()
       Response.Success(Unit)
     } catch (e: Exception) {
-      Response.Error(e.message.toString())
+      Response.Error(e)
     }
   }
 
-  suspend fun signUp(email: String, password: String): Response<Unit> {
+  suspend fun signUp(email: String, password: String): Response<String> {
     return try {
-      firebaseAuth.createUserWithEmailAndPassword(email, password).await()
-      Response.Success(Unit)
+      val userId = firebaseAuth.createUserWithEmailAndPassword(email, password).await().user?.uid
+      Response.Success(userId)
     } catch (e: Exception) {
-      Response.Error(e.message.toString())
+      Response.Error(e)
+    }
+  }
+
+   suspend fun deleteUser() {
+    try {
+      firebaseAuth.currentUser?.delete()?.await()
+    } catch (_: Exception) {
     }
   }
 }
+

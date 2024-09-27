@@ -31,6 +31,7 @@ dependencies {
     implementation project(':domain')
 
     implementation libs.firebase.auth.ktx
+    implementation libs.firebase.firestore.ktx
     implementation(libs.hilt.android)
     implementation project(':util')
     kapt(libs.hilt.android.compiler)

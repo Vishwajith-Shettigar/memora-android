@@ -58,7 +58,7 @@ fun LogInScreen(
         ButtonName.SIGN_UP -> navController.navigate(
           Screen.Signup.route
         ) {
-          popUpTo(navController.graph.startDestinationId)
+          popUpTo(Screen.Onboarding.route)
         }
 
         ButtonName.LOG_IN -> navController.navigate(
@@ -76,7 +76,7 @@ fun LogInScreen(
         ButtonName.SIGN_UP -> navController.navigate(
           Screen.Signup.route
         ) {
-          popUpTo(navController.graph.startDestinationId)
+          popUpTo(Screen.Onboarding.route)
         }
 
         ButtonName.LOG_IN -> navController.navigate(
@@ -97,10 +97,12 @@ fun CustomTextField(
   icon: Int,
   modifier: Modifier = Modifier,
   isTablet: Boolean = false,
+  value: String = "",
+  onValueChanged: (String) -> Unit = {}
 ) {
   TextField(
-    value = "",
-    onValueChange = { /* Handle input */ },
+    value = value,
+    onValueChange = { onValueChanged(it) },
     placeholder = {
       Text(
         text = hint,
