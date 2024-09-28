@@ -57,10 +57,13 @@ class UserRemoteDataSource @Inject constructor(
 
   suspend fun checkUserRecordExists(userId: String): Response<Any> {
     return try {
+      Log.e("#", userId)
       val documentReference = firestore.collection("users").document(userId)
       val documentSnapshot: DocumentSnapshot = documentReference.get().await()
-      documentSnapshot.exists()
-      Response.Success()
+      if (documentSnapshot.exists())
+        Response.Success()
+      else
+        Response.Error(AskDetailsException())
     } catch (e: Exception) {
       Response.Error(AskDetailsException())
     }

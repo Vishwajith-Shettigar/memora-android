@@ -7,6 +7,7 @@ import androidx.navigation.compose.navigation
 import com.example.timecapsule.routes.Screen
 import com.example.timecapsule.ui.login.LogInScreen
 import com.example.timecapsule.ui.onboarding.OnboardingScreen
+import com.example.timecapsule.ui.signup.SignUpDetailsScreen
 import com.example.timecapsule.ui.signup.SignUpScreen
 
 // Helper method for Onboarding Flow
@@ -18,5 +19,6 @@ fun NavGraphBuilder.onboardingNavGraph(navController: NavController) {
     composable(Screen.Onboarding.route) { OnboardingScreen(navController) }
     composable(Screen.Login.route) { LogInScreen(navController) }
     composable(Screen.Signup.route) { SignUpScreen(navController) }
+    composable(Screen.AskDetails.route) { SignUpDetailsScreen() }
   }
 }

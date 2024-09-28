@@ -117,7 +117,6 @@ fun SignUpScreenMobile(modifier: Modifier = Modifier, viewModel: SignUpViewModel
   var cpassword by remember { mutableStateOf("") }
 
   val isLoading = authState is AuthState.Loading
-  val isError = authState is AuthState.Error
   LaunchedEffect(key1 = authState) {
     when (authState) {
       is AuthState.Success -> {
