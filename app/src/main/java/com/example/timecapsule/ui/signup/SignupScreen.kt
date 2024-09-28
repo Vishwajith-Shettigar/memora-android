@@ -339,7 +339,9 @@ fun RegisterButton(
       style = MaterialTheme.typography.labelMedium.copy(
         color = Color.White.copy(alpha = 0.8f)
       ),
-      modifier = Modifier.padding(horizontal = 3.dp),
+      modifier = Modifier
+          .padding(horizontal = 3.dp)
+          .clickable { routeToLogin() }
     )
   }
 }

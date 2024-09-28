@@ -171,6 +171,11 @@ fun LogInScreenMobile(
   LaunchedEffect(key1 = authState) {
     when (authState) {
       is AuthState.Success -> {
+        navController.navigate(Screen.MainScreens.route) {
+          popUpTo(Screen.OnboardingScreens.route) {
+            inclusive = true
+          }
+        }
       }
 
       is AuthState.Error -> {
