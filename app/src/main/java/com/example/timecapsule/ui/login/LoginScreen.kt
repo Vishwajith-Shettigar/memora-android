@@ -404,7 +404,6 @@ fun LogInScreenTablet(modifier: Modifier = Modifier, buttonClicked: (ButtonName)
         )
         .padding(horizontal = 16.dp)
   ) {
-
     Spacer(modifier = Modifier.width(5.dp))
 
     // Top Decorative Image
@@ -412,7 +411,6 @@ fun LogInScreenTablet(modifier: Modifier = Modifier, buttonClicked: (ButtonName)
 
     Spacer(modifier = Modifier.height(5.dp))
     BodyPart(true, buttonClicked = buttonClicked)
-
   }
 }
 

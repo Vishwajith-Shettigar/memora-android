@@ -6,5 +6,4 @@ data class UserDetails(
   val firstName: String?=null,
   val lastName: String?=null,
   val email: String,
-  val password: String,
 )

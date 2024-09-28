@@ -142,10 +142,28 @@ class AuthRemoteDataSource @Inject constructor(
     }
   }
 
+  suspend fun signOut() {
+    try {
+      firebaseAuth.signOut()
+    } catch (
+      _: Exception
+    ) {
+    }
+  }
+
   suspend fun deleteUser() {
     try {
       firebaseAuth.currentUser?.delete()?.await()
     } catch (_: Exception) {
+    }
+  }
+
+  fun getAuth(): FirebaseUser? {
+    return try {
+      firebaseAuth.currentUser
+
+    } catch (_: Exception) {
+      return null
     }
   }
 }

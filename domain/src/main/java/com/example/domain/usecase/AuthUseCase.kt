@@ -4,6 +4,8 @@ import com.example.data.repository.AuthRepository
 import com.example.data.repository.AuthRepositoryImpl
 import com.example.data.repository.UserRepository
 import com.example.model.UserDetails
+import com.example.util.AskDetailsException
+import com.example.util.NoAuthException
 import com.example.util.Response
 import com.example.util.UnspecifiedException
 import javax.inject.Inject
@@ -33,5 +35,28 @@ class SignUpUseCase @Inject constructor(
 //    if (checkUserNameDoesntExist is Response.Error)
 //      return checkUserNameDoesntExist
     return authRepository.signUp(email, password)
+  }
+}
+
+class SignOutUseCase @Inject constructor(
+  private val authRepository: AuthRepository
+) {
+  suspend operator fun invoke() {
+    authRepository.signOut()
+  }
+}
+
+class getAuthUseCase @Inject constructor(
+  private val authRepository: AuthRepository,
+  private val onBoardingDataUseCase: OnBoardingDataUseCase
+) {
+  suspend operator fun invoke(): Response<Unit> {
+    if (authRepository.getAuth() === null) {
+      return Response.Error(exception = NoAuthException())
+    }
+    if (onBoardingDataUseCase.getIsOnBoardingDetailsCompleted() == false) {
+      return Response.Error(exception = AskDetailsException())
+    }
+    return Response.Success()
   }
 }

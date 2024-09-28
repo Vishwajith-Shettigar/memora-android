@@ -4,6 +4,7 @@ import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.CircularProgressIndicator
@@ -38,6 +39,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.timecapsule.R
+import com.example.timecapsule.routes.Screen
 import com.example.timecapsule.ui.theme.SignUpBackground
 import com.example.timecapsule.ui.util.Device
 import com.example.timecapsule.ui.util.DeviceType
@@ -53,20 +55,22 @@ fun SignUpScreen(
   if (DeviceType.getDeviceType() == Device.TABLET)
     SignUpScreenTablet(modifier)
   else
-    SignUpScreenMobile(modifier, viewModel)
+    SignUpScreenMobile(modifier, viewModel, navController)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CustomTextField(
+  value: String,
   hint: String,
   icon: Int,
   modifier: Modifier = Modifier,
   isTablet: Boolean = false,
+  onValueChanged: (String) -> Unit
 ) {
   TextField(
-    value = "",
-    onValueChange = { /* Handle input */ },
+    value = value,
+    onValueChange = { onValueChanged(it) },
     placeholder = {
       Text(
         text = hint,
@@ -103,7 +107,11 @@ fun CustomTextField(
 
 
 @Composable
-fun SignUpScreenMobile(modifier: Modifier = Modifier, viewModel: SignUpViewModel) {
+fun SignUpScreenMobile(
+  modifier: Modifier = Modifier,
+  viewModel: SignUpViewModel,
+  navController: NavController
+) {
 
   val context = LocalContext.current
 
@@ -120,16 +128,17 @@ fun SignUpScreenMobile(modifier: Modifier = Modifier, viewModel: SignUpViewModel
   LaunchedEffect(key1 = authState) {
     when (authState) {
       is AuthState.Success -> {
-
+        navController.navigate(Screen.Login.route) {
+          popUpTo(Screen.Onboarding.route)
+        }
       }
+
       is AuthState.Error -> {
         val message = (authState as AuthState.Error).message
         Toast.makeText(context, message, Toast.LENGTH_LONG).show()
       }
 
-      else -> {
-
-      }
+      else -> {}
 
     }
   }
@@ -170,6 +179,10 @@ fun SignUpScreenMobile(modifier: Modifier = Modifier, viewModel: SignUpViewModel
           viewModel.signUp(userName, email, password)
         else
           Toast.makeText(context, "Passwords dont match", Toast.LENGTH_LONG).show()
+      }, routeToLogin = {
+        navController.navigate(Screen.Login.route) {
+          popUpTo(Screen.Onboarding.route)
+        }
       })
   }
 }
@@ -213,7 +226,8 @@ fun BodyPart(
   onEmailChanged: (String) -> Unit = {},
   onPasswordChanged: (String) -> Unit = {},
   onCPasswordChanged: (String) -> Unit = {},
-  onRegisterClicked: () -> Unit = {}
+  onRegisterClicked: () -> Unit = {},
+  routeToLogin: () -> Unit = {}
 ) {
   Column(
     horizontalAlignment = Alignment.CenterHorizontally,
@@ -263,13 +277,16 @@ fun BodyPart(
       onValueChanged = onCPasswordChanged
     )
     Spacer(modifier = Modifier.height(16.dp))
-    RegisterButton(isLoading = isLoading, onRegisterClicked)
+    RegisterButton(isLoading = isLoading, onRegisterClicked, routeToLogin)
     Spacer(modifier = Modifier.height(5.dp))
   }
 }
 
 @Composable
-fun RegisterButton(isLoading: Boolean = false, onRegisterClicked: () -> Unit = {}) {
+fun RegisterButton(
+  isLoading: Boolean = false, onRegisterClicked: () -> Unit = {},
+  routeToLogin: () -> Unit = {}
+) {
   Button(
     onClick = { onRegisterClicked() },
     shape = RoundedCornerShape(20.dp),
@@ -322,7 +339,7 @@ fun RegisterButton(isLoading: Boolean = false, onRegisterClicked: () -> Unit = {
       style = MaterialTheme.typography.labelMedium.copy(
         color = Color.White.copy(alpha = 0.8f)
       ),
-      modifier = Modifier.padding(horizontal = 3.dp)
+      modifier = Modifier.padding(horizontal = 3.dp),
     )
   }
 }
