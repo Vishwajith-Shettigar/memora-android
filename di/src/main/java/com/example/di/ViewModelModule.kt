@@ -19,14 +19,14 @@ class ViewModelModule {
 
   @Provides
   @ViewModelScoped
-  fun provideSignUpUseCase(authRepository: AuthRepository,saveUserDetailsUseCase: SaveUserDetailsUseCase): SignUpUseCase {
-    return SignUpUseCase(authRepository,saveUserDetailsUseCase)
+  fun provideSignUpUseCase(authRepository: AuthRepository,userRepository: UserRepository): SignUpUseCase {
+    return SignUpUseCase(authRepository,userRepository)
   }
 
   @Provides
   @ViewModelScoped
-  fun provideSignInUseCase(authRepository: AuthRepository): SignInUseCase {
-    return SignInUseCase(authRepository)
+  fun provideSignInUseCase(authRepository: AuthRepository,userRepository: UserRepository): SignInUseCase {
+    return SignInUseCase(authRepository,userRepository)
   }
 
   @Provides

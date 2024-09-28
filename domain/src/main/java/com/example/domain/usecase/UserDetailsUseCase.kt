@@ -12,3 +12,4 @@ class SaveUserDetailsUseCase @Inject constructor(
     return userRepository.saveUserDetails(userDetails)
   }
 }
+

@@ -48,8 +48,8 @@ fun SignUpDetailsScreen(modifier: Modifier = Modifier) {
     // Content of the screen
     Column(
       modifier = Modifier
-          .fillMaxSize()
-          .padding(horizontal = 16.dp),
+        .fillMaxSize()
+        .padding(horizontal = 16.dp),
       verticalArrangement = Arrangement.Center,
       horizontalAlignment = Alignment.CenterHorizontally,
     ) {
@@ -65,6 +65,7 @@ fun SignUpDetailsScreen(modifier: Modifier = Modifier) {
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
       ) {
+        CustomTextField(hint = "User name", icon = R.drawable.ic_username, isTablet = isTablet)
         CustomTextField(hint = "First name", icon = R.drawable.ic_username, isTablet = isTablet)
         CustomTextField(hint = "Last name", icon = R.drawable.ic_person, isTablet = isTablet)
         Spacer(modifier = Modifier.height(20.dp))
@@ -91,19 +92,19 @@ fun LetsGoButton(isTablet: Boolean = false) {
         containerColor = Color.Transparent
       ),
       modifier = Modifier
-          .width(130.dp)
-          .height(46.dp)
-          .shadow(
-              elevation = 10.dp, // Shadow size
-              shape = RoundedCornerShape(5.dp)
-          )
-          .padding(0.dp)
-          .background(
-              brush = Brush.horizontalGradient(
-                  colors = listOf(Color(0xFF4F46E5), Color(0xFF3B82F6))
-              ),
-              shape = RoundedCornerShape(5.dp)
-          )
+        .width(130.dp)
+        .height(46.dp)
+        .shadow(
+          elevation = 10.dp, // Shadow size
+          shape = RoundedCornerShape(5.dp)
+        )
+        .padding(0.dp)
+        .background(
+          brush = Brush.horizontalGradient(
+            colors = listOf(Color(0xFF4F46E5), Color(0xFF3B82F6))
+          ),
+          shape = RoundedCornerShape(5.dp)
+        )
     ) {
       Text(
         text = stringResource(id = R.string.letsgo_button),
@@ -125,8 +126,8 @@ fun BackgroundObjects(isTablet: Boolean = false) {
 
   Box(
     modifier = Modifier
-        .fillMaxSize()
-        .background(Brush.verticalGradient(SignUpBackground))
+      .fillMaxSize()
+      .background(Brush.verticalGradient(SignUpBackground))
 
   )
   {
@@ -134,9 +135,9 @@ fun BackgroundObjects(isTablet: Boolean = false) {
       painter = painterResource(id = R.drawable.onboarding_image),
       contentDescription = null,
       modifier = Modifier
-          .size(sizeObject)
-          .background(Color.Transparent)
-          .align(Alignment.TopEnd),
+        .size(sizeObject)
+        .background(Color.Transparent)
+        .align(Alignment.TopEnd),
       contentScale = ContentScale.Fit,
       alpha = 0.1f
 
@@ -145,9 +146,9 @@ fun BackgroundObjects(isTablet: Boolean = false) {
       painter = painterResource(id = R.drawable.testimg),
       contentDescription = null,
       modifier = Modifier
-          .size(sizeObject - 50.dp)
-          .background(Color.Transparent)
-          .align(Alignment.BottomStart),
+        .size(sizeObject - 50.dp)
+        .background(Color.Transparent)
+        .align(Alignment.BottomStart),
       contentScale = ContentScale.Fit,
       alpha = 0.1f
 

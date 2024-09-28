@@ -123,7 +123,6 @@ fun SignUpScreenMobile(modifier: Modifier = Modifier, viewModel: SignUpViewModel
       is AuthState.Success -> {
 
       }
-
       is AuthState.Error -> {
         val message = (authState as AuthState.Error).message
         Toast.makeText(context, message, Toast.LENGTH_LONG).show()
@@ -246,12 +245,6 @@ fun BodyPart(
     Spacer(modifier = Modifier.height(5.dp))
 
     // Input Fields
-    com.example.timecapsule.ui.login.CustomTextField(
-      hint = stringResource(id = R.string.username_hint),
-      icon = R.drawable.ic_username,
-      value = userName,
-      onValueChanged = onUserNameChanged
-    )
     com.example.timecapsule.ui.login.CustomTextField(
       hint = stringResource(id = R.string.email_hint),
       icon = R.drawable.ic_email,

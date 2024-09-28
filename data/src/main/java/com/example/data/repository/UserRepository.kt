@@ -9,6 +9,8 @@ import javax.inject.Inject
 interface UserRepository {
   suspend fun saveUserDetails(userDetails: UserDetails): Response<Unit>
   suspend fun getUserDetails(userId: String): Response<UserDetails>
+  suspend fun checkUserNameDoesntExists(userName: String): Response<Exception>
+  suspend fun checkUserRecordExists(userId: String):Response<Any>
 }
 
 class UserRepositoryImpl @Inject constructor(
@@ -20,5 +22,13 @@ class UserRepositoryImpl @Inject constructor(
 
   override suspend fun getUserDetails(userId: String): Response<UserDetails> {
     return Response.Success()
+  }
+
+  override suspend fun checkUserNameDoesntExists(userName: String): Response<Exception> {
+    return userRemoteDataSource.checkUserNameDoesntExist(userName)
+  }
+
+  override suspend fun checkUserRecordExists(userId: String): Response<Any> {
+   return userRemoteDataSource.checkUserRecordExists(userId)
   }
 }

@@ -5,8 +5,8 @@ import com.example.util.Response
 import javax.inject.Inject
 
 interface AuthRepository {
-  suspend fun signIn(email: String, password: String): Response<Unit>
-  suspend fun signUp(email: String, password: String): Response<String>
+  suspend fun signIn(email: String, password: String): Response<String>
+  suspend fun signUp(email: String, password: String): Response<Exception>
   suspend fun deleteUser()
 }
 
@@ -14,11 +14,11 @@ interface AuthRepository {
 class AuthRepositoryImpl @Inject constructor(
   private val authRemoteDataSource: AuthRemoteDataSource
 ) : AuthRepository {
-  override suspend fun signIn(email: String, password: String): Response<Unit> {
+  override suspend fun signIn(email: String, password: String): Response<String> {
     return authRemoteDataSource.signIn(email, password)
   }
 
-  override suspend fun signUp(email: String, password: String): Response<String> {
+  override suspend fun signUp(email: String, password: String): Response<Exception> {
     return authRemoteDataSource.signUp(email, password)
   }
 
