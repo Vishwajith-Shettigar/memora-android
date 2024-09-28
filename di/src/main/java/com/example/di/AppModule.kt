@@ -1,17 +1,21 @@
 package com.example.di
 
+import android.content.Context
 import com.example.data.remote.AuthRemoteDataSource
 import com.example.data.remote.UserRemoteDataSource
 import com.example.data.repository.AuthRepository
 import com.example.data.repository.AuthRepositoryImpl
 import com.example.data.repository.UserRepository
 import com.example.data.repository.UserRepositoryImpl
+import com.example.data.sharedpreference.SharedPreferencesHelper
+import com.example.domain.usecase.OnBoardingDataUseCase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
@@ -28,6 +32,19 @@ abstract class AppModule {
   abstract fun bindUserRepository(userRepositoryImpl: UserRepositoryImpl): UserRepository
 
   companion object {
+
+    @Provides
+    @Singleton
+    fun provideSharedPreferencesHelper(@ApplicationContext context: Context): SharedPreferencesHelper {
+      return SharedPreferencesHelper(context)
+    }
+
+    @Provides
+    @Singleton
+    fun provideOnBoardingDetailsUseCase(sharedPreferencesHelper: SharedPreferencesHelper): OnBoardingDataUseCase {
+      return OnBoardingDataUseCase(sharedPreferencesHelper)
+    }
+
     @Provides
     @Singleton
     fun provideFirebaseAuth(): FirebaseAuth {
@@ -51,9 +68,10 @@ abstract class AppModule {
     @Provides
     @Singleton
     fun provideUserRemoteDataSource(
-      firestore: FirebaseFirestore
+      firestore: FirebaseFirestore,
+      remoteDataSource: AuthRemoteDataSource
     ): UserRemoteDataSource {
-      return UserRemoteDataSource(firestore)
+      return UserRemoteDataSource(firestore, remoteDataSource)
     }
   }
 }

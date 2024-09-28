@@ -2,22 +2,25 @@ package com.example.data.remote
 
 import android.util.Log
 import com.example.model.UserDetails
+import com.example.util.AskDetailsException
 import com.example.util.Response
+import com.example.util.UnspecifiedException
 import com.example.util.UsernameAlreadyExistsException
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import javax.inject.Inject
 import kotlinx.coroutines.tasks.await
 
 class UserRemoteDataSource @Inject constructor(
-  val firestore: FirebaseFirestore
+  val firestore: FirebaseFirestore,
+  val authRemoteDataSource: AuthRemoteDataSource
 ) {
-  suspend fun saveUserDetails(userDetails: UserDetails): Response<Unit> {
+  suspend fun saveUserDetails(userName: String, fName: String, lName: String): Response<Unit> {
     val usersCollection = firestore.collection("users")
 
     return try {
-
       val usernameQuery = usersCollection
-        .whereEqualTo("userName", userDetails.userName)
+        .whereEqualTo("userName", userName)
         .get()
         .await()
 
@@ -26,12 +29,52 @@ class UserRemoteDataSource @Inject constructor(
         throw UsernameAlreadyExistsException()
       }
 
-      firestore.collection("users").document(userDetails.userId)
-        .set(userDetails).await()
+      val user = authRemoteDataSource.getAuth() ?: throw UnspecifiedException()
 
+      val newUserDetails = UserDetails(
+        userId = user.uid,
+        email = user.email.toString(),
+        userName = userName,
+        firstName = fName,
+        lastName = lName
+      )
+
+      firestore.collection("users").document(newUserDetails.userId)
+        .set(newUserDetails).await()
       Response.Success(Unit)
     } catch (e: Exception) {
       Response.Error(e)
+    }
+  }
+
+  suspend fun checkUserNameDoesntExist(userName: String): Response<Exception> {
+    return try {
+      val usersCollection = firestore.collection("users")
+      val usernameQuery = usersCollection
+        .whereEqualTo("userName", userName)
+        .get()
+        .await()
+
+      // If the username already exists, throw a custom exception
+      if (!usernameQuery.isEmpty) {
+        throw UsernameAlreadyExistsException()
+      }
+      Response.Success()
+    } catch (e: Exception) {
+      Response.Error(e)
+    }
+  }
+
+  suspend fun checkUserRecordExists(userId: String): Response<Any> {
+    return try {
+      val documentReference = firestore.collection("users").document(userId)
+      val documentSnapshot: DocumentSnapshot = documentReference.get().await()
+      if (documentSnapshot.exists())
+        Response.Success()
+      else
+        Response.Error(AskDetailsException())
+    } catch (e: Exception) {
+      Response.Error(AskDetailsException())
     }
   }
 }

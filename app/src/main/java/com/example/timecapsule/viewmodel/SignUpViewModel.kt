@@ -7,6 +7,7 @@ import com.example.data.repository.AuthRepository
 import com.example.domain.usecase.SignUpUseCase
 import com.example.util.Response
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.lang.Exception
 import javax.inject.Inject
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,7 +18,7 @@ sealed class AuthState {
   object Idle : AuthState()
   object Loading : AuthState()
   object Success : AuthState()
-  data class Error(val message: String) : AuthState()
+  data class Error(val message: String,val exception: Exception?=null) : AuthState()
 }
 
 @HiltViewModel

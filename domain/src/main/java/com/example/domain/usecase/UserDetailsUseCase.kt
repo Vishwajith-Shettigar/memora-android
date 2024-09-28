@@ -8,7 +8,8 @@ import javax.inject.Inject
 class SaveUserDetailsUseCase @Inject constructor(
   private val userRepository: UserRepository
 ) {
-  suspend operator fun invoke(userDetails: UserDetails): Response<Unit> {
-    return userRepository.saveUserDetails(userDetails)
+  suspend operator fun invoke(userName: String, fName: String, lName: String): Response<Unit> {
+    return userRepository.saveUserDetails(userName,fName,lName)
   }
 }
+
