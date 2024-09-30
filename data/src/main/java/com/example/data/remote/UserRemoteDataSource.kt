@@ -6,9 +6,11 @@ import com.example.util.AskDetailsException
 import com.example.util.Response
 import com.example.util.UnspecifiedException
 import com.example.util.UsernameAlreadyExistsException
+import com.example.util.defaultPictures
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import javax.inject.Inject
+import kotlin.random.Random
 import kotlinx.coroutines.tasks.await
 
 class UserRemoteDataSource @Inject constructor(
@@ -31,12 +33,15 @@ class UserRemoteDataSource @Inject constructor(
 
       val user = authRemoteDataSource.getAuth() ?: throw UnspecifiedException()
 
+      val size = defaultPictures.size
+      val defaultImageUrl = defaultPictures.get(Random.nextInt(0, size))
       val newUserDetails = UserDetails(
         userId = user.uid,
         email = user.email.toString(),
         userName = userName,
         firstName = fName,
-        lastName = lName
+        lastName = lName,
+        imageUrl = defaultImageUrl
       )
 
       firestore.collection("users").document(newUserDetails.userId)

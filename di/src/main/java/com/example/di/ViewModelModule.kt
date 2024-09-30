@@ -2,7 +2,9 @@ package com.example.di
 
 import com.example.data.repository.AuthRepository
 import com.example.data.repository.AuthRepositoryImpl
+import com.example.data.repository.CapsulesRepository
 import com.example.data.repository.UserRepository
+import com.example.domain.usecase.GetCapsuleListUseCase
 import com.example.domain.usecase.OnBoardingDataUseCase
 import com.example.domain.usecase.SaveUserDetailsUseCase
 import com.example.domain.usecase.SignInUseCase
@@ -58,4 +60,11 @@ class ViewModelModule {
   ): getAuthUseCase {
     return getAuthUseCase(authRepository, onBoardingDataUseCase)
   }
+
+  @Provides
+  @ViewModelScoped
+  fun provideGetCapsulesListUseCase(capsulesRepository: CapsulesRepository): GetCapsuleListUseCase {
+    return GetCapsuleListUseCase(capsulesRepository)
+  }
 }
+

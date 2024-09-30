@@ -1,5 +1,6 @@
 package com.example.timecapsule.ui.capsulelist
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -24,6 +25,9 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -34,11 +38,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.example.timecapsule.R
 import com.example.timecapsule.ui.util.DeviceType
+import com.example.timecapsule.viewmodel.CapsuleListScreenAuthState
+import com.example.timecapsule.viewmodel.ShowCapsulesListViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview
@@ -46,11 +53,32 @@ import com.example.timecapsule.ui.util.DeviceType
 fun CapsuleCardListScreen(
   navController: NavController = rememberNavController(),
   modifier: Modifier = Modifier,
+  viewModel: ShowCapsulesListViewModel = hiltViewModel(),
   addCapsuleBtnClicked: () -> Unit = {},
   onCapsuleClicked: (id: String) -> Unit = {}
 ) {
   val isTablet = DeviceType.isTablet()
   val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+
+  val state by viewModel.capsuleListState.collectAsState()
+
+  LaunchedEffect(key1 = Unit) {
+    viewModel.getCapsulesList()
+  }
+
+  LaunchedEffect(key1 = state) {
+    when (state) {
+      is CapsuleListScreenAuthState.Loading -> {
+      }
+
+      is CapsuleListScreenAuthState.Success -> {
+      }
+
+      is CapsuleListScreenAuthState.Error -> {}
+      CapsuleListScreenAuthState.Idle -> {
+      }
+    }
+  }
 
   Scaffold(
     containerColor = MaterialTheme.colorScheme.primary,
@@ -142,7 +170,6 @@ fun SearchBarWithProfile(isTablet: Boolean = false) {
           .size(70.dp)
           .clip(CircleShape)
           .padding(3.dp)
-
     )
   }
 }
