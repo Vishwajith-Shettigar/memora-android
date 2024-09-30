@@ -67,6 +67,7 @@ dependencies {
     implementation project(':domain')
     implementation project(':util')
     implementation project(':di')
+    implementation project(':model')
 
     implementation libs.androidx.core.ktx
     implementation libs.androidx.lifecycle.runtime.ktx
@@ -119,4 +120,6 @@ dependencies {
     implementation(libs.hilt.android)
     kapt(libs.hilt.android.compiler)
     implementation "androidx.hilt:hilt-navigation-compose:1.2.0"
+
+    implementation(libs.firebase.firestore.ktx)
 }

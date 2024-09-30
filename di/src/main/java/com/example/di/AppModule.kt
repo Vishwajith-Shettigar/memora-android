@@ -2,9 +2,12 @@ package com.example.di
 
 import android.content.Context
 import com.example.data.remote.AuthRemoteDataSource
+import com.example.data.remote.CapsulesRemoteDataSource
 import com.example.data.remote.UserRemoteDataSource
 import com.example.data.repository.AuthRepository
 import com.example.data.repository.AuthRepositoryImpl
+import com.example.data.repository.CapsulesRepository
+import com.example.data.repository.CapsulesRepositoryImpl
 import com.example.data.repository.UserRepository
 import com.example.data.repository.UserRepositoryImpl
 import com.example.data.sharedpreference.SharedPreferencesHelper
@@ -30,6 +33,11 @@ abstract class AppModule {
   @Binds
   @Singleton
   abstract fun bindUserRepository(userRepositoryImpl: UserRepositoryImpl): UserRepository
+
+  @Binds
+  @Singleton
+  abstract fun bindCapsulesRepository(capsulesRepositoryImpl: CapsulesRepositoryImpl): CapsulesRepository
+
 
   companion object {
 
@@ -72,6 +80,15 @@ abstract class AppModule {
       remoteDataSource: AuthRemoteDataSource
     ): UserRemoteDataSource {
       return UserRemoteDataSource(firestore, remoteDataSource)
+    }
+
+    @Provides
+    @Singleton
+    fun provideCapsulesRemoteDataSource(
+      firestore: FirebaseFirestore,
+      remoteDataSource: AuthRemoteDataSource
+    ): CapsulesRemoteDataSource {
+      return CapsulesRemoteDataSource(firestore, remoteDataSource)
     }
   }
 }
