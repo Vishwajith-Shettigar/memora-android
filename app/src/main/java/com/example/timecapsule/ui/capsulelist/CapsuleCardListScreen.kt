@@ -1,6 +1,5 @@
 package com.example.timecapsule.ui.capsulelist
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -26,8 +25,11 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -42,9 +44,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
+import com.example.model.CapsuleDetails
 import com.example.timecapsule.R
 import com.example.timecapsule.ui.util.DeviceType
-import com.example.timecapsule.viewmodel.CapsuleListScreenAuthState
+import com.example.timecapsule.viewmodel.CapsuleListScreenState
 import com.example.timecapsule.viewmodel.ShowCapsulesListViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -62,20 +65,31 @@ fun CapsuleCardListScreen(
 
   val state by viewModel.capsuleListState.collectAsState()
 
+  val isLoading: Boolean = state is CapsuleListScreenState.Loading
+  val isSuccess: Boolean = state is CapsuleListScreenState.Success
+
+  var showCapsuleList: Boolean = state is CapsuleListScreenState.Success
+
+  val capsuleList = remember {
+    mutableStateListOf<CapsuleDetails>()
+  }
+
   LaunchedEffect(key1 = Unit) {
     viewModel.getCapsulesList()
   }
 
   LaunchedEffect(key1 = state) {
     when (state) {
-      is CapsuleListScreenAuthState.Loading -> {
+      is CapsuleListScreenState.Loading -> {
       }
 
-      is CapsuleListScreenAuthState.Success -> {
+      is CapsuleListScreenState.Success -> {
+        capsuleList.clear()
+        capsuleList.addAll((state as CapsuleListScreenState.Success).capsuleList)
       }
 
-      is CapsuleListScreenAuthState.Error -> {}
-      CapsuleListScreenAuthState.Idle -> {
+      is CapsuleListScreenState.Error -> {}
+      CapsuleListScreenState.Idle -> {
       }
     }
   }
@@ -87,10 +101,10 @@ fun CapsuleCardListScreen(
         TopAppBar(
           title = {
             Text(
-              "Your Title",
+              "Time Capsule",
               style = MaterialTheme.typography.titleLarge.copy(
-                fontSize = 30.sp,
-                fontWeight = FontWeight.Bold
+                fontSize = 25.sp,
+                fontWeight = FontWeight.ExtraBold
               )
             )
           },
@@ -117,7 +131,11 @@ fun CapsuleCardListScreen(
       modifier = Modifier
           .fillMaxSize()
           .padding(paddingValues)
-          .nestedScroll(scrollBehavior.nestedScrollConnection), onCapsuleClicked
+          .nestedScroll(scrollBehavior.nestedScrollConnection),
+      isLoading = isLoading,
+      isSuccess = isSuccess,
+      capsuleList = capsuleList,
+      onCapsuleClicked = onCapsuleClicked
     )
   }
 }

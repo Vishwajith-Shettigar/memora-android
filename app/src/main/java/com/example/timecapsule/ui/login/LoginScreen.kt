@@ -358,9 +358,9 @@ fun LogInButton(isLoading: Boolean, buttonClicked: (ButtonName) -> Unit = {}) {
   ) {
     if (isLoading)
       CircularProgressIndicator(
-        modifier = Modifier.size(24.dp), // Set size of progress indicator
-        color = Color.White, // Change color if needed
-        strokeWidth = 2.dp // Adjust thickness
+        modifier = Modifier.size(24.dp),
+        color = Color.White,
+        strokeWidth = 2.dp
       )
     else
       Text(

@@ -37,6 +37,7 @@ import com.example.timecapsule.ui.theme.RubikBubble
 import com.example.timecapsule.ui.capsulelist.TimerPlaceholder
 import com.example.timecapsule.ui.selecttime.BackRow
 import com.example.timecapsule.ui.sharewithpeople.ShowSelectedPeople
+import com.google.firebase.Timestamp
 
 @Preview
 @Composable
@@ -100,7 +101,7 @@ fun TopPart(modifier: Modifier = Modifier, onBack: () -> Unit) {
           .padding(start = 10.dp)
           .zIndex(2f)
     ) {
-      TimerPlaceholder("109099D", isSmallSize = false)
+      TimerPlaceholder(Timestamp.now(), isSmallSize = false)
 
     }
   }

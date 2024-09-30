@@ -33,7 +33,9 @@ class CapsulesRemoteDataSource @Inject constructor(
             modelId = capsuleDoc.get("modelId") as Number,
             time = capsuleDoc.get("time") as Timestamp,
             users = capsuleDoc.get("users") as List<Map<String, Any>>,
-            isOwner = capsule["isOwner"] as Boolean
+            isOwner = capsule["isOwner"] as Boolean,
+            imageUrl = capsuleDoc.get("imageUrl") as String,
+            ownerUserName = capsuleDoc.get("ownerUserName") as String
           )
           capsulesDetailsList.add(capsuleDetails)
         }

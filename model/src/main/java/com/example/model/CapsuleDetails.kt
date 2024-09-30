@@ -11,5 +11,7 @@ data class CapsuleDetails(
   val isOpened: Boolean,
   val modelId: Number,
   val users: List<Map<String, Any>>,
-  val isOwner:Boolean
+  val isOwner:Boolean,
+  val imageUrl:String,
+  val ownerUserName:String,
 )
