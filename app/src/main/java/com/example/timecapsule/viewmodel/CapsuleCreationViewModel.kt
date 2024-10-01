@@ -21,18 +21,10 @@ enum class ShareWithPeopleOption {
 class CapsuleCreationViewModel @Inject constructor(
 ) : ViewModel() {
 
-  override fun onCleared() {
-    super.onCleared()
-    Log.e("#", "im cleared")
-  }
-
-  init {
-      Log.e("#","init")
-  }
-
   // store timestamp
-   var selectedTimeStamp: Timestamp? = null
-  private var shareWithPeopleOption: ShareWithPeopleOption = ShareWithPeopleOption.DONT_SHARE
+  var selectedTimeStamp: Timestamp? = null
+
+   var shareWithPeopleOption: ShareWithPeopleOption = ShareWithPeopleOption.DONT_SHARE
 
   fun setTimeStamp(p0: Timestamp) {
     selectedTimeStamp = p0
@@ -41,5 +33,4 @@ class CapsuleCreationViewModel @Inject constructor(
   fun setShareWithPeople(p0: ShareWithPeopleOption) {
     shareWithPeopleOption = p0
   }
-
 }
