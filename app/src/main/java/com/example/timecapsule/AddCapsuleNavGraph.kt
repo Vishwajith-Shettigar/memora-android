@@ -4,7 +4,12 @@ import android.app.Activity
 import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.NavHost
@@ -26,15 +31,56 @@ import com.example.timecapsule.ui.sharewithpeople.ShareOptionScreen
 import com.example.timecapsule.ui.sharewithpeople.SharePeopleOptions
 import com.example.timecapsule.ui.sharewithpeople.ShareScreen
 import com.example.timecapsule.ui.uploadfiles.UploadFilesScreen
+import com.example.timecapsule.viewmodel.CapsuleCreationViewModel
+import com.google.firebase.Timestamp
+
+
+fun NavController.isRouteInBackstack(route: String): Boolean {
+  return try {
+    getBackStackEntry(route)
+    true
+  } catch (e: IllegalArgumentException) {
+    false
+  }
+}
+
+@Composable
+fun getViewModel(navController: NavController): CapsuleCreationViewModel {
+  var backStackEntry = navController.previousBackStackEntry
+
+  if (navController.isRouteInBackstack(Screen.AddCapsuleScreens.route))
+    backStackEntry = navController.getBackStackEntry(Screen.AddCapsuleScreens.route)
+  val sharedViewModel: CapsuleCreationViewModel = backStackEntry?.let { it1 ->
+    viewModel(it1)
+  }!!
+
+  return sharedViewModel
+}
+
+@Composable
+inline fun <reified T : ViewModel> NavBackStackEntry.sharedViewModel(
+  navController: NavController,
+): T {
+  val navGraphRoute = destination.parent?.route ?: return viewModel()
+  val parentEntry = remember(this) {
+    navController.getBackStackEntry(navGraphRoute)
+  }
+  return hiltViewModel(parentEntry)
+}
 
 // Helper method for Add Capsule Flow
 fun NavGraphBuilder.addCapsuleNavGraph(navController: NavController, activity: Activity) {
+
   navigation(
     startDestination = Screen.SelectTime.route,
     route = Screen.AddCapsuleScreens.route // Separate route for Add Capsule
   ) {
-    composable(route = Screen.SelectTime.route) {
-      SelectTimeScreen { navigationFlow ->
+
+    composable(route = Screen.SelectTime.route) { backstackentry ->
+      val sharedViewModel =
+        backstackentry.sharedViewModel<CapsuleCreationViewModel>(navController = navController)
+
+      SelectTimeScreen(viewModel = sharedViewModel) { navigationFlow ->
         handleNavigation(
           activity = activity,
           navController = navController,
@@ -46,7 +92,11 @@ fun NavGraphBuilder.addCapsuleNavGraph(navController: NavController, activity: A
       }
     }
 
-    composable(route = Screen.ShareWithPeopleOptions.route) {
+    composable(route = Screen.ShareWithPeopleOptions.route) { backstackentry ->
+
+      val sharedViewModel =
+        backstackentry.sharedViewModel<CapsuleCreationViewModel>(navController = navController)
+
       ShareOptionScreen { navigationFlow, sharePeopleOption ->
         when (navigationFlow) {
           NavigationAddCapsule.BACK -> {
@@ -202,7 +252,7 @@ fun handleNavigation(
   when (navigationFlow) {
     NavigationAddCapsule.BACK -> {
       if (navigateToScreenRouteBack == null) {
-        activity.onBackPressed()
+        navController.popBackStack(Screen.AddCapsuleScreens.route, inclusive = true)
       } else {
         navController.navigate(navigateToScreenRouteBack.route) {
           popUpTo(route = popScreenRoute.route) {
