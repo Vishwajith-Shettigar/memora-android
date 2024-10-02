@@ -29,9 +29,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.ViewModel
 import com.example.timecapsule.ui.theme.SubTitleFontColor
 import com.example.timecapsule.ui.selecttime.NavigationAddCapsule
 import com.example.timecapsule.ui.selecttime.NavigationRow
+import com.example.timecapsule.viewmodel.CapsuleCreationViewModel
+import com.example.timecapsule.viewmodel.ShareWithPeopleOption
 
 enum class SharePeopleOptions {
   SELECTED_PEOPLE,
@@ -41,31 +45,46 @@ enum class SharePeopleOptions {
 
 @Preview
 @Composable
-fun ShareOptionScreen(onNavigate: (NavigationAddCapsule, SharePeopleOptions) -> Unit = { _, _ -> }) {
+fun ShareOptionScreen(
+  viewModel: CapsuleCreationViewModel = hiltViewModel(),
+  onNavigate: (NavigationAddCapsule, SharePeopleOptions) -> Unit = { _, _ -> }
+) {
   var selectedOption by rememberSaveable { mutableStateOf(SharePeopleOptions.NONE) }
-  Scaffold(modifier = Modifier
-    .fillMaxSize()
-    .background(MaterialTheme.colorScheme.primary)
-    .padding(top = 30.dp),
+  Scaffold(
+    modifier = Modifier
+        .fillMaxSize()
+        .background(MaterialTheme.colorScheme.primary)
+        .padding(top = 30.dp),
     containerColor = MaterialTheme.colorScheme.primary,
   ) { padding ->
-    Box(modifier = Modifier.padding(padding).fillMaxSize()){
+    Box(
+      modifier = Modifier
+          .padding(padding)
+          .fillMaxSize()
+    ) {
       SelectionScreen(modifier = Modifier, selectedOption) {
+        if (it == SharePeopleOptions.NONE)
+          viewModel.setShareWithPeople(ShareWithPeopleOption.DONT_SHARE)
+        else if (it == SharePeopleOptions.SELECTED_PEOPLE)
+          viewModel.setShareWithPeople(ShareWithPeopleOption.SELECTED_PEOPLES)
+        else
+          viewModel.setShareWithPeople(ShareWithPeopleOption.SHARE_ALL)
+
         selectedOption = it
 
       }
       Box(
         modifier = Modifier
-          .fillMaxWidth()
-          .padding(0.dp)
-          .align(Alignment.BottomCenter)
-          .zIndex(2f)
+            .fillMaxWidth()
+            .padding(0.dp)
+            .align(Alignment.BottomCenter)
+            .zIndex(2f)
       ) {
         NavigationRow() { navigationFlow ->
           onNavigate(navigationFlow, selectedOption)
         }
       }
- }
+    }
   }
 }
 
@@ -78,17 +97,17 @@ fun SelectionScreen(
 
   Column(
     modifier = modifier
-      .fillMaxSize()
-      .padding(16.dp),
+        .fillMaxSize()
+        .padding(16.dp),
     horizontalAlignment = Alignment.CenterHorizontally,
     verticalArrangement = Arrangement.Center
   ) {
 
     Row(
       modifier = Modifier
-        .fillMaxWidth()
-        .wrapContentHeight()
-        .weight(1f),
+          .fillMaxWidth()
+          .wrapContentHeight()
+          .weight(1f),
       horizontalArrangement = Arrangement.Start
     ) {
       Column {
@@ -141,9 +160,9 @@ fun SelectionScreen(
 fun RadioButtonOption(text: String, description: String, selected: Boolean, onClick: () -> Unit) {
   Column(
     modifier = Modifier
-      .padding(vertical = 10.dp)
-      .fillMaxWidth()
-      .wrapContentHeight()
+        .padding(vertical = 10.dp)
+        .fillMaxWidth()
+        .wrapContentHeight()
   ) {
     Row(
       modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically,

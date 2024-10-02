@@ -1,5 +1,6 @@
 package com.example.timecapsule.ui.selecttime
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -25,6 +26,7 @@ import androidx.compose.material3.TimePicker
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -42,7 +44,10 @@ import androidx.compose.ui.zIndex
 import com.example.timecapsule.R
 import com.example.timecapsule.ui.theme.NavigatioButtons
 import com.example.timecapsule.ui.util.DeviceType
+import com.example.timecapsule.viewmodel.CapsuleCreationViewModel
+import com.google.firebase.Timestamp
 import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
@@ -145,13 +150,13 @@ fun BackRow(clickedBack: () -> Unit = {}) {
 }
 
 @Composable
-fun SelectTime(modifier: Modifier = Modifier) {
-  DateTimePicker(modifier)
+fun SelectTime(modifier: Modifier = Modifier, viewModel: CapsuleCreationViewModel) {
+  DateTimePicker(modifier, viewModel)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DateTimePicker(modifier: Modifier = Modifier) {
+fun DateTimePicker(modifier: Modifier = Modifier, viewModel: CapsuleCreationViewModel) {
 
   val isTablet = DeviceType.isTablet()
   var showDatePicker by remember { mutableStateOf(true) }
@@ -167,6 +172,19 @@ fun DateTimePicker(modifier: Modifier = Modifier) {
 
   val selectedTime = timePickerState.let {
     convertToTimeFormat(it.hour, it.minute)
+  }
+
+
+
+  LaunchedEffect(selectedDate, selectedTime) {
+    val selectedTimestamp = getSelectedTimestamp(
+      datePickerState.selectedDateMillis,
+      timePickerState.hour,
+      timePickerState.minute
+    )
+    if (selectedTimestamp != null) {
+      viewModel.setTimeStamp(selectedTimestamp)
+    }
   }
 
   Column(
@@ -296,4 +314,22 @@ fun convertMillisToDate(millis: Long): String {
 
 fun convertToTimeFormat(hour: Int, minute: Int): String {
   return String.format("%02d:%02d", hour, minute)
+}
+
+fun getSelectedTimestamp(dateMillis: Long?, hour: Int, minute: Int): Timestamp? {
+  return if (dateMillis != null) {
+    val calendar = Calendar.getInstance()
+    calendar.timeInMillis = dateMillis
+
+    // Set the time from the time picker
+    calendar.set(Calendar.HOUR_OF_DAY, hour)
+    calendar.set(Calendar.MINUTE, minute)
+    calendar.set(Calendar.SECOND, 0) // Optional: set seconds to 0
+
+    // Get the Date object and convert to Firebase Timestamp
+    val selectedDate = calendar.time
+    Timestamp(selectedDate) // Convert Date to Firebase Timestamp
+  } else {
+    null
+  }
 }
