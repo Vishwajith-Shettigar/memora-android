@@ -1,5 +1,6 @@
 package com.example.timecapsule.ui.sharewithpeople
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -35,18 +36,27 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import com.example.timecapsule.R
+import com.example.timecapsule.ui.fakedata.User
 import com.example.timecapsule.ui.theme.SubTitleFontColor
 import com.example.timecapsule.ui.selecttime.NavigationRow
 import com.example.timecapsule.ui.fakedata.userList
@@ -56,6 +66,10 @@ import com.example.timecapsule.ui.util.DeviceType
 @Preview
 @Composable
 fun ShareScreen(onNavigate: (NavigationAddCapsule) -> Unit = {}) {
+
+  val selectedPeoples = remember {
+    mutableStateListOf<User>()
+  }
   Scaffold(
     modifier = Modifier
         .fillMaxSize()
@@ -68,14 +82,37 @@ fun ShareScreen(onNavigate: (NavigationAddCapsule) -> Unit = {}) {
           .fillMaxSize()
     )
     {
+      AnimatedVisibility(visible = selectedPeoples.size == 0) {
+        Text(
+          text = "You can select people by searching their username.",
+          style = MaterialTheme.typography.titleLarge.copy(fontSize = 24.sp),
+          color = MaterialTheme.colorScheme.onSurfaceVariant,
+          fontWeight = FontWeight.Bold,
+          modifier = Modifier
+              .padding(start = 15.dp, top = 50.dp, bottom = 8.dp)
+              .align(Alignment.TopStart)
+        )
+      }
+
       Column(
         Modifier
           .fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
+        verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
       ) {
-        ShowSelectedPeople(Modifier)
-        SearchPeople()
+        ShowSelectedPeople(Modifier, selectedPeoples = selectedPeoples) { userName ->
+          val newSelectedPeoples = selectedPeoples.filter { user ->
+            user.username != userName
+
+          }
+
+          selectedPeoples.clear()
+          selectedPeoples.addAll(newSelectedPeoples)
+        }
+        SearchPeople() { user ->
+          if (!selectedPeoples.contains(user))
+            selectedPeoples.add(user)
+        }
       }
       Box(
         modifier = Modifier
@@ -94,17 +131,41 @@ fun ShareScreen(onNavigate: (NavigationAddCapsule) -> Unit = {}) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchPeople() {
+fun SearchPeople(addSelectedPeople: (User) -> Unit = {}) {
   val isTablet = DeviceType.isTablet()
+
+  var searchResult = remember {
+    mutableStateListOf<User>()
+  }
+
+  var searchValue by remember {
+    mutableStateOf<String>("")
+  }
+
+  LaunchedEffect(searchValue) {
+    if (searchValue.isNotBlank()) {
+      val newResult = userList.filter { user ->
+        user.username.contains(searchValue.trim(), ignoreCase = true) || user.name.contains(
+          searchValue.trim(),
+          ignoreCase = true,
+        )
+      }
+      searchResult.clear()
+      searchResult.addAll(newResult)
+    }
+  }
+
   Column(
       Modifier
           .wrapContentSize()
           .padding(20.dp),
-    horizontalAlignment = Alignment.CenterHorizontally
+    horizontalAlignment = Alignment.CenterHorizontally,
+    verticalArrangement = Arrangement.Top
   ) {
+
     OutlinedTextField(
-      value = "",
-      onValueChange = {},
+      value = searchValue,
+      onValueChange = { searchValue = it },
       modifier =
       if (!isTablet) {
           Modifier
@@ -145,8 +206,14 @@ fun SearchPeople() {
               .background(MaterialTheme.colorScheme.primary)
       },
     ) {
-      items(userList) { user ->
-        UserInfo(user.username, user.name, user.imageResId)
+      items(searchResult) { user ->
+        UserInfo(
+          user = user,
+          userName = user.username,
+          name = user.name,
+          image = user.imageResId,
+          addSelectedPeople
+        )
       }
     }
   }
@@ -155,15 +222,17 @@ fun SearchPeople() {
 @Preview
 @Composable
 fun UserInfo(
+  user: User = User("", "", 0),
   userName: String = "Shinzo",
   name: String = "Shinzo chan",
-  image: Int = R.drawable.testimg1
+  image: Int = R.drawable.testimg1,
+  addSelectedPeople: (User) -> Unit = {}
 ) {
   val isTablet = DeviceType.isTablet()
   val interactionSource = remember { MutableInteractionSource() }
   Row(
       Modifier
-          .wrapContentWidth()
+          .fillMaxWidth()
           .wrapContentHeight()
           .padding(5.dp)
           .clickable(
@@ -171,44 +240,62 @@ fun UserInfo(
               indication = ripple()
           ),
     verticalAlignment = Alignment.CenterVertically,
-    horizontalArrangement = Arrangement.Start,
+    horizontalArrangement = Arrangement.SpaceBetween,
   ) {
-    Image(
-      painter = painterResource(id = image),
-      contentDescription = "seleccted people",
-      modifier = Modifier
-          .height(50.dp)
-          .width(50.dp)
-          .clip(shape = CircleShape),
-      contentScale = ContentScale.Crop
-    )
-    Column(
-      modifier = if (!isTablet) {
-          Modifier
-              .fillMaxWidth()
-              .wrapContentHeight()
-              .padding(horizontal = 10.dp)
-      } else {
-          Modifier
-              .widthIn(min = 500.dp, max = 900.dp)
-              .wrapContentHeight()
-              .padding(horizontal = 10.dp)
-
-      }
+    Row(
+        Modifier
+            .wrapContentWidth()
+            .wrapContentHeight(),
+      verticalAlignment = Alignment.CenterVertically,
+      horizontalArrangement = Arrangement.Start,
     ) {
-      Text(
-        text = userName,
-        style = MaterialTheme.typography.titleSmall.copy(
-          fontSize = 16.sp
-        ),
-        color = MaterialTheme.colorScheme.onSurfaceVariant
+      Image(
+        painter = painterResource(id = image),
+        contentDescription = "seleccted people",
+        modifier = Modifier
+            .height(50.dp)
+            .width(50.dp)
+            .clip(shape = CircleShape),
+        contentScale = ContentScale.Crop
       )
-      Text(
-        text = name,
-        style = MaterialTheme.typography.titleSmall.copy(
-          fontSize = 13.sp
-        ),
-        color = SubTitleFontColor
+      Column(
+        modifier = if (!isTablet) {
+            Modifier
+                .wrapContentWidth()
+                .wrapContentHeight()
+                .padding(horizontal = 10.dp)
+        } else {
+            Modifier
+                .widthIn(min = 500.dp, max = 900.dp)
+                .wrapContentHeight()
+                .padding(horizontal = 10.dp)
+
+        }
+      ) {
+        Text(
+          text = userName,
+          style = MaterialTheme.typography.titleSmall.copy(
+            fontSize = 16.sp
+          ),
+          color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        Text(
+          text = name,
+          style = MaterialTheme.typography.titleSmall.copy(
+            fontSize = 13.sp
+          ),
+          color = SubTitleFontColor
+        )
+      }
+    }
+
+    IconButton(
+      onClick = { addSelectedPeople(user) },
+    ) {
+      Icon(
+        painter = painterResource(id = com.example.timecapsule.R.drawable.ic_add),
+        contentDescription = "add icon",
+        tint = MaterialTheme.colorScheme.onSurfaceVariant
       )
     }
   }
@@ -216,22 +303,32 @@ fun UserInfo(
 
 @Preview
 @Composable
-fun ShowSelectedPeople(modifier: Modifier = Modifier, disableCrossBtn: Boolean = false) {
+fun ShowSelectedPeople(
+  modifier: Modifier = Modifier,
+  disableCrossBtn: Boolean = false,
+  selectedPeoples: List<User> = emptyList(), remove: (String) -> Unit = {}
+) {
+
   LazyHorizontalGrid(
     modifier = modifier
         .wrapContentSize()
         .height(120.dp),
     rows = GridCells.Fixed(1)
   ) {
-    items(userList + userList) { user ->
-      Profile(user.imageResId, disableCrossBtn)
+    items(selectedPeoples) { user ->
+      Profile(userName = user.username, user.imageResId, disableCrossBtn, remove)
     }
   }
 }
 
 @Preview
 @Composable
-fun Profile(imageId: Int = R.drawable.testimg1, disableCrossBtn: Boolean = false) {
+fun Profile(
+  userName: String = "",
+  imageId: Int = R.drawable.testimg1,
+  disableCrossBtn: Boolean = false,
+  remove: (String) -> Unit = {}
+) {
 
   Column(
     modifier = Modifier
@@ -248,8 +345,7 @@ fun Profile(imageId: Int = R.drawable.testimg1, disableCrossBtn: Boolean = false
           .wrapContentWidth()
           .padding(horizontal = 4.dp)
           .background(Color.Transparent),
-
-      )
+    )
     {
       Image(
         painter = painterResource(id = imageId),
@@ -263,7 +359,7 @@ fun Profile(imageId: Int = R.drawable.testimg1, disableCrossBtn: Boolean = false
       )
       if (!disableCrossBtn)
         IconButton(
-          onClick = { /*TODO*/ }, modifier = Modifier
+          onClick = { remove(userName) }, modifier = Modifier
                 .height(30.dp)
                 .width(30.dp)
                 .align(Alignment.TopEnd)

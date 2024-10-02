@@ -16,7 +16,6 @@ enum class ShareWithPeopleOption {
   SELECTED_PEOPLES
 }
 
-
 @HiltViewModel
 class CapsuleCreationViewModel @Inject constructor(
 ) : ViewModel() {
