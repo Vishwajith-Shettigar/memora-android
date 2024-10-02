@@ -116,7 +116,7 @@ fun NavGraphBuilder.addCapsuleNavGraph(navController: NavController, activity: A
       val sharedViewModel =
         backstackentry.sharedViewModel<CapsuleCreationViewModel>(navController = navController)
 
-      ShareScreen() { navigationFlow ->
+      ShareScreen(sharedViewModel) { navigationFlow ->
         handleNavigation(
           activity = activity,
           navController = navController,
