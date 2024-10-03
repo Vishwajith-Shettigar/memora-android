@@ -32,6 +32,7 @@ import com.example.timecapsule.ui.sharewithpeople.SharePeopleOptions
 import com.example.timecapsule.ui.sharewithpeople.ShareScreen
 import com.example.timecapsule.ui.uploadfiles.UploadFilesScreen
 import com.example.timecapsule.viewmodel.CapsuleCreationViewModel
+import com.example.timecapsule.viewmodel.LocationOption
 import com.example.timecapsule.viewmodel.ShareWithPeopleOption
 import com.google.firebase.Timestamp
 
@@ -130,10 +131,11 @@ fun NavGraphBuilder.addCapsuleNavGraph(navController: NavController, activity: A
     composable(route = Screen.LocationSelectionOptions.route) { backstackentry ->
       val sharedViewModel =
         backstackentry.sharedViewModel<CapsuleCreationViewModel>(navController = navController)
-      SelectLocationOptionScreen() { navigationFlow, selectionOption ->
+      SelectLocationOptionScreen(sharedViewModel) { navigationFlow, selectionOption ->
         when (navigationFlow) {
           NavigationAddCapsule.BACK -> {
-            var previousRoute = Screen.ShareWithPeopleOptions.route
+            var previousRoute =
+              Screen.ShareWithPeopleOptions.route
 
             // set previous route ShareWithPeople if user shared with selected peoples.
             if (sharedViewModel.shareWithPeopleOption == ShareWithPeopleOption.SELECTED_PEOPLES)
@@ -173,8 +175,10 @@ fun NavGraphBuilder.addCapsuleNavGraph(navController: NavController, activity: A
         }
       }
     }
-    composable(route = Screen.SelectLocation.route) {
-      SelectLocationScreen() { navigationFlow ->
+    composable(route = Screen.SelectLocation.route) { backstackentry ->
+      val sharedViewModel =
+        backstackentry.sharedViewModel<CapsuleCreationViewModel>(navController = navController)
+      SelectLocationScreen(sharedViewModel) { navigationFlow ->
         handleNavigation(
           activity = activity,
           navController = navController,
@@ -185,9 +189,14 @@ fun NavGraphBuilder.addCapsuleNavGraph(navController: NavController, activity: A
         )
       }
     }
-    composable(route = Screen.ChooseCapsuleModel.route) {
+    composable(route = Screen.ChooseCapsuleModel.route) { backstackentry ->
+      val sharedViewModel =
+        backstackentry.sharedViewModel<CapsuleCreationViewModel>(navController = navController)
       // Todo: Decide previous route based on LocationSelectionOptions selection
-      val previousRoute = Screen.SelectLocation
+      var previousRoute:Screen = Screen.SelectLocation
+      if (sharedViewModel.selectedLocationOption == LocationOption.DONT_SELECT_LOCATION)
+        previousRoute = Screen.LocationSelectionOptions
+
       SelectCapsuleScreen() { navigationFlow ->
 
         handleNavigation(

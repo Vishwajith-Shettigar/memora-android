@@ -119,7 +119,6 @@ fun ShareScreen(
         SearchPeople(viewModel) { user ->
           if (!viewModel.selectedPeoples.contains(user))
             viewModel.selectedPeoples.add(user)
-          Log.e("#", "added")
         }
       }
       Box(
@@ -157,7 +156,6 @@ fun SearchPeople(
 
   LaunchedEffect(searchValue) {
     if (searchValue.isNotBlank()) {
-      Log.e("#", searchValue)
       viewModel.searchUsers(searchValue)
     }
   }

@@ -43,7 +43,9 @@ class UserRemoteDataSource @Inject constructor(
         userName = userName,
         firstName = fName,
         lastName = lName,
-        imageUrl = defaultImageUrl
+        imageUrl = defaultImageUrl,
+        userNameLowerCase = userName.toLowerCase(),
+        firstNameLowerCase = fName.toLowerCase()
       )
 
       firestore.collection("users").document(newUserDetails.userId)
@@ -91,14 +93,14 @@ class UserRemoteDataSource @Inject constructor(
 
       // Query for userNameLower and firstNameLower
       val userNameResult = firestore.collection("users")
-        .whereGreaterThanOrEqualTo("userNameLower", lowerCaseQuery)
-        .whereLessThanOrEqualTo("userNameLower", lowerCaseQuery + '\uf8ff')
+        .whereGreaterThanOrEqualTo("userNameLowerCase", lowerCaseQuery)
+        .whereLessThanOrEqualTo("userNameLowerCase", lowerCaseQuery + '\uf8ff')
         .get()
         .await()
 
       val firstNameResult = firestore.collection("users")
-        .whereGreaterThanOrEqualTo("firstNameLower", lowerCaseQuery)
-        .whereLessThanOrEqualTo("firstNameLower", lowerCaseQuery + '\uf8ff')
+        .whereGreaterThanOrEqualTo("firstNameLowerCase", lowerCaseQuery)
+        .whereLessThanOrEqualTo("firstNameLowerCase", lowerCaseQuery + '\uf8ff')
         .get()
         .await()
 
@@ -109,7 +111,6 @@ class UserRemoteDataSource @Inject constructor(
       val uniqueResults = allResults.distinctBy { it.id }
       parseUsers((uniqueResults))
     } catch (e: Exception) {
-      Log.e("#", e.toString())
       Response.Error(e)
     }
   }
@@ -124,8 +125,15 @@ class UserRemoteDataSource @Inject constructor(
       val imageUrl = document.get("imageUrl") as String
 
       val user = UserDetails(
-        userId = userId, userName = userName, firstName = fname, lastName = lname,
-        imageUrl = imageUrl, email = "", capsuleList = emptyList()
+        userId = userId,
+        userName = userName,
+        firstName = fname,
+        lastName = lname,
+        imageUrl = imageUrl,
+        email = "",
+        capsuleList = emptyList(),
+        userNameLowerCase = "",
+        firstNameLowerCase = ""
       )
 
       users.add(user)
