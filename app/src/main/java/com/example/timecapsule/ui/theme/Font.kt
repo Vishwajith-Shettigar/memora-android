@@ -17,3 +17,7 @@ val Inter = FontFamily(
 val RubikBubble = FontFamily(
   Font(R.font.rubikbubblesregular, FontWeight.ExtraBold, FontStyle.Normal)
 )
+
+val overSeer = FontFamily(
+  Font(com.example.timecapsule.R.font.overseer)
+)
