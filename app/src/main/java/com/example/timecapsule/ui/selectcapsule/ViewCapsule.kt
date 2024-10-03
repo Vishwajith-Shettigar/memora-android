@@ -12,6 +12,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -40,8 +41,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import com.example.timecapsule.R
+import com.example.util.modelIdMap
+import com.mapbox.maps.extension.style.expressions.dsl.generated.heatmapDensity
 import io.github.sceneview.Scene
 import io.github.sceneview.SceneView
 import io.github.sceneview.animation.Transition.animateRotation
@@ -71,19 +76,43 @@ fun ViewCapsule() {
         .padding(vertical = 30.dp),
     containerColor = Color.Black,
     topBar = {
-      BackRow()
+
     },
   ) { innerPadding ->
-    Display3DModel(Modifier.padding(innerPadding))
+    Column(
+      modifier = Modifier
+          .fillMaxSize()
+          .background(Color.Red)
+    ) {
+      Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(300.dp)
+      )
+      {
+        BackRow(Modifier.padding(innerPadding))
+        Display3DModel(Modifier.padding(innerPadding))
+      }
+      Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.Black)
+            .padding(bottom = innerPadding.calculateBottomPadding(), start = 10.dp, end = 5.dp)
+            .zIndex(10.0F)
+      ) {
+        Text(text = "Im text", color = Color.White)
+      }
+    }
   }
 }
 
 @Composable
-fun BackRow() {
+fun BackRow(modifier: Modifier) {
   Row(
-    modifier = Modifier
+    modifier = modifier
         .fillMaxWidth()
-        .padding(20.dp)
+        .zIndex(10.0F)
+        .padding(horizontal = 20.dp)
         .background(Color.Transparent),
     horizontalArrangement = Arrangement.Start
   ) {
@@ -109,44 +138,40 @@ fun Display3DModel(
 ) {
   Box(
     modifier = Modifier
-      .fillMaxSize()
+        .fillMaxWidth()
+        .height(300.dp)
   ) {
-    Box(
-      modifier = Modifier
-        .align(Alignment.Center)
-    ) {
-      val engine = rememberEngine()
-      val modelLoader = rememberModelLoader(engine)
+    val engine = rememberEngine()
+    val modelLoader = rememberModelLoader(engine)
 
-      val cameraNode = rememberCameraNode(engine).apply {
-        position = Position(z = 4.0f)
-      }
-      val centerNode = rememberNode(engine).apply {
-        addChildNode(cameraNode)
-      }
-
-      Scene(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.Transparent),
-        engine = engine,
-        modelLoader = modelLoader,
-        cameraNode = cameraNode,
-        childNodes = listOf(
-          centerNode,
-          rememberNode {
-            ModelNode(
-              modelInstance = modelLoader.createModelInstance(
-                assetFileLocation = modelFileName
-              ),
-              scaleToUnits = 0.3f
-            )
-          }
-        ),
-        onFrame = {
-          cameraNode.lookAt(centerNode)
-        }
-      )
+    val cameraNode = rememberCameraNode(engine).apply {
+      position = Position(z = 4.0f)
     }
+    val centerNode = rememberNode(engine).apply {
+      addChildNode(cameraNode)
+    }
+
+    Scene(
+      modifier = Modifier
+          .fillMaxSize()
+          .align(Alignment.Center),
+      engine = engine,
+      modelLoader = modelLoader,
+      cameraNode = cameraNode,
+      childNodes = listOf(
+        centerNode,
+        rememberNode {
+          ModelNode(
+            modelInstance = modelLoader.createModelInstance(
+              assetFileLocation = modelFileName
+            ),
+            scaleToUnits = 1.7f
+          )
+        }
+      ),
+      onFrame = {
+        cameraNode.lookAt(centerNode)
+      }
+    )
   }
 }

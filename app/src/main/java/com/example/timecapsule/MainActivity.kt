@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import com.example.timecapsule.ui.selectcapsule.ViewCapsule
 import com.example.timecapsule.ui.theme.TimeCapsuleTheme
 import com.mapbox.common.MapboxOptions
 import dagger.hilt.EntryPoint
@@ -30,7 +31,7 @@ class MainActivity : ComponentActivity() {
 //        ShareScreen()
 //        SelectLocationOptionScreen()
 //        SelectCapsuleScreen()
-//        ViewCapsule()
+        ViewCapsule()
 //        UploadFilesScreen()
 //        FindCapsuleScreenV1()
 //        ReviewScreen()
@@ -40,7 +41,7 @@ class MainActivity : ComponentActivity() {
 //        NotificationScreen()
 //        LetterScreen()
 //        OnBoardingNavGraph()
-          NavGraph()
+//          NavGraph()
       }
     }
   }
