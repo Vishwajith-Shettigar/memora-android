@@ -34,6 +34,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.timecapsule.BuildConfig
@@ -43,6 +44,7 @@ import com.example.timecapsule.ui.selecttime.NavigationRow
 import com.example.timecapsule.ui.util.DeviceType
 import com.example.timecapsule.ui.util.searchPlace
 import com.example.timecapsule.ui.theme.white
+import com.example.timecapsule.viewmodel.CapsuleCreationViewModel
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.libraries.places.api.Places
@@ -56,37 +58,38 @@ import com.google.maps.android.compose.rememberCameraPositionState
 
 
 @Composable
-fun SelectLocationScreen(onNavigate: (NavigationAddCapsule) -> Unit) {
+fun SelectLocationScreen(
+  viewModel: CapsuleCreationViewModel = hiltViewModel(),
+  onNavigate: (NavigationAddCapsule) -> Unit
+) {
   if (!Places.isInitialized()) {
     Places.initialize(LocalContext.current, BuildConfig.MAPS_API_KEY)
   }
   Scaffold { padding ->
-    MyMapWithSearch(Modifier.padding(padding), onNavigate)
+    MyMapWithSearch(Modifier.padding(padding), viewModel, onNavigate)
   }
 }
 
 @Composable
-fun MyMapWithSearch(modifier: Modifier = Modifier, onNavigate: (NavigationAddCapsule) -> Unit) {
+fun MyMapWithSearch(
+  modifier: Modifier = Modifier,
+  viewModel: CapsuleCreationViewModel,
+  onNavigate: (NavigationAddCapsule) -> Unit
+) {
   val context = LocalContext.current
   val placesClient = remember { Places.createClient(context) }
   val cameraPositionState = rememberCameraPositionState {
     mutableStateOf(
       CameraPosition.fromLatLngZoom(
-        LatLng(
-          1.3521,
-          103.8198
-        ), 10f
+        viewModel.latLang, 10f
       )
     )
   }
 
-  val isSataliteView = remember {
-    mutableStateOf(false)
-  }
-  var markerPosition by remember { mutableStateOf(LatLng(1.3521, 103.8198)) }
+  val isSataliteView = viewModel.isSataliteView
 
   var markerSate by remember {
-    mutableStateOf(MarkerState(LatLng(1.3521, 103.8198)))
+    mutableStateOf(MarkerState(viewModel.latLang))
   }
 
   Box(modifier = modifier.fillMaxSize()) {
@@ -94,8 +97,8 @@ fun MyMapWithSearch(modifier: Modifier = Modifier, onNavigate: (NavigationAddCap
       searchPlace(placesClient, query) { latLng ->
         if (latLng != null) {
           cameraPositionState.position = CameraPosition.fromLatLngZoom(latLng, 15f)
-          markerPosition = latLng
           markerSate = MarkerState(latLng)
+          viewModel.latLang=latLng
         } else {
           Unit
         }
@@ -106,6 +109,7 @@ fun MyMapWithSearch(modifier: Modifier = Modifier, onNavigate: (NavigationAddCap
       cameraPositionState = cameraPositionState,
       uiSettings = MapUiSettings(zoomControlsEnabled = true), onMapClick = { latLng ->
         markerSate = MarkerState(latLng)
+        viewModel.latLang=latLng
 
       },
       properties = if (isSataliteView.value) {

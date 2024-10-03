@@ -7,5 +7,7 @@ data class UserDetails(
   val lastName: String? = null,
   val email: String,
   val imageUrl: String,
-  val capsuleList: List<Map<String,Any>> = emptyList()
+  val capsuleList: List<Map<String,Any>> = emptyList(),
+  val userNameLowerCase:String,
+  val firstNameLowerCase:String
 )

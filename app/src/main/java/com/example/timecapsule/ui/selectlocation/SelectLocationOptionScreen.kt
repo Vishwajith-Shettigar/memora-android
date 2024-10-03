@@ -27,9 +27,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.timecapsule.ui.theme.SubTitleFontColor
 import com.example.timecapsule.ui.selecttime.NavigationAddCapsule
 import com.example.timecapsule.ui.selecttime.NavigationRow
+import com.example.timecapsule.viewmodel.CapsuleCreationViewModel
+import com.example.timecapsule.viewmodel.LocationOption
 
 enum class LocationOptions {
   SELECTED,
@@ -38,7 +41,10 @@ enum class LocationOptions {
 
 @Preview
 @Composable
-fun SelectLocationOptionScreen(onNavigate: (NavigationAddCapsule, LocationOptions) -> Unit = { _, _ -> }) {
+fun SelectLocationOptionScreen(
+  viewModel: CapsuleCreationViewModel = hiltViewModel(),
+  onNavigate: (NavigationAddCapsule, LocationOptions) -> Unit = { _, _ -> }
+) {
   var selectedOption by rememberSaveable { mutableStateOf(LocationOptions.NONE) }
 
   Scaffold(
@@ -55,6 +61,11 @@ fun SelectLocationOptionScreen(onNavigate: (NavigationAddCapsule, LocationOption
           .fillMaxSize()
     ) {
       SelectionScreen(modifier = Modifier.padding(padding), selectedOption) {
+        if (it==LocationOptions.NONE)
+          viewModel.setLocationOption(LocationOption.DONT_SELECT_LOCATION)
+        else
+          viewModel.setLocationOption(LocationOption.SELECT_LOCATION)
+
         selectedOption = it
       }
       Box(

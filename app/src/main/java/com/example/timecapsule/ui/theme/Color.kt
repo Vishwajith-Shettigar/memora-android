@@ -44,4 +44,4 @@ val LightBlue= Color(0xFF638BF8)
 
 val ReviewScreenCommondColor= Color(0xFF5C82EB)
 
-
+val viewCapsuleDark= Color(0xFF121212)

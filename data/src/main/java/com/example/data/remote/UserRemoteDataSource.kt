@@ -9,7 +9,9 @@ import com.example.util.UsernameAlreadyExistsException
 import com.example.util.defaultPictures
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.QuerySnapshot
 import javax.inject.Inject
+import kotlin.math.ln
 import kotlin.random.Random
 import kotlinx.coroutines.tasks.await
 
@@ -41,7 +43,9 @@ class UserRemoteDataSource @Inject constructor(
         userName = userName,
         firstName = fName,
         lastName = lName,
-        imageUrl = defaultImageUrl
+        imageUrl = defaultImageUrl,
+        userNameLowerCase = userName.toLowerCase(),
+        firstNameLowerCase = fName.toLowerCase()
       )
 
       firestore.collection("users").document(newUserDetails.userId)
@@ -81,5 +85,59 @@ class UserRemoteDataSource @Inject constructor(
     } catch (e: Exception) {
       Response.Error(AskDetailsException())
     }
+  }
+
+  suspend fun searchUsers(query: String): Response<List<UserDetails>> {
+    return try {
+      val lowerCaseQuery = query.lowercase()
+
+      // Query for userNameLower and firstNameLower
+      val userNameResult = firestore.collection("users")
+        .whereGreaterThanOrEqualTo("userNameLowerCase", lowerCaseQuery)
+        .whereLessThanOrEqualTo("userNameLowerCase", lowerCaseQuery + '\uf8ff')
+        .get()
+        .await()
+
+      val firstNameResult = firestore.collection("users")
+        .whereGreaterThanOrEqualTo("firstNameLowerCase", lowerCaseQuery)
+        .whereLessThanOrEqualTo("firstNameLowerCase", lowerCaseQuery + '\uf8ff')
+        .get()
+        .await()
+
+      // Combine both results
+      val allResults = userNameResult.documents + firstNameResult.documents
+
+      // Remove duplicates by document ID
+      val uniqueResults = allResults.distinctBy { it.id }
+      parseUsers((uniqueResults))
+    } catch (e: Exception) {
+      Response.Error(e)
+    }
+  }
+
+  private fun parseUsers(snapshot: List<DocumentSnapshot>): Response<List<UserDetails>> {
+    val users = mutableListOf<UserDetails>()
+    for (document in snapshot) {
+      val userName = document.get("userName") as String
+      val userId = document.get("userId") as String
+      val fname = document.get("firstName") as String
+      val lname = document.get("lastName") as String
+      val imageUrl = document.get("imageUrl") as String
+
+      val user = UserDetails(
+        userId = userId,
+        userName = userName,
+        firstName = fname,
+        lastName = lname,
+        imageUrl = imageUrl,
+        email = "",
+        capsuleList = emptyList(),
+        userNameLowerCase = "",
+        firstNameLowerCase = ""
+      )
+
+      users.add(user)
+    }
+    return Response.Success(users)
   }
 }
