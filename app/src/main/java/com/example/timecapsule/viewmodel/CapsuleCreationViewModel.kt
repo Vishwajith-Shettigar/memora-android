@@ -1,5 +1,6 @@
 package com.example.timecapsule.viewmodel
 
+import android.net.Uri
 import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
@@ -8,7 +9,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.domain.usecase.SearchUsersUseCase
+import com.example.domain.usecase.UploadFilesUseCase
+import com.example.model.FileUploadProgress
+import com.example.model.FileUploaded
 import com.example.model.UserDetails
 import com.example.timecapsule.routes.Screen
 import com.example.util.Response
@@ -17,9 +22,12 @@ import com.google.firebase.Timestamp
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.lang.Exception
 import javax.inject.Inject
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 sealed class SearchPeopleState {
   object Idle : SearchPeopleState()
@@ -40,17 +48,28 @@ enum class LocationOption {
 
 @HiltViewModel
 class CapsuleCreationViewModel @Inject constructor(
-  private val searchUsersUseCase: SearchUsersUseCase
+  private val searchUsersUseCase: SearchUsersUseCase,
+  private val uploadFilesUseCase: UploadFilesUseCase
 ) : ViewModel() {
+
+  private var totalFiles: Int = 0
+
 
   private val _searchPeopleState = MutableStateFlow<SearchPeopleState>(SearchPeopleState.Idle)
   val searchPeopleState: StateFlow<SearchPeopleState> = _searchPeopleState
+
+  private val _fileProgrerssState =
+    MutableStateFlow<MutableList<FileUploadProgress>>(mutableListOf())
+  val fileProgrerssState: StateFlow<MutableList<FileUploadProgress>> = _fileProgrerssState
+
+  private val _fileUploadedState =
+    MutableStateFlow<MutableList<FileUploaded>>(mutableListOf())
+  val fileUploadedState: StateFlow<MutableList<FileUploaded>> = _fileUploadedState
 
   val selectedPeoples = mutableStateListOf<UserDetails>()
 
   val isSataliteView =
     mutableStateOf(false)
-
 
   var latLang =
     LatLng(
@@ -58,6 +77,25 @@ class CapsuleCreationViewModel @Inject constructor(
       103.8198
     )
 
+  fun getFileStatus() {
+    viewModelScope.launch {
+      withContext(Dispatchers.IO) {
+        while (true) {
+          if (totalFiles != fileUploadedState.value.size) {
+            delay(5000)
+            if (_fileProgrerssState.value.size != 0) {
+              Log.e("#", _fileProgrerssState.value?.get(0)?.progress.toString())
+            }
+            _fileProgrerssState.value = uploadFilesUseCase.getUploadProgress().toMutableList()
+            if (_fileProgrerssState.value.size != 0) {
+              Log.e("#", _fileProgrerssState.value?.get(0)?.progress.toString())
+            }
+            _fileUploadedState.value = uploadFilesUseCase.getUploadedFiles().toMutableList()
+          }
+        }
+      }
+    }
+  }
 
   // Store timestamp
   var selectedTimeStamp: Timestamp? = null
@@ -82,18 +120,29 @@ class CapsuleCreationViewModel @Inject constructor(
 
   fun searchUsers(query: String) {
     viewModelScope.launch {
-      val result = searchUsersUseCase(query)
-      _searchPeopleState.value = when (result) {
-        is Response.Success -> {
-          SearchPeopleState.Success(result.data!!)
-        }
+      withContext(Dispatchers.IO) {
+        val result = searchUsersUseCase(query)
+        _searchPeopleState.value = when (result) {
+          is Response.Success -> {
+            SearchPeopleState.Success(result.data!!)
+          }
 
-        is Response.Error -> {
-          SearchPeopleState.Error(
-            exception = result.exception,
-            message = result.exception.message!!
-          )
+          is Response.Error -> {
+            SearchPeopleState.Error(
+              exception = result.exception,
+              message = result.exception.message!!
+            )
+          }
         }
+      }
+    }
+  }
+
+  fun uploadFiles(uri: Uri) {
+    totalFiles++
+    viewModelScope.launch {
+      withContext(Dispatchers.IO) {
+        uploadFilesUseCase.uploadFile(uri)
       }
     }
   }

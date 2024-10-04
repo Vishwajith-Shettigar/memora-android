@@ -1,5 +1,15 @@
 package com.example.timecapsule.ui.uploadfiles
 
+import android.app.Activity
+import android.content.Intent
+import android.content.pm.LauncherActivityInfo
+import android.content.pm.LauncherApps
+import android.net.Uri
+import android.util.Log
+import androidx.activity.compose.ManagedActivityResultLauncher
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -44,26 +54,99 @@ import com.example.timecapsule.R
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.model.FileUploadProgress
+import com.example.model.FileUploaded
 import com.example.timecapsule.ui.theme.LightBlue
 import com.example.timecapsule.ui.theme.NavigatioButtons
 import com.example.timecapsule.ui.theme.SubTitleFontColor
 import com.example.timecapsule.ui.selecttime.NavigationAddCapsule
 import com.example.timecapsule.ui.selecttime.NavigationRow
 import com.example.timecapsule.ui.util.DeviceType
+import com.example.timecapsule.viewmodel.CapsuleCreationViewModel
+import com.example.util.fileImageMap
+import com.example.util.getFileImageID
+
+val FILE_SELECT_CODE = 101
+
+lateinit var filePickerLauncher: ManagedActivityResultLauncher<Intent, *>
+
+@Composable
+fun FilePicker(viewModel: CapsuleCreationViewModel) {
+  // State to store selected URIs
+  val context = LocalContext.current
+  val selectedUris = remember { mutableStateListOf<Uri>() }
+
+  // Create a launcher for the file selection activity
+  filePickerLauncher = rememberLauncherForActivityResult(
+    contract = ActivityResultContracts.StartActivityForResult()
+  ) { result ->
+    if (result.resultCode == Activity.RESULT_OK) {
+      val data: Intent? = result.data
+
+      // Check if multiple files were selected
+      if (data?.clipData != null) {
+        val clipData = data.clipData
+        for (i in 0 until clipData!!.itemCount) {
+          val fileUri = clipData.getItemAt(i).uri
+          Log.e("#", fileUri.toString())
+          viewModel.uploadFiles(uri = fileUri)
+        }
+      } else if (data?.data != null) {
+        // Single file selected
+        val fileUri = data.data
+        fileUri?.let {
+          Log.e("#", fileUri.toString())
+          viewModel.uploadFiles(uri = it)
+        }
+      }
+    }
+  }
+}
+
+// Function to trigger the file picker
+fun openFilePicker() {
+  val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+    addCategory(Intent.CATEGORY_OPENABLE)
+    type = "*/*" // Accept any file type
+    putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true) // Allow multiple selection
+  }
+  filePickerLauncher.launch(intent)
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
-fun UploadFilesScreen(onNavigate: (NavigationAddCapsule) -> Unit = {}) {
-  val isTablet = DeviceType.isTablet()
+fun UploadFilesScreen(
+  viewModel: CapsuleCreationViewModel = hiltViewModel(),
+  onNavigate: (NavigationAddCapsule) -> Unit = {}
+) {
 
+  viewModel.getFileStatus()
+  val fileUploadProgress by viewModel.fileProgrerssState.collectAsState()
+  val fileUploaded by viewModel.fileUploadedState.collectAsState()
+
+  Log.e("#", "compse " + fileUploadProgress.size)
+
+  LaunchedEffect(key1 = fileUploadProgress) {
+    if (fileUploadProgress.size != 0)
+      Log.e("#", "Laucnhed efffect " + fileUploadProgress[0].progress.toString())
+    else {
+      Log.e("#", "Laucnhed efffect " + "Zero")
+    }
+  }
+
+  val isTablet = DeviceType.isTablet()
+  FilePicker(viewModel)
   Scaffold(
     modifier = Modifier.background(MaterialTheme.colorScheme.primary),
     topBar = {
@@ -108,11 +191,9 @@ fun UploadFilesScreen(onNavigate: (NavigationAddCapsule) -> Unit = {}) {
             .padding(horizontal = 10.dp)
             .fillMaxSize(),
       ) {
-
         item { UploadFileCard() }
-        item { OngoingUpload() }
-        item { Uploaded() }
-
+        item { OngoingUpload(fileUploadProgress) }
+        item { Uploaded(fileUploaded) }
       }
       Box(
         modifier = Modifier
@@ -129,44 +210,41 @@ fun UploadFilesScreen(onNavigate: (NavigationAddCapsule) -> Unit = {}) {
   }
 }
 
-@Preview(showBackground = true)
 @Composable
-fun Uploaded() {
-  Column(
-    modifier = Modifier
-      .fillMaxWidth()
-      .wrapContentHeight()
-      .background(MaterialTheme.colorScheme.primary)
-      .padding(start = 10.dp, end = 10.dp, top = 20.dp, bottom = 50.dp)
-  )
-  {
-    Text(
-      text = "Uploaded Files",
-      style = MaterialTheme.typography.titleLarge.copy(
-        fontSize = 16.sp,
-        fontWeight = FontWeight.Bold,
-        color = MaterialTheme.colorScheme.onSurfaceVariant
-      )
-    )
-    Column(
-      modifier = Modifier
-        .fillMaxWidth()
-        .wrapContentHeight()
-        .padding(vertical = 5.dp)
-    ) {
-      UploadedFileItem(title = "Lorem ipsum", "21.9 MB", R.drawable.pdf)
-      UploadedFileItem(title = "Lorem ipsum puioka", "11.9 MB", R.drawable.xls)
-
-
-    }
-
-  }
+fun Uploaded(fileUploaded: List<FileUploaded>) {
+//  Column(
+//    modifier = Modifier
+//        .fillMaxWidth()
+//        .wrapContentHeight()
+//        .background(MaterialTheme.colorScheme.primary)
+//        .padding(start = 10.dp, end = 10.dp, top = 20.dp, bottom = 50.dp)
+//  )
+//  {
+//    Text(
+//      text = "Uploaded Files",
+//      style = MaterialTheme.typography.titleLarge.copy(
+//        fontSize = 16.sp,
+//        fontWeight = FontWeight.Bold,
+//        color = MaterialTheme.colorScheme.onSurfaceVariant
+//      )
+//    )
+//    Column(
+//      modifier = Modifier
+//          .fillMaxWidth()
+//          .wrapContentHeight()
+//          .padding(vertical = 5.dp)
+//    ) {
+//      fileUploaded.forEach {
+//        UploadedFileItem(title = it.fileName, it.totalSize.toString(), getFileImageID(it.fileType))
+//      }
+////      UploadedFileItem(title = "Lorem ipsum puioka", "11.9 MB", R.drawable.xls)
+//    }
+//  }
 }
 
-@Preview(showBackground = true)
 @Composable
-fun OngoingUpload() {
-  Column(
+fun OngoingUpload(fileUploadProgress: MutableList<FileUploadProgress>) {
+  Box(
     modifier = Modifier
       .fillMaxWidth()
       .wrapContentHeight()
@@ -189,27 +267,16 @@ fun OngoingUpload() {
         .wrapContentHeight()
         .padding(vertical = 5.dp)
     ) {
-      UploadingFileItem(
-        title = "Family time", icon = R.drawable.videocamera, uploadProgress = 6F,
-        isUploading = true, fileSize = "6.5 MB of 100.8 MB"
-      )
-
-      UploadingFileItem(
-        title = "Pet shinzo", icon = R.drawable.image, uploadProgress = 61F,
-        isUploading = true, fileSize = "5.5 MB of 4.8 MB"
-      )
-      UploadingFileItem(
-        title = "Project report", icon = R.drawable.doc, uploadProgress = 11F,
-        isUploading = true, fileSize = "0.5 MB of 4.8 MB"
-      )
-      UploadingFileItem(
-        title = "Time management", icon = R.drawable.xls, uploadProgress = 97F,
-        isUploading = true, fileSize = "11.5 MB of 11.8 MB"
-      )
-      UploadingFileItem(
-        title = "SRS", icon = R.drawable.pdf, uploadProgress = 100F,
-        isUploading = false, fileSize = "21.8 MB of 21.8 MB"
-      )
+      fileUploadProgress.forEach {
+        Log.e("#", it.fileName + "  " + it.fileType)
+        UploadingFileItem(
+          title = it.fileName,
+          icon = com.example.timecapsule.R.drawable.doc,
+          uploadProgress = it.progress.toFloat(),
+          isUploading = true,
+          fileSize = "${it.uploadedSize} of ${it.totalSize}"
+        )
+      }
     }
 
   }
@@ -349,11 +416,18 @@ fun UploadingFileItem(
 @Preview(showBackground = true)
 @Composable
 fun UploadFileCard() {
+  val context = LocalContext.current
+  val activity = context as? Activity
+
   val stroke = Stroke(
     width = 2f,
     pathEffect = PathEffect.dashPathEffect(floatArrayOf(10f, 10f), 0f)
   )
-  Card(
+  Card(onClick = {
+    activity?.let {
+      openFilePicker()
+    }
+  },
     colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary),
     shape = RoundedCornerShape(8.dp),
     modifier = Modifier

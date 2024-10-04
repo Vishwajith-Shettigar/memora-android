@@ -3,6 +3,7 @@ package com.example.di
 import com.example.data.repository.AuthRepository
 import com.example.data.repository.AuthRepositoryImpl
 import com.example.data.repository.CapsulesRepository
+import com.example.data.repository.UploadFileRepository
 import com.example.data.repository.UserRepository
 import com.example.domain.usecase.GetCapsuleListUseCase
 import com.example.domain.usecase.OnBoardingDataUseCase
@@ -11,6 +12,7 @@ import com.example.domain.usecase.SearchUsersUseCase
 import com.example.domain.usecase.SignInUseCase
 import com.example.domain.usecase.SignOutUseCase
 import com.example.domain.usecase.SignUpUseCase
+import com.example.domain.usecase.UploadFilesUseCase
 import com.example.domain.usecase.getAuthUseCase
 import dagger.Binds
 import dagger.Module
@@ -72,5 +74,11 @@ class ViewModelModule {
   @ViewModelScoped
   fun provideSearchUsersUseCase(userRepository: UserRepository): SearchUsersUseCase {
     return SearchUsersUseCase(userRepository)
+  }
+
+  @Provides
+  @ViewModelScoped
+  fun provideUploadFilesUseCase(fileRepository: UploadFileRepository): UploadFilesUseCase {
+    return UploadFilesUseCase(fileRepository)
   }
 }

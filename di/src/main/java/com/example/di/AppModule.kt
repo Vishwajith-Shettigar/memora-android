@@ -3,17 +3,21 @@ package com.example.di
 import android.content.Context
 import com.example.data.remote.AuthRemoteDataSource
 import com.example.data.remote.CapsulesRemoteDataSource
+import com.example.data.remote.FilesRemoteDataSource
 import com.example.data.remote.UserRemoteDataSource
 import com.example.data.repository.AuthRepository
 import com.example.data.repository.AuthRepositoryImpl
 import com.example.data.repository.CapsulesRepository
 import com.example.data.repository.CapsulesRepositoryImpl
+import com.example.data.repository.UploadFileRepository
+import com.example.data.repository.UploadFileRepositoryImpl
 import com.example.data.repository.UserRepository
 import com.example.data.repository.UserRepositoryImpl
 import com.example.data.sharedpreference.SharedPreferencesHelper
 import com.example.domain.usecase.OnBoardingDataUseCase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -38,6 +42,9 @@ abstract class AppModule {
   @Singleton
   abstract fun bindCapsulesRepository(capsulesRepositoryImpl: CapsulesRepositoryImpl): CapsulesRepository
 
+  @Binds
+  @Singleton
+  abstract fun bindUploadFilesRepository(uploadFileRepositoryImpl: UploadFileRepositoryImpl): UploadFileRepository
 
   companion object {
 
@@ -67,10 +74,25 @@ abstract class AppModule {
 
     @Provides
     @Singleton
+    fun provideFirebaseStorage(): FirebaseStorage {
+      return FirebaseStorage.getInstance()
+    }
+
+    @Provides
+    @Singleton
     fun provideAuthRemoteDataSource(
       firebaseAuth: FirebaseAuth
     ): AuthRemoteDataSource {
       return AuthRemoteDataSource(firebaseAuth)
+    }
+
+    @Provides
+    @Singleton
+    fun provideFilesRemoteDataSource(
+      firebaseStorage: FirebaseStorage,
+      @ApplicationContext context: Context
+    ): FilesRemoteDataSource {
+      return FilesRemoteDataSource(firebaseStorage, context)
     }
 
     @Provides

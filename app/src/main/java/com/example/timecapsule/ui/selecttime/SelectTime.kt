@@ -77,7 +77,6 @@ fun NavigationRow(showBackBtn: Boolean = true, onClick: (NavigationAddCapsule) -
       Arrangement.SpaceBetween,
     verticalAlignment = Alignment.CenterVertically
   ) {
-
     Box(
       modifier =
       Modifier
@@ -92,7 +91,6 @@ fun NavigationRow(showBackBtn: Boolean = true, onClick: (NavigationAddCapsule) -
         IconButton(
           onClick = { onClick(NavigationAddCapsule.BACK) },
           modifier = Modifier.align(Alignment.Center)
-
         ) {
           Icon(
             painter = painterResource(id = R.drawable.ic_back_arrow), contentDescription = "back",
