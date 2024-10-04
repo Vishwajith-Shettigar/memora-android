@@ -72,11 +72,9 @@ import com.example.timecapsule.ui.theme.SubTitleFontColor
 import com.example.timecapsule.ui.selecttime.NavigationAddCapsule
 import com.example.timecapsule.ui.selecttime.NavigationRow
 import com.example.timecapsule.ui.util.DeviceType
+import com.example.timecapsule.util.getFileImageID
 import com.example.timecapsule.viewmodel.CapsuleCreationViewModel
-import com.example.util.fileImageMap
-import com.example.util.getFileImageID
-
-val FILE_SELECT_CODE = 101
+import com.example.timecapsule.viewmodel.StorageWarningState
 
 lateinit var filePickerLauncher: ManagedActivityResultLauncher<Intent, *>
 
@@ -98,14 +96,12 @@ fun FilePicker(viewModel: CapsuleCreationViewModel) {
         val clipData = data.clipData
         for (i in 0 until clipData!!.itemCount) {
           val fileUri = clipData.getItemAt(i).uri
-          Log.e("#", fileUri.toString())
           viewModel.uploadFiles(uri = fileUri)
         }
       } else if (data?.data != null) {
         // Single file selected
         val fileUri = data.data
         fileUri?.let {
-          Log.e("#", fileUri.toString())
           viewModel.uploadFiles(uri = it)
         }
       }
@@ -117,10 +113,55 @@ fun FilePicker(viewModel: CapsuleCreationViewModel) {
 fun openFilePicker() {
   val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
     addCategory(Intent.CATEGORY_OPENABLE)
-    type = "*/*" // Accept any file type
-    putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true) // Allow multiple selection
+    type = "*/*"
+    putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
   }
   filePickerLauncher.launch(intent)
+}
+
+@Composable
+fun StorageWarningDialog(
+  onDismiss: () -> Unit = {}
+) {
+  // The dialog content with the message and buttons
+  AlertDialog(
+    onDismissRequest = onDismiss, // Close the dialog when dismissed
+    title = {
+      Text(
+        text = "Capsule Storage full",
+        style = MaterialTheme.typography.titleLarge.copy(
+          fontSize = 20.sp,
+          fontWeight = FontWeight.Bold,
+          color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+      )
+    },
+    text = {
+      Text(
+        text = "Your capsule is full already, if you want to add more files please use other capsules.",
+        style = MaterialTheme.typography.titleLarge.copy(
+          fontSize = 16.sp,
+          color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+      )
+    },
+    confirmButton = {
+    },
+    dismissButton = {
+      Button(colors = ButtonDefaults.buttonColors(containerColor = LightBlue),
+        onClick = {
+          onDismiss()
+        }
+      ) {
+        Text(
+          "Ok", style = MaterialTheme.typography.titleLarge.copy(
+            fontSize = 12.sp,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+          )
+        )
+      }
+    }
+  )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -135,13 +176,11 @@ fun UploadFilesScreen(
   val fileUploadProgress by viewModel.fileProgrerssState.collectAsState()
   val fileUploaded by viewModel.fileUploadedState.collectAsState()
 
-  Log.e("#", "compse " + fileUploadProgress.size)
+  val storageWarningState by viewModel.storageWarningState.collectAsState()
 
-  LaunchedEffect(key1 = fileUploadProgress) {
-    if (fileUploadProgress.size != 0)
-      Log.e("#", "Laucnhed efffect " + fileUploadProgress[0].progress.toString())
-    else {
-      Log.e("#", "Laucnhed efffect " + "Zero")
+  if (storageWarningState == StorageWarningState.Warning) {
+    StorageWarningDialog() {
+      viewModel.setStorageNoWaringState()
     }
   }
 
@@ -154,8 +193,8 @@ fun UploadFilesScreen(
         title = {
           Box(
             modifier = Modifier
-              .fillMaxWidth()
-              .background(MaterialTheme.colorScheme.primary),
+                .fillMaxWidth()
+                .background(MaterialTheme.colorScheme.primary),
             contentAlignment = Alignment.Center
           ) {
             Text(
@@ -176,20 +215,20 @@ fun UploadFilesScreen(
   ) { innerPadding ->
     Box(
       modifier = Modifier
-        .fillMaxSize()
-        .padding(innerPadding)
+          .fillMaxSize()
+          .padding(innerPadding)
     )
     {
       LazyColumn(
         modifier = if (isTablet)
-          Modifier
-            .padding(horizontal = 10.dp)
-            .width(800.dp)
-            .align(Alignment.Center)
+            Modifier
+                .padding(horizontal = 10.dp)
+                .width(800.dp)
+                .align(Alignment.Center)
         else
-          Modifier
-            .padding(horizontal = 10.dp)
-            .fillMaxSize(),
+            Modifier
+                .padding(horizontal = 10.dp)
+                .fillMaxSize(),
       ) {
         item { UploadFileCard() }
         item { OngoingUpload(fileUploadProgress) }
@@ -197,10 +236,10 @@ fun UploadFilesScreen(
       }
       Box(
         modifier = Modifier
-          .fillMaxWidth()
-          .padding(0.dp)
-          .align(Alignment.BottomCenter)
-          .zIndex(2f)
+            .fillMaxWidth()
+            .padding(0.dp)
+            .align(Alignment.BottomCenter)
+            .zIndex(2f)
       ) {
         NavigationRow() {
           onNavigate(it)
@@ -212,45 +251,44 @@ fun UploadFilesScreen(
 
 @Composable
 fun Uploaded(fileUploaded: List<FileUploaded>) {
-//  Column(
-//    modifier = Modifier
-//        .fillMaxWidth()
-//        .wrapContentHeight()
-//        .background(MaterialTheme.colorScheme.primary)
-//        .padding(start = 10.dp, end = 10.dp, top = 20.dp, bottom = 50.dp)
-//  )
-//  {
-//    Text(
-//      text = "Uploaded Files",
-//      style = MaterialTheme.typography.titleLarge.copy(
-//        fontSize = 16.sp,
-//        fontWeight = FontWeight.Bold,
-//        color = MaterialTheme.colorScheme.onSurfaceVariant
-//      )
-//    )
-//    Column(
-//      modifier = Modifier
-//          .fillMaxWidth()
-//          .wrapContentHeight()
-//          .padding(vertical = 5.dp)
-//    ) {
-//      fileUploaded.forEach {
-//        UploadedFileItem(title = it.fileName, it.totalSize.toString(), getFileImageID(it.fileType))
-//      }
-////      UploadedFileItem(title = "Lorem ipsum puioka", "11.9 MB", R.drawable.xls)
-//    }
-//  }
+  Column(
+    modifier = Modifier
+        .fillMaxWidth()
+        .wrapContentHeight()
+        .background(MaterialTheme.colorScheme.primary)
+        .padding(start = 10.dp, end = 10.dp, top = 20.dp, bottom = 50.dp)
+  )
+  {
+    Text(
+      text = "Uploaded Files",
+      style = MaterialTheme.typography.titleLarge.copy(
+        fontSize = 16.sp,
+        fontWeight = FontWeight.Bold,
+        color = MaterialTheme.colorScheme.onSurfaceVariant
+      )
+    )
+    Column(
+      modifier = Modifier
+          .fillMaxWidth()
+          .wrapContentHeight()
+          .padding(vertical = 5.dp)
+    ) {
+      fileUploaded.forEach {
+        UploadedFileItem(title = it.fileName, it.totalSize.toString(), getFileImageID(it.fileType))
+      }
+    }
+  }
 }
 
 @Composable
-fun OngoingUpload(fileUploadProgress: MutableList<FileUploadProgress>) {
-  Box(
+fun OngoingUpload(fileUploadProgress: List<FileUploadProgress>) {
+  Column(
     modifier = Modifier
-      .fillMaxWidth()
-      .wrapContentHeight()
-      .clip(shape = RoundedCornerShape(10.dp))
-      .background(MaterialTheme.colorScheme.primaryContainer)
-      .padding(horizontal = 10.dp, vertical = 20.dp)
+        .fillMaxWidth()
+        .wrapContentHeight()
+        .clip(shape = RoundedCornerShape(10.dp))
+        .background(MaterialTheme.colorScheme.primaryContainer)
+        .padding(horizontal = 10.dp, vertical = 20.dp)
   )
   {
     Text(
@@ -263,9 +301,9 @@ fun OngoingUpload(fileUploadProgress: MutableList<FileUploadProgress>) {
     )
     Column(
       modifier = Modifier
-        .fillMaxWidth()
-        .wrapContentHeight()
-        .padding(vertical = 5.dp)
+          .fillMaxWidth()
+          .wrapContentHeight()
+          .padding(vertical = 5.dp)
     ) {
       fileUploadProgress.forEach {
         Log.e("#", it.fileName + "  " + it.fileType)
@@ -293,9 +331,9 @@ fun UploadedFileItem(
   Row(
     verticalAlignment = Alignment.CenterVertically,
     modifier = Modifier
-      .fillMaxWidth()
-      .background(MaterialTheme.colorScheme.primary)
-      .padding(5.dp)
+        .fillMaxWidth()
+        .background(MaterialTheme.colorScheme.primary)
+        .padding(5.dp)
   ) {
     Image(
       painter = painterResource(id = icon),
@@ -330,11 +368,11 @@ fun UploadedFileItem(
       IconButton(
         onClick = onDeleteClick,
         modifier = Modifier
-          .size(40.dp)
-          .background(
-            color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.6F),
-            shape = CircleShape
-          )
+            .size(40.dp)
+            .background(
+                color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.6F),
+                shape = CircleShape
+            )
       ) {
         Icon(
           painter = painterResource(id = R.drawable.ic_delete), // Replace with your actual delete icon resource
@@ -355,8 +393,8 @@ fun UploadingFileItem(
   Row(
     verticalAlignment = Alignment.CenterVertically,
     modifier = Modifier
-      .background(MaterialTheme.colorScheme.primaryContainer)
-      .padding(5.dp)
+        .background(MaterialTheme.colorScheme.primaryContainer)
+        .padding(5.dp)
   ) {
     Image(
       painter = painterResource(id = icon),
@@ -431,21 +469,21 @@ fun UploadFileCard() {
     colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary),
     shape = RoundedCornerShape(8.dp),
     modifier = Modifier
-      .fillMaxWidth()
-      .height(150.dp)
-      .padding(horizontal = 3.dp, vertical = 10.dp)
-      .drawBehind {
-        drawRoundRect(
-          color = LightBlue,
-          style = stroke,
-          cornerRadius = CornerRadius(8.dp.toPx())
-        )
-      }
+        .fillMaxWidth()
+        .height(150.dp)
+        .padding(horizontal = 3.dp, vertical = 10.dp)
+        .drawBehind {
+            drawRoundRect(
+                color = LightBlue,
+                style = stroke,
+                cornerRadius = CornerRadius(8.dp.toPx())
+            )
+        }
   ) {
     Column(
       modifier = Modifier
-        .fillMaxSize()
-        .padding(vertical = 20.dp),
+          .fillMaxSize()
+          .padding(vertical = 20.dp),
       horizontalAlignment = Alignment.CenterHorizontally,
       verticalArrangement = Arrangement.SpaceBetween
     ) {

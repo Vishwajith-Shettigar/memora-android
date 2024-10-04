@@ -1,5 +1,6 @@
 package com.example.timecapsule.viewmodel
 
+import android.content.Context
 import android.net.Uri
 import android.util.Log
 import androidx.compose.runtime.MutableState
@@ -17,9 +18,12 @@ import com.example.model.FileUploaded
 import com.example.model.UserDetails
 import com.example.timecapsule.routes.Screen
 import com.example.util.Response
+import com.example.util.bytesToMegabytes
+import com.example.util.getFileSizeAndName
 import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.Timestamp
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import java.lang.Exception
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
@@ -46,25 +50,39 @@ enum class LocationOption {
   DONT_SELECT_LOCATION
 }
 
+sealed class StorageWarningState {
+  object NoWarning : StorageWarningState()
+  object Warning : StorageWarningState()
+}
+
 @HiltViewModel
 class CapsuleCreationViewModel @Inject constructor(
   private val searchUsersUseCase: SearchUsersUseCase,
-  private val uploadFilesUseCase: UploadFilesUseCase
+  private val uploadFilesUseCase: UploadFilesUseCase,
+  @ApplicationContext private val context: Context
 ) : ViewModel() {
+
+  private val capsuleSizeInMB: Double = 1.0
+  private var contentSizeInMB: Double = 0.0
 
   private var totalFiles: Int = 0
 
+  private var fileUris: MutableList<Uri> = mutableListOf()
 
   private val _searchPeopleState = MutableStateFlow<SearchPeopleState>(SearchPeopleState.Idle)
   val searchPeopleState: StateFlow<SearchPeopleState> = _searchPeopleState
 
+  private val _storageWarningState =
+    MutableStateFlow<StorageWarningState>(StorageWarningState.NoWarning)
+  val storageWarningState: StateFlow<StorageWarningState> = _storageWarningState
+
   private val _fileProgrerssState =
-    MutableStateFlow<MutableList<FileUploadProgress>>(mutableListOf())
-  val fileProgrerssState: StateFlow<MutableList<FileUploadProgress>> = _fileProgrerssState
+    MutableStateFlow<List<FileUploadProgress>>(listOf())
+  val fileProgrerssState: StateFlow<List<FileUploadProgress>> = _fileProgrerssState
 
   private val _fileUploadedState =
-    MutableStateFlow<MutableList<FileUploaded>>(mutableListOf())
-  val fileUploadedState: StateFlow<MutableList<FileUploaded>> = _fileUploadedState
+    MutableStateFlow<List<FileUploaded>>(mutableListOf())
+  val fileUploadedState: StateFlow<List<FileUploaded>> = _fileUploadedState
 
   val selectedPeoples = mutableStateListOf<UserDetails>()
 
@@ -83,14 +101,12 @@ class CapsuleCreationViewModel @Inject constructor(
         while (true) {
           if (totalFiles != fileUploadedState.value.size) {
             delay(5000)
-            if (_fileProgrerssState.value.size != 0) {
-              Log.e("#", _fileProgrerssState.value?.get(0)?.progress.toString())
+            _fileProgrerssState.value = uploadFilesUseCase.getUploadProgress().map {
+              it.copy()
             }
-            _fileProgrerssState.value = uploadFilesUseCase.getUploadProgress().toMutableList()
-            if (_fileProgrerssState.value.size != 0) {
-              Log.e("#", _fileProgrerssState.value?.get(0)?.progress.toString())
+            _fileUploadedState.value = uploadFilesUseCase.getUploadedFiles().map {
+              it.copy()
             }
-            _fileUploadedState.value = uploadFilesUseCase.getUploadedFiles().toMutableList()
           }
         }
       }
@@ -139,12 +155,23 @@ class CapsuleCreationViewModel @Inject constructor(
   }
 
   fun uploadFiles(uri: Uri) {
-    totalFiles++
-    viewModelScope.launch {
-      withContext(Dispatchers.IO) {
-        uploadFilesUseCase.uploadFile(uri)
+    val size = getFileSizeAndName(uri, context).first
+    val inMB = bytesToMegabytes(size)
+    contentSizeInMB += inMB
+    if (contentSizeInMB <= capsuleSizeInMB) {
+      totalFiles++
+      viewModelScope.launch {
+        withContext(Dispatchers.IO) {
+          uploadFilesUseCase.uploadFile(uri)
+        }
       }
+    } else {
+      contentSizeInMB -= inMB
+      _storageWarningState.value = StorageWarningState.Warning
     }
   }
 
+  fun setStorageNoWaringState() {
+    _storageWarningState.value = StorageWarningState.NoWarning
+  }
 }

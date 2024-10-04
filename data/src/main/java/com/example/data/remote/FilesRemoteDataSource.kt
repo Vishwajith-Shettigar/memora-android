@@ -6,11 +6,9 @@ import android.provider.OpenableColumns
 import android.util.Log
 import com.example.model.FileUploadProgress
 import com.example.model.FileUploaded
+import com.example.util.getFileSizeAndName
 import com.google.firebase.storage.FirebaseStorage
 import javax.inject.Inject
-import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlin.random.Random
-
 
 class FilesRemoteDataSource @Inject
 constructor(
@@ -20,9 +18,8 @@ constructor(
 
   fun getFileType(uri: Uri): String? {
     val mimeType = context.contentResolver.getType(uri)
-    return mimeType?.substringAfter("/") // This will return the string after the "/" in the MIME type
+    return mimeType?.substringAfter("/")
   }
-
 
   // Global or class-level variable to keep track of the uploads
   private val uploadProgressMap = mutableMapOf<Uri, FileUploadProgress>()
@@ -30,21 +27,12 @@ constructor(
 
   fun uploadFileToFirebase(fileUri: Uri) {
     try {
-
-
       val fileReference = firebaseStorage.reference.child("uploads/${fileUri.lastPathSegment}")
-
       // Get the total size of the file
-
-      val pair: Pair<Long, String> = getFileSize(fileUri)
+      val pair: Pair<Long, String> = getFileSizeAndName(fileUri, context)
       val totalSize = pair.first
       val fileName = pair.second
-
-
       val mimeType = getFileType(fileUri)
-
-      Log.e("#", totalSize.toString() + " " + fileName + " " + mimeType)
-
 
       // Initialize the upload progress for this file
       uploadProgressMap[fileUri] =
@@ -74,8 +62,6 @@ constructor(
         }
         .addOnFailureListener { exception ->
           // Handle failure
-          Log.e("#", "Upload failed: ${exception.message}")
-          // Optionally remove from the map if it fails
           uploadProgressMap[fileUri]?.isFailed = true
         }
         .addOnProgressListener { taskSnapshot ->
@@ -85,8 +71,6 @@ constructor(
 
           // Update upload progress
           val progress = (100.0 * bytesTransferred / totalByteCount)
-          Log.e("#", "Upload progress for ${fileUri.lastPathSegment}: $progress%")
-
           // Update progress in the map
           uploadProgressMap[fileUri]?.apply {
             this.progress = progress
@@ -94,39 +78,19 @@ constructor(
           }
         }
     } catch (e: Exception) {
-      Log.e("#", e.toString())
     }
-  }
-
-  // Function to get the size of the file
-  private fun getFileSize(fileUri: Uri): Pair<Long, String> {
-    var size: Long = 0
-    var name: String = Random.nextLong(0, 100000).toString() + "xp1233op"
-    // Get the file size using ContentResolver
-    context.contentResolver.query(fileUri, null, null, null, null)?.use { cursor ->
-      if (cursor.moveToFirst()) {
-        val sizeColumnIndex = cursor.getColumnIndex(OpenableColumns.SIZE)
-        val nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
-        if (sizeColumnIndex != -1) {
-          size = cursor.getLong(sizeColumnIndex)
-        } else {
-          Log.e("File Size", "Column index for size not found.")
-        }
-        if (nameIndex != -1) {
-          name = cursor.getString(nameIndex)
-        }
-      }
-    }
-    return Pair(size, name)
   }
 
   // Function to get upload progress for a specific file
   fun getUploadProgress(): List<FileUploadProgress> {
-    Log.e("#","getUploadProgress")
     return uploadProgressMap.values.toList()
   }
 
   fun getUploadedFiles(): List<FileUploaded> {
     return uploadedFiles.toList()
+  }
+
+  // TODO: when user exits without creating capsule.
+  fun unRegisterStorageOperations() {
   }
 }
