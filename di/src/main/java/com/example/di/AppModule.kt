@@ -90,9 +90,10 @@ abstract class AppModule {
     @Singleton
     fun provideFilesRemoteDataSource(
       firebaseStorage: FirebaseStorage,
-      @ApplicationContext context: Context
-    ): FilesRemoteDataSource {
-      return FilesRemoteDataSource(firebaseStorage, context)
+      @ApplicationContext context: Context,
+      firestore: FirebaseFirestore,
+authRemoteDataSource: AuthRemoteDataSource    ): FilesRemoteDataSource {
+      return FilesRemoteDataSource(firebaseStorage, context, firestore, authRemoteDataSource)
     }
 
     @Provides

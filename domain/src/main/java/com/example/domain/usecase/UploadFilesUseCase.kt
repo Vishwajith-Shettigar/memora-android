@@ -13,11 +13,23 @@ class UploadFilesUseCase @Inject constructor(
     uploadFileRepository.uploadFiles(uri)
   }
 
-   fun getUploadProgress(): List<FileUploadProgress> {
+  fun getUploadProgress(): List<FileUploadProgress> {
     return uploadFileRepository.getUploadProgress()
   }
 
-   fun getUploadedFiles(): List<FileUploaded> {
+  fun getUploadedFiles(): List<FileUploaded> {
     return uploadFileRepository.getUploadedFiles()
+  }
+
+  fun cancelFileUploding(uri: Uri) {
+    uploadFileRepository.cancelUpLoading(uri)
+  }
+
+  fun cancelAllFilesUploading() {
+    uploadFileRepository.cancelAllUpLoading()
+  }
+
+  fun deleteUploadedFile(uri: Uri) {
+    uploadFileRepository.deleteUploadedFile(uri)
   }
 }

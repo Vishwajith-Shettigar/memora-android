@@ -231,8 +231,16 @@ fun UploadFilesScreen(
                 .fillMaxSize(),
       ) {
         item { UploadFileCard() }
-        item { OngoingUpload(fileUploadProgress) }
-        item { Uploaded(fileUploaded) }
+        item {
+          OngoingUpload(fileUploadProgress) { uri ->
+            viewModel.cancelFileUploading(uri)
+          }
+        }
+        item {
+          Uploaded(fileUploaded) { uri, fileUri ->
+            viewModel.deleteUploadedFile(uri, fileUri)
+          }
+        }
       }
       Box(
         modifier = Modifier
@@ -250,7 +258,7 @@ fun UploadFilesScreen(
 }
 
 @Composable
-fun Uploaded(fileUploaded: List<FileUploaded>) {
+fun Uploaded(fileUploaded: List<FileUploaded>, onDeleteClick: (Uri, Uri) -> Unit) {
   Column(
     modifier = Modifier
         .fillMaxWidth()
@@ -274,14 +282,24 @@ fun Uploaded(fileUploaded: List<FileUploaded>) {
           .padding(vertical = 5.dp)
     ) {
       fileUploaded.forEach {
-        UploadedFileItem(title = it.fileName, it.totalSize.toString(), getFileImageID(it.fileType))
+        UploadedFileItem(
+          uri = it.uri,
+          fileUri = it.fileUri,
+          title = it.fileName,
+          it.totalSize.toString(),
+          getFileImageID(it.fileType),
+          onDeleteClick = onDeleteClick
+        )
       }
     }
   }
 }
 
 @Composable
-fun OngoingUpload(fileUploadProgress: List<FileUploadProgress>) {
+fun OngoingUpload(
+  fileUploadProgress: List<FileUploadProgress>,
+  onDeleteClick: (uri: Uri) -> Unit = {}
+) {
   Column(
     modifier = Modifier
         .fillMaxWidth()
@@ -306,27 +324,29 @@ fun OngoingUpload(fileUploadProgress: List<FileUploadProgress>) {
           .padding(vertical = 5.dp)
     ) {
       fileUploadProgress.forEach {
-        Log.e("#", it.fileName + "  " + it.fileType)
         UploadingFileItem(
+          uri = it.uri,
           title = it.fileName,
-          icon = com.example.timecapsule.R.drawable.doc,
+          icon = getFileImageID(it.fileType),
           uploadProgress = it.progress.toFloat(),
           isUploading = true,
-          fileSize = "${it.uploadedSize} of ${it.totalSize}"
+          fileSize = "${it.uploadedSize} of ${it.totalSize}",
+          onDeleteClick
         )
       }
     }
-
   }
 }
 
 @Preview
 @Composable
 fun UploadedFileItem(
+  uri: Uri = Uri.EMPTY,
+  fileUri: Uri = Uri.EMPTY,
   title: String = "Project Reports",
   fileSize: String = "21.8 MB of 21.8 MB",
   icon: Int = R.drawable.doc, disableDeleteBtn: Boolean = false,
-  onDeleteClick: () -> Unit = {}
+  onDeleteClick: (Uri, Uri) -> Unit = { _, _ -> }
 ) {
   Row(
     verticalAlignment = Alignment.CenterVertically,
@@ -366,7 +386,7 @@ fun UploadedFileItem(
 
     if (!disableDeleteBtn)
       IconButton(
-        onClick = onDeleteClick,
+        onClick = { onDeleteClick(uri, fileUri) },
         modifier = Modifier
             .size(40.dp)
             .background(
@@ -386,8 +406,13 @@ fun UploadedFileItem(
 @Preview
 @Composable
 fun UploadingFileItem(
-  title: String = "Project Reports", icon: Int = R.drawable.doc, uploadProgress: Float = 40F,
-  isUploading: Boolean = true, fileSize: String = "6.5 MB of 9.8 MB"
+  uri: Uri = Uri.EMPTY,
+  title: String = "Project Reports",
+  icon: Int = R.drawable.doc,
+  uploadProgress: Float = 40F,
+  isUploading: Boolean = true,
+  fileSize: String = "6.5 MB of 9.8 MB",
+  onDeleteClick: (Uri) -> Unit = {}
 ) {
 
   Row(
@@ -405,7 +430,7 @@ fun UploadingFileItem(
 
     Spacer(modifier = Modifier.width(8.dp))
 
-    Column(modifier = Modifier.weight(1f)) {
+    Column(modifier = Modifier.weight(0.6f)) {
       Text(
         text = title,
         style = MaterialTheme.typography.titleLarge.copy(
@@ -442,11 +467,26 @@ fun UploadingFileItem(
           color = LightBlue
         )
       }
-
     }
 
     Spacer(modifier = Modifier.width(8.dp))
-
+    IconButton(
+      onClick = {
+        onDeleteClick(uri)
+      },
+      modifier = Modifier
+          .size(40.dp)
+          .background(
+              color = MaterialTheme.colorScheme.primary.copy(alpha = 0.6F),
+              shape = CircleShape
+          )
+    ) {
+      Icon(
+        painter = painterResource(id = R.drawable.ic_delete), // Replace with your actual delete icon resource
+        contentDescription = "Delete File",
+        tint = Color.Blue.copy(alpha = 0.5F)
+      )
+    }
 
   }
 }

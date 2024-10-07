@@ -23,7 +23,6 @@ fun bytesToMegabytes(bytes: Long): Double {
       if (sizeColumnIndex != -1) {
         size = cursor.getLong(sizeColumnIndex)
       } else {
-        Log.e("File Size", "Column index for size not found.")
       }
       if (nameIndex != -1) {
         name = cursor.getString(nameIndex)

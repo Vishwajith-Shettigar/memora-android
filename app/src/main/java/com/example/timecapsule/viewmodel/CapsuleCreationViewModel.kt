@@ -62,12 +62,10 @@ class CapsuleCreationViewModel @Inject constructor(
   @ApplicationContext private val context: Context
 ) : ViewModel() {
 
-  private val capsuleSizeInMB: Double = 1.0
+  private val capsuleSizeInMB: Double = 5.0
   private var contentSizeInMB: Double = 0.0
 
   private var totalFiles: Int = 0
-
-  private var fileUris: MutableList<Uri> = mutableListOf()
 
   private val _searchPeopleState = MutableStateFlow<SearchPeopleState>(SearchPeopleState.Idle)
   val searchPeopleState: StateFlow<SearchPeopleState> = _searchPeopleState
@@ -100,7 +98,7 @@ class CapsuleCreationViewModel @Inject constructor(
       withContext(Dispatchers.IO) {
         while (true) {
           if (totalFiles != fileUploadedState.value.size) {
-            delay(5000)
+            delay(100)
             _fileProgrerssState.value = uploadFilesUseCase.getUploadProgress().map {
               it.copy()
             }
@@ -173,5 +171,26 @@ class CapsuleCreationViewModel @Inject constructor(
 
   fun setStorageNoWaringState() {
     _storageWarningState.value = StorageWarningState.NoWarning
+  }
+
+  fun cancelFileUploading(uri: Uri) {
+    val size = getFileSizeAndName(uri, context).first
+    val inMB = bytesToMegabytes(size)
+    contentSizeInMB -= inMB
+    totalFiles--
+    uploadFilesUseCase.cancelFileUploding(uri)
+  }
+
+  fun deleteUploadedFile(uri: Uri, fileUri: Uri) {
+    totalFiles--
+    val size = getFileSizeAndName(uri, context).first
+    val inMB = bytesToMegabytes(size)
+    contentSizeInMB -= inMB
+    uploadFilesUseCase.deleteUploadedFile(uri)
+  }
+
+  override fun onCleared() {
+    super.onCleared()
+    uploadFilesUseCase.cancelAllFilesUploading()
   }
 }

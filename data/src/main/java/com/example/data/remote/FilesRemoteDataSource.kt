@@ -6,15 +6,29 @@ import android.provider.OpenableColumns
 import android.util.Log
 import com.example.model.FileUploadProgress
 import com.example.model.FileUploaded
+import com.example.model.TempUploaded
 import com.example.util.getFileSizeAndName
+import com.google.firebase.Timestamp
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.UploadTask
 import javax.inject.Inject
+import kotlin.random.Random
+import kotlin.random.nextULong
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 
 class FilesRemoteDataSource @Inject
 constructor(
   private val firebaseStorage: FirebaseStorage,
-  private val context: Context
+  private val context: Context,
+  private val firestore: FirebaseFirestore,
+  private val authRemoteDataSource: AuthRemoteDataSource
 ) {
+
+  private val userId: String = authRemoteDataSource.getAuth()?.uid!!
 
   fun getFileType(uri: Uri): String? {
     val mimeType = context.contentResolver.getType(uri)
@@ -23,11 +37,22 @@ constructor(
 
   // Global or class-level variable to keep track of the uploads
   private val uploadProgressMap = mutableMapOf<Uri, FileUploadProgress>()
-  private val uploadedFiles = mutableListOf<FileUploaded>()
+  private val uploadedFiles = mutableMapOf<Uri, FileUploaded>()
+
+  private val tempFilesMetaDataRef = mutableMapOf<Uri, String>()
+
+  private val uploadTaskMap = mutableMapOf<Uri, UploadTask>()
+
+  // Remove file path from tempFilesMetaDataRef and uploadedFiles.
+  fun deleteUploadedFile(uri: Uri) {
+    uploadedFiles.remove(uri)
+    tempFilesMetaDataRef.remove(uri)
+  }
 
   fun uploadFileToFirebase(fileUri: Uri) {
     try {
-      val fileReference = firebaseStorage.reference.child("uploads/${fileUri.lastPathSegment}")
+      val fileReference =
+        firebaseStorage.reference.child("uploads/${userId}/${fileUri.lastPathSegment}")
       // Get the total size of the file
       val pair: Pair<Long, String> = getFileSizeAndName(fileUri, context)
       val totalSize = pair.first
@@ -43,23 +68,30 @@ constructor(
           fileType = mimeType ?: "unknown"
         )
 
-      fileReference.putFile(fileUri)
-        .addOnSuccessListener { taskSnapshot ->
-          // Handle successful upload
-          fileReference.downloadUrl.addOnSuccessListener { uri ->
-            Log.e("#", "File uploaded successfully. File URL: $uri")
-            // Remove from progress map after upload completes
-            uploadedFiles.add(
+      val uploadTask = fileReference.putFile(fileUri)
+      uploadTaskMap[fileUri] = uploadTask
+      uploadTask.addOnSuccessListener { taskSnapshot ->
+        // Handle successful upload
+        fileReference.downloadUrl.addOnSuccessListener { uri ->
+
+          // Remove from progress map after upload completes
+          if (uploadProgressMap[fileUri] != null) {
+            uploadedFiles[uri] =
               FileUploaded(
                 fileName = uploadProgressMap[fileUri]?.fileName ?: "",
                 uri = uri,
+                fileUri = uploadProgressMap[fileUri]!!.uri,
                 totalSize = totalSize,
                 fileType = uploadProgressMap[fileUri]?.fileType ?: "unknown"
               )
-            )
+
             uploadProgressMap.remove(fileUri)
+            CoroutineScope(Dispatchers.IO).launch {
+              storeTempUploadedFileMetaData(uri)
+            }
           }
         }
+      }
         .addOnFailureListener { exception ->
           // Handle failure
           uploadProgressMap[fileUri]?.isFailed = true
@@ -87,10 +119,46 @@ constructor(
   }
 
   fun getUploadedFiles(): List<FileUploaded> {
-    return uploadedFiles.toList()
+    return uploadedFiles.values.toList()
   }
 
-  // TODO: when user exits without creating capsule.
-  fun unRegisterStorageOperations() {
+  // Store uploaded files metadata whos payment pending.
+  suspend fun storeTempUploadedFileMetaData(uri: Uri) {
+    try {
+      val path = userId +
+        Random.nextULong(0u, 10000u).toString() + Random.nextULong(0u, 10000u).toString()
+      val tempFile = TempUploaded(uri = uri, userId = userId, timeStamp = Timestamp.now())
+      firestore.collection("temp_files").document(
+        path
+      ).set(tempFile).await()
+      tempFilesMetaDataRef[uri] = path
+    } catch (_: Exception) {
+    }
+  }
+
+  // When payment done delete all uploaded files metadata.
+  suspend fun deleteTempUploadedFileMetaData() {
+    try {
+      tempFilesMetaDataRef.values.forEach { path ->
+        firestore.collection("temp_files").document(
+          path
+        ).delete().await()
+      }
+    } catch (_: Exception) {
+    }
+  }
+
+  fun cancelUploadingProgressTask(fileUri: Uri) {
+    uploadTaskMap[fileUri]?.cancel()
+    uploadProgressMap.remove(fileUri)
+  }
+
+  fun cancelAllUploadings() {
+    uploadTaskMap.forEach { _, uploadTask ->
+      uploadTask.cancel()
+    }
+    uploadProgressMap.clear()
+    uploadTaskMap.clear()
+    uploadedFiles.clear()
   }
 }

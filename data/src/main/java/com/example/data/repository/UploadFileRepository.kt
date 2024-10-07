@@ -10,6 +10,9 @@ interface UploadFileRepository {
   suspend fun uploadFiles(uri: Uri)
   fun getUploadProgress(): List<FileUploadProgress>
   fun getUploadedFiles(): List<FileUploaded>
+  fun cancelUpLoading(uri: Uri)
+  fun cancelAllUpLoading()
+  fun deleteUploadedFile(uri: Uri)
 }
 
 class UploadFileRepositoryImpl @Inject constructor(
@@ -25,5 +28,17 @@ class UploadFileRepositoryImpl @Inject constructor(
 
   override fun getUploadedFiles(): List<FileUploaded> {
     return filesRemoteDataSource.getUploadedFiles()
+  }
+
+  override fun cancelUpLoading(uri: Uri) {
+    filesRemoteDataSource.cancelUploadingProgressTask(uri)
+  }
+
+  override fun cancelAllUpLoading() {
+    filesRemoteDataSource.cancelAllUploadings()
+  }
+
+  override fun deleteUploadedFile(uri: Uri) {
+    filesRemoteDataSource.deleteUploadedFile(uri)
   }
 }

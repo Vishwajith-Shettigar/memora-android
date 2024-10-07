@@ -13,6 +13,5 @@ val fileImageMap: Map<String, Int> = mapOf(
 )
 
 fun getFileImageID(type: String): Int {
-  Log.e("#", type)
   return fileImageMap[type] ?: R.drawable.ic_launcher_foreground
 }
