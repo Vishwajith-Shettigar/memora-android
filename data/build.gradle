@@ -2,6 +2,7 @@ plugins {
     id 'com.android.library'
     id 'kotlin-android'
     id 'org.jetbrains.kotlin.android'
+    id 'kotlin-kapt'
 }
 
 android {
@@ -34,5 +35,6 @@ dependencies{
 
     // Firebase Authentication dependency
     implementation(libs.firebase.auth.ktx)
-
+    implementation(libs.hilt.android)
+    kapt(libs.hilt.android.compiler)
 }

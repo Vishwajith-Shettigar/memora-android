@@ -204,12 +204,12 @@ fun SharedContent() {
       color = MaterialTheme.colorScheme.onSurfaceVariant
     )
 
-    UploadedFileItem(title = "Lorem ipsum", "21.9 MB", R.drawable.pdf, true)
-    UploadedFileItem(title = "ispum ipsum", "11.9 MB", R.drawable.image, true)
-    UploadedFileItem(title = "itahi emuah", "51.9 MB", R.drawable.videocamera, true)
-    UploadedFileItem(title = "Lorem ipsum", "21.9 MB", R.drawable.pdf, true)
-    UploadedFileItem(title = "poio ipsum", "21.9 MB", R.drawable.xls, true)
-    UploadedFileItem(title = "Lorem ipsum", "21.9 MB", R.drawable.pdf, true)
+    UploadedFileItem(title = "Lorem ipsum", fileSize = "21.9 MB", icon = R.drawable.pdf, disableDeleteBtn = true)
+    UploadedFileItem(title = "ispum ipsum", fileSize = "11.9 MB", icon =  R.drawable.image, disableDeleteBtn =  true)
+    UploadedFileItem(title = "itahi emuah", fileSize = "51.9 MB", icon =  R.drawable.videocamera, disableDeleteBtn =  true)
+    UploadedFileItem(title = "Lorem ipsum", fileSize =  "21.9 MB", icon =  R.drawable.pdf, disableDeleteBtn = true)
+    UploadedFileItem(title = "poio ipsum", fileSize =  "21.9 MB", icon =  R.drawable.xls, disableDeleteBtn = true)
+    UploadedFileItem(title = "Lorem ipsum", fileSize = "21.9 MB", icon =  R.drawable.pdf, disableDeleteBtn =  true)
   }
 }
 

@@ -192,13 +192,11 @@ fun NavGraphBuilder.addCapsuleNavGraph(navController: NavController, activity: A
     composable(route = Screen.ChooseCapsuleModel.route) { backstackentry ->
       val sharedViewModel =
         backstackentry.sharedViewModel<CapsuleCreationViewModel>(navController = navController)
-      // Todo: Decide previous route based on LocationSelectionOptions selection
-      var previousRoute:Screen = Screen.SelectLocation
+      var previousRoute: Screen = Screen.SelectLocation
       if (sharedViewModel.selectedLocationOption == LocationOption.DONT_SELECT_LOCATION)
         previousRoute = Screen.LocationSelectionOptions
 
       SelectCapsuleScreen() { navigationFlow ->
-
         handleNavigation(
           activity = activity,
           navController = navController,
@@ -209,9 +207,10 @@ fun NavGraphBuilder.addCapsuleNavGraph(navController: NavController, activity: A
         )
       }
     }
-    composable(route = Screen.UploadContent.route) {
-      UploadFilesScreen() { navigationFlow ->
-
+    composable(route = Screen.UploadContent.route) { backstackentry ->
+      val sharedViewModel =
+        backstackentry.sharedViewModel<CapsuleCreationViewModel>(navController = navController)
+      UploadFilesScreen(sharedViewModel) { navigationFlow ->
         handleNavigation(
           activity = activity,
           navController = navController,

@@ -31,7 +31,7 @@ class MainActivity : ComponentActivity() {
 //        ShareScreen()
 //        SelectLocationOptionScreen()
 //        SelectCapsuleScreen()
-        ViewCapsule()
+//        ViewCapsule()
 //        UploadFilesScreen()
 //        FindCapsuleScreenV1()
 //        ReviewScreen()
@@ -41,7 +41,7 @@ class MainActivity : ComponentActivity() {
 //        NotificationScreen()
 //        LetterScreen()
 //        OnBoardingNavGraph()
-//          NavGraph()
+        NavGraph()
       }
     }
   }
