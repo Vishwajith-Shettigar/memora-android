@@ -22,10 +22,12 @@ import com.example.util.bytesToMegabytes
 import com.example.util.getFileSizeAndName
 import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.Timestamp
+import com.google.firebase.util.nextAlphanumericString
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.lang.Exception
 import javax.inject.Inject
+import kotlin.random.Random
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -61,6 +63,8 @@ class CapsuleCreationViewModel @Inject constructor(
   private val uploadFilesUseCase: UploadFilesUseCase,
   @ApplicationContext private val context: Context
 ) : ViewModel() {
+
+  private val CAPSULE_ID: String = Random.nextAlphanumericString(10)
 
   private val capsuleSizeInMB: Double = 5.0
   private var contentSizeInMB: Double = 0.0
@@ -160,7 +164,7 @@ class CapsuleCreationViewModel @Inject constructor(
       totalFiles++
       viewModelScope.launch {
         withContext(Dispatchers.IO) {
-          uploadFilesUseCase.uploadFile(uri)
+          uploadFilesUseCase.uploadFile(uri, CAPSULE_ID)
         }
       }
     } else {
@@ -183,10 +187,15 @@ class CapsuleCreationViewModel @Inject constructor(
 
   fun deleteUploadedFile(uri: Uri, fileUri: Uri) {
     totalFiles--
-    val size = getFileSizeAndName(uri, context).first
+    val size = getFileSizeAndName(fileUri, context).first
     val inMB = bytesToMegabytes(size)
     contentSizeInMB -= inMB
-    uploadFilesUseCase.deleteUploadedFile(uri)
+    viewModelScope.launch {
+      withContext(Dispatchers.IO)
+      {
+        uploadFilesUseCase.deleteUploadedFile(uri, capsuleId = CAPSULE_ID)
+      }
+    }
   }
 
   override fun onCleared() {
