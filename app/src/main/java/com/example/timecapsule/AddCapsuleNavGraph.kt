@@ -196,7 +196,7 @@ fun NavGraphBuilder.addCapsuleNavGraph(navController: NavController, activity: A
       if (sharedViewModel.selectedLocationOption == LocationOption.DONT_SELECT_LOCATION)
         previousRoute = Screen.LocationSelectionOptions
 
-      SelectCapsuleScreen() { navigationFlow ->
+      SelectCapsuleScreen(viewModel = sharedViewModel) { navigationFlow ->
         handleNavigation(
           activity = activity,
           navController = navController,

@@ -2,6 +2,7 @@ package com.example.data.repository
 
 import com.example.data.remote.CapsulesRemoteDataSource
 import com.example.data.remote.UserRemoteDataSource
+import com.example.model.CapsuleAsset
 import com.example.model.CapsuleDetails
 import com.example.util.Response
 import javax.inject.Inject
@@ -9,6 +10,7 @@ import javax.inject.Inject
 
 interface CapsulesRepository {
   suspend fun getCapsulesList(): Response<List<CapsuleDetails>>
+  suspend fun getCapsuleAssets():Response<List<CapsuleAsset>>
 }
 
 class CapsulesRepositoryImpl @Inject constructor(
@@ -18,4 +20,7 @@ class CapsulesRepositoryImpl @Inject constructor(
     return capsulesRemoteDataSource.getCapsulesList()
   }
 
+  override suspend fun getCapsuleAssets(): Response<List<CapsuleAsset>> {
+   return capsulesRemoteDataSource.getCapsuleAssets()
+  }
 }

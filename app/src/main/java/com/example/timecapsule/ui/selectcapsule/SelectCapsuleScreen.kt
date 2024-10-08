@@ -1,6 +1,7 @@
 package com.example.timecapsule.ui.selectcapsule
 
 import CapsuleImage
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -29,7 +31,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -39,27 +44,59 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
+import androidx.hilt.navigation.compose.hiltViewModel
+import coil.compose.AsyncImage
+import com.example.model.CapsuleAsset
+import com.example.model.CapsuleDetails
 import com.example.timecapsule.R
 import com.example.timecapsule.ui.selecttime.NavigationAddCapsule
 import com.example.timecapsule.ui.selecttime.NavigationRow
 import com.example.timecapsule.ui.util.DeviceType
 import com.example.timecapsule.ui.util.createCapsuleImageList
+import com.example.timecapsule.viewmodel.CapsuleCreationViewModel
+import com.example.timecapsule.viewmodel.CapsuleSelectionState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
 fun SelectCapsuleScreen(
-  modifier: Modifier = Modifier,
+  modifier: Modifier = Modifier, viewModel: CapsuleCreationViewModel = hiltViewModel(),
   onNavigate: (NavigationAddCapsule) -> Unit = {}
 ) {
   val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
   val isTablet = DeviceType.isTablet()
+
+  val capsuleAssets = remember {
+    mutableStateListOf<CapsuleAsset>()
+  }
+  val capsuleAssetsState by viewModel.capsuleSelectionState.collectAsState()
+
+  var isLoading: Boolean = capsuleAssetsState is CapsuleSelectionState.Loading
+
+  LaunchedEffect(key1 = Unit) {
+    viewModel.getCapsuleAssets()
+  }
+
+  LaunchedEffect(key1 = capsuleAssetsState) {
+    when (capsuleAssetsState) {
+      is CapsuleSelectionState.Success -> {
+        capsuleAssets.clear()
+        capsuleAssets.addAll((capsuleAssetsState as CapsuleSelectionState.Success).data)
+      }
+
+      is CapsuleSelectionState.Error -> {
+      }
+
+      CapsuleSelectionState.Loading -> {}
+    }
+  }
 
   Scaffold(
     modifier = Modifier.fillMaxSize(),
@@ -93,7 +130,7 @@ fun SelectCapsuleScreen(
           .fillMaxSize()
 
     ) {
-      CapsuleList(Modifier.nestedScroll(scrollBehavior.nestedScrollConnection))
+      CapsuleList(Modifier.nestedScroll(scrollBehavior.nestedScrollConnection), capsuleAssets)
       Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -109,19 +146,18 @@ fun SelectCapsuleScreen(
   }
 }
 
-
 @Composable
-fun CapsuleList(modifier: Modifier) {
+fun CapsuleList(modifier: Modifier, capsuleAssets: List<CapsuleAsset>) {
   val isTablet = DeviceType.isTablet()
   if (isTablet) {
-    CapsuleListTablet(modifier = modifier)
+    CapsuleListTablet(modifier = modifier, capsuleAssets)
   } else {
-    CapsuleListMobile(modifier = modifier)
+    CapsuleListMobile(modifier = modifier, capsuleAssets)
   }
 }
 
 @Composable
-fun CapsuleListMobile(modifier: Modifier = Modifier) {
+fun CapsuleListMobile(modifier: Modifier = Modifier, capsuleAssets: List<CapsuleAsset>) {
   var selectedCapsuleId by rememberSaveable { mutableStateOf<String>("") }
   LazyVerticalStaggeredGrid(
     modifier = modifier
@@ -131,9 +167,9 @@ fun CapsuleListMobile(modifier: Modifier = Modifier) {
     horizontalArrangement = Arrangement.spacedBy(8.dp),
     verticalItemSpacing = 8.dp,
     content = {
-      items(createCapsuleImageList()) {
-        Capsule(it, selectedCapsuleId == it.imageId) {
-          selectedCapsuleId = it.imageId
+      items(capsuleAssets) {
+        Capsule(it, selectedCapsuleId == it.capsule_id) {
+          selectedCapsuleId = it.capsule_id
         }
       }
     }
@@ -141,7 +177,7 @@ fun CapsuleListMobile(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun CapsuleListTablet(modifier: Modifier = Modifier) {
+fun CapsuleListTablet(modifier: Modifier = Modifier, capsuleAssets: List<CapsuleAsset>) {
   var selectedCapsuleId by remember { mutableStateOf<String>("") }
 
   LazyVerticalStaggeredGrid(
@@ -153,9 +189,9 @@ fun CapsuleListTablet(modifier: Modifier = Modifier) {
     horizontalArrangement = Arrangement.spacedBy(10.dp),
     verticalItemSpacing = 8.dp,
     content = {
-      items(createCapsuleImageList()) { it ->
-        Capsule(it, selectedCapsuleId == it.imageId) {
-          selectedCapsuleId = it.imageId
+      items(capsuleAssets) {
+        Capsule(it, selectedCapsuleId == it.capsule_id) {
+          selectedCapsuleId = it.capsule_id
         }
       }
     }
@@ -164,7 +200,7 @@ fun CapsuleListTablet(modifier: Modifier = Modifier) {
 
 @Composable
 fun Capsule(
-  capsuleImage: CapsuleImage = CapsuleImage("capsule_image1", R.drawable.capsule_image1),
+  capsuleAssets: CapsuleAsset,
   isSelected: Boolean = false,
   onSelect: () -> Unit = {}
 ) {
@@ -194,8 +230,9 @@ fun Capsule(
           .clip(shape = RoundedCornerShape(6.dp))
           .background(Color.Transparent)
     ) {
-      Image(
-        painter = painterResource(id = capsuleImage.imageName),
+      AsyncImage(
+        modifier = Modifier.heightIn(min = 200.dp),
+        model = capsuleAssets.imageUrl,
         contentDescription = "capsule 1",
       )
       OutlinedButton(

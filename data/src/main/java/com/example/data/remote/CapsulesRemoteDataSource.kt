@@ -1,5 +1,7 @@
 package com.example.data.remote
 
+import android.util.Log
+import com.example.model.CapsuleAsset
 import com.example.model.CapsuleDetails
 import com.example.util.InValidUserException
 import com.example.util.Response
@@ -45,5 +47,26 @@ class CapsulesRemoteDataSource @Inject constructor(
       }
     }
     return Response.Error(exception = InValidUserException())
+  }
+
+  suspend fun getCapsuleAssets(): Response<List<CapsuleAsset>> {
+    return try {
+      val capsuleAssets = mutableListOf<CapsuleAsset>()
+      val docs = firestore.collection("capsule_assets").get().await().documents
+      docs.forEach { document ->
+        val capsuleAsset = CapsuleAsset(
+          capsule_id = document.get("capsule_id").toString(),
+          capsuleName = document.get("capsuleName").toString(),
+          description = document.get("description").toString(),
+          imageUrl = document.get("imageUrl").toString(),
+          isPaid = document.get("isPaid") as Boolean,
+          storage = document.get("storage") as Number
+        )
+        capsuleAssets.add(capsuleAsset)
+      }
+      return Response.Success(capsuleAssets)
+    } catch (e: Exception) {
+      Response.Error(UnspecifiedException())
+    }
   }
 }

@@ -11,8 +11,10 @@ import androidx.compose.runtime.remember
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.domain.usecase.GetCapsuleAssetsUseCase
 import com.example.domain.usecase.SearchUsersUseCase
 import com.example.domain.usecase.UploadFilesUseCase
+import com.example.model.CapsuleAsset
 import com.example.model.FileUploadProgress
 import com.example.model.FileUploaded
 import com.example.model.UserDetails
@@ -57,10 +59,17 @@ sealed class StorageWarningState {
   object Warning : StorageWarningState()
 }
 
+sealed class CapsuleSelectionState {
+  object Loading : CapsuleSelectionState()
+  class Success(val data: List<CapsuleAsset>) : CapsuleSelectionState()
+  data class Error(val message: String, val exception: Exception? = null) : CapsuleSelectionState()
+}
+
 @HiltViewModel
 class CapsuleCreationViewModel @Inject constructor(
   private val searchUsersUseCase: SearchUsersUseCase,
   private val uploadFilesUseCase: UploadFilesUseCase,
+  private val getCapsuleAssetsUseCase: GetCapsuleAssetsUseCase,
   @ApplicationContext private val context: Context
 ) : ViewModel() {
 
@@ -85,6 +94,10 @@ class CapsuleCreationViewModel @Inject constructor(
   private val _fileUploadedState =
     MutableStateFlow<List<FileUploaded>>(mutableListOf())
   val fileUploadedState: StateFlow<List<FileUploaded>> = _fileUploadedState
+
+  private val _capsuleSelectionState =
+    MutableStateFlow<CapsuleSelectionState>(CapsuleSelectionState.Loading)
+  val capsuleSelectionState: StateFlow<CapsuleSelectionState> = _capsuleSelectionState
 
   val selectedPeoples = mutableStateListOf<UserDetails>()
 
@@ -194,6 +207,25 @@ class CapsuleCreationViewModel @Inject constructor(
       withContext(Dispatchers.IO)
       {
         uploadFilesUseCase.deleteUploadedFile(uri, capsuleId = CAPSULE_ID)
+      }
+    }
+  }
+
+  fun getCapsuleAssets() {
+    viewModelScope.launch {
+      withContext(Dispatchers.IO) {
+        val response = getCapsuleAssetsUseCase()
+        when (response) {
+          is Response.Success -> {
+            _capsuleSelectionState.value =
+              CapsuleSelectionState.Success(response.data ?: emptyList())
+          }
+
+          is Response.Error -> {
+            _capsuleSelectionState.value =
+              CapsuleSelectionState.Error(response.exception.message ?: "", response.exception)
+          }
+        }
       }
     }
   }
