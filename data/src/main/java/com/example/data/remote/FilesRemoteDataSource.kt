@@ -146,7 +146,7 @@ constructor(
     return uploadedFiles.values.toList()
   }
 
-  // Store uploaded files metadata whos payment pending.
+  // Store uploaded files metadata who's payment pending.
   suspend fun storeTempUploadedFileMetaData(uri: Uri) {
     try {
       val path = userId +
@@ -160,7 +160,9 @@ constructor(
     }
   }
 
-  // When payment done delete all uploaded files metadata.
+  // When payment is done, delete all uploaded file metadata.
+  // We only store file metadata when the user exits the app or cancels the capsule creation in the middle.
+  // Later, we can delete all files for which payment hasn't been made.
   suspend fun deleteTempUploadedFileMetaData() {
     try {
       tempFilesMetaDataRef.values.forEach { path ->
