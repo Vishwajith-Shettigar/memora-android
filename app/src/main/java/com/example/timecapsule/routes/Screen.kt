@@ -1,5 +1,7 @@
 package com.example.timecapsule.routes
 
+import kotlin.math.cos
+
 sealed class Screen(val route: String) {
   // Auth Flow
   object Splash : Screen("splash")
@@ -40,8 +42,12 @@ sealed class Screen(val route: String) {
   object ShareWithPeopleOptions : Screen("share_with_people_options")
   object ShareWithPeople : Screen("share_with_people")
   object ChooseCapsuleModel : Screen("choose_capsule_model")
+  object ViewCapsuleModel :
+    Screen("view_capsule_model/{capsuleId}/{capsuleName}/{description}/{isPaid}/{storage}/{cost}") {
+    fun createRoute(capsuleId: String, capsuleName: String, description: String, isPaid: Boolean,storage:Int,cost:Int) =
+      "view_capsule_model/${capsuleId}/${capsuleName}/${description}/${isPaid}/${storage}/${cost}"
+  }
   object LocationSelectionOptions : Screen("location_selection_options")
-
 
   // Subscreens in Profile
   object Settings : Screen("settings")

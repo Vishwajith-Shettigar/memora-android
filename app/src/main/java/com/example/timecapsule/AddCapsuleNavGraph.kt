@@ -17,10 +17,12 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import com.example.model.CapsuleAsset
 import com.example.timecapsule.routes.Screen
 import com.example.timecapsule.ui.review.ReviewScreen
 import com.example.timecapsule.ui.review.SharedPeople
 import com.example.timecapsule.ui.selectcapsule.SelectCapsuleScreen
+import com.example.timecapsule.ui.selectcapsule.ViewCapsule
 import com.example.timecapsule.ui.selectlocation.LocationOptions
 import com.example.timecapsule.ui.selectlocation.SelectLocationOptionScreen
 import com.example.timecapsule.ui.selectlocation.SelectLocationScreen
@@ -196,7 +198,19 @@ fun NavGraphBuilder.addCapsuleNavGraph(navController: NavController, activity: A
       if (sharedViewModel.selectedLocationOption == LocationOption.DONT_SELECT_LOCATION)
         previousRoute = Screen.LocationSelectionOptions
 
-      SelectCapsuleScreen() { navigationFlow ->
+      SelectCapsuleScreen(viewModel = sharedViewModel, onViewCapsuleClick = { capsuleAsset ->
+
+        navController.navigate(
+          Screen.ViewCapsuleModel.createRoute(
+            capsuleId = capsuleAsset.capsule_id,
+            capsuleName = capsuleAsset.capsuleName,
+            description = capsuleAsset.description,
+            isPaid = capsuleAsset.isPaid,
+            storage = capsuleAsset.storage.toInt(),
+            cost = capsuleAsset.cost.toInt()
+          )
+        )
+      }, onNavigate = { navigationFlow ->
         handleNavigation(
           activity = activity,
           navController = navController,
@@ -205,8 +219,24 @@ fun NavGraphBuilder.addCapsuleNavGraph(navController: NavController, activity: A
           navigateToScreenRouteNext = Screen.UploadContent,
           popScreenRoute = Screen.ChooseCapsuleModel
         )
+      })
+    }
+
+    composable(route = Screen.ViewCapsuleModel.route) { backstackentry ->
+      val capsuleAsset = CapsuleAsset(
+        capsule_id = backstackentry.arguments?.getString("capsuleId")!!,
+        capsuleName = backstackentry.arguments?.getString("capsuleName")!!,
+        description = backstackentry.arguments?.getString("description")!!,
+        isPaid = backstackentry.arguments?.getString("isPaid")!!.toBoolean(),
+        storage = backstackentry.arguments?.getString("storage")!!.toInt(),
+        imageUrl = "",
+        cost = backstackentry.arguments?.getString("cost")!!.toInt()
+      )
+      ViewCapsule(capsuleAsset) {
+        navController.popBackStack()
       }
     }
+
     composable(route = Screen.UploadContent.route) { backstackentry ->
       val sharedViewModel =
         backstackentry.sharedViewModel<CapsuleCreationViewModel>(navController = navController)

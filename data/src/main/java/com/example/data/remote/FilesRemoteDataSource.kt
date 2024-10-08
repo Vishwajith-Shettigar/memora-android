@@ -25,7 +25,7 @@ constructor(
   private val firebaseStorage: FirebaseStorage,
   private val context: Context,
   private val firestore: FirebaseFirestore,
-  private val authRemoteDataSource: AuthRemoteDataSource
+  authRemoteDataSource: AuthRemoteDataSource
 ) {
 
   private val userId: String = authRemoteDataSource.getAuth()?.uid!!
@@ -43,16 +43,40 @@ constructor(
 
   private val uploadTaskMap = mutableMapOf<Uri, UploadTask>()
 
+  // To prevent from uploading duplicate file.
+  private val uploadedFileList = mutableListOf<Uri>()
+
   // Remove file path from tempFilesMetaDataRef and uploadedFiles.
-  fun deleteUploadedFile(uri: Uri) {
-    uploadedFiles.remove(uri)
-    tempFilesMetaDataRef.remove(uri)
+  suspend fun deleteUploadedFile(uri: Uri, capsuleId: String) {
+    try {
+      val fileUri = uploadedFiles[uri]?.fileUri!!
+      uploadedFileList.remove(fileUri)
+      uploadedFiles.remove(uri)
+      tempFilesMetaDataRef.remove(uri)
+      val filePath = filePathParser(fileUri)
+      firebaseStorage.reference.child("uploads/${userId}/${capsuleId}/${filePath}")
+        .delete()
+        .await()
+    } catch (_: Exception) {
+    }
   }
 
-  fun uploadFileToFirebase(fileUri: Uri) {
+  fun filePathParser(fileUri: Uri): String {
+    return try {
+      fileUri.path?.replace("/", "_") ?: fileUri.lastPathSegment.toString()
+    } catch (_: Exception) {
+      fileUri.lastPathSegment.toString()
+    }
+  }
+
+  fun uploadFileToFirebase(fileUri: Uri, capsuleId: String) {
     try {
+      if (uploadProgressMap.containsKey(fileUri) || uploadedFileList.contains(fileUri))
+        return
+
+      val filePath = filePathParser(fileUri)
       val fileReference =
-        firebaseStorage.reference.child("uploads/${userId}/${fileUri.lastPathSegment}")
+        firebaseStorage.reference.child("uploads/${userId}/${capsuleId}/${filePath}")
       // Get the total size of the file
       val pair: Pair<Long, String> = getFileSizeAndName(fileUri, context)
       val totalSize = pair.first
@@ -73,9 +97,9 @@ constructor(
       uploadTask.addOnSuccessListener { taskSnapshot ->
         // Handle successful upload
         fileReference.downloadUrl.addOnSuccessListener { uri ->
-
           // Remove from progress map after upload completes
           if (uploadProgressMap[fileUri] != null) {
+            uploadedFileList.add(fileUri)
             uploadedFiles[uri] =
               FileUploaded(
                 fileName = uploadProgressMap[fileUri]?.fileName ?: "",
@@ -122,7 +146,7 @@ constructor(
     return uploadedFiles.values.toList()
   }
 
-  // Store uploaded files metadata whos payment pending.
+  // Store uploaded files metadata who's payment pending.
   suspend fun storeTempUploadedFileMetaData(uri: Uri) {
     try {
       val path = userId +
@@ -136,7 +160,9 @@ constructor(
     }
   }
 
-  // When payment done delete all uploaded files metadata.
+  // When payment is done, delete all uploaded file metadata.
+  // We only store file metadata when the user exits the app or cancels the capsule creation in the middle.
+  // Later, we can delete all files for which payment hasn't been made.
   suspend fun deleteTempUploadedFileMetaData() {
     try {
       tempFilesMetaDataRef.values.forEach { path ->
@@ -160,5 +186,6 @@ constructor(
     uploadProgressMap.clear()
     uploadTaskMap.clear()
     uploadedFiles.clear()
+    uploadedFileList.clear()
   }
 }

@@ -7,19 +7,19 @@ import com.example.model.FileUploaded
 import javax.inject.Inject
 
 interface UploadFileRepository {
-  suspend fun uploadFiles(uri: Uri)
+  suspend fun uploadFiles(uri: Uri,capsuleId:String)
   fun getUploadProgress(): List<FileUploadProgress>
   fun getUploadedFiles(): List<FileUploaded>
   fun cancelUpLoading(uri: Uri)
   fun cancelAllUpLoading()
-  fun deleteUploadedFile(uri: Uri)
+ suspend fun deleteUploadedFile(uri: Uri,capsuleId: String)
 }
 
 class UploadFileRepositoryImpl @Inject constructor(
   private val filesRemoteDataSource: FilesRemoteDataSource
 ) : UploadFileRepository {
-  override suspend fun uploadFiles(uri: Uri) {
-    filesRemoteDataSource.uploadFileToFirebase(uri)
+  override suspend fun uploadFiles(uri: Uri,capsuleId:String) {
+    filesRemoteDataSource.uploadFileToFirebase(uri,capsuleId)
   }
 
   override fun getUploadProgress(): List<FileUploadProgress> {
@@ -38,7 +38,7 @@ class UploadFileRepositoryImpl @Inject constructor(
     filesRemoteDataSource.cancelAllUploadings()
   }
 
-  override fun deleteUploadedFile(uri: Uri) {
-    filesRemoteDataSource.deleteUploadedFile(uri)
+  override suspend fun deleteUploadedFile(uri: Uri, capsuleId: String) {
+    filesRemoteDataSource.deleteUploadedFile(uri,capsuleId)
   }
 }

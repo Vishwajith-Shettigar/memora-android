@@ -11,8 +11,10 @@ import androidx.compose.runtime.remember
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.domain.usecase.GetCapsuleAssetsUseCase
 import com.example.domain.usecase.SearchUsersUseCase
 import com.example.domain.usecase.UploadFilesUseCase
+import com.example.model.CapsuleAsset
 import com.example.model.FileUploadProgress
 import com.example.model.FileUploaded
 import com.example.model.UserDetails
@@ -22,10 +24,12 @@ import com.example.util.bytesToMegabytes
 import com.example.util.getFileSizeAndName
 import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.Timestamp
+import com.google.firebase.util.nextAlphanumericString
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.lang.Exception
 import javax.inject.Inject
+import kotlin.random.Random
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -55,12 +59,21 @@ sealed class StorageWarningState {
   object Warning : StorageWarningState()
 }
 
+sealed class CapsuleSelectionState {
+  object Loading : CapsuleSelectionState()
+  class Success(val data: List<CapsuleAsset>) : CapsuleSelectionState()
+  data class Error(val message: String, val exception: Exception? = null) : CapsuleSelectionState()
+}
+
 @HiltViewModel
 class CapsuleCreationViewModel @Inject constructor(
   private val searchUsersUseCase: SearchUsersUseCase,
   private val uploadFilesUseCase: UploadFilesUseCase,
+  private val getCapsuleAssetsUseCase: GetCapsuleAssetsUseCase,
   @ApplicationContext private val context: Context
 ) : ViewModel() {
+
+  private val CAPSULE_ID: String = Random.nextAlphanumericString(10)
 
   private val capsuleSizeInMB: Double = 5.0
   private var contentSizeInMB: Double = 0.0
@@ -81,6 +94,10 @@ class CapsuleCreationViewModel @Inject constructor(
   private val _fileUploadedState =
     MutableStateFlow<List<FileUploaded>>(mutableListOf())
   val fileUploadedState: StateFlow<List<FileUploaded>> = _fileUploadedState
+
+  private val _capsuleSelectionState =
+    MutableStateFlow<CapsuleSelectionState>(CapsuleSelectionState.Loading)
+  val capsuleSelectionState: StateFlow<CapsuleSelectionState> = _capsuleSelectionState
 
   val selectedPeoples = mutableStateListOf<UserDetails>()
 
@@ -160,7 +177,7 @@ class CapsuleCreationViewModel @Inject constructor(
       totalFiles++
       viewModelScope.launch {
         withContext(Dispatchers.IO) {
-          uploadFilesUseCase.uploadFile(uri)
+          uploadFilesUseCase.uploadFile(uri, CAPSULE_ID)
         }
       }
     } else {
@@ -183,10 +200,34 @@ class CapsuleCreationViewModel @Inject constructor(
 
   fun deleteUploadedFile(uri: Uri, fileUri: Uri) {
     totalFiles--
-    val size = getFileSizeAndName(uri, context).first
+    val size = getFileSizeAndName(fileUri, context).first
     val inMB = bytesToMegabytes(size)
     contentSizeInMB -= inMB
-    uploadFilesUseCase.deleteUploadedFile(uri)
+    viewModelScope.launch {
+      withContext(Dispatchers.IO)
+      {
+        uploadFilesUseCase.deleteUploadedFile(uri, capsuleId = CAPSULE_ID)
+      }
+    }
+  }
+
+  fun getCapsuleAssets() {
+    viewModelScope.launch {
+      withContext(Dispatchers.IO) {
+        val response = getCapsuleAssetsUseCase()
+        when (response) {
+          is Response.Success -> {
+            _capsuleSelectionState.value =
+              CapsuleSelectionState.Success(response.data ?: emptyList())
+          }
+
+          is Response.Error -> {
+            _capsuleSelectionState.value =
+              CapsuleSelectionState.Error(response.exception.message ?: "", response.exception)
+          }
+        }
+      }
+    }
   }
 
   override fun onCleared() {

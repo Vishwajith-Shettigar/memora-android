@@ -15,3 +15,13 @@ data class CapsuleDetails(
   val imageUrl:String,
   val ownerUserName:String,
 )
+
+data class CapsuleAsset(
+  val capsule_id:String,
+  val capsuleName:String,
+  val imageUrl:String,
+  val isPaid:Boolean,
+  val storage: Number,
+  val description:String,
+  val cost: Number
+)

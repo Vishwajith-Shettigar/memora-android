@@ -9,8 +9,8 @@ import javax.inject.Inject
 class UploadFilesUseCase @Inject constructor(
   private val uploadFileRepository: UploadFileRepository
 ) {
-  suspend fun uploadFile(uri: Uri) {
-    uploadFileRepository.uploadFiles(uri)
+  suspend fun uploadFile(uri: Uri,capsuleId:String) {
+    uploadFileRepository.uploadFiles(uri,capsuleId)
   }
 
   fun getUploadProgress(): List<FileUploadProgress> {
@@ -29,7 +29,7 @@ class UploadFilesUseCase @Inject constructor(
     uploadFileRepository.cancelAllUpLoading()
   }
 
-  fun deleteUploadedFile(uri: Uri) {
-    uploadFileRepository.deleteUploadedFile(uri)
+ suspend fun deleteUploadedFile(uri: Uri,capsuleId: String) {
+    uploadFileRepository.deleteUploadedFile(uri,capsuleId)
   }
 }
