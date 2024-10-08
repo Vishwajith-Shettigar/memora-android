@@ -23,4 +23,5 @@ data class CapsuleAsset(
   val isPaid:Boolean,
   val storage: Number,
   val description:String,
+  val cost: Number
 )

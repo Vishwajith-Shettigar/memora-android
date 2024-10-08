@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
+import android.util.Log
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
@@ -57,6 +58,7 @@ import androidx.compose.ui.unit.max
 import androidx.compose.ui.unit.min
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
+import com.example.model.CapsuleAsset
 import com.example.timecapsule.R
 import com.example.timecapsule.ui.selecttime.BackRow
 import com.example.timecapsule.ui.theme.Inter
@@ -64,8 +66,10 @@ import com.example.timecapsule.ui.theme.darkCardBackground
 import com.example.timecapsule.ui.theme.darkPrimaryBackground
 import com.example.timecapsule.ui.theme.overSeer
 import com.example.timecapsule.ui.util.DeviceType
-import com.example.util.modelIdMap
+import com.example.util.getModel
 import com.mapbox.maps.extension.style.expressions.dsl.generated.heatmapDensity
+import com.mapbox.maps.extension.style.expressions.dsl.generated.mod
+import com.mapbox.maps.extension.style.model.model
 import io.github.sceneview.Scene
 import io.github.sceneview.SceneView
 import io.github.sceneview.animation.Transition.animateRotation
@@ -85,44 +89,45 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-@Preview
 @Composable
-fun ViewCapsule() {
+fun ViewCapsule(capsuleAsset: CapsuleAsset, onBackClick: () -> Unit = {}) {
   val isTablet = DeviceType.isTablet()
+
+  val modelName = getModel(capsuleAsset.capsule_id)
   Scaffold(
     modifier = Modifier
-        .fillMaxSize()
-        .background(MaterialTheme.colorScheme.primary)
-        .padding(vertical = 30.dp),
+      .fillMaxSize()
+      .background(MaterialTheme.colorScheme.primary)
+      .padding(vertical = 30.dp),
   ) { innerPadding ->
     Column(
       modifier = Modifier
-          .fillMaxSize()
-          .background(MaterialTheme.colorScheme.onSecondaryContainer),
+        .fillMaxSize()
+        .background(MaterialTheme.colorScheme.onSecondaryContainer),
       verticalArrangement = Arrangement.Center,
       horizontalAlignment = Alignment.CenterHorizontally
     ) {
       Box(
         modifier = Modifier
-            .fillMaxWidth()
-            .height(400.dp)
-            .shadow(
-                2.dp,
-                ambientColor = Color.White,
-                spotColor = Color.White,
-                shape = RoundedCornerShape(bottomEnd = 50.dp, bottomStart = 50.dp)
-            )
-            .clip(shape = RoundedCornerShape(bottomEnd = 50.dp, bottomStart = 50.dp))
+          .fillMaxWidth()
+          .height(400.dp)
+          .shadow(
+            2.dp,
+            ambientColor = Color.White,
+            spotColor = Color.White,
+            shape = RoundedCornerShape(bottomEnd = 50.dp, bottomStart = 50.dp)
+          )
+          .clip(shape = RoundedCornerShape(bottomEnd = 50.dp, bottomStart = 50.dp))
       )
       {
-        BackRow(Modifier.padding(innerPadding))
-        Display3DModel(Modifier.padding(innerPadding))
+        BackRow(Modifier.padding(innerPadding), onBackClick)
+        Display3DModel(Modifier.padding(innerPadding), modelName)
       }
 
       val colMod = if (isTablet) {
-          Modifier
-              .fillMaxHeight()
-              .width(500.dp)
+        Modifier
+          .fillMaxHeight()
+          .width(500.dp)
       } else {
         Modifier.fillMaxSize()
 
@@ -137,38 +142,38 @@ fun ViewCapsule() {
       ) {
         Row(
           modifier = Modifier
-              .fillMaxWidth()
-              .wrapContentHeight()
+            .fillMaxWidth()
+            .wrapContentHeight()
         ) {
           ElevatedCard(
             modifier = Modifier
-                .height(190.dp)
-                .weight(1.3F)
-                .shadow(
-                    10.dp,
-                    RoundedCornerShape(10.dp),
-                    ambientColor = Color.White,
-                    spotColor = Color.White
-                )
-                .clip(RoundedCornerShape(10.dp)),
+              .height(190.dp)
+              .weight(1.3F)
+              .shadow(
+                10.dp,
+                RoundedCornerShape(10.dp),
+                ambientColor = Color.White,
+                spotColor = Color.White
+              )
+              .clip(RoundedCornerShape(10.dp)),
             colors = CardDefaults.elevatedCardColors(darkPrimaryBackground),
           ) {
             Column(
               modifier = Modifier
-                  .fillMaxSize()
-                  .background(darkPrimaryBackground),
+                .fillMaxSize()
+                .background(darkPrimaryBackground),
               verticalArrangement = Arrangement.Center,
               horizontalAlignment = Alignment.CenterHorizontally
             ) {
               Text(
-                text = "Model 100-M",
+                text = capsuleAsset.capsuleName,
                 style = MaterialTheme.typography.titleMedium.copy(
                   color = Color.White,
-                  fontSize = 30.sp, fontFamily = overSeer
+                  fontSize = 25.sp, fontFamily = overSeer
                 )
               )
               Text(
-                text = "The wizard capsule",
+                text = capsuleAsset.description,
                 style = MaterialTheme.typography.titleMedium.copy(
                   color = Color.White,
                   fontSize = 10.sp,
@@ -179,33 +184,33 @@ fun ViewCapsule() {
 
           Column(
             modifier = Modifier
-                .padding(start = 6.dp)
-                .height(190.dp)
-                .weight(1.0F),
+              .padding(start = 6.dp)
+              .height(190.dp)
+              .weight(1.0F),
             verticalArrangement = Arrangement.SpaceBetween
           ) {
             ElevatedCard(
               modifier = Modifier
-                  .fillMaxWidth()
-                  .height(90.dp)
-                  .shadow(
-                      2.dp,
-                      RoundedCornerShape(5.dp),
-                      ambientColor = Color.White,
-                      spotColor = Color.White
-                  )
-                  .clip(RoundedCornerShape(5.dp)),
+                .fillMaxWidth()
+                .height(90.dp)
+                .shadow(
+                  2.dp,
+                  RoundedCornerShape(5.dp),
+                  ambientColor = Color.White,
+                  spotColor = Color.White
+                )
+                .clip(RoundedCornerShape(5.dp)),
               colors = CardDefaults.elevatedCardColors(darkPrimaryBackground),
               shape = RoundedCornerShape(5.dp)
             ) {
               Column(
                 modifier = Modifier
-                    .padding(5.dp)
-                    .fillMaxSize(), verticalArrangement = Arrangement.Top,
+                  .padding(5.dp)
+                  .fillMaxSize(), verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.Start
               ) {
                 Text(
-                  text = "500 MB",
+                  text = "${capsuleAsset.storage} MB",
                   style = MaterialTheme.typography.titleMedium.copy(
                     color = Color.White,
                     fontSize = 20.sp,
@@ -224,26 +229,26 @@ fun ViewCapsule() {
             }
             ElevatedCard(
               modifier = Modifier
-                  .fillMaxWidth()
-                  .height(90.dp)
-                  .shadow(
-                      2.dp,
-                      RoundedCornerShape(5.dp),
-                      ambientColor = Color.White,
-                      spotColor = Color.White
-                  )
-                  .clip(RoundedCornerShape(5.dp)),
+                .fillMaxWidth()
+                .height(90.dp)
+                .shadow(
+                  2.dp,
+                  RoundedCornerShape(5.dp),
+                  ambientColor = Color.White,
+                  spotColor = Color.White
+                )
+                .clip(RoundedCornerShape(5.dp)),
               colors = CardDefaults.elevatedCardColors(darkPrimaryBackground),
               shape = RoundedCornerShape(5.dp)
             ) {
               Column(
                 modifier = Modifier
-                    .padding(5.dp)
-                    .fillMaxSize(), verticalArrangement = Arrangement.Top,
+                  .padding(5.dp)
+                  .fillMaxSize(), verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.Start
               ) {
                 Text(
-                  text = "Free",
+                  text = if (capsuleAsset.isPaid) "${capsuleAsset.cost} $" else "Free",
                   style = MaterialTheme.typography.titleMedium.copy(
                     color = Color.White,
                     fontSize = 20.sp,
@@ -268,21 +273,21 @@ fun ViewCapsule() {
 }
 
 @Composable
-fun BackRow(modifier: Modifier) {
+fun BackRow(modifier: Modifier, onBackClick: () -> Unit = {}) {
   Row(
     modifier = modifier
-        .fillMaxWidth()
-        .zIndex(10.0F)
-        .padding(horizontal = 20.dp)
-        .background(Color.Transparent),
+      .fillMaxWidth()
+      .zIndex(10.0F)
+      .padding(horizontal = 20.dp)
+      .background(Color.Transparent),
     horizontalArrangement = Arrangement.Start
   ) {
     IconButton(
-      onClick = { }, modifier =
-        Modifier
-            .size(40.dp)
-            .clip(CircleShape)
-            .border(1.dp, Color.Gray, CircleShape)
+      onClick = { onBackClick() }, modifier =
+      Modifier
+        .size(40.dp)
+        .clip(CircleShape)
+        .border(1.dp, Color.Gray, CircleShape)
     ) {
       Icon(
         painter = painterResource(id = R.drawable.ic_back_arrow), contentDescription = "back",
@@ -295,8 +300,9 @@ fun BackRow(modifier: Modifier) {
 @Composable
 fun Display3DModel(
   modifier: Modifier = Modifier,
-  modelFileName: String = "testmodel.glb"
+  modelFileName: String
 ) {
+
   Box(
     modifier = Modifier
       .fillMaxSize()
@@ -313,8 +319,8 @@ fun Display3DModel(
 
     Scene(
       modifier = Modifier
-          .fillMaxSize()
-          .align(Alignment.Center),
+        .fillMaxSize()
+        .align(Alignment.Center),
       engine = engine,
       modelLoader = modelLoader,
       cameraNode = cameraNode,

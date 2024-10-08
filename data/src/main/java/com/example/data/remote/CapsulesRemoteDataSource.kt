@@ -60,7 +60,8 @@ class CapsulesRemoteDataSource @Inject constructor(
           description = document.get("description").toString(),
           imageUrl = document.get("imageUrl").toString(),
           isPaid = document.get("isPaid") as Boolean,
-          storage = document.get("storage") as Number
+          storage = document.get("storage") as Number,
+          cost = document.get("cost") as Number
         )
         capsuleAssets.add(capsuleAsset)
       }

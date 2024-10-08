@@ -2,9 +2,13 @@ package com.example.util
 
 import java.util.HashMap
 
-val modelIdMap = mapOf(
-  "100M" to "testmodel.glb",
-  "200M" to "testmodel.glb",
-  "300M" to "testmodel.glb",
-  "400M" to "testmodel.glb",
+private val modelIdMap = mapOf(
+  "100" to "testmodel.glb",
+  "200" to "testmodel.glb",
+  "300" to "testmodel.glb",
+  "400" to "testmodel.glb",
 )
+
+fun getModel(id:String):String{
+  return modelIdMap.get(id)?:"testmodel.glb"
+}

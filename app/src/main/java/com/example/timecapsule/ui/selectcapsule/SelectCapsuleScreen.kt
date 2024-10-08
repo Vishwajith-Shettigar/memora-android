@@ -68,7 +68,7 @@ import com.example.timecapsule.viewmodel.CapsuleSelectionState
 @Composable
 fun SelectCapsuleScreen(
   modifier: Modifier = Modifier, viewModel: CapsuleCreationViewModel = hiltViewModel(),
-  onNavigate: (NavigationAddCapsule) -> Unit = {}
+  onNavigate: (NavigationAddCapsule) -> Unit = {}, onViewCapsuleClick: (CapsuleAsset) -> Unit={}
 ) {
   val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
   val isTablet = DeviceType.isTablet()
@@ -126,11 +126,11 @@ fun SelectCapsuleScreen(
   ) { innerPadding ->
     Box(
       modifier = modifier
-          .padding(innerPadding)
-          .fillMaxSize()
+        .padding(innerPadding)
+        .fillMaxSize()
 
     ) {
-      CapsuleList(Modifier.nestedScroll(scrollBehavior.nestedScrollConnection), capsuleAssets)
+      CapsuleList(Modifier.nestedScroll(scrollBehavior.nestedScrollConnection), capsuleAssets,onViewCapsuleClick)
       Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -147,17 +147,17 @@ fun SelectCapsuleScreen(
 }
 
 @Composable
-fun CapsuleList(modifier: Modifier, capsuleAssets: List<CapsuleAsset>) {
+fun CapsuleList(modifier: Modifier, capsuleAssets: List<CapsuleAsset>,onViewCapsuleClick: (CapsuleAsset) -> Unit={}) {
   val isTablet = DeviceType.isTablet()
   if (isTablet) {
-    CapsuleListTablet(modifier = modifier, capsuleAssets)
+    CapsuleListTablet(modifier = modifier, capsuleAssets,onViewCapsuleClick)
   } else {
-    CapsuleListMobile(modifier = modifier, capsuleAssets)
+    CapsuleListMobile(modifier = modifier, capsuleAssets,onViewCapsuleClick)
   }
 }
 
 @Composable
-fun CapsuleListMobile(modifier: Modifier = Modifier, capsuleAssets: List<CapsuleAsset>) {
+fun CapsuleListMobile(modifier: Modifier = Modifier, capsuleAssets: List<CapsuleAsset>,onViewCapsuleClick: (CapsuleAsset) -> Unit={}) {
   var selectedCapsuleId by rememberSaveable { mutableStateOf<String>("") }
   LazyVerticalStaggeredGrid(
     modifier = modifier
@@ -168,7 +168,7 @@ fun CapsuleListMobile(modifier: Modifier = Modifier, capsuleAssets: List<Capsule
     verticalItemSpacing = 8.dp,
     content = {
       items(capsuleAssets) {
-        Capsule(it, selectedCapsuleId == it.capsule_id) {
+        Capsule(it, selectedCapsuleId == it.capsule_id,onViewCapsuleClick=onViewCapsuleClick) {
           selectedCapsuleId = it.capsule_id
         }
       }
@@ -177,7 +177,7 @@ fun CapsuleListMobile(modifier: Modifier = Modifier, capsuleAssets: List<Capsule
 }
 
 @Composable
-fun CapsuleListTablet(modifier: Modifier = Modifier, capsuleAssets: List<CapsuleAsset>) {
+fun CapsuleListTablet(modifier: Modifier = Modifier, capsuleAssets: List<CapsuleAsset>,onViewCapsuleClick: (CapsuleAsset) -> Unit={}) {
   var selectedCapsuleId by remember { mutableStateOf<String>("") }
 
   LazyVerticalStaggeredGrid(
@@ -190,7 +190,7 @@ fun CapsuleListTablet(modifier: Modifier = Modifier, capsuleAssets: List<Capsule
     verticalItemSpacing = 8.dp,
     content = {
       items(capsuleAssets) {
-        Capsule(it, selectedCapsuleId == it.capsule_id) {
+        Capsule(it, selectedCapsuleId == it.capsule_id,onViewCapsuleClick= onViewCapsuleClick) {
           selectedCapsuleId = it.capsule_id
         }
       }
@@ -202,7 +202,7 @@ fun CapsuleListTablet(modifier: Modifier = Modifier, capsuleAssets: List<Capsule
 fun Capsule(
   capsuleAssets: CapsuleAsset,
   isSelected: Boolean = false,
-  onSelect: () -> Unit = {}
+  onViewCapsuleClick: (CapsuleAsset) -> Unit={},onSelect: () -> Unit = {}
 ) {
   Card(
     colors =
@@ -236,7 +236,7 @@ fun Capsule(
         contentDescription = "capsule 1",
       )
       OutlinedButton(
-        onClick = { },
+        onClick = { onViewCapsuleClick(capsuleAssets)},
         modifier = Modifier
             .height(40.dp)
             .width(100.dp),
