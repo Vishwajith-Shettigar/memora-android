@@ -14,12 +14,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -68,7 +70,7 @@ import com.example.timecapsule.viewmodel.CapsuleSelectionState
 @Composable
 fun SelectCapsuleScreen(
   modifier: Modifier = Modifier, viewModel: CapsuleCreationViewModel = hiltViewModel(),
-  onNavigate: (NavigationAddCapsule) -> Unit = {}, onViewCapsuleClick: (CapsuleAsset) -> Unit={}
+  onNavigate: (NavigationAddCapsule) -> Unit = {}, onViewCapsuleClick: (CapsuleAsset) -> Unit = {}
 ) {
   val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
   val isTablet = DeviceType.isTablet()
@@ -79,6 +81,8 @@ fun SelectCapsuleScreen(
   val capsuleAssetsState by viewModel.capsuleSelectionState.collectAsState()
 
   var isLoading: Boolean = capsuleAssetsState is CapsuleSelectionState.Loading
+  var isSuccess: Boolean = capsuleAssetsState is CapsuleSelectionState.Success
+
 
   LaunchedEffect(key1 = Unit) {
     viewModel.getCapsuleAssets()
@@ -126,17 +130,39 @@ fun SelectCapsuleScreen(
   ) { innerPadding ->
     Box(
       modifier = modifier
-        .padding(innerPadding)
-        .fillMaxSize()
+          .padding(innerPadding)
+          .fillMaxSize()
 
     ) {
-      CapsuleList(Modifier.nestedScroll(scrollBehavior.nestedScrollConnection), capsuleAssets,onViewCapsuleClick)
+      if (isLoading)
+        Column(
+          modifier = Modifier.fillMaxSize(),
+          verticalArrangement = Arrangement.Center,
+          horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+
+          CircularProgressIndicator(
+            modifier = Modifier
+              .size(44.dp),
+            color = Color.White,
+            strokeWidth = 2.dp,
+            backgroundColor = MaterialTheme.colorScheme.onSurfaceVariant
+          )
+        }
+
+      if (isSuccess)
+        CapsuleList(
+          Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+          capsuleAssets,
+          onViewCapsuleClick
+        )
+
       Box(
         modifier = Modifier
-          .fillMaxWidth()
-          .padding(0.dp)
-          .align(Alignment.BottomCenter)
-          .zIndex(2f)
+            .fillMaxWidth()
+            .padding(0.dp)
+            .align(Alignment.BottomCenter)
+            .zIndex(2f)
       ) {
         NavigationRow { navigationFlow ->
           onNavigate(navigationFlow)
@@ -147,17 +173,25 @@ fun SelectCapsuleScreen(
 }
 
 @Composable
-fun CapsuleList(modifier: Modifier, capsuleAssets: List<CapsuleAsset>,onViewCapsuleClick: (CapsuleAsset) -> Unit={}) {
+fun CapsuleList(
+  modifier: Modifier,
+  capsuleAssets: List<CapsuleAsset>,
+  onViewCapsuleClick: (CapsuleAsset) -> Unit = {}
+) {
   val isTablet = DeviceType.isTablet()
   if (isTablet) {
-    CapsuleListTablet(modifier = modifier, capsuleAssets,onViewCapsuleClick)
+    CapsuleListTablet(modifier = modifier, capsuleAssets, onViewCapsuleClick)
   } else {
-    CapsuleListMobile(modifier = modifier, capsuleAssets,onViewCapsuleClick)
+    CapsuleListMobile(modifier = modifier, capsuleAssets, onViewCapsuleClick)
   }
 }
 
 @Composable
-fun CapsuleListMobile(modifier: Modifier = Modifier, capsuleAssets: List<CapsuleAsset>,onViewCapsuleClick: (CapsuleAsset) -> Unit={}) {
+fun CapsuleListMobile(
+  modifier: Modifier = Modifier,
+  capsuleAssets: List<CapsuleAsset>,
+  onViewCapsuleClick: (CapsuleAsset) -> Unit = {}
+) {
   var selectedCapsuleId by rememberSaveable { mutableStateOf<String>("") }
   LazyVerticalStaggeredGrid(
     modifier = modifier
@@ -168,7 +202,7 @@ fun CapsuleListMobile(modifier: Modifier = Modifier, capsuleAssets: List<Capsule
     verticalItemSpacing = 8.dp,
     content = {
       items(capsuleAssets) {
-        Capsule(it, selectedCapsuleId == it.capsule_id,onViewCapsuleClick=onViewCapsuleClick) {
+        Capsule(it, selectedCapsuleId == it.capsule_id, onViewCapsuleClick = onViewCapsuleClick) {
           selectedCapsuleId = it.capsule_id
         }
       }
@@ -177,7 +211,11 @@ fun CapsuleListMobile(modifier: Modifier = Modifier, capsuleAssets: List<Capsule
 }
 
 @Composable
-fun CapsuleListTablet(modifier: Modifier = Modifier, capsuleAssets: List<CapsuleAsset>,onViewCapsuleClick: (CapsuleAsset) -> Unit={}) {
+fun CapsuleListTablet(
+  modifier: Modifier = Modifier,
+  capsuleAssets: List<CapsuleAsset>,
+  onViewCapsuleClick: (CapsuleAsset) -> Unit = {}
+) {
   var selectedCapsuleId by rememberSaveable { mutableStateOf<String>("") }
 
   LazyVerticalStaggeredGrid(
@@ -190,7 +228,7 @@ fun CapsuleListTablet(modifier: Modifier = Modifier, capsuleAssets: List<Capsule
     verticalItemSpacing = 8.dp,
     content = {
       items(capsuleAssets) {
-        Capsule(it, selectedCapsuleId == it.capsule_id,onViewCapsuleClick= onViewCapsuleClick) {
+        Capsule(it, selectedCapsuleId == it.capsule_id, onViewCapsuleClick = onViewCapsuleClick) {
           selectedCapsuleId = it.capsule_id
         }
       }
@@ -202,7 +240,7 @@ fun CapsuleListTablet(modifier: Modifier = Modifier, capsuleAssets: List<Capsule
 fun Capsule(
   capsuleAssets: CapsuleAsset,
   isSelected: Boolean = false,
-  onViewCapsuleClick: (CapsuleAsset) -> Unit={},onSelect: () -> Unit = {}
+  onViewCapsuleClick: (CapsuleAsset) -> Unit = {}, onSelect: () -> Unit = {}
 ) {
   Card(
     colors =
@@ -236,7 +274,7 @@ fun Capsule(
         contentDescription = "capsule 1",
       )
       OutlinedButton(
-        onClick = { onViewCapsuleClick(capsuleAssets)},
+        onClick = { onViewCapsuleClick(capsuleAssets) },
         modifier = Modifier
             .height(40.dp)
             .width(100.dp),

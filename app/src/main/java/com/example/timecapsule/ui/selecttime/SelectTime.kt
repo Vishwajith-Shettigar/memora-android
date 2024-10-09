@@ -190,7 +190,6 @@ fun DateTimePicker(modifier: Modifier = Modifier, viewModel: CapsuleCreationView
         .fillMaxSize()
         .padding(horizontal = 15.dp)
         .background(MaterialTheme.colorScheme.primary),
-
     ) {
 
     Row {

@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -61,7 +62,8 @@ fun CapsuleCardListMobile(
         modifier = Modifier
           .size(44.dp),
         color = Color.White,
-        strokeWidth = 2.dp
+        strokeWidth = 2.dp,
+        backgroundColor = MaterialTheme.colorScheme.onSurfaceVariant
       )
     }
   if (isSuccess)
@@ -97,7 +99,8 @@ fun CapsuleCardListTablet(
         modifier = Modifier
           .size(44.dp),
         color = Color.White,
-        strokeWidth = 2.dp
+        strokeWidth = 2.dp,
+        backgroundColor = MaterialTheme.colorScheme.onSurfaceVariant
       )
     }
 
