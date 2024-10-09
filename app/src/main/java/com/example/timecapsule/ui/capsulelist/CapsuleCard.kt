@@ -204,7 +204,7 @@ fun ResponsiveRowColumn(
         text = title,
         style = MaterialTheme.typography.titleLarge
       )
-      TimerPlaceholder(timerValue = timerValue)
+      TimerPlaceholder(timerValue = timerValue, setReadyToOpen = setReadyToOpen)
     }
   }
 }

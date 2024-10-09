@@ -27,7 +27,11 @@ fun CapsuleCardList(
   onCapsuleClicked: (id: String) -> Unit = {}
 ) {
   if (DeviceType.isTablet()) {
-    CapsuleCardListTablet(modifier, onCapsuleClicked)
+    CapsuleCardListTablet(
+      modifier = modifier, isLoading = isLoading,
+      isSuccess = isSuccess,
+      capsuleList = capsuleList, onCapsuleClicked = onCapsuleClicked
+    )
   } else {
     CapsuleCardListMobile(
       modifier = modifier, isLoading = isLoading,
@@ -76,20 +80,40 @@ fun CapsuleCardListMobile(
 @Composable
 fun CapsuleCardListTablet(
   modifier: Modifier = Modifier,
+  isLoading: Boolean = false,
+  isSuccess: Boolean = false,
+  capsuleList: List<CapsuleDetails> = mutableListOf(),
   onCapsuleClicked: (id: String) -> Unit = {}
 ) {
-  LazyVerticalStaggeredGrid(
-    columns = StaggeredGridCells.Adaptive(minSize = 350.dp),
-    modifier = modifier
-        .fillMaxSize()
-        .background(Color.Transparent),
-    contentPadding = PaddingValues(8.dp),
-    horizontalArrangement = Arrangement.spacedBy(10.dp),
-    verticalItemSpacing = 8.dp,
-    content = {
-      items(10) { index ->
-        CapsuleCard(1, onCapsuleClicked = onCapsuleClicked)
-      }
+
+  if (isLoading)
+    Column(
+      modifier = modifier,
+      verticalArrangement = Arrangement.Center,
+      horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+
+      CircularProgressIndicator(
+        modifier = Modifier
+          .size(44.dp),
+        color = Color.White,
+        strokeWidth = 2.dp
+      )
     }
-  )
+
+  if (isSuccess)
+    LazyVerticalStaggeredGrid(
+      columns = StaggeredGridCells.Adaptive(minSize = 350.dp),
+      modifier = modifier
+          .fillMaxSize()
+          .background(Color.Transparent),
+      contentPadding = PaddingValues(8.dp),
+      horizontalArrangement = Arrangement.spacedBy(10.dp),
+      verticalItemSpacing = 8.dp,
+      content = {
+        items(capsuleList.size) {
+          CapsuleCard(1, capsuleDetails = capsuleList[it], onCapsuleClicked = onCapsuleClicked)
+        }
+      }
+    )
 }

@@ -9,6 +9,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -77,10 +78,16 @@ fun ShareScreen(
   viewModel: CapsuleCreationViewModel = hiltViewModel(),
   onNavigate: (NavigationAddCapsule) -> Unit = {}
 ) {
+  val isTablet = DeviceType.isTablet()
+  val scaffoldPadding = if (isTablet)
+    PaddingValues(30.dp)
+  else
+    PaddingValues(0.dp)
 
   Scaffold(
     modifier = Modifier
         .fillMaxSize()
+        .padding(scaffoldPadding)
         .background(MaterialTheme.colorScheme.primary),
     containerColor = MaterialTheme.colorScheme.primary,
   ) { padding ->
@@ -242,9 +249,15 @@ fun UserInfo(
 ) {
   val isTablet = DeviceType.isTablet()
   val interactionSource = remember { MutableInteractionSource() }
+
+  val rowMod = if (isTablet)
+    Modifier.widthIn(min = 500.dp, max = 800.dp)
+  else
+    Modifier
+      .fillMaxWidth()
+
   Row(
-      Modifier
-          .fillMaxWidth()
+      rowMod
           .wrapContentHeight()
           .padding(5.dp)
           .clickable(

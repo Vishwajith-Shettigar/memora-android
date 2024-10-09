@@ -133,10 +133,10 @@ fun SelectCapsuleScreen(
       CapsuleList(Modifier.nestedScroll(scrollBehavior.nestedScrollConnection), capsuleAssets,onViewCapsuleClick)
       Box(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(0.dp)
-            .align(Alignment.BottomCenter)
-            .zIndex(2f)
+          .fillMaxWidth()
+          .padding(0.dp)
+          .align(Alignment.BottomCenter)
+          .zIndex(2f)
       ) {
         NavigationRow { navigationFlow ->
           onNavigate(navigationFlow)
@@ -178,7 +178,7 @@ fun CapsuleListMobile(modifier: Modifier = Modifier, capsuleAssets: List<Capsule
 
 @Composable
 fun CapsuleListTablet(modifier: Modifier = Modifier, capsuleAssets: List<CapsuleAsset>,onViewCapsuleClick: (CapsuleAsset) -> Unit={}) {
-  var selectedCapsuleId by remember { mutableStateOf<String>("") }
+  var selectedCapsuleId by rememberSaveable { mutableStateOf<String>("") }
 
   LazyVerticalStaggeredGrid(
     columns = StaggeredGridCells.Adaptive(minSize = 400.dp),

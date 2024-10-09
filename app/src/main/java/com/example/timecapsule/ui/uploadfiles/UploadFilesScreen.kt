@@ -75,6 +75,7 @@ import com.example.timecapsule.ui.util.DeviceType
 import com.example.timecapsule.util.getFileImageID
 import com.example.timecapsule.viewmodel.CapsuleCreationViewModel
 import com.example.timecapsule.viewmodel.StorageWarningState
+import com.example.util.bytesToMegabytes
 
 lateinit var filePickerLauncher: ManagedActivityResultLauncher<Intent, *>
 
@@ -286,7 +287,7 @@ fun Uploaded(fileUploaded: List<FileUploaded>, onDeleteClick: (Uri, Uri) -> Unit
           uri = it.uri,
           fileUri = it.fileUri,
           title = it.fileName,
-          it.totalSize.toString(),
+          fileSize = "${String.format("%.2f", bytesToMegabytes(it.totalSize))} MB",
           getFileImageID(it.fileType),
           onDeleteClick = onDeleteClick
         )
@@ -330,7 +331,12 @@ fun OngoingUpload(
           icon = getFileImageID(it.fileType),
           uploadProgress = it.progress.toFloat(),
           isUploading = true,
-          fileSize = "${it.uploadedSize} of ${it.totalSize}",
+          fileSize = "${
+            String.format(
+              "%.2f",
+              bytesToMegabytes(it.uploadedSize)
+            )
+          } MB  of ${String.format("%.2f", bytesToMegabytes(it.totalSize))} MB",
           onDeleteClick
         )
       }
@@ -459,7 +465,7 @@ fun UploadingFileItem(
         Text(
           text =
           if (isUploading) {
-            "Uploading... ${(uploadProgress).toInt()}%"
+            "${(uploadProgress).toInt()}%"
           } else {
             "Uploaded"
           },

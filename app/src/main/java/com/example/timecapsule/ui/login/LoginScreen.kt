@@ -73,23 +73,7 @@ fun LogInScreen(
   modifier: Modifier = Modifier, viewModel: LogInViewModel = hiltViewModel()
 ) {
   if (DeviceType.getDeviceType() == Device.TABLET)
-    LogInScreenTablet(modifier) { buttonName ->
-      when (buttonName) {
-        ButtonName.SIGN_UP -> navController.navigate(
-          Screen.Signup.route
-        ) {
-          popUpTo(Screen.Onboarding.route)
-        }
-
-        ButtonName.LOG_IN -> navController.navigate(
-          Screen.MainScreens.route
-        ) {
-          popUpTo(navController.graph.startDestinationId) {
-            inclusive = true
-          }
-        }
-      }
-    }
+    LogInScreenTablet(modifier, navController = navController, viewModel = viewModel)
   else
     LogInScreenMobile(modifier, navController = navController, viewModel = viewModel)
 }
@@ -290,7 +274,6 @@ fun EmailVerificationDialog(
   )
 }
 
-
 @Composable
 fun BodyPart(
   isTablet: Boolean = false, email: String = "",
@@ -396,7 +379,59 @@ fun LogInButton(isLoading: Boolean, buttonClicked: (ButtonName) -> Unit = {}) {
 }
 
 @Composable
-fun LogInScreenTablet(modifier: Modifier = Modifier, buttonClicked: (ButtonName) -> Unit = {}) {
+fun LogInScreenTablet(
+  modifier: Modifier = Modifier, navController: NavController = rememberNavController(),
+  viewModel: LogInViewModel = hiltViewModel()
+) {
+
+  val context = LocalContext.current
+
+  // Observe the authState from the ViewModel
+  val authState by viewModel.authState.collectAsState()
+
+  var showDialog by remember {
+    mutableStateOf(false)
+  }
+
+  val isLoading = authState is AuthState.Loading
+
+  // State variables for user input
+  var email by remember { mutableStateOf("") }
+  var password by remember { mutableStateOf("") }
+
+  LaunchedEffect(key1 = authState) {
+    when (authState) {
+      is AuthState.Success -> {
+        navController.navigate(Screen.MainScreens.route) {
+          popUpTo(Screen.OnboardingScreens.route) {
+            inclusive = true
+          }
+        }
+      }
+
+      is AuthState.Error -> {
+        if ((authState as AuthState.Error).exception is AskDetailsException) {
+          navController.navigate(Screen.AskDetails.route) {
+            popUpTo(Screen.Onboarding.route)
+          }
+        } else if ((authState as AuthState.Error).exception is UnverifiedEmailException) {
+          showDialog = true
+
+        } else {
+          val message = (authState as AuthState.Error).message
+          Toast.makeText(context, message, Toast.LENGTH_LONG).show()
+        }
+      }
+
+      else -> Unit
+    }
+  }
+
+  if (showDialog)
+    EmailVerificationDialog() {
+      showDialog = false
+    }
+
   Row(
     verticalAlignment = Alignment.CenterVertically,
     horizontalArrangement = Arrangement.SpaceBetween,
@@ -415,7 +450,27 @@ fun LogInScreenTablet(modifier: Modifier = Modifier, buttonClicked: (ButtonName)
     TopImage(true)
 
     Spacer(modifier = Modifier.height(5.dp))
-    BodyPart(true, buttonClicked = buttonClicked)
+    BodyPart(
+      isTablet = true, password = password,
+      email = email,
+      isLoading = isLoading,
+      buttonClicked = { buttonName ->
+        when (buttonName) {
+          ButtonName.SIGN_UP -> navController.navigate(
+            Screen.Signup.route
+          ) {
+            popUpTo(Screen.Onboarding.route)
+          }
+
+          ButtonName.LOG_IN -> {
+            viewModel.signIn(email, password)
+          }
+        }
+
+      },
+      onEmailChanged = { email = it },
+      onPasswordChanged = { password = it },
+    )
   }
 }
 

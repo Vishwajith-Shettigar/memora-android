@@ -53,7 +53,7 @@ fun SignUpScreen(
   modifier: Modifier = Modifier, viewModel: SignUpViewModel = hiltViewModel()
 ) {
   if (DeviceType.getDeviceType() == Device.TABLET)
-    SignUpScreenTablet(modifier)
+    SignUpScreenTablet(modifier, viewModel, navController)
   else
     SignUpScreenMobile(modifier, viewModel, navController)
 }
@@ -189,7 +189,40 @@ fun SignUpScreenMobile(
 
 
 @Composable
-fun SignUpScreenTablet(modifier: Modifier = Modifier) {
+fun SignUpScreenTablet(
+  modifier: Modifier = Modifier,
+  viewModel: SignUpViewModel,
+  navController: NavController
+) {
+  val context = LocalContext.current
+
+  // Observe the authState from the ViewModel
+  val authState by viewModel.authState.collectAsState()
+
+  // State variables for user input
+  var userName by remember { mutableStateOf("") }
+  var email by remember { mutableStateOf("") }
+  var password by remember { mutableStateOf("") }
+  var cpassword by remember { mutableStateOf("") }
+
+  val isLoading = authState is AuthState.Loading
+  LaunchedEffect(key1 = authState) {
+    when (authState) {
+      is AuthState.Success -> {
+        navController.navigate(Screen.Login.route) {
+          popUpTo(Screen.Onboarding.route)
+        }
+      }
+
+      is AuthState.Error -> {
+        val message = (authState as AuthState.Error).message
+        Toast.makeText(context, message, Toast.LENGTH_LONG).show()
+      }
+
+      else -> {}
+
+    }
+  }
   Row(
     verticalAlignment = Alignment.CenterVertically,
     horizontalArrangement = Arrangement.SpaceBetween,
@@ -209,8 +242,26 @@ fun SignUpScreenTablet(modifier: Modifier = Modifier) {
     TopImage(true)
 
     Spacer(modifier = Modifier.height(5.dp))
-    BodyPart(true)
-
+    BodyPart(isTablet = true,
+      userName = userName,
+      email = email,
+      password = password,
+      cPassword = cpassword,
+      isLoading = isLoading,
+      onUserNameChanged = { userName = it },
+      onEmailChanged = { email = it },
+      onPasswordChanged = { password = it },
+      onCPasswordChanged = { cpassword = it },
+      onRegisterClicked = {
+        if (password == cpassword)
+          viewModel.signUp(userName, email, password)
+        else
+          Toast.makeText(context, "Passwords dont match", Toast.LENGTH_LONG).show()
+      }, routeToLogin = {
+        navController.navigate(Screen.Login.route) {
+          popUpTo(Screen.Onboarding.route)
+        }
+      })
   }
 }
 
