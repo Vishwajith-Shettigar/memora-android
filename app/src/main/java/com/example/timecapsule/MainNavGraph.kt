@@ -85,7 +85,7 @@ fun NavigationRail(navController: NavController) {
 fun BottomNavigationBar(navController: NavController) {
   val items = getNavigationItems()
   BottomNavigation(
-    backgroundColor = Color.Red,
+    backgroundColor = MaterialTheme.colorScheme.primary,
     modifier  = Modifier
       .windowInsetsPadding(WindowInsets.navigationBars.only(WindowInsetsSides.Bottom))
       .background(MaterialTheme.colorScheme.primary)

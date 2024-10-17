@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import com.example.timecapsule.ui.ar.ArScreen
+import com.example.timecapsule.ui.capsulecreationconfirmation.CapsuleCreationConfirmation
 import com.example.timecapsule.ui.selectcapsule.ViewCapsule
 import com.example.timecapsule.ui.theme.TimeCapsuleTheme
 import com.mapbox.common.MapboxOptions
@@ -42,7 +43,8 @@ class MainActivity : ComponentActivity() {
 //        NotificationScreen()
 //        LetterScreen()
 //        OnBoardingNavGraph()
-        NavGraph()
+//        NavGraph()
+        CapsuleCreationConfirmation()
       }
     }
   }
