@@ -8,6 +8,7 @@ import com.example.util.Response
 import com.example.util.UnspecifiedException
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.type.LatLng
 import javax.inject.Inject
 import kotlinx.coroutines.tasks.await
 
@@ -37,7 +38,7 @@ class CapsulesRemoteDataSource @Inject constructor(
             users = capsuleDoc.get("users") as List<Map<String, Any>>,
             isOwner = capsule["isOwner"] as Boolean,
             imageUrl = capsuleDoc.get("imageUrl") as String,
-            ownerUserName = capsuleDoc.get("ownerUserName") as String
+            ownerUserName = capsuleDoc.get("ownerUserName") as String,
           )
           capsulesDetailsList.add(capsuleDetails)
         }

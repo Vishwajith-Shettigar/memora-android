@@ -4,6 +4,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -31,6 +33,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
@@ -65,8 +68,11 @@ fun SelectLocationScreen(
   if (!Places.isInitialized()) {
     Places.initialize(LocalContext.current, BuildConfig.MAPS_API_KEY)
   }
-  Scaffold { padding ->
-    MyMapWithSearch(Modifier.padding(padding), viewModel, onNavigate)
+  Scaffold { innerPadding ->
+    MyMapWithSearch(Modifier .padding(
+      start = innerPadding.calculateStartPadding(LayoutDirection.Ltr),
+      end = innerPadding.calculateEndPadding(LayoutDirection.Ltr),
+    ), viewModel, onNavigate)
   }
 }
 

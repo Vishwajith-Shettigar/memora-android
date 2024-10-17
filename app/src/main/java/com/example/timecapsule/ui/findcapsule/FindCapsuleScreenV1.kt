@@ -145,7 +145,7 @@ fun FindCapsuleScreenV1(navController: NavController = rememberNavController(),)
       }
     }
     MapView(
-      Modifier.padding(innerPadding), initialCamera, initialCameraPoint, context,
+      Modifier.padding(), initialCamera, initialCameraPoint, context,
       userLocationPoint
     ) {
       userLocationPoint = it

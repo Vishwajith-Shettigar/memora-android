@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -50,6 +52,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
@@ -129,8 +132,13 @@ fun SelectCapsuleScreen(
   ) { innerPadding ->
     Box(
       modifier = modifier
-        .padding(innerPadding)
-        .fillMaxSize()
+          .padding(
+              start = innerPadding.calculateStartPadding(LayoutDirection.Ltr),
+              end = innerPadding.calculateEndPadding(LayoutDirection.Ltr),
+              top = innerPadding.calculateTopPadding()
+          )
+          .fillMaxSize()
+          .background(Color.Red)
 
     ) {
       if (isLoading)
@@ -158,10 +166,10 @@ fun SelectCapsuleScreen(
 
       Box(
         modifier = Modifier
-          .fillMaxWidth()
-          .padding(0.dp)
-          .align(Alignment.BottomCenter)
-          .zIndex(2f)
+            .fillMaxWidth()
+            .padding(0.dp)
+            .align(Alignment.BottomCenter)
+            .zIndex(2f)
       ) {
         NavigationRow { navigationFlow ->
           onNavigate(navigationFlow)
@@ -220,8 +228,8 @@ fun CapsuleListTablet(
   LazyVerticalStaggeredGrid(
     columns = StaggeredGridCells.Adaptive(minSize = 400.dp),
     modifier = modifier
-      .fillMaxSize()
-      .background(Color.Transparent),
+        .fillMaxSize()
+        .background(Color.Transparent),
     contentPadding = PaddingValues(8.dp),
     horizontalArrangement = Arrangement.spacedBy(10.dp),
     verticalItemSpacing = 8.dp,
@@ -250,8 +258,8 @@ fun Capsule(
 
     },
     modifier = Modifier
-      .wrapContentHeight()
-      .fillMaxWidth(),
+        .wrapContentHeight()
+        .fillMaxWidth(),
     elevation = CardDefaults.cardElevation(4.dp),
     shape = RoundedCornerShape(6.dp),
     onClick = {
@@ -262,10 +270,10 @@ fun Capsule(
       horizontalAlignment = Alignment.CenterHorizontally,
       verticalArrangement = Arrangement.Center,
       modifier = Modifier
-        .padding(vertical = 15.dp)
-        .fillMaxSize()
-        .clip(shape = RoundedCornerShape(6.dp))
-        .background(Color.Transparent)
+          .padding(vertical = 15.dp)
+          .fillMaxSize()
+          .clip(shape = RoundedCornerShape(6.dp))
+          .background(Color.Transparent)
     ) {
       AsyncImage(
         modifier = Modifier.heightIn(min = 200.dp),
@@ -275,8 +283,8 @@ fun Capsule(
       OutlinedButton(
         onClick = { onViewCapsuleClick(capsuleAssets) },
         modifier = Modifier
-          .height(40.dp)
-          .width(100.dp),
+            .height(40.dp)
+            .width(100.dp),
         colors = ButtonDefaults.outlinedButtonColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
       ) {
         Text(

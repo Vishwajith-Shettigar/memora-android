@@ -1,6 +1,7 @@
 package com.example.model
 
 import com.google.firebase.Timestamp
+import com.google.type.LatLng
 
 data class CapsuleDetails(
   val id: String,
@@ -14,6 +15,7 @@ data class CapsuleDetails(
   val isOwner:Boolean,
   val imageUrl:String,
   val ownerUserName:String,
+  val location :LatLng?=null
 )
 
 data class CapsuleAsset(

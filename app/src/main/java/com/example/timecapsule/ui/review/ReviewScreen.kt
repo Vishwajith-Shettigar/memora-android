@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -51,6 +53,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -343,7 +346,6 @@ fun ReviewScreen(
             showDetails = true
           }
         },
-        scrollBehavior = bottomScrollBehavior
       )
     },
     topBar = {
@@ -367,7 +369,10 @@ fun ReviewScreen(
 
     LazyColumn(
       modifier = Modifier
-          .padding(innerPadding)
+          .padding(
+              start = innerPadding.calculateStartPadding(LayoutDirection.Ltr),
+              end = innerPadding.calculateEndPadding(LayoutDirection.Ltr),
+          )
           .padding(horizontal = 10.dp)
           .nestedScroll(scrollBehavior.nestedScrollConnection)
           .nestedScroll(bottomScrollBehavior.nestedScrollConnection),
@@ -537,12 +542,13 @@ fun BottomRow(onNavigate: (NavigationAddCapsule) -> Unit = {}, onClick: () -> Un
       border = BorderStroke(1.dp, MaterialTheme.colorScheme.onSurfaceVariant),
       modifier = Modifier
           .wrapContentWidth()
-          .height(46.dp)
+          .height(46.dp),
+      colors = ButtonDefaults.buttonColors(containerColor = ReviewScreenCommondColor.copy(alpha = 0.6F))
+
     ) {
       Text(
         text = stringResource(id = R.string.edit_button),
-        style = MaterialTheme.typography.titleLarge.copy(fontSize = 15.sp),
-        color = MaterialTheme.colorScheme.onSurfaceVariant
+        style = MaterialTheme.typography.titleLarge.copy(fontSize = 15.sp, color = Color.White),
       )
     }
 
