@@ -47,7 +47,7 @@ fun MobileLayoutV1() {
   ) { paddingValues ->
     NavHost(
       navController = navController,
-      modifier = Modifier.padding(bottom = paddingValues.calculateBottomPadding()),
+      modifier = Modifier.padding(paddingValues),
       startDestination = Screen.OnboardingScreens.route,
     ) {
       onboardingNavGraph(navController)

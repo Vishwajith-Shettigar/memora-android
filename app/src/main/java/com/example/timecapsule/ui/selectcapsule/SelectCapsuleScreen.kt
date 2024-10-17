@@ -125,13 +125,12 @@ fun SelectCapsuleScreen(
         scrollBehavior = scrollBehavior,
         colors = TopAppBarDefaults.topAppBarColors(MaterialTheme.colorScheme.primary)
       )
-
     }
   ) { innerPadding ->
     Box(
       modifier = modifier
-          .padding(innerPadding)
-          .fillMaxSize()
+        .padding(innerPadding)
+        .fillMaxSize()
 
     ) {
       if (isLoading)
@@ -159,10 +158,10 @@ fun SelectCapsuleScreen(
 
       Box(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(0.dp)
-            .align(Alignment.BottomCenter)
-            .zIndex(2f)
+          .fillMaxWidth()
+          .padding(0.dp)
+          .align(Alignment.BottomCenter)
+          .zIndex(2f)
       ) {
         NavigationRow { navigationFlow ->
           onNavigate(navigationFlow)
@@ -221,8 +220,8 @@ fun CapsuleListTablet(
   LazyVerticalStaggeredGrid(
     columns = StaggeredGridCells.Adaptive(minSize = 400.dp),
     modifier = modifier
-        .fillMaxSize()
-        .background(Color.Transparent),
+      .fillMaxSize()
+      .background(Color.Transparent),
     contentPadding = PaddingValues(8.dp),
     horizontalArrangement = Arrangement.spacedBy(10.dp),
     verticalItemSpacing = 8.dp,
@@ -251,8 +250,8 @@ fun Capsule(
 
     },
     modifier = Modifier
-        .wrapContentHeight()
-        .fillMaxWidth(),
+      .wrapContentHeight()
+      .fillMaxWidth(),
     elevation = CardDefaults.cardElevation(4.dp),
     shape = RoundedCornerShape(6.dp),
     onClick = {
@@ -263,10 +262,10 @@ fun Capsule(
       horizontalAlignment = Alignment.CenterHorizontally,
       verticalArrangement = Arrangement.Center,
       modifier = Modifier
-          .padding(vertical = 15.dp)
-          .fillMaxSize()
-          .clip(shape = RoundedCornerShape(6.dp))
-          .background(Color.Transparent)
+        .padding(vertical = 15.dp)
+        .fillMaxSize()
+        .clip(shape = RoundedCornerShape(6.dp))
+        .background(Color.Transparent)
     ) {
       AsyncImage(
         modifier = Modifier.heightIn(min = 200.dp),
@@ -276,8 +275,8 @@ fun Capsule(
       OutlinedButton(
         onClick = { onViewCapsuleClick(capsuleAssets) },
         modifier = Modifier
-            .height(40.dp)
-            .width(100.dp),
+          .height(40.dp)
+          .width(100.dp),
         colors = ButtonDefaults.outlinedButtonColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
       ) {
         Text(

@@ -251,8 +251,10 @@ fun NavGraphBuilder.addCapsuleNavGraph(navController: NavController, activity: A
         )
       }
     }
-    composable(route = Screen.ReviewContent.route) {
-      ReviewScreen { navigationFlow ->
+    composable(route = Screen.ReviewContent.route) {backstackentry->
+      val sharedViewModel =
+        backstackentry.sharedViewModel<CapsuleCreationViewModel>(navController = navController)
+      ReviewScreen(sharedViewModel) { navigationFlow ->
         handleNavigation(
           activity = activity,
           navController = navController,
