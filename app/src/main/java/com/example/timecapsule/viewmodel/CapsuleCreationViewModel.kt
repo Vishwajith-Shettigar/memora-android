@@ -73,6 +73,8 @@ class CapsuleCreationViewModel @Inject constructor(
   @ApplicationContext private val context: Context
 ) : ViewModel() {
 
+  val amount=500
+
   private val CAPSULE_ID: String = Random.nextAlphanumericString(10)
 
   private val capsuleSizeInMB: Double = 5.0
@@ -109,6 +111,49 @@ class CapsuleCreationViewModel @Inject constructor(
       1.3521,
       103.8198
     )
+
+  private val _name = mutableStateOf("")
+  val name: State<String> = _name
+
+  private val _address = mutableStateOf("")
+  val address: State<String> = _address
+
+  private val _postalCode = mutableStateOf("")
+  val postalCode: State<String> = _postalCode
+
+  private val _city = mutableStateOf("")
+  val city: State<String> = _city
+
+  private val _state = mutableStateOf("")
+  val state: State<String> = _state
+
+  private val _country = mutableStateOf("")
+  val country: State<String> = _country
+
+  // Update functions to change state
+  fun updateName(newName: String) {
+    _name.value = newName
+  }
+
+  fun updateAddress(newAddress: String) {
+    _address.value = newAddress
+  }
+
+  fun updatePostalCode(newPostalCode: String) {
+    _postalCode.value = newPostalCode
+  }
+
+  fun updateCity(newCity: String) {
+    _city.value = newCity
+  }
+
+  fun updateState(newState: String) {
+    _state.value = newState
+  }
+
+  fun updateCountry(newCountry: String) {
+    _country.value = newCountry
+  }
 
   fun getFileStatus() {
     viewModelScope.launch {
