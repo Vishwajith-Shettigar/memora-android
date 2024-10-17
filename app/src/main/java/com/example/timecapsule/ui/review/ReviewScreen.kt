@@ -372,6 +372,7 @@ fun ReviewScreen(
           .padding(
               start = innerPadding.calculateStartPadding(LayoutDirection.Ltr),
               end = innerPadding.calculateEndPadding(LayoutDirection.Ltr),
+            top = innerPadding.calculateTopPadding()
           )
           .padding(horizontal = 10.dp)
           .nestedScroll(scrollBehavior.nestedScrollConnection)
