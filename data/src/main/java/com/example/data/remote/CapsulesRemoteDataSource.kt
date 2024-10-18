@@ -116,7 +116,7 @@ class CapsulesRemoteDataSource @Inject constructor(
             imageUrl = capsuleDoc.get("imageUrl") as String,
             ownerUserName = capsuleDoc.get("ownerUserName") as String,
             location = location,
-            filleUrls = capsuleDoc.get("fileUrls") as List<String>
+            fileUrls = capsuleDoc.get("fileUrls") as List<String>
           )
           capsulesDetailsList.add(capsuleDetails)
         }

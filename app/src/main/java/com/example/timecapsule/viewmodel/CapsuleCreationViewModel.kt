@@ -15,6 +15,7 @@ import com.example.domain.usecase.GetCapsuleAssetsUseCase
 import com.example.domain.usecase.SearchUsersUseCase
 import com.example.domain.usecase.UploadFilesUseCase
 import com.example.model.CapsuleAsset
+import com.example.model.CapsuleDetails
 import com.example.model.FileUploadProgress
 import com.example.model.FileUploaded
 import com.example.model.UserDetails
@@ -24,7 +25,10 @@ import com.example.util.bytesToMegabytes
 import com.example.util.getFileSizeAndName
 import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.Timestamp
+import com.google.firebase.firestore.GeoPoint
 import com.google.firebase.util.nextAlphanumericString
+import com.mapbox.maps.extension.style.expressions.dsl.generated.id
+import com.mapbox.maps.extension.style.expressions.dsl.generated.mod
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.lang.Exception
@@ -274,6 +278,43 @@ class CapsuleCreationViewModel @Inject constructor(
               CapsuleSelectionState.Error(response.exception.message ?: "", response.exception)
           }
         }
+      }
+    }
+  }
+
+  fun saveCapsule() {
+    viewModelScope.launch {
+      withContext(Dispatchers.IO) {
+        val capsuleTitle = " The family"
+        val descriptions = "Lorem ipsum orev opie kioe huoata"
+        val location = GeoPoint(latLang.latitude, latLang.longitude)
+        val users: List<Map<String, Any>> = selectedPeoples.map { selectedPeople ->
+          mapOf(
+            "isOwner" to false,
+            "userId" to selectedPeople.userId
+          )
+        }
+        // Todo : add onwer also in users list.
+
+        val fileUrls: List<String> = _fileUploadedState.value.map { file ->
+          file.uri.toString()
+        }
+
+        val capsuleDetails = CapsuleDetails(
+          id = CAPSULE_ID,
+          modelId = selectedCapsuleModelId!!.toInt(),
+          imageUrl = selectedCapsuleImageUrl!!,
+          title = capsuleTitle,
+          description = descriptions,
+          location = location,
+          users = users,
+          fileUrls = fileUrls,
+          isDeleted = false,
+          time = selectedTimeStamp!!,
+          isOwner = false, // just placeholder
+          isOpened = false, // just placeholder
+          ownerUserName = "",
+        )
       }
     }
   }
