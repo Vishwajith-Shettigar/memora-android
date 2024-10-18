@@ -109,9 +109,10 @@ authRemoteDataSource: AuthRemoteDataSource    ): FilesRemoteDataSource {
     @Singleton
     fun provideCapsulesRemoteDataSource(
       firestore: FirebaseFirestore,
-      remoteDataSource: AuthRemoteDataSource
+      remoteDataSource: AuthRemoteDataSource,
+      userRemoteDataSource: UserRemoteDataSource
     ): CapsulesRemoteDataSource {
-      return CapsulesRemoteDataSource(firestore, remoteDataSource)
+      return CapsulesRemoteDataSource(firestore, remoteDataSource,userRemoteDataSource)
     }
   }
 }

@@ -48,6 +48,8 @@ sealed class Screen(val route: String) {
       "view_capsule_model/${capsuleId}/${capsuleName}/${description}/${isPaid}/${storage}/${cost}"
   }
   object LocationSelectionOptions : Screen("location_selection_options")
+  object CapsuleCreationSavingScreen : Screen("capsule_creation_saving")
+
 
   // Subscreens in Profile
   object Settings : Screen("settings")

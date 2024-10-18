@@ -73,12 +73,15 @@ class CapsuleCreationViewModel @Inject constructor(
   @ApplicationContext private val context: Context
 ) : ViewModel() {
 
-  val amount=500
+  val amount = 500
 
   private val CAPSULE_ID: String = Random.nextAlphanumericString(10)
 
   private val capsuleSizeInMB: Double = 5.0
   private var contentSizeInMB: Double = 0.0
+
+  var selectedCapsuleModelId: String? = null
+  var selectedCapsuleImageUrl: String? = null
 
   private var totalFiles: Int = 0
 

@@ -1,6 +1,7 @@
 package com.example.model
 
 import com.google.firebase.Timestamp
+import com.google.firebase.firestore.GeoPoint
 import com.google.type.LatLng
 
 data class CapsuleDetails(
@@ -14,8 +15,9 @@ data class CapsuleDetails(
   val users: List<Map<String, Any>>,
   val isOwner:Boolean,
   val imageUrl:String,
-  val ownerUserName:String,
-  val location :LatLng?=null
+  var ownerUserName:String,
+  val location :GeoPoint?=null,
+  val filleUrls:List<String>
 )
 
 data class CapsuleAsset(

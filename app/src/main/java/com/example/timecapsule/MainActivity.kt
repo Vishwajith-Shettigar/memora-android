@@ -40,8 +40,8 @@ class MainActivity : ComponentActivity() {
 //        NotificationScreen()
 //        LetterScreen()
 //        OnBoardingNavGraph()
-//        NavGraph()
-        CapsuleCreationSavingScreen()
+        NavGraph()
+//        CapsuleCreationSavingScreen()
       }
     }
   }

@@ -3,19 +3,89 @@ package com.example.data.remote
 import android.util.Log
 import com.example.model.CapsuleAsset
 import com.example.model.CapsuleDetails
+import com.example.model.UserDetails
 import com.example.util.InValidUserException
 import com.example.util.Response
 import com.example.util.UnspecifiedException
 import com.google.firebase.Timestamp
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.type.LatLng
+import com.google.firebase.firestore.GeoPoint
 import javax.inject.Inject
 import kotlinx.coroutines.tasks.await
 
 class CapsulesRemoteDataSource @Inject constructor(
   val firestore: FirebaseFirestore,
-  val authRemoteDataSource: AuthRemoteDataSource
+  val authRemoteDataSource: AuthRemoteDataSource,
+  val userRemoteDataSource: UserRemoteDataSource
 ) {
+
+  suspend fun createCapsule(capsuleDetails: CapsuleDetails): Response<Unit> {
+    return try {
+      val userId = authRemoteDataSource.getAuth()?.uid
+
+      val responseUserName: Response<UserDetails> =
+        userRemoteDataSource.getUserDetails(userId!!) as Response<UserDetails>
+
+      if (responseUserName is Response.Error) {
+        throw responseUserName.exception
+      }
+
+      val userName: String = (responseUserName as Response.Success).data!!.userName
+
+      val responseSaveCapsule = saveCapsule(capsuleDetails, userName)
+
+      if (responseSaveCapsule is Response.Error)
+        throw responseSaveCapsule.exception
+
+      val addCapsuleToUserResponse =
+        addCapsuleToUsersDocument(capsuleDetails.users, userId, capsuleDetails)
+
+      if (addCapsuleToUserResponse is Response.Error)
+        throw addCapsuleToUserResponse.exception
+
+      Response.Success()
+    } catch (e: Exception) {
+      Response.Error(e)
+    }
+
+  }
+
+  suspend fun addCapsuleToUsersDocument(
+    users: List<Map<String, Any>>,
+    userUID: String,
+    capsuleDetails: CapsuleDetails
+  ): Response<Unit> {
+
+    return try {
+      users.forEach { user ->
+        val userId = user.get("userId")
+        val isOwner = user.get("isOwner")
+        val map = mapOf(
+          "id" to capsuleDetails.id,
+          "isOwner" to isOwner
+        )
+        firestore.collection("users").document(userId.toString())
+          .update("capsuleList", FieldValue.arrayUnion(map)).await()
+      }
+      Response.Success()
+    } catch (e: Exception) {
+      Response.Error(e)
+    }
+  }
+
+  suspend fun saveCapsule(capsuleDetails: CapsuleDetails, userName: String): Response<Unit> {
+    return try {
+      val ref = firestore.collection("capsules").document(capsuleDetails.id)
+      capsuleDetails.ownerUserName = userName
+
+      ref.set(capsuleDetails).await()
+      Response.Success()
+    } catch (e: Exception) {
+      Response.Error(e)
+    }
+  }
+
   suspend fun getCapsulesList(): Response<List<CapsuleDetails>> {
     val userId = authRemoteDataSource.getAuth()?.uid
     if (userId != null) {
@@ -27,6 +97,12 @@ class CapsulesRemoteDataSource @Inject constructor(
         capsules.forEach { capsule ->
           val capsuleDoc =
             firestore.collection("capsules").document(capsule["id"].toString()).get().await().data
+
+          var location: GeoPoint? = null
+          capsuleDoc?.get("location")?.let {
+            location = it as GeoPoint
+          }
+
           val capsuleDetails = CapsuleDetails(
             id = capsule["id"] as String,
             title = capsuleDoc?.get("title") as String,
@@ -39,11 +115,14 @@ class CapsulesRemoteDataSource @Inject constructor(
             isOwner = capsule["isOwner"] as Boolean,
             imageUrl = capsuleDoc.get("imageUrl") as String,
             ownerUserName = capsuleDoc.get("ownerUserName") as String,
+            location = location,
+            filleUrls = capsuleDoc.get("fileUrls") as List<String>
           )
           capsulesDetailsList.add(capsuleDetails)
         }
         Response.Success(capsulesDetailsList)
       } catch (e: Exception) {
+        Log.e("Pokemon", e.toString())
         Response.Error(UnspecifiedException())
       }
     }

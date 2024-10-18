@@ -68,6 +68,15 @@ import com.example.timecapsule.ui.util.createCapsuleImageList
 import com.example.timecapsule.viewmodel.CapsuleCreationViewModel
 import com.example.timecapsule.viewmodel.CapsuleSelectionState
 
+
+fun getCapsuleImageUrl(capsuleModelId: String, capsuleAssets: List<CapsuleAsset>): String? {
+  capsuleAssets.forEach { assets ->
+    if (assets.capsule_id == capsuleModelId)
+      return assets.imageUrl
+  }
+  return null
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
@@ -162,7 +171,10 @@ fun SelectCapsuleScreen(
           Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
           capsuleAssets,
           onViewCapsuleClick
-        )
+        ) { capsuleModelId, imageUrl ->
+          viewModel.selectedCapsuleModelId = capsuleModelId
+          viewModel.selectedCapsuleImageUrl = imageUrl
+        }
 
       Box(
         modifier = Modifier
@@ -183,13 +195,24 @@ fun SelectCapsuleScreen(
 fun CapsuleList(
   modifier: Modifier,
   capsuleAssets: List<CapsuleAsset>,
-  onViewCapsuleClick: (CapsuleAsset) -> Unit = {}
+  onViewCapsuleClick: (CapsuleAsset) -> Unit = {},
+  setCapsuleModelIdAndImageUrl: (String, String) -> Unit = { _, _ -> }
 ) {
   val isTablet = DeviceType.isTablet()
   if (isTablet) {
-    CapsuleListTablet(modifier = modifier, capsuleAssets, onViewCapsuleClick)
+    CapsuleListTablet(
+      modifier = modifier,
+      capsuleAssets,
+      onViewCapsuleClick,
+      setCapsuleModelIdAndImageUrl
+    )
   } else {
-    CapsuleListMobile(modifier = modifier, capsuleAssets, onViewCapsuleClick)
+    CapsuleListMobile(
+      modifier = modifier,
+      capsuleAssets,
+      onViewCapsuleClick,
+      setCapsuleModelIdAndImageUrl
+    )
   }
 }
 
@@ -197,9 +220,18 @@ fun CapsuleList(
 fun CapsuleListMobile(
   modifier: Modifier = Modifier,
   capsuleAssets: List<CapsuleAsset>,
-  onViewCapsuleClick: (CapsuleAsset) -> Unit = {}
+  onViewCapsuleClick: (CapsuleAsset) -> Unit = {},
+  setCapsuleModelIdAndImageUrl: (String, String) -> Unit = { _, _ -> }
 ) {
   var selectedCapsuleId by rememberSaveable { mutableStateOf<String>("") }
+
+  LaunchedEffect(selectedCapsuleId) {
+    val imageUrl = getCapsuleImageUrl(selectedCapsuleId, capsuleAssets)
+    if (imageUrl != null) {
+      setCapsuleModelIdAndImageUrl(selectedCapsuleId, imageUrl)
+    }
+  }
+
   LazyVerticalStaggeredGrid(
     modifier = modifier
       .background(Color.Transparent),
@@ -221,9 +253,19 @@ fun CapsuleListMobile(
 fun CapsuleListTablet(
   modifier: Modifier = Modifier,
   capsuleAssets: List<CapsuleAsset>,
-  onViewCapsuleClick: (CapsuleAsset) -> Unit = {}
+  onViewCapsuleClick: (CapsuleAsset) -> Unit = {},
+  setCapsuleModelIdAndImageUrl: (String, String) -> Unit = { _, _ -> }
 ) {
   var selectedCapsuleId by rememberSaveable { mutableStateOf<String>("") }
+
+  LaunchedEffect(selectedCapsuleId) {
+
+    val imageUrl = getCapsuleImageUrl(selectedCapsuleId, capsuleAssets)
+    if (imageUrl != null) {
+      setCapsuleModelIdAndImageUrl(selectedCapsuleId, imageUrl)
+    }
+
+  }
 
   LazyVerticalStaggeredGrid(
     columns = StaggeredGridCells.Adaptive(minSize = 400.dp),
