@@ -271,14 +271,7 @@ fun NavGraphBuilder.addCapsuleNavGraph(navController: NavController, activity: A
       val sharedViewModel =
         backstackentry.sharedViewModel<CapsuleCreationViewModel>(navController = navController)
       CapsuleCreationSavingScreen(sharedViewModel) { navigationFlow ->
-        handleNavigation(
-          activity = activity,
-          navController = navController,
-          navigationFlow = navigationFlow,
-          navigateToScreenRouteBack = null,
-          navigateToScreenRouteNext = null,
-          popScreenRoute = Screen.ReviewContent
-        )
+       activity.onBackPressed()
       }
     }
   }

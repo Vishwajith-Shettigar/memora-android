@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -38,6 +40,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -126,11 +129,15 @@ fun CapsuleCardListScreen(
           modifier = Modifier.size(30.dp)
         )
       }
-    }) { paddingValues ->
+    }) { innerPadding ->
     CapsuleCardList(
       modifier = Modifier
           .fillMaxSize()
-          .padding(paddingValues)
+        .padding(
+          start = innerPadding.calculateStartPadding(LayoutDirection.Ltr),
+          end = innerPadding.calculateEndPadding(LayoutDirection.Ltr),
+          top = innerPadding.calculateTopPadding()
+        )
           .nestedScroll(scrollBehavior.nestedScrollConnection),
       isLoading = isLoading,
       isSuccess = isSuccess,

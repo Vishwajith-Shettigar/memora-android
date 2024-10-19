@@ -1,5 +1,6 @@
 package com.example.domain.usecase
 
+import android.util.Log
 import com.example.data.repository.AuthRepository
 import com.example.data.repository.AuthRepositoryImpl
 import com.example.data.repository.UserRepository
@@ -58,5 +59,20 @@ class getAuthUseCase @Inject constructor(
       return Response.Error(exception = AskDetailsException())
     }
     return Response.Success()
+  }
+}
+
+class getUserIDUseCase @Inject constructor(
+  private val authRepository: AuthRepository,
+) {
+  suspend operator fun invoke(): Response<String> {
+    return try {
+      val auth = authRepository.getAuth() ?: throw NoAuthException()
+      Response.Success(auth.uid)
+    } catch (
+      e: Exception
+    ) {
+      Response.Error(e)
+    }
   }
 }

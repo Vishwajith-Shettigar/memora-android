@@ -1,5 +1,6 @@
 package com.example.timecapsule.ui.CapsuleCreationSaving
 
+import android.util.Log
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -17,6 +18,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -33,6 +35,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.timecapsule.R
 import com.example.timecapsule.ui.selecttime.NavigationAddCapsule
+import com.example.timecapsule.viewmodel.CapsuleCreationState
 import com.example.timecapsule.viewmodel.CapsuleCreationViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -46,27 +49,43 @@ fun CapsuleCreationSavingScreen(
   onNavigate: (NavigationAddCapsule) -> Unit = {}
 ) {
 
+  val capsuleCreationState by viewModel.capsuleCreationState.collectAsState()
+
+  LaunchedEffect(Unit) {
+    viewModel.saveCapsule()
+  }
+
   Scaffold { innerPading ->
     Column(
       modifier = Modifier
-        .fillMaxSize()
-        .padding(innerPading),
+          .fillMaxSize()
+          .padding(innerPading),
       verticalArrangement = Arrangement.Center,
       horizontalAlignment = Alignment.CenterHorizontally
     ) {
-      LoadingScreen()
-//      SuccessScreen()
+      if (capsuleCreationState is CapsuleCreationState.Loading)
+        LoadingScreen()
+      if (capsuleCreationState is CapsuleCreationState.Success)
+        SuccessScreen(onNavigate)
+      if (capsuleCreationState is CapsuleCreationState.Error) {
+      }
     }
   }
 }
 
 @Composable
-fun SuccessScreen() {
+fun SuccessScreen(onNavigate: (NavigationAddCapsule) -> Unit = {}) {
 
   var timer by remember {
     mutableStateOf(5)
   }
 
+  LaunchedEffect(timer) {
+    if (timer == 0) {
+      onNavigate(NavigationAddCapsule.NEXT)
+    }
+  }
+  
   LaunchedEffect(Unit) {
     CoroutineScope(Dispatchers.IO).launch {
       while (true) {
@@ -81,8 +100,8 @@ fun SuccessScreen() {
     contentDescription = null,
     contentScale = ContentScale.Crop,
     modifier = Modifier
-      .size(200.dp) // Image size, adjust as needed
-      .padding(16.dp)
+        .size(200.dp) // Image size, adjust as needed
+        .padding(16.dp)
   )
 
   Text(
@@ -134,8 +153,8 @@ fun RotatingPicture(image: Painter) {
     contentDescription = null,
     contentScale = ContentScale.Crop,
     modifier = Modifier
-      .size(200.dp) // Image size, adjust as needed
-      .rotate(rotationAngle) // Apply the rotating animation
-      .padding(16.dp)
+        .size(200.dp) // Image size, adjust as needed
+        .rotate(rotationAngle) // Apply the rotating animation
+        .padding(16.dp)
   )
 }

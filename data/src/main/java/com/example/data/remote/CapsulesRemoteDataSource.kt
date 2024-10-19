@@ -22,6 +22,7 @@ class CapsulesRemoteDataSource @Inject constructor(
 
   suspend fun createCapsule(capsuleDetails: CapsuleDetails): Response<Unit> {
     return try {
+
       val userId = authRemoteDataSource.getAuth()?.uid
 
       val responseUserName: Response<UserDetails> =
@@ -63,7 +64,8 @@ class CapsulesRemoteDataSource @Inject constructor(
         val isOwner = user.get("isOwner")
         val map = mapOf(
           "id" to capsuleDetails.id,
-          "isOwner" to isOwner
+          "isOwner" to isOwner,
+          "isOpened" to false
         )
         firestore.collection("users").document(userId.toString())
           .update("capsuleList", FieldValue.arrayUnion(map)).await()
@@ -98,6 +100,9 @@ class CapsulesRemoteDataSource @Inject constructor(
           val capsuleDoc =
             firestore.collection("capsules").document(capsule["id"].toString()).get().await().data
 
+          if (capsuleDoc.isNullOrEmpty())
+            return@forEach
+
           var location: GeoPoint? = null
           capsuleDoc?.get("location")?.let {
             location = it as GeoPoint
@@ -107,8 +112,7 @@ class CapsulesRemoteDataSource @Inject constructor(
             id = capsule["id"] as String,
             title = capsuleDoc?.get("title") as String,
             description = capsuleDoc.get("description") as String,
-            isDeleted = capsuleDoc.get("isDeleted") as Boolean,
-            isOpened = capsuleDoc.get("isOpened") as Boolean,
+            isDeleted = capsuleDoc.get("deleted") as Boolean,
             modelId = capsuleDoc.get("modelId") as Number,
             time = capsuleDoc.get("time") as Timestamp,
             users = capsuleDoc.get("users") as List<Map<String, Any>>,
@@ -116,13 +120,13 @@ class CapsulesRemoteDataSource @Inject constructor(
             imageUrl = capsuleDoc.get("imageUrl") as String,
             ownerUserName = capsuleDoc.get("ownerUserName") as String,
             location = location,
-            fileUrls = capsuleDoc.get("fileUrls") as List<String>
+            fileUrls = capsuleDoc.get("fileUrls") as List<String>,
+            isOpened = capsule["isOpened"] as Boolean
           )
           capsulesDetailsList.add(capsuleDetails)
         }
         Response.Success(capsulesDetailsList)
       } catch (e: Exception) {
-        Log.e("Pokemon", e.toString())
         Response.Error(UnspecifiedException())
       }
     }

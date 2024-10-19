@@ -3,8 +3,10 @@ package com.example.di
 import com.example.data.repository.AuthRepository
 import com.example.data.repository.AuthRepositoryImpl
 import com.example.data.repository.CapsulesRepository
+import com.example.data.repository.CapsulesRepositoryImpl
 import com.example.data.repository.UploadFileRepository
 import com.example.data.repository.UserRepository
+import com.example.domain.usecase.CreateCapsuleUseCase
 import com.example.domain.usecase.GetCapsuleAssetsUseCase
 import com.example.domain.usecase.GetCapsuleListUseCase
 import com.example.domain.usecase.OnBoardingDataUseCase
@@ -15,6 +17,7 @@ import com.example.domain.usecase.SignOutUseCase
 import com.example.domain.usecase.SignUpUseCase
 import com.example.domain.usecase.UploadFilesUseCase
 import com.example.domain.usecase.getAuthUseCase
+import com.example.domain.usecase.getUserIDUseCase
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -63,6 +66,23 @@ class ViewModelModule {
     onBoardingDataUseCase: OnBoardingDataUseCase
   ): getAuthUseCase {
     return getAuthUseCase(authRepository, onBoardingDataUseCase)
+  }
+
+  @Provides
+  @ViewModelScoped
+  fun provideCreateCapsuleUseCase(
+    capsulesRepository: CapsulesRepository
+  ): CreateCapsuleUseCase {
+    return CreateCapsuleUseCase(capsulesRepository)
+  }
+
+
+  @Provides
+  @ViewModelScoped
+  fun provideGetUserIdUseCase(
+    authRepository: AuthRepository,
+  ): getUserIDUseCase {
+    return getUserIDUseCase(authRepository)
   }
 
   @Provides

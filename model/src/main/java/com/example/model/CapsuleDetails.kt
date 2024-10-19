@@ -10,14 +10,14 @@ data class CapsuleDetails(
   val description: String,
   val time: Timestamp,
   val isDeleted: Boolean,
-  val isOpened: Boolean,
   val modelId: Number,
   val users: List<Map<String, Any>>,
   val isOwner:Boolean,
   val imageUrl:String,
   var ownerUserName:String,
   val location :GeoPoint?=null,
-  val fileUrls:List<String>
+  val fileUrls:List<String>,
+  val isOpened:Boolean?=null,
 )
 
 data class CapsuleAsset(

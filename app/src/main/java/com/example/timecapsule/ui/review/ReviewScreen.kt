@@ -372,7 +372,7 @@ fun ReviewScreen(
           .padding(
               start = innerPadding.calculateStartPadding(LayoutDirection.Ltr),
               end = innerPadding.calculateEndPadding(LayoutDirection.Ltr),
-            top = innerPadding.calculateTopPadding()
+              top = innerPadding.calculateTopPadding()
           )
           .padding(horizontal = 10.dp)
           .nestedScroll(scrollBehavior.nestedScrollConnection)
@@ -554,7 +554,10 @@ fun BottomRow(onNavigate: (NavigationAddCapsule) -> Unit = {}, onClick: () -> Un
     }
 
     Button(
-      onClick = { onClick() },
+      onClick = {
+        onClick()
+//        onNavigate(NavigationAddCapsule.NEXT)
+      },
       border = BorderStroke(1.dp, Color.Black),
       modifier = Modifier
           .wrapContentWidth()
