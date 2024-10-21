@@ -59,6 +59,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.model.UserDetails
 import com.example.timecapsule.BuildConfig
 import com.example.timecapsule.R
 import com.example.timecapsule.ui.theme.ReviewScreenCommondColor
@@ -378,7 +379,7 @@ fun ReviewScreen(
           .nestedScroll(scrollBehavior.nestedScrollConnection)
           .nestedScroll(bottomScrollBehavior.nestedScrollConnection),
     ) {
-      item { SharedPeople() }
+      item { SharedPeople(viewModel.selectedPeoples) }
       item { DateAndTime() }
       item { SelectedCapsule() }
       item { SharedContent() }
@@ -387,7 +388,7 @@ fun ReviewScreen(
 }
 
 @Composable
-fun SharedPeople() {
+fun SharedPeople( selectedPeoples: MutableList<UserDetails>) {
   Column(
     modifier = Modifier
         .fillMaxWidth()
@@ -399,7 +400,7 @@ fun SharedPeople() {
       style = MaterialTheme.typography.titleLarge.copy(fontSize = 20.sp),
       color = MaterialTheme.colorScheme.onSurfaceVariant
     )
-    ShowSelectedPeople(disableCrossBtn = true)
+    ShowSelectedPeople(disableCrossBtn = true, selectedPeoples = selectedPeoples)
   }
 }
 

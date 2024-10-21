@@ -13,6 +13,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.domain.usecase.CreateCapsuleUseCase
 import com.example.domain.usecase.GetCapsuleAssetsUseCase
+import com.example.domain.usecase.GetUserDetailsUseCase
 import com.example.domain.usecase.SearchUsersUseCase
 import com.example.domain.usecase.UploadFilesUseCase
 import com.example.domain.usecase.getUserIDUseCase
@@ -88,18 +89,26 @@ class CapsuleCreationViewModel @Inject constructor(
   private val getCapsuleAssetsUseCase: GetCapsuleAssetsUseCase,
   private val getUserIDUseCase: getUserIDUseCase,
   private val createCapsuleUseCase: CreateCapsuleUseCase,
+  private val getUsersDetailsUseCase: GetUserDetailsUseCase,
   @ApplicationContext private val context: Context
 ) : ViewModel() {
 
-  private var userId: String? = null
+   var userId: String? = null
 
   init {
     CoroutineScope(Dispatchers.IO).launch {
       val response = getUserIDUseCase.invoke()
       if (response is Response.Success)
         userId = response.data
+
+      userId?.let {
+        val userDetailsResponse = getUsersDetailsUseCase(it)
+        if (userDetailsResponse is Response.Success)
+          selectedPeoples.add(userDetailsResponse.data!!)
+      }
     }
   }
+
 
   val amount = 500
 
@@ -235,7 +244,10 @@ class CapsuleCreationViewModel @Inject constructor(
         val result = searchUsersUseCase(query)
         _searchPeopleState.value = when (result) {
           is Response.Success -> {
-            SearchPeopleState.Success(result.data!!)
+            val temp= result.data!!.filter {
+              it.userId!=userId
+            }
+            SearchPeopleState.Success(temp)
           }
 
           is Response.Error -> {
@@ -325,17 +337,10 @@ class CapsuleCreationViewModel @Inject constructor(
               GeoPoint(latLang.latitude, latLang.longitude)
           val users: MutableList<Map<String, Any>> = selectedPeoples.map { selectedPeople ->
             mapOf(
-              "isOwner" to false,
+              "isOwner" to (selectedPeople.userId == userId),
               "userId" to selectedPeople.userId
             )
           }.toMutableList()
-
-          users.add(
-            mapOf(
-              "isOwner" to true,
-              "userId" to userId!!
-            )
-          )
 
           val fileUrls: List<String> = _fileUploadedState.value.map { file ->
             file.uri.toString()

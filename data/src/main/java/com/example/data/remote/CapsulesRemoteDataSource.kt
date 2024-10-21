@@ -26,7 +26,7 @@ class CapsulesRemoteDataSource @Inject constructor(
       val userId = authRemoteDataSource.getAuth()?.uid
 
       val responseUserName: Response<UserDetails> =
-        userRemoteDataSource.getUserDetails(userId!!) as Response<UserDetails>
+        userRemoteDataSource.getUserDetails(userId!!)
 
       if (responseUserName is Response.Error) {
         throw responseUserName.exception

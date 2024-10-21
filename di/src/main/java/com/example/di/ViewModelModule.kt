@@ -9,6 +9,7 @@ import com.example.data.repository.UserRepository
 import com.example.domain.usecase.CreateCapsuleUseCase
 import com.example.domain.usecase.GetCapsuleAssetsUseCase
 import com.example.domain.usecase.GetCapsuleListUseCase
+import com.example.domain.usecase.GetUserDetailsUseCase
 import com.example.domain.usecase.OnBoardingDataUseCase
 import com.example.domain.usecase.SaveUserDetailsUseCase
 import com.example.domain.usecase.SearchUsersUseCase
@@ -95,6 +96,12 @@ class ViewModelModule {
   @ViewModelScoped
   fun provideSearchUsersUseCase(userRepository: UserRepository): SearchUsersUseCase {
     return SearchUsersUseCase(userRepository)
+  }
+
+  @Provides
+  @ViewModelScoped
+  fun provideGetUserDetailsUseCase(userRepository: UserRepository): GetUserDetailsUseCase {
+    return GetUserDetailsUseCase(userRepository)
   }
 
   @Provides

@@ -96,15 +96,15 @@ fun ShareScreen(
   ) { innerPadding ->
     Box(
       modifier = Modifier
-        .padding(
-          start = innerPadding.calculateStartPadding(LayoutDirection.Ltr),
-          end = innerPadding.calculateEndPadding(LayoutDirection.Ltr),
-          top = innerPadding.calculateTopPadding()
-        )
+          .padding(
+              start = innerPadding.calculateStartPadding(LayoutDirection.Ltr),
+              end = innerPadding.calculateEndPadding(LayoutDirection.Ltr),
+              top = innerPadding.calculateTopPadding()
+          )
           .fillMaxSize()
     )
     {
-      AnimatedVisibility(visible = viewModel.selectedPeoples.size == 0) {
+      AnimatedVisibility(visible = viewModel.selectedPeoples.size == 1) {
         Text(
           text = "You can select people by searching their username.",
           style = MaterialTheme.typography.titleLarge.copy(fontSize = 24.sp),
@@ -122,9 +122,13 @@ fun ShareScreen(
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
       ) {
-        ShowSelectedPeople(Modifier, selectedPeoples = viewModel.selectedPeoples) { userName ->
+        ShowSelectedPeople(
+          Modifier,
+          selectedPeoples = viewModel.selectedPeoples,
+          ownerUserId = viewModel.userId
+        ) { userId ->
           val newSelectedPeoples = viewModel.selectedPeoples.filter { user ->
-            user.userName != userName
+            user.userId != userId
           }
 
           viewModel.selectedPeoples.clear()
@@ -338,7 +342,8 @@ fun UserInfo(
 fun ShowSelectedPeople(
   modifier: Modifier = Modifier,
   disableCrossBtn: Boolean = false,
-  selectedPeoples: MutableList<UserDetails> = mutableListOf(), remove: (String) -> Unit = {}
+  selectedPeoples: MutableList<UserDetails> = mutableListOf(),
+  ownerUserId: String? = null, remove: (String) -> Unit = {}
 ) {
 
   LazyHorizontalGrid(
@@ -348,7 +353,13 @@ fun ShowSelectedPeople(
     rows = GridCells.Fixed(1)
   ) {
     items(selectedPeoples) { user ->
-      Profile(userName = user.userName, user.imageUrl, disableCrossBtn, remove)
+      if (disableCrossBtn || user.userId != ownerUserId)
+        Profile(
+          userName = user.userName,
+          user.imageUrl,
+          disableCrossBtn,
+          remove
+        )
     }
   }
 }
@@ -381,7 +392,7 @@ fun Profile(
     {
       AsyncImage(
         model = imageUrl,
-        contentDescription = "seleccted people",
+        contentDescription = "selected people",
         modifier = Modifier
             .height(70.dp)
             .width(70.dp)
@@ -408,7 +419,7 @@ fun Profile(
 
     }
     Text(
-      text = "Darkx6",
+      text = userName,
       style = MaterialTheme.typography.titleLarge.copy(
         fontSize =
         17.sp
