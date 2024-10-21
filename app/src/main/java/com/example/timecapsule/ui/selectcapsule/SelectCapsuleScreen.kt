@@ -1,6 +1,7 @@
 package com.example.timecapsule.ui.selectcapsule
 
 import CapsuleImage
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -95,6 +96,7 @@ fun SelectCapsuleScreen(
   var isLoading: Boolean = capsuleAssetsState is CapsuleSelectionState.Loading
   var isSuccess: Boolean = capsuleAssetsState is CapsuleSelectionState.Success
 
+  val context = LocalContext.current
 
   LaunchedEffect(key1 = Unit) {
     viewModel.getCapsuleAssets()
@@ -141,13 +143,13 @@ fun SelectCapsuleScreen(
   ) { innerPadding ->
     Box(
       modifier = modifier
-          .padding(
-              start = innerPadding.calculateStartPadding(LayoutDirection.Ltr),
-              end = innerPadding.calculateEndPadding(LayoutDirection.Ltr),
-              top = innerPadding.calculateTopPadding()
-          )
-          .fillMaxSize()
-          .background(Color.Red)
+        .padding(
+          start = innerPadding.calculateStartPadding(LayoutDirection.Ltr),
+          end = innerPadding.calculateEndPadding(LayoutDirection.Ltr),
+          top = innerPadding.calculateTopPadding()
+        )
+        .fillMaxSize()
+        .background(Color.Red)
 
     ) {
       if (isLoading)
@@ -178,13 +180,16 @@ fun SelectCapsuleScreen(
 
       Box(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(0.dp)
-            .align(Alignment.BottomCenter)
-            .zIndex(2f)
+          .fillMaxWidth()
+          .padding(0.dp)
+          .align(Alignment.BottomCenter)
+          .zIndex(2f)
       ) {
         NavigationRow { navigationFlow ->
-          onNavigate(navigationFlow)
+          if (viewModel.selectedCapsuleModelId == null)
+            Toast.makeText(context, "Please select capsule", Toast.LENGTH_SHORT).show()
+          else
+            onNavigate(navigationFlow)
         }
       }
     }
@@ -223,7 +228,7 @@ fun CapsuleListMobile(
   onViewCapsuleClick: (CapsuleAsset) -> Unit = {},
   setCapsuleModelIdAndImageUrl: (String, String) -> Unit = { _, _ -> }
 ) {
-  var selectedCapsuleId by rememberSaveable { mutableStateOf<String>("") }
+  var selectedCapsuleId by rememberSaveable { mutableStateOf("") }
 
   LaunchedEffect(selectedCapsuleId) {
     val imageUrl = getCapsuleImageUrl(selectedCapsuleId, capsuleAssets)
@@ -270,8 +275,8 @@ fun CapsuleListTablet(
   LazyVerticalStaggeredGrid(
     columns = StaggeredGridCells.Adaptive(minSize = 400.dp),
     modifier = modifier
-        .fillMaxSize()
-        .background(Color.Transparent),
+      .fillMaxSize()
+      .background(Color.Transparent),
     contentPadding = PaddingValues(8.dp),
     horizontalArrangement = Arrangement.spacedBy(10.dp),
     verticalItemSpacing = 8.dp,
@@ -300,8 +305,8 @@ fun Capsule(
 
     },
     modifier = Modifier
-        .wrapContentHeight()
-        .fillMaxWidth(),
+      .wrapContentHeight()
+      .fillMaxWidth(),
     elevation = CardDefaults.cardElevation(4.dp),
     shape = RoundedCornerShape(6.dp),
     onClick = {
@@ -312,10 +317,10 @@ fun Capsule(
       horizontalAlignment = Alignment.CenterHorizontally,
       verticalArrangement = Arrangement.Center,
       modifier = Modifier
-          .padding(vertical = 15.dp)
-          .fillMaxSize()
-          .clip(shape = RoundedCornerShape(6.dp))
-          .background(Color.Transparent)
+        .padding(vertical = 15.dp)
+        .fillMaxSize()
+        .clip(shape = RoundedCornerShape(6.dp))
+        .background(Color.Transparent)
     ) {
       AsyncImage(
         modifier = Modifier.heightIn(min = 200.dp),
@@ -325,8 +330,8 @@ fun Capsule(
       OutlinedButton(
         onClick = { onViewCapsuleClick(capsuleAssets) },
         modifier = Modifier
-            .height(40.dp)
-            .width(100.dp),
+          .height(40.dp)
+          .width(100.dp),
         colors = ButtonDefaults.outlinedButtonColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
       ) {
         Text(

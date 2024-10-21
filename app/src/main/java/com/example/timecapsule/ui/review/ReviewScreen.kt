@@ -26,6 +26,7 @@ import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.BottomAppBarDefaults
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -39,6 +40,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -59,6 +61,8 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.AsyncImage
+import com.example.model.FileUploaded
 import com.example.model.UserDetails
 import com.example.timecapsule.BuildConfig
 import com.example.timecapsule.R
@@ -69,10 +73,19 @@ import com.example.timecapsule.ui.sharewithpeople.ShowSelectedPeople
 import com.example.timecapsule.ui.theme.LightBlue
 import com.example.timecapsule.ui.uploadfiles.UploadedFileItem
 import com.example.timecapsule.ui.util.DeviceType
+import com.example.timecapsule.ui.util.DisplayTimestamp
+import com.example.timecapsule.util.getFileImageID
 import com.example.timecapsule.viewmodel.CapsuleCreationViewModel
+import com.example.util.bytesToMegabytes
 import com.github.kittinunf.fuel.httpPost
 import com.github.kittinunf.fuel.json.responseJson
 import com.github.kittinunf.result.Result
+import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.model.LatLng
+import com.google.maps.android.compose.GoogleMap
+import com.google.maps.android.compose.Marker
+import com.google.maps.android.compose.MarkerState
+import com.google.maps.android.compose.rememberCameraPositionState
 import com.stripe.android.PaymentConfiguration
 import com.stripe.android.paymentsheet.PaymentSheet
 import com.stripe.android.paymentsheet.PaymentSheetResult
@@ -248,6 +261,8 @@ fun ReviewScreen(
   val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
   val bottomScrollBehavior = BottomAppBarDefaults.exitAlwaysScrollBehavior()
 
+  val uploadedFile by viewModel.fileUploadedState.collectAsState()
+
   var paymentReady by remember {
     mutableStateOf(PaymentReadyStatus.IDLE)
   }
@@ -380,15 +395,16 @@ fun ReviewScreen(
           .nestedScroll(bottomScrollBehavior.nestedScrollConnection),
     ) {
       item { SharedPeople(viewModel.selectedPeoples) }
-      item { DateAndTime() }
-      item { SelectedCapsule() }
-      item { SharedContent() }
+      item { DateAndTime(DisplayTimestamp(timestamp = viewModel.selectedTimeStamp!!)) }
+      item { SelectedCapsule(viewModel.selectedCapsuleImageUrl!!) }
+      item { SelectedLocation(latlang = viewModel.latLang) }
+      item { SharedContent(uploadedFile) }
     }
   }
 }
 
 @Composable
-fun SharedPeople( selectedPeoples: MutableList<UserDetails>) {
+fun SharedPeople(selectedPeoples: MutableList<UserDetails>) {
   Column(
     modifier = Modifier
         .fillMaxWidth()
@@ -405,7 +421,7 @@ fun SharedPeople( selectedPeoples: MutableList<UserDetails>) {
 }
 
 @Composable
-fun DateAndTime() {
+fun DateAndTime(dateAndTime: String) {
   Column(
     modifier = Modifier
         .fillMaxWidth()
@@ -425,17 +441,7 @@ fun DateAndTime() {
   ) {
     Text(
       modifier = Modifier.padding(10.dp),
-      text = stringResource(id = R.string.date),
-      style = MaterialTheme.typography.titleLarge.copy(
-        fontSize = 25.sp,
-        fontWeight = FontWeight.ExtraBold,
-        fontFamily = RubikBubble
-      ),
-      color = ReviewScreenCommondColor
-    )
-    Text(
-      modifier = Modifier.padding(10.dp),
-      text = stringResource(id = R.string.time),
+      text = dateAndTime,
       style = MaterialTheme.typography.titleLarge.copy(
         fontSize = 25.sp,
         fontWeight = FontWeight.ExtraBold,
@@ -447,7 +453,7 @@ fun DateAndTime() {
 }
 
 @Composable
-fun SelectedCapsule() {
+fun SelectedCapsule(imageUrl: String) {
   Column(
     modifier = Modifier
         .fillMaxWidth()
@@ -465,8 +471,8 @@ fun SelectedCapsule() {
             .width(200.dp)
             .align(Alignment.CenterHorizontally)
     ) {
-      Image(
-        painter = painterResource(id = R.drawable.testimg),
+      AsyncImage(
+        model = imageUrl,
         contentDescription = stringResource(id = R.string.selected_capsule)
       )
     }
@@ -474,7 +480,24 @@ fun SelectedCapsule() {
 }
 
 @Composable
-fun SharedContent() {
+fun SelectedLocation(latlang: LatLng) {
+  Column(
+    modifier = Modifier
+        .fillMaxWidth()
+        .wrapContentHeight()
+        .padding(vertical = 10.dp)
+  ) {
+    Text(
+      text = stringResource(id = R.string.selected_location),
+      style = MaterialTheme.typography.titleLarge.copy(fontSize = 20.sp),
+      color = MaterialTheme.colorScheme.onSurfaceVariant
+    )
+    MapPreviewCard(latlang = latlang)
+  }
+}
+
+@Composable
+fun SharedContent(fileUploaded: List<FileUploaded>) {
   Column(
     modifier = Modifier
         .fillMaxWidth()
@@ -488,42 +511,16 @@ fun SharedContent() {
       color = MaterialTheme.colorScheme.onSurfaceVariant
     )
 
-    UploadedFileItem(
-      title = "Lorem ipsum",
-      fileSize = "21.9 MB",
-      icon = R.drawable.pdf,
-      disableDeleteBtn = true
-    )
-    UploadedFileItem(
-      title = "ispum ipsum",
-      fileSize = "11.9 MB",
-      icon = R.drawable.image,
-      disableDeleteBtn = true
-    )
-    UploadedFileItem(
-      title = "itahi emuah",
-      fileSize = "51.9 MB",
-      icon = R.drawable.videocamera,
-      disableDeleteBtn = true
-    )
-    UploadedFileItem(
-      title = "Lorem ipsum",
-      fileSize = "21.9 MB",
-      icon = R.drawable.pdf,
-      disableDeleteBtn = true
-    )
-    UploadedFileItem(
-      title = "poio ipsum",
-      fileSize = "21.9 MB",
-      icon = R.drawable.xls,
-      disableDeleteBtn = true
-    )
-    UploadedFileItem(
-      title = "Lorem ipsum",
-      fileSize = "21.9 MB",
-      icon = R.drawable.pdf,
-      disableDeleteBtn = true
-    )
+    fileUploaded.forEach {
+      UploadedFileItem(
+        uri = it.uri,
+        fileUri = it.fileUri,
+        title = it.fileName,
+        fileSize = "${String.format("%.2f", bytesToMegabytes(it.totalSize))} MB",
+        getFileImageID(it.fileType),
+        disableDeleteBtn = true
+      )
+    }
   }
 }
 
@@ -570,6 +567,43 @@ fun BottomRow(onNavigate: (NavigationAddCapsule) -> Unit = {}, onClick: () -> Un
         text = stringResource(id = R.string.done_button),
         style = MaterialTheme.typography.titleLarge.copy(fontSize = 15.sp, color = Color.White),
         modifier = Modifier.background(ReviewScreenCommondColor)
+      )
+    }
+  }
+}
+
+@Composable
+fun MapPreviewCard(latlang: LatLng) {
+
+
+  // Define the camera position for the map preview
+  val cameraPositionState = rememberCameraPositionState {
+    position = CameraPosition.fromLatLngZoom(latlang, 10f)
+  }
+
+  var markerSate by remember {
+    mutableStateOf(MarkerState(latlang))
+  }
+
+  // Card layout with rounded corners
+  Card(
+    modifier = Modifier
+        .fillMaxWidth()
+        .height(200.dp).padding(vertical = 10.dp),  // Adjust height to make it look like a preview
+    shape = RoundedCornerShape(8.dp)
+  ) {
+    // GoogleMap composable for the map preview
+    GoogleMap(
+      modifier = Modifier.fillMaxWidth(),
+      cameraPositionState = cameraPositionState,
+      onMapLoaded = {
+        // Optionally perform any additional actions after the map is loaded
+      }
+    ) {
+      // Add a marker to show the location
+      Marker(
+        state = markerSate,
+        title = "Location"
       )
     }
   }
