@@ -50,7 +50,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.wear.compose.material3.placeholder
 import coil.compose.AsyncImage
 import com.example.model.CapsuleDetails
 import com.example.timecapsule.R
