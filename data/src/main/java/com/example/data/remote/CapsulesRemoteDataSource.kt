@@ -148,7 +148,7 @@ class CapsulesRemoteDataSource @Inject constructor(
 
       capsules.forEach {
         if (it["id"] == capsuleId) {
-          isOwner = it["isOpened"] as Boolean
+          isOwner = it["isOwner"] as Boolean
           isOpened = it["isOpened"] as Boolean
         }
       }

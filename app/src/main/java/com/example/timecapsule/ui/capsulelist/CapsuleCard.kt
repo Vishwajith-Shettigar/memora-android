@@ -74,7 +74,7 @@ fun CapsuleCard(
         .fillMaxWidth(),
     elevation = CardDefaults.cardElevation(10.dp),
     shape = RoundedCornerShape(6.dp),
-    onClick = { onCapsuleClicked("1234") }
+    onClick = { onCapsuleClicked(capsuleDetails!!.id) }
   ) {
     Column(
       modifier =
