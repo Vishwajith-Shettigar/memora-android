@@ -397,7 +397,14 @@ fun ReviewScreen(
       item { SharedPeople(viewModel.selectedPeoples) }
       item { DateAndTime(DisplayTimestamp(timestamp = viewModel.selectedTimeStamp!!)) }
       item { SelectedCapsule(viewModel.selectedCapsuleImageUrl!!) }
-      item { SelectedLocation(latlang = viewModel.latLang) }
+      item {
+        SelectedLocation(
+          latlang = viewModel.latLang, modifier =  Modifier
+                .fillMaxWidth()
+                .wrapContentHeight()
+                .padding(vertical = 10.dp)
+        )
+      }
       item { SharedContent(uploadedFile) }
     }
   }
@@ -480,12 +487,9 @@ fun SelectedCapsule(imageUrl: String) {
 }
 
 @Composable
-fun SelectedLocation(latlang: LatLng) {
+fun SelectedLocation(latlang: LatLng, modifier: Modifier = Modifier) {
   Column(
-    modifier = Modifier
-        .fillMaxWidth()
-        .wrapContentHeight()
-        .padding(vertical = 10.dp)
+    modifier = modifier
   ) {
     Text(
       text = stringResource(id = R.string.selected_location),
@@ -589,7 +593,8 @@ fun MapPreviewCard(latlang: LatLng) {
   Card(
     modifier = Modifier
         .fillMaxWidth()
-        .height(200.dp).padding(vertical = 10.dp),  // Adjust height to make it look like a preview
+        .height(200.dp)
+        .padding(vertical = 10.dp),  // Adjust height to make it look like a preview
     shape = RoundedCornerShape(8.dp)
   ) {
     // GoogleMap composable for the map preview

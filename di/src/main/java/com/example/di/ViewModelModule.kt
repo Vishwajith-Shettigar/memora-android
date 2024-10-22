@@ -8,6 +8,7 @@ import com.example.data.repository.UploadFileRepository
 import com.example.data.repository.UserRepository
 import com.example.domain.usecase.CreateCapsuleUseCase
 import com.example.domain.usecase.GetCapsuleAssetsUseCase
+import com.example.domain.usecase.GetCapsuleDetailsUseCase
 import com.example.domain.usecase.GetCapsuleListUseCase
 import com.example.domain.usecase.GetUserDetailsUseCase
 import com.example.domain.usecase.OnBoardingDataUseCase
@@ -90,6 +91,12 @@ class ViewModelModule {
   @ViewModelScoped
   fun provideGetCapsulesListUseCase(capsulesRepository: CapsulesRepository): GetCapsuleListUseCase {
     return GetCapsuleListUseCase(capsulesRepository)
+  }
+
+  @Provides
+  @ViewModelScoped
+  fun provideGetCapsuleDetailsUseCase(capsulesRepository: CapsulesRepository): GetCapsuleDetailsUseCase {
+    return GetCapsuleDetailsUseCase(capsulesRepository)
   }
 
   @Provides

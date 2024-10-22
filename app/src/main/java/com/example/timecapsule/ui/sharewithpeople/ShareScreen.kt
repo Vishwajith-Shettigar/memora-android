@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -358,7 +359,7 @@ fun ShowSelectedPeople(
           userName = user.userName,
           user.imageUrl,
           disableCrossBtn,
-          remove
+          remove = remove
         )
     }
   }
@@ -370,8 +371,22 @@ fun Profile(
   userName: String = "",
   imageUrl: String = "",
   disableCrossBtn: Boolean = false,
+  isOwner: Boolean = false,
   remove: (String) -> Unit = {}
 ) {
+
+  val imageModifier = if (isOwner)
+      Modifier
+          .height(70.dp)
+          .width(70.dp)
+          .clip(shape = CircleShape)
+          .border(2.dp, color = Color.Red, shape = CircleShape)
+  else
+      Modifier
+          .height(70.dp)
+          .width(70.dp)
+          .clip(shape = CircleShape)
+
 
   Column(
     modifier = Modifier
@@ -393,12 +408,7 @@ fun Profile(
       AsyncImage(
         model = imageUrl,
         contentDescription = "selected people",
-        modifier = Modifier
-            .height(70.dp)
-            .width(70.dp)
-            .clip(shape = CircleShape)
-            .align(Alignment.Center),
-        contentScale = ContentScale.Crop
+        modifier = imageModifier.align(Alignment.Center)
       )
       if (!disableCrossBtn)
         IconButton(

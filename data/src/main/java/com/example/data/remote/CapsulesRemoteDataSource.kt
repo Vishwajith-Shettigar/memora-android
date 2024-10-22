@@ -133,6 +133,61 @@ class CapsulesRemoteDataSource @Inject constructor(
     return Response.Error(exception = InValidUserException())
   }
 
+  suspend fun getCapsuleDetails(capsuleId: String): Response<CapsuleDetails> {
+    return try {
+      val userId = authRemoteDataSource.getAuth()?.uid
+      if (userId == null) {
+        throw InValidUserException()
+      }
+
+      val doc = firestore.collection("users").document(userId).get().await()
+      val capsules: MutableList<Map<*, *>> =
+        doc.data?.get("capsuleList") as? MutableList<Map<*, *>> ?: mutableListOf()
+      var isOwner = false
+      var isOpened = false
+
+      capsules.forEach {
+        if (it["id"] == capsuleId) {
+          isOwner = it["isOpened"] as Boolean
+          isOpened = it["isOpened"] as Boolean
+        }
+      }
+
+      // clear the list, since no use.
+      capsules.clear()
+
+      val capsuleDoc =
+        firestore.collection("capsules").document(capsuleId).get().await().data
+
+      if (capsuleDoc.isNullOrEmpty())
+        throw UnspecifiedException()
+
+      var location: GeoPoint? = null
+      capsuleDoc.get("location")?.let {
+        location = it as GeoPoint
+      }
+
+      val capsuleDetails = CapsuleDetails(
+        id = capsuleId,
+        title = capsuleDoc.get("title") as String,
+        description = capsuleDoc.get("description") as String,
+        isDeleted = capsuleDoc.get("deleted") as Boolean,
+        modelId = capsuleDoc.get("modelId") as Number,
+        time = capsuleDoc.get("time") as Timestamp,
+        users = capsuleDoc.get("users") as List<Map<String, Any>>,
+        isOwner = isOwner,
+        imageUrl = capsuleDoc.get("imageUrl") as String,
+        ownerUserName = capsuleDoc.get("ownerUserName") as String,
+        location = location,
+        fileUrls = capsuleDoc.get("fileUrls") as List<String>,
+        isOpened = isOpened
+      )
+      Response.Success(capsuleDetails)
+    } catch (e: Exception) {
+      Response.Error(exception = e)
+    }
+  }
+
   suspend fun getCapsuleAssets(): Response<List<CapsuleAsset>> {
     return try {
       val capsuleAssets = mutableListOf<CapsuleAsset>()
