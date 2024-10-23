@@ -73,7 +73,7 @@ fun ProfileScreen(navController: NavController = rememberNavController(),) {
   Scaffold { innerPadding ->
     Column(
       modifier = Modifier
-          .padding(bottom = innerPadding.calculateBottomPadding())
+          .padding()
           .fillMaxSize()
           .background((backgroundColor))
     ) {

@@ -19,6 +19,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.example.model.CapsuleAsset
 import com.example.timecapsule.routes.Screen
+import com.example.timecapsule.ui.CapsuleCreationSaving.CapsuleCreationSavingScreen
 import com.example.timecapsule.ui.review.ReviewScreen
 import com.example.timecapsule.ui.review.SharedPeople
 import com.example.timecapsule.ui.selectcapsule.SelectCapsuleScreen
@@ -260,9 +261,17 @@ fun NavGraphBuilder.addCapsuleNavGraph(navController: NavController, activity: A
           navController = navController,
           navigationFlow = navigationFlow,
           navigateToScreenRouteBack = Screen.UploadContent,
-          navigateToScreenRouteNext = null,
+          navigateToScreenRouteNext = Screen.CapsuleCreationSavingScreen,
           popScreenRoute = Screen.ReviewContent
         )
+      }
+    }
+
+    composable(route = Screen.CapsuleCreationSavingScreen.route) {backstackentry->
+      val sharedViewModel =
+        backstackentry.sharedViewModel<CapsuleCreationViewModel>(navController = navController)
+      CapsuleCreationSavingScreen(sharedViewModel) { navigationFlow ->
+       activity.onBackPressed()
       }
     }
   }

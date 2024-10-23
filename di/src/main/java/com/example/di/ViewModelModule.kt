@@ -3,10 +3,14 @@ package com.example.di
 import com.example.data.repository.AuthRepository
 import com.example.data.repository.AuthRepositoryImpl
 import com.example.data.repository.CapsulesRepository
+import com.example.data.repository.CapsulesRepositoryImpl
 import com.example.data.repository.UploadFileRepository
 import com.example.data.repository.UserRepository
+import com.example.domain.usecase.CreateCapsuleUseCase
 import com.example.domain.usecase.GetCapsuleAssetsUseCase
+import com.example.domain.usecase.GetCapsuleDetailsUseCase
 import com.example.domain.usecase.GetCapsuleListUseCase
+import com.example.domain.usecase.GetUserDetailsUseCase
 import com.example.domain.usecase.OnBoardingDataUseCase
 import com.example.domain.usecase.SaveUserDetailsUseCase
 import com.example.domain.usecase.SearchUsersUseCase
@@ -15,6 +19,7 @@ import com.example.domain.usecase.SignOutUseCase
 import com.example.domain.usecase.SignUpUseCase
 import com.example.domain.usecase.UploadFilesUseCase
 import com.example.domain.usecase.getAuthUseCase
+import com.example.domain.usecase.getUserIDUseCase
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -67,14 +72,43 @@ class ViewModelModule {
 
   @Provides
   @ViewModelScoped
+  fun provideCreateCapsuleUseCase(
+    capsulesRepository: CapsulesRepository
+  ): CreateCapsuleUseCase {
+    return CreateCapsuleUseCase(capsulesRepository)
+  }
+
+
+  @Provides
+  @ViewModelScoped
+  fun provideGetUserIdUseCase(
+    authRepository: AuthRepository,
+  ): getUserIDUseCase {
+    return getUserIDUseCase(authRepository)
+  }
+
+  @Provides
+  @ViewModelScoped
   fun provideGetCapsulesListUseCase(capsulesRepository: CapsulesRepository): GetCapsuleListUseCase {
     return GetCapsuleListUseCase(capsulesRepository)
   }
 
   @Provides
   @ViewModelScoped
+  fun provideGetCapsuleDetailsUseCase(capsulesRepository: CapsulesRepository): GetCapsuleDetailsUseCase {
+    return GetCapsuleDetailsUseCase(capsulesRepository)
+  }
+
+  @Provides
+  @ViewModelScoped
   fun provideSearchUsersUseCase(userRepository: UserRepository): SearchUsersUseCase {
     return SearchUsersUseCase(userRepository)
+  }
+
+  @Provides
+  @ViewModelScoped
+  fun provideGetUserDetailsUseCase(userRepository: UserRepository): GetUserDetailsUseCase {
+    return GetUserDetailsUseCase(userRepository)
   }
 
   @Provides

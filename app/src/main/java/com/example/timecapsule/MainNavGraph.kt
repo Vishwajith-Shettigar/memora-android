@@ -2,7 +2,13 @@ package com.example.timecapsule
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.only
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
@@ -15,7 +21,10 @@ import com.example.timecapsule.ui.profile.ProfileScreen
 import androidx.compose.material3.*
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.navigation
 import com.example.timecapsule.ui.capsuledetails.CapsuleDetailsScreen
@@ -77,11 +86,14 @@ fun BottomNavigationBar(navController: NavController) {
   val items = getNavigationItems()
   BottomNavigation(
     backgroundColor = MaterialTheme.colorScheme.primary,
-    modifier = Modifier.background(MaterialTheme.colorScheme.primary)
+    modifier  = Modifier
+      .windowInsetsPadding(WindowInsets.navigationBars.only(WindowInsetsSides.Bottom))
+      .background(MaterialTheme.colorScheme.primary)
   ) {
     val currentRoute = navController.currentDestination?.route
     items.forEach { item ->
       BottomNavigationItem(
+        modifier = Modifier.align(Alignment.Top),
         icon = {
           val icon: Int =
             if (currentRoute == item.screen.route)
@@ -132,9 +144,11 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
 
     // Capsule Details Screen (inside Main flow)
     composable(Screen.CapsuleDetails.route) { navBackStackEntry ->
-      val id = navBackStackEntry.arguments?.getString("id")
-      CapsuleDetailsScreen {
-        navController.popBackStack() // Return to previous screen
+      val capsuleId = navBackStackEntry.arguments?.getString("id")
+      if (capsuleId != null) {
+        CapsuleDetailsScreen(capsuleId) {
+          navController.popBackStack() // Return to previous screen
+        }
       }
     }
   }

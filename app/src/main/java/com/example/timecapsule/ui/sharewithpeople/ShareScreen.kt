@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -11,6 +12,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -55,6 +58,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
@@ -90,14 +94,18 @@ fun ShareScreen(
         .padding(scaffoldPadding)
         .background(MaterialTheme.colorScheme.primary),
     containerColor = MaterialTheme.colorScheme.primary,
-  ) { padding ->
+  ) { innerPadding ->
     Box(
       modifier = Modifier
-          .padding(padding)
+          .padding(
+              start = innerPadding.calculateStartPadding(LayoutDirection.Ltr),
+              end = innerPadding.calculateEndPadding(LayoutDirection.Ltr),
+              top = innerPadding.calculateTopPadding()
+          )
           .fillMaxSize()
     )
     {
-      AnimatedVisibility(visible = viewModel.selectedPeoples.size == 0) {
+      AnimatedVisibility(visible = viewModel.selectedPeoples.size == 1) {
         Text(
           text = "You can select people by searching their username.",
           style = MaterialTheme.typography.titleLarge.copy(fontSize = 24.sp),
@@ -115,7 +123,11 @@ fun ShareScreen(
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
       ) {
-        ShowSelectedPeople(Modifier, selectedPeoples = viewModel.selectedPeoples) { userName ->
+        ShowSelectedPeople(
+          Modifier,
+          selectedPeoples = viewModel.selectedPeoples,
+          ownerUserId = viewModel.userId
+        ) { userName ->
           val newSelectedPeoples = viewModel.selectedPeoples.filter { user ->
             user.userName != userName
           }
@@ -331,7 +343,8 @@ fun UserInfo(
 fun ShowSelectedPeople(
   modifier: Modifier = Modifier,
   disableCrossBtn: Boolean = false,
-  selectedPeoples: MutableList<UserDetails> = mutableListOf(), remove: (String) -> Unit = {}
+  selectedPeoples: MutableList<UserDetails> = mutableListOf(),
+  ownerUserId: String? = null, remove: (String) -> Unit = {}
 ) {
 
   LazyHorizontalGrid(
@@ -341,7 +354,13 @@ fun ShowSelectedPeople(
     rows = GridCells.Fixed(1)
   ) {
     items(selectedPeoples) { user ->
-      Profile(userName = user.userName, user.imageUrl, disableCrossBtn, remove)
+      if (disableCrossBtn || user.userId != ownerUserId)
+        Profile(
+          userName = user.userName,
+          user.imageUrl,
+          disableCrossBtn,
+          remove = remove
+        )
     }
   }
 }
@@ -352,8 +371,22 @@ fun Profile(
   userName: String = "",
   imageUrl: String = "",
   disableCrossBtn: Boolean = false,
+  isOwner: Boolean = false,
   remove: (String) -> Unit = {}
 ) {
+
+  val imageModifier = if (isOwner)
+      Modifier
+          .height(70.dp)
+          .width(70.dp)
+          .clip(shape = CircleShape)
+          .border(2.dp, color = Color.Red, shape = CircleShape)
+  else
+      Modifier
+          .height(70.dp)
+          .width(70.dp)
+          .clip(shape = CircleShape)
+
 
   Column(
     modifier = Modifier
@@ -374,13 +407,8 @@ fun Profile(
     {
       AsyncImage(
         model = imageUrl,
-        contentDescription = "seleccted people",
-        modifier = Modifier
-            .height(70.dp)
-            .width(70.dp)
-            .clip(shape = CircleShape)
-            .align(Alignment.Center),
-        contentScale = ContentScale.Crop
+        contentDescription = "selected people",
+        modifier = imageModifier.align(Alignment.Center)
       )
       if (!disableCrossBtn)
         IconButton(
@@ -401,7 +429,7 @@ fun Profile(
 
     }
     Text(
-      text = "Darkx6",
+      text = userName,
       style = MaterialTheme.typography.titleLarge.copy(
         fontSize =
         17.sp

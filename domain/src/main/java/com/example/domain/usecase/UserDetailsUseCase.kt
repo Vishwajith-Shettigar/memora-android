@@ -21,3 +21,11 @@ class SearchUsersUseCase @Inject constructor(
   }
 }
 
+class GetUserDetailsUseCase @Inject constructor(
+  private val userRepository: UserRepository
+){
+  suspend operator fun invoke(userId:String):Response<UserDetails>{
+    return userRepository.getUserDetails(userId)
+  }
+}
+

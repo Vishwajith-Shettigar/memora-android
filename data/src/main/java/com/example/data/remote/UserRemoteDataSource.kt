@@ -19,6 +19,16 @@ class UserRemoteDataSource @Inject constructor(
   val firestore: FirebaseFirestore,
   val authRemoteDataSource: AuthRemoteDataSource
 ) {
+
+  suspend fun getUserDetails(userId: String): Response<UserDetails> {
+    return try {
+      val userDoc = firestore.collection("users").document(userId).get().await()
+      Response.Success(parseUser(userDoc))
+    } catch (e: Exception) {
+      Response.Error(exception =  e)
+    }
+  }
+
   suspend fun saveUserDetails(userName: String, fName: String, lName: String): Response<Unit> {
     val usersCollection = firestore.collection("users")
 
@@ -118,26 +128,32 @@ class UserRemoteDataSource @Inject constructor(
   private fun parseUsers(snapshot: List<DocumentSnapshot>): Response<List<UserDetails>> {
     val users = mutableListOf<UserDetails>()
     for (document in snapshot) {
-      val userName = document.get("userName") as String
-      val userId = document.get("userId") as String
-      val fname = document.get("firstName") as String
-      val lname = document.get("lastName") as String
-      val imageUrl = document.get("imageUrl") as String
-
-      val user = UserDetails(
-        userId = userId,
-        userName = userName,
-        firstName = fname,
-        lastName = lname,
-        imageUrl = imageUrl,
-        email = "",
-        capsuleList = emptyList(),
-        userNameLowerCase = "",
-        firstNameLowerCase = ""
-      )
-
+      val user = parseUser(document)
       users.add(user)
     }
     return Response.Success(users)
+  }
+
+
+  private fun parseUser(document: DocumentSnapshot): UserDetails {
+    val userName = document.get("userName") as String
+    val userId = document.get("userId") as String
+    val fname = document.get("firstName") as String
+    val lname = document.get("lastName") as String
+    val imageUrl = document.get("imageUrl") as String
+
+    val user = UserDetails(
+      userId = userId,
+      userName = userName,
+      firstName = fname,
+      lastName = lname,
+      imageUrl = imageUrl,
+      email = "",
+      capsuleList = emptyList(),
+      userNameLowerCase = "",
+      firstNameLowerCase = ""
+    )
+    return user
+
   }
 }

@@ -11,10 +11,14 @@ import androidx.compose.runtime.remember
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.domain.usecase.CreateCapsuleUseCase
 import com.example.domain.usecase.GetCapsuleAssetsUseCase
+import com.example.domain.usecase.GetUserDetailsUseCase
 import com.example.domain.usecase.SearchUsersUseCase
 import com.example.domain.usecase.UploadFilesUseCase
+import com.example.domain.usecase.getUserIDUseCase
 import com.example.model.CapsuleAsset
+import com.example.model.CapsuleDetails
 import com.example.model.FileUploadProgress
 import com.example.model.FileUploaded
 import com.example.model.UserDetails
@@ -24,12 +28,14 @@ import com.example.util.bytesToMegabytes
 import com.example.util.getFileSizeAndName
 import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.Timestamp
+import com.google.firebase.firestore.GeoPoint
 import com.google.firebase.util.nextAlphanumericString
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
-import java.lang.Exception
 import javax.inject.Inject
+import kotlin.Exception
 import kotlin.random.Random
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -65,20 +71,54 @@ sealed class CapsuleSelectionState {
   data class Error(val message: String, val exception: Exception? = null) : CapsuleSelectionState()
 }
 
+sealed class CapsuleCreationState {
+  object Loading : CapsuleCreationState()
+  object Success : CapsuleCreationState()
+  data class Error(val message: String, val exception: Exception? = null) : CapsuleCreationState()
+}
+
+object DefaultLocation {
+  val latitude = 1.3521
+  val longitude = 103.8198
+}
+
 @HiltViewModel
 class CapsuleCreationViewModel @Inject constructor(
   private val searchUsersUseCase: SearchUsersUseCase,
   private val uploadFilesUseCase: UploadFilesUseCase,
   private val getCapsuleAssetsUseCase: GetCapsuleAssetsUseCase,
+  private val getUserIDUseCase: getUserIDUseCase,
+  private val createCapsuleUseCase: CreateCapsuleUseCase,
+  private val getUsersDetailsUseCase: GetUserDetailsUseCase,
   @ApplicationContext private val context: Context
 ) : ViewModel() {
 
-  val amount=500
+  var userId: String? = null
+
+  init {
+    CoroutineScope(Dispatchers.IO).launch {
+      val response = getUserIDUseCase.invoke()
+      if (response is Response.Success)
+        userId = response.data
+
+      userId?.let {
+        val userDetailsResponse = getUsersDetailsUseCase(it)
+        if (userDetailsResponse is Response.Success)
+          selectedPeoples.add(userDetailsResponse.data!!)
+      }
+    }
+  }
+
+
+  val amount = 500
 
   private val CAPSULE_ID: String = Random.nextAlphanumericString(10)
 
   private val capsuleSizeInMB: Double = 5.0
   private var contentSizeInMB: Double = 0.0
+
+  var selectedCapsuleModelId: String? = null
+  var selectedCapsuleImageUrl: String? = null
 
   private var totalFiles: Int = 0
 
@@ -101,16 +141,17 @@ class CapsuleCreationViewModel @Inject constructor(
     MutableStateFlow<CapsuleSelectionState>(CapsuleSelectionState.Loading)
   val capsuleSelectionState: StateFlow<CapsuleSelectionState> = _capsuleSelectionState
 
+  private val _capsuleCreationState =
+    MutableStateFlow<CapsuleCreationState>(CapsuleCreationState.Loading)
+  val capsuleCreationState: StateFlow<CapsuleCreationState> = _capsuleCreationState
+
   val selectedPeoples = mutableStateListOf<UserDetails>()
 
   val isSataliteView =
     mutableStateOf(false)
 
-  var latLang =
-    LatLng(
-      1.3521,
-      103.8198
-    )
+  var latLang:LatLng? =null
+
 
   private val _name = mutableStateOf("")
   val name: State<String> = _name
@@ -200,7 +241,10 @@ class CapsuleCreationViewModel @Inject constructor(
         val result = searchUsersUseCase(query)
         _searchPeopleState.value = when (result) {
           is Response.Success -> {
-            SearchPeopleState.Success(result.data!!)
+            val temp = result.data!!.filter {
+              it.userId != userId
+            }
+            SearchPeopleState.Success(temp)
           }
 
           is Response.Error -> {
@@ -271,6 +315,68 @@ class CapsuleCreationViewModel @Inject constructor(
               CapsuleSelectionState.Error(response.exception.message ?: "", response.exception)
           }
         }
+      }
+    }
+  }
+
+  fun saveCapsule() {
+    _capsuleCreationState.value = CapsuleCreationState.Loading
+
+    viewModelScope.launch {
+      try {
+        withContext(Dispatchers.IO) {
+          val capsuleTitle = " The family"
+          val descriptions = "Lorem ipsum orev opie kioe huoata"
+          val location =
+            if (latLang==null || selectedLocationOption == LocationOption.DONT_SELECT_LOCATION)
+              null
+            else
+              GeoPoint(latLang!!.latitude, latLang!!.longitude)
+          val users: MutableList<Map<String, Any>> = selectedPeoples.map { selectedPeople ->
+            mapOf(
+              "isOwner" to (selectedPeople.userId == userId),
+              "userId" to selectedPeople.userId,
+              "userName" to selectedPeople.userName,
+              "imageUrl" to selectedPeople.imageUrl
+            )
+          }.toMutableList()
+
+          val fileUrls: List<String> = _fileUploadedState.value.map { file ->
+            file.uri.toString()
+          }
+
+          val capsuleDetails = CapsuleDetails(
+            id = CAPSULE_ID,
+            modelId = selectedCapsuleModelId?.toIntOrNull() ?: 100,
+            imageUrl = selectedCapsuleImageUrl!!,
+            title = capsuleTitle,
+            description = descriptions,
+            location = location,
+            users = users.toList(),
+            fileUrls = fileUrls,
+            isDeleted = false,
+            time = selectedTimeStamp!!,
+            isOwner = false, // just placeholder
+            ownerUserName = "",
+          )
+
+          val response = createCapsuleUseCase(capsuleDetails)
+          withContext(Dispatchers.Main)
+          {
+            when (response) {
+              is Response.Success -> {
+                _capsuleCreationState.value = CapsuleCreationState.Success
+              }
+
+              is Response.Error -> {
+                _capsuleCreationState.value =
+                  CapsuleCreationState.Error("", response.exception)
+              }
+            }
+          }
+
+        }
+      } catch (e: Exception) {
       }
     }
   }

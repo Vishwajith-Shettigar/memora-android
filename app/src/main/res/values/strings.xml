@@ -37,6 +37,7 @@
     <string name="date">10–08–2089</string>
     <string name="time">4:30 PM</string>
     <string name="selected_capsule">Selected Capsule</string>
+    <string name="selected_location">Selected Location</string>
     <string name="shared_content">Content You\'ve Shared</string>
     <string name="edit_button">Edit</string>
     <string name="done_button">Done</string>

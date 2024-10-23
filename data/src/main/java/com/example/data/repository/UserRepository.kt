@@ -26,7 +26,7 @@ class UserRepositoryImpl @Inject constructor(
   }
 
   override suspend fun getUserDetails(userId: String): Response<UserDetails> {
-    return Response.Success()
+    return userRemoteDataSource.getUserDetails(userId)
   }
 
   override suspend fun checkUserNameDoesntExists(userName: String): Response<Exception> {

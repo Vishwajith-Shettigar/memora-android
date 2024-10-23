@@ -60,6 +60,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
@@ -217,7 +218,11 @@ fun UploadFilesScreen(
     Box(
       modifier = Modifier
           .fillMaxSize()
-          .padding(innerPadding)
+        .padding(
+          start = innerPadding.calculateStartPadding(LayoutDirection.Ltr),
+          end = innerPadding.calculateEndPadding(LayoutDirection.Ltr),
+          top = innerPadding.calculateTopPadding()
+        )
     )
     {
       LazyColumn(

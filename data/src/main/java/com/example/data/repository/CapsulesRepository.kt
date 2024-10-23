@@ -10,7 +10,9 @@ import javax.inject.Inject
 
 interface CapsulesRepository {
   suspend fun getCapsulesList(): Response<List<CapsuleDetails>>
-  suspend fun getCapsuleAssets():Response<List<CapsuleAsset>>
+  suspend fun getCapsuleAssets(): Response<List<CapsuleAsset>>
+  suspend fun createCapsule(capsuleDetails: CapsuleDetails): Response<Unit>
+  suspend fun getCapsuleDetails(capsuleId: String): Response<CapsuleDetails>
 }
 
 class CapsulesRepositoryImpl @Inject constructor(
@@ -21,6 +23,14 @@ class CapsulesRepositoryImpl @Inject constructor(
   }
 
   override suspend fun getCapsuleAssets(): Response<List<CapsuleAsset>> {
-   return capsulesRemoteDataSource.getCapsuleAssets()
+    return capsulesRemoteDataSource.getCapsuleAssets()
+  }
+
+  override suspend fun createCapsule(capsuleDetails: CapsuleDetails): Response<Unit> {
+    return capsulesRemoteDataSource.createCapsule(capsuleDetails)
+  }
+
+  override suspend fun getCapsuleDetails(capsuleId: String): Response<CapsuleDetails> {
+    return capsulesRemoteDataSource.getCapsuleDetails(capsuleId)
   }
 }

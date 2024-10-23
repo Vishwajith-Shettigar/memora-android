@@ -25,6 +25,7 @@ filamentAndroid = "1.17.1"
 navigationCompose = "2.8.1"
 jetbrainsKotlinJvm = "1.9.0"
 stripeAndroid = "20.52.0"
+composeMaterial3 = "1.0.0-alpha27"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }

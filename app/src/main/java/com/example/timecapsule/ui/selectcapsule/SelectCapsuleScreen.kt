@@ -1,6 +1,7 @@
 package com.example.timecapsule.ui.selectcapsule
 
 import CapsuleImage
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -8,6 +9,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -50,6 +53,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
@@ -64,6 +68,15 @@ import com.example.timecapsule.ui.util.DeviceType
 import com.example.timecapsule.ui.util.createCapsuleImageList
 import com.example.timecapsule.viewmodel.CapsuleCreationViewModel
 import com.example.timecapsule.viewmodel.CapsuleSelectionState
+
+
+fun getCapsuleImageUrl(capsuleModelId: String, capsuleAssets: List<CapsuleAsset>): String? {
+  capsuleAssets.forEach { assets ->
+    if (assets.capsule_id == capsuleModelId)
+      return assets.imageUrl
+  }
+  return null
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview
@@ -83,6 +96,7 @@ fun SelectCapsuleScreen(
   var isLoading: Boolean = capsuleAssetsState is CapsuleSelectionState.Loading
   var isSuccess: Boolean = capsuleAssetsState is CapsuleSelectionState.Success
 
+  val context = LocalContext.current
 
   LaunchedEffect(key1 = Unit) {
     viewModel.getCapsuleAssets()
@@ -129,8 +143,13 @@ fun SelectCapsuleScreen(
   ) { innerPadding ->
     Box(
       modifier = modifier
-        .padding(innerPadding)
+        .padding(
+          start = innerPadding.calculateStartPadding(LayoutDirection.Ltr),
+          end = innerPadding.calculateEndPadding(LayoutDirection.Ltr),
+          top = innerPadding.calculateTopPadding()
+        )
         .fillMaxSize()
+        .background(Color.Red)
 
     ) {
       if (isLoading)
@@ -154,7 +173,10 @@ fun SelectCapsuleScreen(
           Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
           capsuleAssets,
           onViewCapsuleClick
-        )
+        ) { capsuleModelId, imageUrl ->
+          viewModel.selectedCapsuleModelId = capsuleModelId
+          viewModel.selectedCapsuleImageUrl = imageUrl
+        }
 
       Box(
         modifier = Modifier
@@ -164,7 +186,10 @@ fun SelectCapsuleScreen(
           .zIndex(2f)
       ) {
         NavigationRow { navigationFlow ->
-          onNavigate(navigationFlow)
+          if (viewModel.selectedCapsuleModelId == null)
+            Toast.makeText(context, "Please select capsule", Toast.LENGTH_SHORT).show()
+          else
+            onNavigate(navigationFlow)
         }
       }
     }
@@ -175,13 +200,24 @@ fun SelectCapsuleScreen(
 fun CapsuleList(
   modifier: Modifier,
   capsuleAssets: List<CapsuleAsset>,
-  onViewCapsuleClick: (CapsuleAsset) -> Unit = {}
+  onViewCapsuleClick: (CapsuleAsset) -> Unit = {},
+  setCapsuleModelIdAndImageUrl: (String, String) -> Unit = { _, _ -> }
 ) {
   val isTablet = DeviceType.isTablet()
   if (isTablet) {
-    CapsuleListTablet(modifier = modifier, capsuleAssets, onViewCapsuleClick)
+    CapsuleListTablet(
+      modifier = modifier,
+      capsuleAssets,
+      onViewCapsuleClick,
+      setCapsuleModelIdAndImageUrl
+    )
   } else {
-    CapsuleListMobile(modifier = modifier, capsuleAssets, onViewCapsuleClick)
+    CapsuleListMobile(
+      modifier = modifier,
+      capsuleAssets,
+      onViewCapsuleClick,
+      setCapsuleModelIdAndImageUrl
+    )
   }
 }
 
@@ -189,9 +225,18 @@ fun CapsuleList(
 fun CapsuleListMobile(
   modifier: Modifier = Modifier,
   capsuleAssets: List<CapsuleAsset>,
-  onViewCapsuleClick: (CapsuleAsset) -> Unit = {}
+  onViewCapsuleClick: (CapsuleAsset) -> Unit = {},
+  setCapsuleModelIdAndImageUrl: (String, String) -> Unit = { _, _ -> }
 ) {
-  var selectedCapsuleId by rememberSaveable { mutableStateOf<String>("") }
+  var selectedCapsuleId by rememberSaveable { mutableStateOf("") }
+
+  LaunchedEffect(selectedCapsuleId) {
+    val imageUrl = getCapsuleImageUrl(selectedCapsuleId, capsuleAssets)
+    if (imageUrl != null) {
+      setCapsuleModelIdAndImageUrl(selectedCapsuleId, imageUrl)
+    }
+  }
+
   LazyVerticalStaggeredGrid(
     modifier = modifier
       .background(Color.Transparent),
@@ -213,9 +258,19 @@ fun CapsuleListMobile(
 fun CapsuleListTablet(
   modifier: Modifier = Modifier,
   capsuleAssets: List<CapsuleAsset>,
-  onViewCapsuleClick: (CapsuleAsset) -> Unit = {}
+  onViewCapsuleClick: (CapsuleAsset) -> Unit = {},
+  setCapsuleModelIdAndImageUrl: (String, String) -> Unit = { _, _ -> }
 ) {
   var selectedCapsuleId by rememberSaveable { mutableStateOf<String>("") }
+
+  LaunchedEffect(selectedCapsuleId) {
+
+    val imageUrl = getCapsuleImageUrl(selectedCapsuleId, capsuleAssets)
+    if (imageUrl != null) {
+      setCapsuleModelIdAndImageUrl(selectedCapsuleId, imageUrl)
+    }
+
+  }
 
   LazyVerticalStaggeredGrid(
     columns = StaggeredGridCells.Adaptive(minSize = 400.dp),

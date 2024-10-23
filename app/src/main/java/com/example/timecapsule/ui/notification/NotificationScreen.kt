@@ -102,7 +102,7 @@ fun NotificationScreen(navController: NavController = rememberNavController(),) 
       modifier = Modifier
           .background(MaterialTheme.colorScheme.primary)
           .fillMaxSize()
-          .padding(innerPadding)
+          .padding(top = innerPadding.calculateTopPadding())
           .nestedScroll(scrollBehavior.nestedScrollConnection),
       horizontalAlignment = Alignment.CenterHorizontally
     ) {
