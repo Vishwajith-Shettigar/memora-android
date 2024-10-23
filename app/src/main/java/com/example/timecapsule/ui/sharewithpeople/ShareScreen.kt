@@ -127,9 +127,9 @@ fun ShareScreen(
           Modifier,
           selectedPeoples = viewModel.selectedPeoples,
           ownerUserId = viewModel.userId
-        ) { userId ->
+        ) { userName ->
           val newSelectedPeoples = viewModel.selectedPeoples.filter { user ->
-            user.userId != userId
+            user.userName != userName
           }
 
           viewModel.selectedPeoples.clear()

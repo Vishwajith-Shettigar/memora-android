@@ -93,7 +93,7 @@ class CapsuleCreationViewModel @Inject constructor(
   @ApplicationContext private val context: Context
 ) : ViewModel() {
 
-   var userId: String? = null
+  var userId: String? = null
 
   init {
     CoroutineScope(Dispatchers.IO).launch {
@@ -150,11 +150,8 @@ class CapsuleCreationViewModel @Inject constructor(
   val isSataliteView =
     mutableStateOf(false)
 
-  var latLang =
-    LatLng(
-      1.3521,
-      103.8198
-    )
+  var latLang:LatLng? =null
+
 
   private val _name = mutableStateOf("")
   val name: State<String> = _name
@@ -244,8 +241,8 @@ class CapsuleCreationViewModel @Inject constructor(
         val result = searchUsersUseCase(query)
         _searchPeopleState.value = when (result) {
           is Response.Success -> {
-            val temp= result.data!!.filter {
-              it.userId!=userId
+            val temp = result.data!!.filter {
+              it.userId != userId
             }
             SearchPeopleState.Success(temp)
           }
@@ -331,14 +328,16 @@ class CapsuleCreationViewModel @Inject constructor(
           val capsuleTitle = " The family"
           val descriptions = "Lorem ipsum orev opie kioe huoata"
           val location =
-            if (latLang.latitude == DefaultLocation.latitude && latLang.longitude == DefaultLocation.longitude)
+            if (latLang==null || selectedLocationOption == LocationOption.DONT_SELECT_LOCATION)
               null
             else
-              GeoPoint(latLang.latitude, latLang.longitude)
+              GeoPoint(latLang!!.latitude, latLang!!.longitude)
           val users: MutableList<Map<String, Any>> = selectedPeoples.map { selectedPeople ->
             mapOf(
               "isOwner" to (selectedPeople.userId == userId),
-              "userId" to selectedPeople.userId
+              "userId" to selectedPeople.userId,
+              "userName" to selectedPeople.userName,
+              "imageUrl" to selectedPeople.imageUrl
             )
           }.toMutableList()
 

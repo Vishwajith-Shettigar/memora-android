@@ -398,12 +398,15 @@ fun ReviewScreen(
       item { DateAndTime(DisplayTimestamp(timestamp = viewModel.selectedTimeStamp!!)) }
       item { SelectedCapsule(viewModel.selectedCapsuleImageUrl!!) }
       item {
-        SelectedLocation(
-          latlang = viewModel.latLang, modifier =  Modifier
-                .fillMaxWidth()
-                .wrapContentHeight()
-                .padding(vertical = 10.dp)
-        )
+        viewModel.latLang?.let {
+          SelectedLocation(
+            latlang = it, modifier =  Modifier
+              .fillMaxWidth()
+              .wrapContentHeight()
+              .padding(vertical = 10.dp)
+          )
+        }
+
       }
       item { SharedContent(uploadedFile) }
     }

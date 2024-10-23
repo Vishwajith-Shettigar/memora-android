@@ -86,16 +86,18 @@ fun MyMapWithSearch(
   val placesClient = remember { Places.createClient(context) }
   val cameraPositionState = rememberCameraPositionState {
     mutableStateOf(
-      CameraPosition.fromLatLngZoom(
-        viewModel.latLang, 10f
-      )
+      viewModel.latLang?.let {
+        CameraPosition.fromLatLngZoom(
+          it, 10f
+        )
+      }
     )
   }
 
   val isSataliteView = viewModel.isSataliteView
 
   var markerSate by remember {
-    mutableStateOf(MarkerState(viewModel.latLang))
+    mutableStateOf(viewModel.latLang?.let { MarkerState(it) })
   }
 
   Box(modifier = modifier.fillMaxSize()) {
@@ -122,13 +124,14 @@ fun MyMapWithSearch(
         MapProperties(mapType = MapType.HYBRID)
       } else {
         MapProperties(mapType = MapType.TERRAIN)
-
       }
     ) {
-      Marker(
-        state = markerSate,
-        contentDescription = markerSate.position.latitude.toString() + "\n" + markerSate.position.longitude.toString()
-      )
+      markerSate?.let {
+        Marker(
+          state = it,
+          contentDescription = markerSate!!.position.latitude.toString() + "\n" + markerSate!!.position.longitude.toString()
+        )
+      }
     }
     Box(
       modifier = Modifier

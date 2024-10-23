@@ -126,4 +126,6 @@ dependencies {
     implementation (libs.stripe.android)
     implementation ("com.github.kittinunf.fuel:fuel:2.3.1")
     implementation ("com.github.kittinunf.fuel:fuel-json:2.3.1")
+
+    implementation "com.google.accompanist:accompanist-placeholder-material:0.31.0-alpha"
 }
