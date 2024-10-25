@@ -317,13 +317,11 @@ fun BottomPart(
                 remove = {})
             }
           }
-
         }
       }
     }
 
     // SelectedLocation with shimmer effect
-
     if (isLoading)
       Box(
         modifier = Modifier
@@ -353,7 +351,5 @@ fun BottomPart(
               )
         )
       }
-
-
   }
 }
