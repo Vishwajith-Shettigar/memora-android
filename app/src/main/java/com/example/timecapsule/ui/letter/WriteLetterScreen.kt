@@ -30,7 +30,7 @@ import com.example.timecapsule.ui.util.DeviceType
 import kotlin.math.floor
 
 @Composable
-fun LetterScreen() {
+fun WriteLetterScreen() {
   Scaffold(containerColor = MaterialTheme.colorScheme.primary,
     bottomBar = {
       Box(
