@@ -94,6 +94,7 @@ dependencies {
     implementation libs.coil.compose
     implementation libs.ui
     implementation libs.androidx.runtime
+    implementation "io.coil-kt:coil-gif:2.7.0"
 
     // Google map sdk
     implementation "com.google.maps.android:maps-compose:6.1.0"

@@ -86,9 +86,9 @@ fun BottomNavigationBar(navController: NavController) {
   val items = getNavigationItems()
   BottomNavigation(
     backgroundColor = MaterialTheme.colorScheme.primary,
-    modifier  = Modifier
-      .windowInsetsPadding(WindowInsets.navigationBars.only(WindowInsetsSides.Bottom))
-      .background(MaterialTheme.colorScheme.primary)
+    modifier = Modifier
+        .windowInsetsPadding(WindowInsets.navigationBars.only(WindowInsetsSides.Bottom))
+        .background(MaterialTheme.colorScheme.primary)
   ) {
     val currentRoute = navController.currentDestination?.route
     items.forEach { item ->
@@ -136,7 +136,10 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
         navController.navigate(Screen.AddCapsuleScreens.route) // Start AddCapsule flow
       }, onCapsuleClicked = { id ->
         navController.navigate(Screen.CapsuleDetails.createRoute(id)) // Capsule details
-      })
+      },
+        openCapule = { capsuleId ->
+
+        })
     }
     composable(Screen.Location.route) { FindCapsuleScreenV1(navController) }
     composable(Screen.Notification.route) { NotificationScreen(navController) }

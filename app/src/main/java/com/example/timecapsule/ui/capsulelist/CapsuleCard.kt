@@ -43,6 +43,7 @@ import com.example.timecapsule.R
 import com.example.timecapsule.ui.theme.LightBlue
 import com.example.timecapsule.ui.util.DeviceType
 import com.google.firebase.Timestamp
+import com.google.firebase.firestore.GeoPoint
 import java.text.SimpleDateFormat
 import java.util.Locale
 import java.util.concurrent.TimeUnit
@@ -53,7 +54,7 @@ fun CapsuleCard(
   rowItemSize: Int = 2,
   capsuleDetails: CapsuleDetails? = null,
   modifier: Modifier = Modifier,
-  onCapsuleClicked: (id: String) -> Unit = {}
+  onCapsuleClicked: (id: String) -> Unit = {}, openCapule:(id:String)->Unit ={}
 ) {
   // State to toggle the visibility of the pane
   var isPaneVisible by remember { mutableStateOf(false) }
@@ -108,7 +109,7 @@ fun CapsuleCard(
           horizontalArrangement = Arrangement.Center
         )
         {
-          Button(onClick = { }, colors = ButtonDefaults.buttonColors(containerColor = LightBlue)) {
+          Button(onClick = { openCapule(capsuleDetails.id)}, colors = ButtonDefaults.buttonColors(containerColor = LightBlue)) {
             Text(text = "Open", color = Color.LightGray)
           }
         }

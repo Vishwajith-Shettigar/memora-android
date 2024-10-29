@@ -61,7 +61,8 @@ fun CapsuleCardListScreen(
   modifier: Modifier = Modifier,
   viewModel: ShowCapsulesListViewModel = hiltViewModel(),
   addCapsuleBtnClicked: () -> Unit = {},
-  onCapsuleClicked: (id: String) -> Unit = {}
+  onCapsuleClicked: (id: String) -> Unit = {},
+  openCapule:(id:String)->Unit ={}
 ) {
   val isTablet = DeviceType.isTablet()
   val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
@@ -142,7 +143,8 @@ fun CapsuleCardListScreen(
       isLoading = isLoading,
       isSuccess = isSuccess,
       capsuleList = capsuleList,
-      onCapsuleClicked = onCapsuleClicked
+      onCapsuleClicked = onCapsuleClicked,
+      openCapule=openCapule
     )
   }
 }

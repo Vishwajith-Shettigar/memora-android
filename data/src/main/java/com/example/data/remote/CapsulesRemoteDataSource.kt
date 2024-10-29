@@ -127,6 +127,7 @@ class CapsulesRemoteDataSource @Inject constructor(
         }
         Response.Success(capsulesDetailsList)
       } catch (e: Exception) {
+        Log.e("pokemon",e.toString())
         Response.Error(UnspecifiedException())
       }
     }

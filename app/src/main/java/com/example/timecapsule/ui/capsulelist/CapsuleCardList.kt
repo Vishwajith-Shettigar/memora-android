@@ -25,7 +25,7 @@ fun CapsuleCardList(
   isLoading: Boolean = false,
   isSuccess: Boolean = false,
   capsuleList: List<CapsuleDetails> = mutableListOf(),
-  onCapsuleClicked: (id: String) -> Unit = {}
+  onCapsuleClicked: (id: String) -> Unit = {},openCapule:(id:String)->Unit ={}
 ) {
   if (DeviceType.isTablet()) {
     CapsuleCardListTablet(
@@ -37,7 +37,7 @@ fun CapsuleCardList(
     CapsuleCardListMobile(
       modifier = modifier, isLoading = isLoading,
       isSuccess = isSuccess,
-      capsuleList = capsuleList, onCapsuleClicked = onCapsuleClicked
+      capsuleList = capsuleList, onCapsuleClicked = onCapsuleClicked,openCapule=openCapule
     )
   }
 }
@@ -48,7 +48,7 @@ fun CapsuleCardListMobile(
   isLoading: Boolean = false,
   isSuccess: Boolean = false,
   capsuleList: List<CapsuleDetails> = mutableListOf(),
-  onCapsuleClicked: (id: String) -> Unit = {}
+  onCapsuleClicked: (id: String) -> Unit = {},openCapule:(id:String)->Unit ={}
 ) {
 
   if (isLoading)
@@ -74,7 +74,7 @@ fun CapsuleCardListMobile(
       verticalItemSpacing = 8.dp
     ) {
       items(capsuleList.size) { it ->
-        CapsuleCard(2, capsuleDetails = capsuleList[it], onCapsuleClicked = onCapsuleClicked)
+        CapsuleCard(2, capsuleDetails = capsuleList[it], onCapsuleClicked = onCapsuleClicked, openCapule = openCapule)
       }
     }
 }
