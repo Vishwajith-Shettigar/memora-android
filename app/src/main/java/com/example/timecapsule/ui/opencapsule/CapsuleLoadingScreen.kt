@@ -12,12 +12,16 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.example.timecapsule.R
 import coil.ImageLoader
@@ -26,16 +30,36 @@ import coil.decode.ImageDecoderDecoder
 import coil.decode.GifDecoder
 import coil.request.ImageRequest
 import coil.size.Size
+import com.example.timecapsule.routes.Screen
+import com.example.timecapsule.viewmodel.OpenCapsuleViewModel
 
 @Preview
 @Composable
-fun CapsuleLoadingScreen() {
+fun CapsuleLoadingScreen(
+  viewModel: OpenCapsuleViewModel = hiltViewModel(), capsuleId: String,
+  navigate: (String) -> Unit = {}
+) {
   val context = LocalContext.current
+
+  val screenCheckPointState by viewModel.screenCheckPoint.collectAsState()
+
+  LaunchedEffect(Unit) {
+    viewModel.getScreenCheckPoint(capsuleId)
+    viewModel.getCapsuleDetails(capsuleId)
+  }
+
+  LaunchedEffect(screenCheckPointState) {
+    screenCheckPointState?.let {
+      navigate(it)
+    }
+  }
+
+
 
   Column(
     modifier = Modifier
-        .fillMaxSize()
-        .background(MaterialTheme.colorScheme.primary),
+      .fillMaxSize()
+      .background(MaterialTheme.colorScheme.primary),
     horizontalAlignment = Alignment.CenterHorizontally,
     verticalArrangement = Arrangement.Center
   ) {

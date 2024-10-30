@@ -15,6 +15,7 @@ import androidx.compose.material.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -22,12 +23,21 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.timecapsule.ui.theme.SubTitleFontColor
 import com.example.timecapsule.R
+import com.example.timecapsule.routes.Screen
+import com.example.timecapsule.viewmodel.OpenCapsuleViewModel
 
 @Preview
 @Composable
-fun InstructionsScreen() {
+fun InstructionsScreen(
+  viewModel: OpenCapsuleViewModel = hiltViewModel(),
+  navigate: (String) -> Unit = {}
+) {
+  LaunchedEffect(Unit) {
+    viewModel.saveScreenCheckPoint(Screen.OpenCapsuleInstructionsScreen.route)
+  }
   Box(
     modifier = Modifier
         .fillMaxSize()

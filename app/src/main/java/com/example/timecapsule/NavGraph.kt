@@ -53,6 +53,7 @@ fun MobileLayoutV1() {
       onboardingNavGraph(navController)
       mainNavGraph(navController)
       addCapsuleNavGraph(navController, activity)
+      openCapsuleNavGraph(navController = navController)
     }
   }
 }

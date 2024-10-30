@@ -129,17 +129,16 @@ data class NavItem(
 fun NavGraphBuilder.mainNavGraph(navController: NavController) {
   navigation(
     startDestination = Screen.Home.route,
-    route = Screen.MainScreens.route // Optional route for separation
+    route = Screen.MainScreens.route
   ) {
     composable(Screen.Home.route) {
       CapsuleCardListScreen(navController, addCapsuleBtnClicked = {
         navController.navigate(Screen.AddCapsuleScreens.route) // Start AddCapsule flow
       }, onCapsuleClicked = { id ->
         navController.navigate(Screen.CapsuleDetails.createRoute(id)) // Capsule details
-      },
-        openCapule = { capsuleId ->
-
-        })
+      }, openCapule = { capsuleId ->
+        navController.navigate(Screen.OpenCapsuleLoadingScreen.createRoute(capsuleId))
+      })
     }
     composable(Screen.Location.route) { FindCapsuleScreenV1(navController) }
     composable(Screen.Notification.route) { NotificationScreen(navController) }
