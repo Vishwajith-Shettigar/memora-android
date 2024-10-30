@@ -36,7 +36,6 @@ class OpenCapsuleViewModel @Inject constructor(
   private var CAPSULE_ID: String? = null
 
   private val _screenCheckPoint = MutableStateFlow<String?>(null)
-  val screenCheckPoint: StateFlow<String?> = _screenCheckPoint
 
   private val _capsuleDetailsState =
     MutableStateFlow<DisplayCapsuleDetailsState?>(null)
