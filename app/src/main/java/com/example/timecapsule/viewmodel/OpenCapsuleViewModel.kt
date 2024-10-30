@@ -12,11 +12,20 @@ import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import okhttp3.Route
 
+data class CombinedState(
+  val checkpoint: String?,
+  val capsuleDetailsState: DisplayCapsuleDetailsState
+)
 
 @HiltViewModel
 class OpenCapsuleViewModel @Inject constructor(
@@ -30,8 +39,25 @@ class OpenCapsuleViewModel @Inject constructor(
   val screenCheckPoint: StateFlow<String?> = _screenCheckPoint
 
   private val _capsuleDetailsState =
-    MutableStateFlow<DisplayCapsuleDetailsState>(DisplayCapsuleDetailsState.Loading)
-  val capsuleDetailsState: StateFlow<DisplayCapsuleDetailsState> = _capsuleDetailsState
+    MutableStateFlow<DisplayCapsuleDetailsState?>(null)
+  val capsuleDetailsState: StateFlow<DisplayCapsuleDetailsState?> = _capsuleDetailsState
+
+  val combinedState: StateFlow<CombinedState?> = combine(
+    _screenCheckPoint,
+    _capsuleDetailsState
+  ) { checkpoint, capsuleDetailsState ->
+    if (checkpoint != null && capsuleDetailsState != null) {
+      CombinedState(checkpoint, capsuleDetailsState)
+    } else {
+      null
+    }
+  }.filterNotNull()
+    .stateIn(
+      viewModelScope,
+      SharingStarted.WhileSubscribed(5000),
+      null
+    )
+
 
   fun getCapsuleDetails(capsuleId: String) {
     CAPSULE_ID = capsuleId
@@ -54,7 +80,6 @@ class OpenCapsuleViewModel @Inject constructor(
     }
   }
 
-
   fun getScreenCheckPoint(capsuleId: String) {
     viewModelScope.launch {
       withContext(Dispatchers.IO) {
@@ -68,13 +93,11 @@ class OpenCapsuleViewModel @Inject constructor(
           )
           _screenCheckPoint.value = Screen.OpenCapsuleInstructionsScreen.route
         }
-
         route?.let {
           _screenCheckPoint.value = it
         }
       }
     }
-
   }
 
   fun saveScreenCheckPoint(route: String) {
@@ -83,5 +106,4 @@ class OpenCapsuleViewModel @Inject constructor(
       capsuleId = CAPSULE_ID!!
     )
   }
-
 }

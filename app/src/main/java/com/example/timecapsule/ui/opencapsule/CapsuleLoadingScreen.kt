@@ -1,6 +1,8 @@
 package com.example.timecapsule.ui.opencapsule
 
 import android.content.Context
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -31,35 +33,40 @@ import coil.decode.GifDecoder
 import coil.request.ImageRequest
 import coil.size.Size
 import com.example.timecapsule.routes.Screen
+import com.example.timecapsule.viewmodel.DisplayCapsuleDetailsState
 import com.example.timecapsule.viewmodel.OpenCapsuleViewModel
 
 @Preview
 @Composable
 fun CapsuleLoadingScreen(
   viewModel: OpenCapsuleViewModel = hiltViewModel(), capsuleId: String,
-  navigate: (String) -> Unit = {}
+  navigate: (String) -> Unit = {}, popBack: () -> Unit = {}
 ) {
   val context = LocalContext.current
-
-  val screenCheckPointState by viewModel.screenCheckPoint.collectAsState()
+  val combinedState by viewModel.combinedState.collectAsState()
 
   LaunchedEffect(Unit) {
     viewModel.getScreenCheckPoint(capsuleId)
     viewModel.getCapsuleDetails(capsuleId)
   }
 
-  LaunchedEffect(screenCheckPointState) {
-    screenCheckPointState?.let {
-      navigate(it)
+  LaunchedEffect(combinedState) {
+    if (combinedState != null) {
+      val checkpoint = combinedState!!.checkpoint
+      val capsuleDetailsState = combinedState!!.capsuleDetailsState
+      if (capsuleDetailsState is DisplayCapsuleDetailsState.Success) {
+        navigate(checkpoint!!)
+      } else {
+        Toast.makeText(context, "Something went wrong!", Toast.LENGTH_SHORT).show()
+        popBack()
+      }
     }
   }
 
-
-
   Column(
     modifier = Modifier
-      .fillMaxSize()
-      .background(MaterialTheme.colorScheme.primary),
+        .fillMaxSize()
+        .background(MaterialTheme.colorScheme.primary),
     horizontalAlignment = Alignment.CenterHorizontally,
     verticalArrangement = Arrangement.Center
   ) {

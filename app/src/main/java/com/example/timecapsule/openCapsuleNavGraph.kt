@@ -22,13 +22,13 @@ fun NavGraphBuilder.openCapsuleNavGraph(navController: NavController) {
       Log.e("pokemon", capsuleId)
       val sharedViewModel =
         backstackentry.sharedViewModel<OpenCapsuleViewModel>(navController = navController)
-      CapsuleLoadingScreen(sharedViewModel, capsuleId) { route ->
+      CapsuleLoadingScreen(sharedViewModel, capsuleId, navigate = { route ->
         navController.navigate(route) {
           popUpTo(Screen.OpenCapsuleLoadingScreen.route) {
             inclusive = true
           }
         }
-      }
+      }, popBack = { navController.popBackStack() })
     }
 
     composable(Screen.OpenCapsuleInstructionsScreen.route) { backstackentry ->
