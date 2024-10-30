@@ -21,4 +21,16 @@ class SharedPreferencesHelper(context: Context) {
   fun isOnBoardingDetailsCompleted(): Boolean {
     return sharedPreferences.getBoolean(KEY_IS_DETAILS_COMPLETED, false)
   }
+
+  fun saveCapsuleOpeningLastScreenRoute(route: String, capsuleId: String) {
+    sharedPreferences.edit().putString(capsuleId, route).apply()
+  }
+
+  fun getCapsuleOpeningLastScreenRoute(capsuleId: String): String? {
+    return sharedPreferences.getString(capsuleId,null)
+  }
+
+  fun deleteCapsuleOpeningLastScreenRoute(capsuleId: String){
+    sharedPreferences.edit().remove(capsuleId).apply()
+  }
 }

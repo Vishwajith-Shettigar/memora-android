@@ -1,5 +1,6 @@
 package com.example.timecapsule.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.domain.usecase.GetCapsuleListUseCase
@@ -41,10 +42,13 @@ class ShowCapsulesListViewModel @Inject constructor(
           CapsuleListScreenState.Success(result.data!!)
         }
 
-        is Response.Error -> CapsuleListScreenState.Error(
-          result.exception.message.toString(),
-          result.exception
-        )
+        is Response.Error -> {
+          Log.e("pokemon", result.exception.toString())
+          CapsuleListScreenState.Error(
+            result.exception.message.toString(),
+            result.exception
+          )
+        }
       }
     }
   }

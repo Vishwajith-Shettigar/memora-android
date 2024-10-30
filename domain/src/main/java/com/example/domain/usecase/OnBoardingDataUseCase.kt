@@ -4,11 +4,11 @@ import com.example.data.sharedpreference.SharedPreferencesHelper
 import javax.inject.Inject
 
 class OnBoardingDataUseCase @Inject constructor(private val sharedPreferencesHelper: SharedPreferencesHelper) {
-  suspend fun setOnBoardingDetailsCompleted(isCompleted: Boolean) {
+  fun setOnBoardingDetailsCompleted(isCompleted: Boolean) {
     sharedPreferencesHelper.setIsOnBoardingDetailsCompleted(isCompleted)
   }
 
-  suspend fun getIsOnBoardingDetailsCompleted(): Boolean {
+  fun getIsOnBoardingDetailsCompleted(): Boolean {
     return sharedPreferencesHelper.isOnBoardingDetailsCompleted()
   }
 }

@@ -8,14 +8,7 @@ sealed class Screen(val route: String) {
   object Onboarding : Screen("onboarding")
   object Login : Screen("login")
   object Signup : Screen("signup")
-
   object AskDetails : Screen("askdetails")
-
-
-  //Main Screen
-
-//  object MainScreens : Screen("main_screens")
-
 
   // Main Flow with Bottom Nav
   object Home : Screen("home")
@@ -27,14 +20,13 @@ sealed class Screen(val route: String) {
   }
 
 
-  object AddCapsuleScreens : Screen("add_capsule_screns")
-
+// Parent navigations.
   object MainScreens : Screen("main_screns")
-
   object OnboardingScreens : Screen("onboardingscrens")
+  object AddCapsuleScreens : Screen("add_capsule_screns")
+  object OpenCapsuleScreens : Screen("open_capsule_screens")
 
-
-  // Subscreens in Home
+  // Add capsule screens
   object SelectTime : Screen("select_time")
   object SelectLocation : Screen("select_location")
   object UploadContent : Screen("upload_content")
@@ -54,4 +46,13 @@ sealed class Screen(val route: String) {
   // Subscreens in Profile
   object Settings : Screen("settings")
   object Help : Screen("help")
+
+  // Open capsule screens.
+  object OpenCapsuleLoadingScreen: Screen("open_capsule_loading/{id}"){
+    fun createRoute(id: String) = "open_capsule_loading/${id}"
+  }
+  object OpenCapsuleInstructionsScreen :Screen("open_capsule_instructions")
+  object OpenCapsuleMapInstructionsScreen : Screen("open_capsule_map_instructions")
+  object OpenCapsuleLetterScreen :Screen("open_capsule_letter")
+  object OpenCapsuleContentScreen : Screen("ope_capsule_content")
 }

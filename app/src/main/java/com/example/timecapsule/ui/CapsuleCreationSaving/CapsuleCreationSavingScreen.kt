@@ -117,13 +117,11 @@ fun SuccessScreen(onNavigate: (NavigationAddCapsule) -> Unit = {}) {
     style = MaterialTheme.typography.titleLarge.copy(fontSize = 15.sp),
     color = MaterialTheme.colorScheme.onSurfaceVariant
   )
-
 }
 
 @Composable
 fun LoadingScreen() {
   RotatingPicture(image = painterResource(id = R.drawable.capsule_image3))
-
   Text(
     modifier = Modifier.padding(10.dp),
     text = "Please dont close the app or press back.",

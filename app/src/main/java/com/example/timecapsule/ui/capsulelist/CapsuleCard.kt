@@ -5,7 +5,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -16,13 +15,11 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.Label
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -46,7 +43,7 @@ import com.example.timecapsule.R
 import com.example.timecapsule.ui.theme.LightBlue
 import com.example.timecapsule.ui.util.DeviceType
 import com.google.firebase.Timestamp
-import java.sql.Time
+import com.google.firebase.firestore.GeoPoint
 import java.text.SimpleDateFormat
 import java.util.Locale
 import java.util.concurrent.TimeUnit
@@ -57,7 +54,7 @@ fun CapsuleCard(
   rowItemSize: Int = 2,
   capsuleDetails: CapsuleDetails? = null,
   modifier: Modifier = Modifier,
-  onCapsuleClicked: (id: String) -> Unit = {}
+  onCapsuleClicked: (id: String) -> Unit = {}, openCapule:(id:String)->Unit ={}
 ) {
   // State to toggle the visibility of the pane
   var isPaneVisible by remember { mutableStateOf(false) }
@@ -85,7 +82,6 @@ fun CapsuleCard(
           .padding(5.dp)
           .background(MaterialTheme.colorScheme.primaryContainer)
     ) {
-
       ResponsiveRowColumn(
         title = capsuleDetails!!.title,
         timerValue = capsuleDetails.time,
@@ -113,7 +109,7 @@ fun CapsuleCard(
           horizontalArrangement = Arrangement.Center
         )
         {
-          Button(onClick = { }, colors = ButtonDefaults.buttonColors(containerColor = LightBlue)) {
+          Button(onClick = { openCapule(capsuleDetails.id)}, colors = ButtonDefaults.buttonColors(containerColor = LightBlue)) {
             Text(text = "Open", color = Color.LightGray)
           }
         }
