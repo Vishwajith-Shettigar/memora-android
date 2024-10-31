@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.location.Location
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -17,6 +18,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -29,10 +31,15 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.drawable.toBitmap
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.timecapsule.BuildConfig
 import com.example.timecapsule.R
+import com.example.timecapsule.routes.Screen
+import com.example.timecapsule.viewmodel.DisplayCapsuleDetailsState
+import com.example.timecapsule.viewmodel.OpenCapsuleViewModel
+import com.example.util.getModel
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
@@ -99,7 +106,33 @@ fun getInitialLocation(context: Context, onLocationFetched: (Point) -> Unit) {
 }
 
 @Composable
-fun FindCapsuleScreenV1(navController: NavController = rememberNavController(),) {
+fun FindCapsuleScreenV1(
+  navController: NavController = rememberNavController(),
+  viewModel: OpenCapsuleViewModel = hiltViewModel()
+) {
+
+  val capsuleDetails = (viewModel.capsuleDetailsState.collectAsState().value
+    as DisplayCapsuleDetailsState.Success).calsuleDetails
+
+  val capsulePoint by remember {
+    val lat = capsuleDetails.location!!.latitude
+    val longt = capsuleDetails.location!!.longitude
+    mutableStateOf<Point>(
+      Point.fromLngLat(longt, lat)
+    )
+  }
+
+  val modelId by remember {
+    mutableStateOf(capsuleDetails.modelId)
+  }
+
+  val modelUri by remember {
+    mutableStateOf(getModel(modelId.toString()))
+  }
+
+  LaunchedEffect(Unit) {
+    viewModel.saveScreenCheckPoint(Screen.OpenCapsuleFindCapsuleScreen.route)
+  }
 
   var locationTypeState by remember { mutableStateOf(LOCATIONTYPE.USER_LOCATION) }
 
@@ -128,7 +161,6 @@ fun FindCapsuleScreenV1(navController: NavController = rememberNavController(),)
     animateCamera(initialCamera = initialCamera, center = it)
   }
 
-//    Point.fromLngLat(74.65932213633747, 13.68945525955631)
 
   Scaffold(floatingActionButton = {
     VerticalFABs { locationType ->
@@ -141,26 +173,17 @@ fun FindCapsuleScreenV1(navController: NavController = rememberNavController(),)
         flagCapsuleLocationType = false
       } else if (!flagCapsuleLocationType) {
         flagCapsuleLocationType = true
-        animateCamera(initialCamera, MODEL1_COORDINATES)
+        animateCamera(initialCamera, capsulePoint)
       }
     }
     MapView(
       Modifier.padding(), initialCamera, initialCameraPoint, context,
-      userLocationPoint
+      userLocationPoint, capsulePoint, modelId.toString(), modelUri,
     ) {
       userLocationPoint = it
     }
   }
 }
-
-val MODEL_ID_1 = "model-id-1"
-
-//  val SAMPLE_MODEL_URI_1 =
-//    "asset://testmodel2folder/scene.gltf"
-val SAMPLE_MODEL_URI_1 =
-  "asset://testmodel.glb"
-val MODEL1_COORDINATES: Point =
-  Point.fromLngLat(74.65992213633747, 13.68945525955631)
 
 val MODEL_ID_KEY = "model-id-key"
 
@@ -169,7 +192,8 @@ val MODEL_ID_KEY = "model-id-key"
 fun MapView(
   modifier: Modifier = Modifier,
   cameraView: MapViewportState, initialPoint: Point, context: Context,
-  locationPoint: Point?, updateLocation: (Point) -> Unit
+  locationPoint: Point?, capsulePoint: Point, modelId: String, modelUri: String,
+  updateLocation: (Point) -> Unit
 ) {
   var pointAnnotationManager by remember { mutableStateOf<PointAnnotationManager?>(null) }
 
@@ -186,22 +210,22 @@ fun MapView(
     modifier.fillMaxSize(),
     mapViewportState = cameraView,
     onMapClickListener = { point ->
-      if (is3dModelClicked(point)) {
-        is3dModelSelected = true
+      if (is3dModelClicked(point, modelCoordinates = capsulePoint)) {
+        if (arePointsWithin10Meters(locationPoint, capsulePoint))
+          is3dModelSelected = true
       }
-      true
+      false
     }
   ) {
-    MapEffect(Unit) { mapView ->
+    MapEffect(this) { mapView ->
       mapView.mapboxMap.apply {
-        addModel(model(MODEL_ID_1) { uri(SAMPLE_MODEL_URI_1) })
+        addModel(model(modelId) { uri("asset://$modelUri") })
       }
       mapView.mapboxMap.loadStyle(BuildConfig.STYLE_URI)
 
       startLocationUpdates(context) {
         updateLocation(Point.fromLngLat(it.longitude, it.latitude))
       }
-
       pointAnnotationManager = mapView.annotations.createPointAnnotationManager()
     }
 
@@ -209,13 +233,13 @@ fun MapView(
       sourceState = rememberGeoJsonSourceState {
         data = GeoJSONData(
           listOf(
-            Feature.fromGeometry(MODEL1_COORDINATES)
-              .also { it.addStringProperty(MODEL_ID_KEY, MODEL_ID_1) },
+            Feature.fromGeometry(capsulePoint)
+              .also { it.addStringProperty(MODEL_ID_KEY, modelId) },
           )
         )
       }
     ) {
-      modelId = ModelIdValue(Expression.get(MODEL_ID_KEY))
+      this.modelId = ModelIdValue(Expression.get(MODEL_ID_KEY))
       modelType = ModelTypeValue.LOCATION_INDICATOR
       modelScale = DoubleListValue(listOf(10.0, 10.0, 10.0))
       modelTranslation = DoubleListValue(listOf(0.0, 0.0, 0.0))
@@ -236,7 +260,7 @@ fun MapView(
 
 fun is3dModelClicked(
   point: Point,
-  modelCoordinates: Point = MODEL1_COORDINATES,
+  modelCoordinates: Point,
   radiusInMeters: Double = 10.0
 ): Boolean {
   // Function to calculate distance between two geographical points
@@ -358,23 +382,34 @@ fun startLocationUpdates(context: Context, onLocationUpdate: (Location) -> Unit)
   ) {
     fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null)
   } else {
-    // Request permissions
     ActivityCompat.requestPermissions(
       context as ComponentActivity,
       arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
       1
     )
   }
+}
 
-//  val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-//
-//  if (ActivityCompat.checkSelfPermission(
-//      context,
-//      Manifest.permission.ACCESS_FINE_LOCATION
-//    ) == PackageManager.PERMISSION_GRANTED
-//  ) {
-//    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10L, 1f) { location ->
-//      onLocationUpdate(location)
-//    }
-//  }
+fun arePointsWithin10Meters(locationPoint: Point?, capsulePoint: Point): Boolean {
+  // Return false if locationPoint is null, as we cannot perform the check
+  if (locationPoint == null) return false
+
+  // Extract the latitude and longitude from each point
+  val locationLatitude = locationPoint.latitude()
+  val locationLongitude = locationPoint.longitude()
+  val capsuleLatitude = capsulePoint.latitude()
+  val capsuleLongitude = capsulePoint.longitude()
+
+  // Use Location.distanceBetween to get the distance in meters
+  val results = FloatArray(1)
+  Location.distanceBetween(
+    locationLatitude,
+    locationLongitude,
+    capsuleLatitude,
+    capsuleLongitude,
+    results
+  )
+
+  // Check if the distance is less than or equal to 10 meters
+  return results[0] <= 10
 }
