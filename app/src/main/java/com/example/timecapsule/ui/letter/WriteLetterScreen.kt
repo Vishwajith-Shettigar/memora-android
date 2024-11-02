@@ -10,6 +10,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -25,45 +26,49 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.timecapsule.R
+import com.example.timecapsule.ui.selecttime.NavigationAddCapsule
 import com.example.timecapsule.ui.selecttime.NavigationRow
 import com.example.timecapsule.ui.util.DeviceType
+import com.example.timecapsule.viewmodel.CapsuleCreationViewModel
 import kotlin.math.floor
 
 @Composable
-fun WriteLetterScreen() {
+fun WriteLetterScreen(viewModel:CapsuleCreationViewModel,onNavigate: (NavigationAddCapsule) -> Unit) {
   Scaffold(containerColor = MaterialTheme.colorScheme.primary,
     bottomBar = {
       Box(
         modifier = Modifier
-          .fillMaxWidth()
-          .padding(0.dp)
+            .fillMaxWidth()
+            .padding(0.dp)
       ) {
-        NavigationRow()
+        NavigationRow() {
+          onNavigate(it)
+        }
       }
     }) { innerPadding ->
     Column(
       modifier = Modifier
-        .background(MaterialTheme.colorScheme.primary)
-        .padding(innerPadding),
+          .background(MaterialTheme.colorScheme.primary)
+          .padding(innerPadding),
     ) {
-      LetterWritingScreen()
+      LetterWritingScreen(viewModel)
     }
   }
 }
 
 @Composable
-fun LetterWritingScreen() {
+fun LetterWritingScreen(viewModel:CapsuleCreationViewModel) {
 
   val isTablet = DeviceType.isTablet()
 
   val boxModifier = if (isTablet) {
-    Modifier
-      .width(500.dp)
-      .height(500.dp)
+      Modifier
+          .width(500.dp)
+          .height(500.dp)
   } else {
-    Modifier
-      .fillMaxWidth(0.9f)
-      .height(500.dp)
+      Modifier
+          .fillMaxWidth(0.9f)
+          .height(500.dp)
   }
 
   val letterImage: Painter = painterResource(id = R.drawable.letterimage)
@@ -79,8 +84,8 @@ fun LetterWritingScreen() {
         color = MaterialTheme.colorScheme.onSurfaceVariant,
         fontWeight = FontWeight.Bold,
         modifier = Modifier
-          .padding(vertical = 20.dp, horizontal = 10.dp)
-          .wrapContentSize()
+            .padding(vertical = 20.dp, horizontal = 10.dp)
+            .wrapContentSize()
       )
       Box(
         modifier = boxModifier
@@ -89,40 +94,33 @@ fun LetterWritingScreen() {
           painter = letterImage,
           contentDescription = "Letter Background",
           modifier = Modifier
-            .fillMaxSize()
-            .align(Alignment.Center),
+              .fillMaxSize()
+              .align(Alignment.Center),
           contentScale = ContentScale.Crop
         )
-        LetterWritingWithLineLimit()
+        LetterWritingWithLineLimit(viewModel)
       }
     }
   }
 }
 
-@Preview(showBackground = true)
 @Composable
-fun PreviewLetterWritingScreen() {
-  LetterWritingScreen()
-}
-
-@Composable
-fun LetterWritingWithLineLimit() {
-  var userText by remember { mutableStateOf(TextFieldValue("Write letter here")) }
+fun LetterWritingWithLineLimit(viewModel:CapsuleCreationViewModel) {
 
   val fontSize = 20.sp
   val maxHeight = 500.dp
   val lineHeight = 28.sp
-  val textsize = userText.text.length;
+  val textsize = viewModel.userLetterText.length;
   val maxLines = floor(500.dp.value / lineHeight.value).toInt()
   var currentLineCount by remember { mutableStateOf(1) }
   Box(
     modifier = Modifier.fillMaxSize()
   ) {
     BasicTextField(
-      value = userText,
+      value = viewModel.userLetterText,
       onValueChange = { newText ->
-        if (newText.text.length < textsize || currentLineCount < maxLines) {
-          userText = newText
+        if (newText.length < textsize || currentLineCount < maxLines) {
+          viewModel.userLetterText = newText
         }
       },
       textStyle = TextStyle(
@@ -137,16 +135,16 @@ fun LetterWritingWithLineLimit() {
       },
       modifier = Modifier
 
-        .align(Alignment.TopStart)
-        .fillMaxSize()
-        .padding(16.dp)
-        .height(maxHeight),
+          .align(Alignment.TopStart)
+          .fillMaxSize()
+          .padding(16.dp)
+          .height(maxHeight),
     )
     Text(
       text = "$currentLineCount/$maxLines lines used",
       modifier = Modifier
-        .align(Alignment.BottomEnd)
-        .padding(16.dp),
+          .align(Alignment.BottomEnd)
+          .padding(16.dp),
       color = Color.Gray,
       fontSize = 12.sp
     )

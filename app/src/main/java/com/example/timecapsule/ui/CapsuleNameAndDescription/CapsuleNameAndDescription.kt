@@ -21,6 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,19 +38,12 @@ import com.example.timecapsule.R
 import com.example.timecapsule.ui.selecttime.NavigationAddCapsule
 import com.example.timecapsule.ui.selecttime.NavigationRow
 import com.example.timecapsule.ui.util.DeviceType
+import com.example.timecapsule.viewmodel.CapsuleCreationViewModel
 
 @Composable
-fun CapsuleNameAndDescription(onNavigate: (NavigationAddCapsule) -> Unit) {
+fun CapsuleNameAndDescription(viewModel:CapsuleCreationViewModel,onNavigate: (NavigationAddCapsule) -> Unit) {
 
   val isTablet = DeviceType.isTablet()
-
-  var capsuleName by remember {
-    mutableStateOf("")
-  }
-
-  var capsuleDescription by remember {
-    mutableStateOf("")
-  }
 
   Scaffold(
     modifier = Modifier
@@ -67,7 +61,6 @@ fun CapsuleNameAndDescription(onNavigate: (NavigationAddCapsule) -> Unit) {
           top = innerPadding.calculateTopPadding()
         )
     ) {
-
       Column(
         Modifier
           .fillMaxWidth()
@@ -82,22 +75,22 @@ fun CapsuleNameAndDescription(onNavigate: (NavigationAddCapsule) -> Unit) {
           modifier = Modifier.padding(bottom = 20.dp)
         )
         CustomTextField(
-          value = capsuleName,
+          value = viewModel.capsuleName,
           hint = "Family capsule",
           icon = R.drawable.ic_bulb,
           isTablet = isTablet,
           characterLimit = 13
         ) {
-          capsuleName = it
+          viewModel.capsuleName = it
         }
         CustomTextField(
-          value = capsuleDescription,
+          value = viewModel.capsuleDescription,
           hint = "Hi, this is Robert. I’m eagerly waiting...",
           icon = R.drawable.ic_subtitles,
           isTablet = isTablet,
           characterLimit = 60
         ) {
-          capsuleDescription = it
+          viewModel.capsuleDescription = it
         }
       }
 
@@ -115,21 +108,6 @@ fun CapsuleNameAndDescription(onNavigate: (NavigationAddCapsule) -> Unit) {
     }
   }
 }
-
-@Preview
-@Composable
-fun showPreview() {
-  CapsuleNameAndDescription({})
-  CustomTextField(
-    value = "",
-    hint = "Family capsule",
-    icon = R.drawable.ic_bulb,
-    characterLimit = 13
-  ) {
-
-  }
-}
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

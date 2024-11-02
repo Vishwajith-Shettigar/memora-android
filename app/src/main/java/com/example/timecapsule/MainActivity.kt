@@ -45,15 +45,15 @@ class MainActivity : ComponentActivity() {
 //        NotificationScreen()
 //        WriteLetterScreen()
 //        OnBoardingNavGraph()
-//        NavGraph()
+        NavGraph()
 //        CapsuleCreationSavingScreen()
 //        InstructionsScreen()
 //        MapInstructionsScreen()
 //        ShowLetterScreen()
 //        CapsuleLoadingScreen()
-        CapsuleNameAndDescription {
-
-        }
+//        CapsuleNameAndDescription {
+//
+//        }
       }
     }
   }

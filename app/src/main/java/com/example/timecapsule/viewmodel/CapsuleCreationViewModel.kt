@@ -5,9 +5,11 @@ import android.net.Uri
 import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -147,10 +149,15 @@ class CapsuleCreationViewModel @Inject constructor(
 
   val selectedPeoples = mutableStateListOf<UserDetails>()
 
+  var userLetterText by mutableStateOf("")
+
+  var capsuleName by mutableStateOf("")
+  var capsuleDescription by mutableStateOf("")
+
   val isSataliteView =
     mutableStateOf(false)
 
-  var latLang:LatLng? =null
+  var latLang: LatLng? = null
 
 
   private val _name = mutableStateOf("")
@@ -325,10 +332,8 @@ class CapsuleCreationViewModel @Inject constructor(
     viewModelScope.launch {
       try {
         withContext(Dispatchers.IO) {
-          val capsuleTitle = " The family"
-          val descriptions = "Lorem ipsum orev opie kioe huoata"
           val location =
-            if (latLang==null || selectedLocationOption == LocationOption.DONT_SELECT_LOCATION)
+            if (latLang == null || selectedLocationOption == LocationOption.DONT_SELECT_LOCATION)
               null
             else
               GeoPoint(latLang!!.latitude, latLang!!.longitude)
@@ -345,12 +350,17 @@ class CapsuleCreationViewModel @Inject constructor(
             file.uri.toString()
           }
 
+          val letter = if (userLetterText.length == 0)
+            null
+          else
+            userLetterText
+
           val capsuleDetails = CapsuleDetails(
             id = CAPSULE_ID,
             modelId = selectedCapsuleModelId?.toIntOrNull() ?: 100,
             imageUrl = selectedCapsuleImageUrl!!,
-            title = capsuleTitle,
-            description = descriptions,
+            title = capsuleName,
+            description = capsuleDescription,
             location = location,
             users = users.toList(),
             fileUrls = fileUrls,
@@ -358,6 +368,7 @@ class CapsuleCreationViewModel @Inject constructor(
             time = selectedTimeStamp!!,
             isOwner = false, // just placeholder
             ownerUserName = "",
+            letter = letter
           )
 
           val response = createCapsuleUseCase(capsuleDetails)

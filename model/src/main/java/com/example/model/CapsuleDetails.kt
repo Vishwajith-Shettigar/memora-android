@@ -18,6 +18,7 @@ data class CapsuleDetails(
   val location :GeoPoint?=null,
   val fileUrls:List<String>,
   val isOpened:Boolean?=null,
+  val letter:String?=null
 )
 
 data class CapsuleAsset(

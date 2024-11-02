@@ -48,8 +48,9 @@ sealed class Screen(val route: String) {
   }
 
   object LocationSelectionOptions : Screen("location_selection_options")
+  object CapsuleNameAndDescriptionScreen : Screen("capsule_name_description")
+  object LetterScreen : Screen("write_letter")
   object CapsuleCreationSavingScreen : Screen("capsule_creation_saving")
-
 
   // Subscreens in Profile
   object Settings : Screen("settings")
