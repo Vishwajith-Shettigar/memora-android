@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.location.Location
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -160,7 +159,6 @@ fun FindCapsuleScreenV1(
     userLocationPoint = it
     animateCamera(initialCamera = initialCamera, center = it)
   }
-
 
   Scaffold(floatingActionButton = {
     VerticalFABs { locationType ->

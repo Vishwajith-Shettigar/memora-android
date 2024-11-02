@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import com.example.timecapsule.ui.CapsuleCreationSaving.CapsuleCreationSavingScreen
+import com.example.timecapsule.ui.CapsuleNameAndDescription.CapsuleNameAndDescription
 import com.example.timecapsule.ui.opencapsule.CapsuleLoadingScreen
 import com.example.timecapsule.ui.opencapsule.InstructionsScreen
 import com.example.timecapsule.ui.opencapsule.MapInstructionsScreen
@@ -44,12 +45,15 @@ class MainActivity : ComponentActivity() {
 //        NotificationScreen()
 //        WriteLetterScreen()
 //        OnBoardingNavGraph()
-        NavGraph()
+//        NavGraph()
 //        CapsuleCreationSavingScreen()
 //        InstructionsScreen()
 //        MapInstructionsScreen()
 //        ShowLetterScreen()
 //        CapsuleLoadingScreen()
+        CapsuleNameAndDescription {
+
+        }
       }
     }
   }
