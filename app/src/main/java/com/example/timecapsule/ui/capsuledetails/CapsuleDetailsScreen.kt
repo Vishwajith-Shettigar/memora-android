@@ -75,7 +75,7 @@ fun CapsuleDetailsScreen(
     when (capsuleDetailsState) {
       is DisplayCapsuleDetailsState.Success -> {
         capsuleDetails =
-          (capsuleDetailsState as DisplayCapsuleDetailsState.Success).calsuleDetails
+          (capsuleDetailsState as DisplayCapsuleDetailsState.Success).capsuleDetails
       }
 
       is DisplayCapsuleDetailsState.Error -> {}

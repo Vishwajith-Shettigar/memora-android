@@ -46,22 +46,17 @@ fun InstructionsScreen(
 
   val capsuleDetailsState by viewModel.capsuleDetailsState.collectAsState()
 
+  val capsuleDetails by remember()
+  {
+    mutableStateOf((capsuleDetailsState as DisplayCapsuleDetailsState.Success).capsuleDetails)
+  }
+
   val isLetterScreen by remember {
-    mutableStateOf(false)
+    mutableStateOf(capsuleDetails.letter != null)
   }
 
-  var isLocationScreen by remember {
-    mutableStateOf(false)
-  }
-
-  LaunchedEffect(key1 = capsuleDetailsState) {
-    if (capsuleDetailsState is DisplayCapsuleDetailsState.Success) {
-      if ((capsuleDetailsState as DisplayCapsuleDetailsState.Success).calsuleDetails.location != null) {
-        isLocationScreen = true
-      }
-    } else {
-      Unit
-    }
+  val isLocationScreen by remember {
+    mutableStateOf(capsuleDetails.location != null)
   }
 
   LaunchedEffect(Unit) {
@@ -69,18 +64,22 @@ fun InstructionsScreen(
   }
   Box(
     modifier = Modifier
-        .fillMaxSize()
-        .background(MaterialTheme.colorScheme.primary)
+      .fillMaxSize()
+      .background(MaterialTheme.colorScheme.primary)
   ) {
     Column(
       modifier = Modifier
-          .align(Alignment.TopCenter)
-          .fillMaxSize(),
+        .align(Alignment.TopCenter)
+        .fillMaxSize(),
       verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally
     ) {
       Text(
-        text = "Hi! We will help you open your time capsule. There’s also a letter included," +
-          " which you can read on the next screen. ",
+        text =
+        if (isLetterScreen)
+          "Hi! We will help you open your time capsule. There’s also a letter included," +
+            " which you can read on the next screen. "
+        else
+          "Hi! We will help you open your time capsule.",
         style = MaterialTheme.typography.titleLarge.copy(fontSize = 20.sp),
         color = MaterialTheme.colorScheme.onSurfaceVariant,
         modifier = Modifier
@@ -94,21 +93,26 @@ fun InstructionsScreen(
     }
     Box(
       modifier = Modifier
-          .fillMaxWidth()
-          .wrapContentHeight()
-          .align(Alignment.BottomCenter)
+        .fillMaxWidth()
+        .wrapContentHeight()
+        .align(Alignment.BottomCenter)
     ) {
-      OpenCapsuleNextButtonRow(isLocationScreen,navigate)
+      OpenCapsuleNextButtonRow(isLocationScreen, isLetterScreen, navigate)
     }
   }
 }
 
 @Composable
-fun OpenCapsuleNextButtonRow(isLocationScreen: Boolean=false, navigate: (String) -> Unit = {}) {
+fun OpenCapsuleNextButtonRow(
+  isLocationScreen: Boolean = false,
+  isLetterScreen: Boolean = false,
+  navigate: (String) -> Unit = {},
+  navigateToMap: Boolean = false
+) {
   Row(
-      Modifier
-          .fillMaxWidth()
-          .padding(bottom = 30.dp, end = 10.dp),
+    Modifier
+      .fillMaxWidth()
+      .padding(bottom = 30.dp, end = 10.dp),
     horizontalArrangement = Arrangement.Absolute.Right,
     verticalAlignment = Alignment.CenterVertically
   ) {
@@ -118,9 +122,16 @@ fun OpenCapsuleNextButtonRow(isLocationScreen: Boolean=false, navigate: (String)
       modifier = Modifier.padding(horizontal = 10.dp)
     )
     Button(onClick = {
-      if (isLocationScreen) {
+      if (navigateToMap) {
         navigate(Screen.OpenCapsuleFindCapsuleScreen.route)
       }
+      else if (isLetterScreen) {
+      navigate(Screen.OpenCapsuleLetterScreen.route)
+    } else if (isLocationScreen) {
+      navigate(Screen.OpenCapsuleMapInstructionsScreen.route)
+    } else {
+      // go to content screen
+    }
     }) {
       Text(text = "next")
     }

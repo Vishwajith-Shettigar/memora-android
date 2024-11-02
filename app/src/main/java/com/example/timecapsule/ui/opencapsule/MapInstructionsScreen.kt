@@ -13,17 +13,27 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.timecapsule.R
+import com.example.timecapsule.routes.Screen
+import com.example.timecapsule.viewmodel.OpenCapsuleViewModel
 
 @Preview
 @Composable
-fun MapInstructionsScreen() {
+fun MapInstructionsScreen(
+  viewModel: OpenCapsuleViewModel = hiltViewModel(),
+  onNavigate: (String) -> Unit = {}
+) {
+  LaunchedEffect(Unit) {
+    viewModel.saveScreenCheckPoint(Screen.OpenCapsuleMapInstructionsScreen.route)
+  }
   Box(
     modifier = Modifier
         .fillMaxSize()
@@ -55,7 +65,7 @@ fun MapInstructionsScreen() {
           .wrapContentHeight()
           .align(Alignment.BottomCenter)
     ) {
-      OpenCapsuleNextButtonRow()
+      OpenCapsuleNextButtonRow(navigateToMap = true, navigate = onNavigate)
     }
   }
 }

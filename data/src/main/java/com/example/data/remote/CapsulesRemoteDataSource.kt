@@ -167,6 +167,11 @@ class CapsulesRemoteDataSource @Inject constructor(
         location = it as GeoPoint
       }
 
+      var letter :String? =null
+      capsuleDoc.get("letter")?.let {
+        letter = it as String
+      }
+
       val capsuleDetails = CapsuleDetails(
         id = capsuleId,
         title = capsuleDoc.get("title") as String,
@@ -180,7 +185,8 @@ class CapsulesRemoteDataSource @Inject constructor(
         ownerUserName = capsuleDoc.get("ownerUserName") as String,
         location = location,
         fileUrls = capsuleDoc.get("fileUrls") as List<String>,
-        isOpened = isOpened
+        isOpened = isOpened,
+        letter = letter
       )
       Response.Success(capsuleDetails)
     } catch (e: Exception) {

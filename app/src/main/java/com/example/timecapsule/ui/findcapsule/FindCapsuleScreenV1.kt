@@ -111,7 +111,7 @@ fun FindCapsuleScreenV1(
 ) {
 
   val capsuleDetails = (viewModel.capsuleDetailsState.collectAsState().value
-    as DisplayCapsuleDetailsState.Success).calsuleDetails
+    as DisplayCapsuleDetailsState.Success).capsuleDetails
 
   val capsulePoint by remember {
     val lat = capsuleDetails.location!!.latitude
