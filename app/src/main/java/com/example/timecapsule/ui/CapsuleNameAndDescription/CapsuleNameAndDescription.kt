@@ -1,6 +1,5 @@
 package com.example.timecapsule.ui.CapsuleNameAndDescription
 
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -37,10 +36,12 @@ import androidx.compose.ui.zIndex
 import com.example.timecapsule.R
 import com.example.timecapsule.ui.selecttime.NavigationAddCapsule
 import com.example.timecapsule.ui.selecttime.NavigationRow
+import com.example.timecapsule.ui.util.DeviceType
 
 @Composable
 fun CapsuleNameAndDescription(onNavigate: (NavigationAddCapsule) -> Unit) {
-  val context = LocalContext.current
+
+  val isTablet = DeviceType.isTablet()
 
   var capsuleName by remember {
     mutableStateOf("")
@@ -84,6 +85,7 @@ fun CapsuleNameAndDescription(onNavigate: (NavigationAddCapsule) -> Unit) {
           value = capsuleName,
           hint = "Family capsule",
           icon = R.drawable.ic_bulb,
+          isTablet = isTablet,
           characterLimit = 13
         ) {
           capsuleName = it
@@ -92,6 +94,7 @@ fun CapsuleNameAndDescription(onNavigate: (NavigationAddCapsule) -> Unit) {
           value = capsuleDescription,
           hint = "Hi, this is Robert. I’m eagerly waiting...",
           icon = R.drawable.ic_subtitles,
+          isTablet = isTablet,
           characterLimit = 60
         ) {
           capsuleDescription = it
@@ -105,7 +108,7 @@ fun CapsuleNameAndDescription(onNavigate: (NavigationAddCapsule) -> Unit) {
           .align(Alignment.BottomCenter)
           .zIndex(2f)
       ) {
-        NavigationRow(showBackBtn = false) { navigationFlow ->
+        NavigationRow() { navigationFlow ->
           onNavigate(navigationFlow)
         }
       }
