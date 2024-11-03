@@ -346,8 +346,13 @@ class CapsuleCreationViewModel @Inject constructor(
             )
           }.toMutableList()
 
-          val fileUrls: List<String> = _fileUploadedState.value.map { file ->
-            file.uri.toString()
+          val fileUrls: List<Map<String, String>> = _fileUploadedState.value.map { file ->
+            mapOf(
+              "url" to file.uri.toString(),
+              "fileName" to file.fileName,
+              "fileType" to file.fileType,
+              "size" to file.totalSize.toString()
+            )
           }
 
           val letter = if (userLetterText.length == 0)

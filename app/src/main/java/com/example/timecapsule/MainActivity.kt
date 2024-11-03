@@ -9,6 +9,7 @@ import com.example.timecapsule.ui.CapsuleNameAndDescription.CapsuleNameAndDescri
 import com.example.timecapsule.ui.opencapsule.CapsuleLoadingScreen
 import com.example.timecapsule.ui.opencapsule.InstructionsScreen
 import com.example.timecapsule.ui.opencapsule.MapInstructionsScreen
+import com.example.timecapsule.ui.opencapsule.ShowContentScreen
 import com.example.timecapsule.ui.opencapsule.ShowLetterScreen
 import com.example.timecapsule.ui.theme.TimeCapsuleTheme
 import com.mapbox.common.MapboxOptions
@@ -45,7 +46,7 @@ class MainActivity : ComponentActivity() {
 //        NotificationScreen()
 //        WriteLetterScreen()
 //        OnBoardingNavGraph()
-        NavGraph()
+//        NavGraph()
 //        CapsuleCreationSavingScreen()
 //        InstructionsScreen()
 //        MapInstructionsScreen()
@@ -54,6 +55,8 @@ class MainActivity : ComponentActivity() {
 //        CapsuleNameAndDescription {
 //
 //        }
+//        FileInfoDisplay()
+        ShowContentScreen()
       }
     }
   }

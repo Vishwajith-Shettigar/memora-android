@@ -120,7 +120,7 @@ class CapsulesRemoteDataSource @Inject constructor(
             imageUrl = capsuleDoc.get("imageUrl") as String,
             ownerUserName = capsuleDoc.get("ownerUserName") as String,
             location = location,
-            fileUrls = capsuleDoc.get("fileUrls") as List<String>,
+            fileUrls = capsuleDoc.get("fileUrls") as List<Map<String,String>>,
             isOpened = capsule["isOpened"] as Boolean
           )
           capsulesDetailsList.add(capsuleDetails)
@@ -184,7 +184,7 @@ class CapsulesRemoteDataSource @Inject constructor(
         imageUrl = capsuleDoc.get("imageUrl") as String,
         ownerUserName = capsuleDoc.get("ownerUserName") as String,
         location = location,
-        fileUrls = capsuleDoc.get("fileUrls") as List<String>,
+        fileUrls = capsuleDoc.get("fileUrls") as List<Map<String,String>>,
         isOpened = isOpened,
         letter = letter
       )
