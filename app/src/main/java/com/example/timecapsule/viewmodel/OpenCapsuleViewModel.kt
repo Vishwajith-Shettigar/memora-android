@@ -128,11 +128,13 @@ class OpenCapsuleViewModel @Inject constructor(
     context.startForegroundService(intent)
 
     context.registerReceiver(DownloadProgressReceiver(), IntentFilter("com.example.timecapsule.DOWNLOAD_COMPLETE"),
-      Context.RECEIVER_NOT_EXPORTED)
+      Context.RECEIVER_EXPORTED)
   }
 
   inner class DownloadProgressReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
+      Log.e("error","reeueiw")
+
       val progress = intent?.getIntExtra("progress", 0) ?: 0
       Log.e("error","yoyoyo")
       _progress.value = progress

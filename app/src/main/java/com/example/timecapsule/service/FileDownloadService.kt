@@ -63,6 +63,7 @@ class FileDownloadService : Service() {
       .apply {
       putExtra("progress", progress)
     }
+    Log.e("error","sent")
     sendBroadcast(intent)
   }
 
