@@ -1,9 +1,15 @@
 package com.example.data.remote
 
+import android.content.ContentValues
 import android.content.Context
 import android.net.Uri
+import android.os.Build
+import android.os.Environment
+import android.provider.MediaStore
 import android.provider.OpenableColumns
 import android.util.Log
+import androidx.annotation.RequiresApi
+import com.example.model.DownloadFile
 import com.example.model.FileUploadProgress
 import com.example.model.FileUploaded
 import com.example.model.TempUploaded
@@ -12,6 +18,9 @@ import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.UploadTask
+import java.io.File
+import java.io.FileOutputStream
+import java.util.ArrayList
 import javax.inject.Inject
 import kotlin.random.Random
 import kotlin.random.nextULong
@@ -187,5 +196,50 @@ constructor(
     uploadTaskMap.clear()
     uploadedFiles.clear()
     uploadedFileList.clear()
+  }
+
+   suspend fun downloadFile(url: DownloadFile): ByteArray? {
+    return try {
+      Log.e("error","helooo")
+      val ref = firebaseStorage.getReferenceFromUrl(url.url)
+      val bytes = ref.getBytes(Long.MAX_VALUE).await()
+      saveFileToStorage(fileContent =  bytes, file =url, context = context)
+      bytes
+    } catch (e: Exception) {
+      Log.e("error",e.toString())
+
+      e.printStackTrace()
+      null
+    }
+  }
+
+  fun saveFileToStorage(context: Context, file: DownloadFile, fileContent: ByteArray) {
+    val resolver = context.contentResolver
+    val contentValues = ContentValues().apply {
+      put(MediaStore.MediaColumns.DISPLAY_NAME, file.name)
+      put(MediaStore.MediaColumns.MIME_TYPE, getMimeTypeFromExtension(file.fileType))
+      put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS)
+    }
+
+    val uri = resolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, contentValues)
+
+    uri?.let {
+      resolver.openOutputStream(it).use { outputStream ->
+        outputStream?.write(fileContent)
+      }
+    }
+
+  }
+  private fun getMimeTypeFromExtension(extension: String): String {
+    return when (extension.toLowerCase()) {
+      "pdf" -> "application/pdf"
+      "jpg", "jpeg" -> "image/jpeg"
+      "png" -> "image/png"
+      "txt" -> "text/plain"
+      "zip" -> "application/zip"
+      "mp3" -> "audio/mpeg"
+      "mp4" -> "video/mp4"
+      else -> "*/*"
+    }
   }
 }

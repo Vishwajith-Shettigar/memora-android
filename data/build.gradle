@@ -9,7 +9,7 @@ android {
     namespace 'com.example.timecapsule'
     compileSdkVersion 34
     defaultConfig {
-        minSdkVersion 24
+        minSdkVersion 33
         targetSdkVersion 34
     }
     sourceSets {
