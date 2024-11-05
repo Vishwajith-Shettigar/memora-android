@@ -43,7 +43,6 @@ class ShowCapsulesListViewModel @Inject constructor(
         }
 
         is Response.Error -> {
-          Log.e("pokemon", result.exception.toString())
           CapsuleListScreenState.Error(
             result.exception.message.toString(),
             result.exception

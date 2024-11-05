@@ -120,14 +120,13 @@ class CapsulesRemoteDataSource @Inject constructor(
             imageUrl = capsuleDoc.get("imageUrl") as String,
             ownerUserName = capsuleDoc.get("ownerUserName") as String,
             location = location,
-            fileUrls = capsuleDoc.get("fileUrls") as List<String>,
+            fileUrls = capsuleDoc.get("fileUrls") as List<Map<String,String>>,
             isOpened = capsule["isOpened"] as Boolean
           )
           capsulesDetailsList.add(capsuleDetails)
         }
         Response.Success(capsulesDetailsList)
       } catch (e: Exception) {
-        Log.e("pokemon",e.toString())
         Response.Error(UnspecifiedException())
       }
     }
@@ -168,6 +167,11 @@ class CapsulesRemoteDataSource @Inject constructor(
         location = it as GeoPoint
       }
 
+      var letter :String? =null
+      capsuleDoc.get("letter")?.let {
+        letter = it as String
+      }
+
       val capsuleDetails = CapsuleDetails(
         id = capsuleId,
         title = capsuleDoc.get("title") as String,
@@ -180,8 +184,9 @@ class CapsulesRemoteDataSource @Inject constructor(
         imageUrl = capsuleDoc.get("imageUrl") as String,
         ownerUserName = capsuleDoc.get("ownerUserName") as String,
         location = location,
-        fileUrls = capsuleDoc.get("fileUrls") as List<String>,
-        isOpened = isOpened
+        fileUrls = capsuleDoc.get("fileUrls") as List<Map<String,String>>,
+        isOpened = isOpened,
+        letter = letter
       )
       Response.Success(capsuleDetails)
     } catch (e: Exception) {

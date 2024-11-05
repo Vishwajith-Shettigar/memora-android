@@ -7,8 +7,11 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.example.timecapsule.routes.Screen
+import com.example.timecapsule.ui.findcapsule.FindCapsuleScreenV1
 import com.example.timecapsule.ui.opencapsule.CapsuleLoadingScreen
 import com.example.timecapsule.ui.opencapsule.InstructionsScreen
+import com.example.timecapsule.ui.opencapsule.MapInstructionsScreen
+import com.example.timecapsule.ui.opencapsule.ShowLetterScreen
 import com.example.timecapsule.viewmodel.OpenCapsuleViewModel
 
 fun NavGraphBuilder.openCapsuleNavGraph(navController: NavController) {
@@ -19,7 +22,6 @@ fun NavGraphBuilder.openCapsuleNavGraph(navController: NavController) {
   ) {
     composable(Screen.OpenCapsuleLoadingScreen.route) { backstackentry ->
       val capsuleId = backstackentry.arguments?.getString("id")!!
-      Log.e("pokemon", capsuleId)
       val sharedViewModel =
         backstackentry.sharedViewModel<OpenCapsuleViewModel>(navController = navController)
       CapsuleLoadingScreen(sharedViewModel, capsuleId, navigate = { route ->
@@ -35,8 +37,39 @@ fun NavGraphBuilder.openCapsuleNavGraph(navController: NavController) {
       val sharedViewModel =
         backstackentry.sharedViewModel<OpenCapsuleViewModel>(navController = navController)
       InstructionsScreen(sharedViewModel) { route ->
-        navController.navigate(route)
+        navController.navigate(route) {
+          popUpTo(Screen.OpenCapsuleInstructionsScreen.route) {
+            inclusive = true
+          }
+        }
       }
+    }
+    composable(Screen.OpenCapsuleLetterScreen.route) { backstackentry ->
+      val sharedViewModel =
+        backstackentry.sharedViewModel<OpenCapsuleViewModel>(navController = navController)
+      ShowLetterScreen(sharedViewModel) { route ->
+        navController.navigate(route) {
+          popUpTo(Screen.OpenCapsuleLetterScreen.route) {
+            inclusive = true
+          }
+        }
+      }
+    }
+    composable(Screen.OpenCapsuleMapInstructionsScreen.route) { backstackentry ->
+      val sharedViewModel =
+        backstackentry.sharedViewModel<OpenCapsuleViewModel>(navController = navController)
+      MapInstructionsScreen(sharedViewModel) { route ->
+        navController.navigate(route) {
+          popUpTo(Screen.OpenCapsuleMapInstructionsScreen.route) {
+            inclusive = true
+          }
+        }
+      }
+    }
+    composable(Screen.OpenCapsuleFindCapsuleScreen.route) { backstackentry ->
+      val sharedViewModel =
+        backstackentry.sharedViewModel<OpenCapsuleViewModel>(navController = navController)
+      FindCapsuleScreenV1(viewModel = sharedViewModel)
     }
   }
 }

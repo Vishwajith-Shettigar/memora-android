@@ -20,7 +20,7 @@ sealed class Screen(val route: String) {
   }
 
 
-// Parent navigations.
+  // Parent navigations.
   object MainScreens : Screen("main_screns")
   object OnboardingScreens : Screen("onboardingscrens")
   object AddCapsuleScreens : Screen("add_capsule_screns")
@@ -36,23 +36,34 @@ sealed class Screen(val route: String) {
   object ChooseCapsuleModel : Screen("choose_capsule_model")
   object ViewCapsuleModel :
     Screen("view_capsule_model/{capsuleId}/{capsuleName}/{description}/{isPaid}/{storage}/{cost}") {
-    fun createRoute(capsuleId: String, capsuleName: String, description: String, isPaid: Boolean,storage:Int,cost:Int) =
+    fun createRoute(
+      capsuleId: String,
+      capsuleName: String,
+      description: String,
+      isPaid: Boolean,
+      storage: Int,
+      cost: Int
+    ) =
       "view_capsule_model/${capsuleId}/${capsuleName}/${description}/${isPaid}/${storage}/${cost}"
   }
-  object LocationSelectionOptions : Screen("location_selection_options")
-  object CapsuleCreationSavingScreen : Screen("capsule_creation_saving")
 
+  object LocationSelectionOptions : Screen("location_selection_options")
+  object CapsuleNameAndDescriptionScreen : Screen("capsule_name_description")
+  object LetterScreen : Screen("write_letter")
+  object CapsuleCreationSavingScreen : Screen("capsule_creation_saving")
 
   // Subscreens in Profile
   object Settings : Screen("settings")
   object Help : Screen("help")
 
   // Open capsule screens.
-  object OpenCapsuleLoadingScreen: Screen("open_capsule_loading/{id}"){
+  object OpenCapsuleLoadingScreen : Screen("open_capsule_loading/{id}") {
     fun createRoute(id: String) = "open_capsule_loading/${id}"
   }
-  object OpenCapsuleInstructionsScreen :Screen("open_capsule_instructions")
+
+  object OpenCapsuleInstructionsScreen : Screen("open_capsule_instructions")
   object OpenCapsuleMapInstructionsScreen : Screen("open_capsule_map_instructions")
-  object OpenCapsuleLetterScreen :Screen("open_capsule_letter")
-  object OpenCapsuleContentScreen : Screen("ope_capsule_content")
+  object OpenCapsuleLetterScreen : Screen("open_capsule_letter")
+  object OpenCapsuleFindCapsuleScreen : Screen("open_capsule_find_capsule_screen")
+  object OpenCapsuleContentScreen : Screen("open_capsule_content")
 }

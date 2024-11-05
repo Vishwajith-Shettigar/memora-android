@@ -20,6 +20,9 @@ import androidx.navigation.toRoute
 import com.example.model.CapsuleAsset
 import com.example.timecapsule.routes.Screen
 import com.example.timecapsule.ui.CapsuleCreationSaving.CapsuleCreationSavingScreen
+import com.example.timecapsule.ui.CapsuleNameAndDescription.CapsuleNameAndDescription
+import com.example.timecapsule.ui.letter.LetterWritingScreen
+import com.example.timecapsule.ui.letter.WriteLetterScreen
 import com.example.timecapsule.ui.review.ReviewScreen
 import com.example.timecapsule.ui.review.SharedPeople
 import com.example.timecapsule.ui.selectcapsule.SelectCapsuleScreen
@@ -247,12 +250,42 @@ fun NavGraphBuilder.addCapsuleNavGraph(navController: NavController, activity: A
           navController = navController,
           navigationFlow = navigationFlow,
           navigateToScreenRouteBack = Screen.ChooseCapsuleModel,
-          navigateToScreenRouteNext = Screen.ReviewContent,
+          navigateToScreenRouteNext = Screen.CapsuleNameAndDescriptionScreen,
           popScreenRoute = Screen.UploadContent
         )
       }
     }
-    composable(route = Screen.ReviewContent.route) {backstackentry->
+
+    composable(route = Screen.CapsuleNameAndDescriptionScreen.route) { backstackentry ->
+      val sharedViewModel =
+        backstackentry.sharedViewModel<CapsuleCreationViewModel>(navController = navController)
+      CapsuleNameAndDescription(sharedViewModel) { navigationFlow ->
+        handleNavigation(
+          activity = activity,
+          navController = navController,
+          navigationFlow = navigationFlow,
+          navigateToScreenRouteBack = Screen.UploadContent,
+          navigateToScreenRouteNext = Screen.LetterScreen,
+          popScreenRoute = Screen.CapsuleNameAndDescriptionScreen
+        )
+      }
+    }
+
+    composable(route = Screen.LetterScreen.route) { backstackentry ->
+      val sharedViewModel =
+        backstackentry.sharedViewModel<CapsuleCreationViewModel>(navController = navController)
+      WriteLetterScreen(sharedViewModel) { navigationFlow ->
+        handleNavigation(
+          activity = activity,
+          navController = navController,
+          navigationFlow = navigationFlow,
+          navigateToScreenRouteBack = Screen.CapsuleNameAndDescriptionScreen,
+          navigateToScreenRouteNext = Screen.ReviewContent,
+          popScreenRoute = Screen.LetterScreen
+        )
+      }
+    }
+    composable(route = Screen.ReviewContent.route) { backstackentry ->
       val sharedViewModel =
         backstackentry.sharedViewModel<CapsuleCreationViewModel>(navController = navController)
       ReviewScreen(sharedViewModel) { navigationFlow ->
@@ -260,18 +293,18 @@ fun NavGraphBuilder.addCapsuleNavGraph(navController: NavController, activity: A
           activity = activity,
           navController = navController,
           navigationFlow = navigationFlow,
-          navigateToScreenRouteBack = Screen.UploadContent,
+          navigateToScreenRouteBack = Screen.LetterScreen,
           navigateToScreenRouteNext = Screen.CapsuleCreationSavingScreen,
           popScreenRoute = Screen.ReviewContent
         )
       }
     }
 
-    composable(route = Screen.CapsuleCreationSavingScreen.route) {backstackentry->
+    composable(route = Screen.CapsuleCreationSavingScreen.route) { backstackentry ->
       val sharedViewModel =
         backstackentry.sharedViewModel<CapsuleCreationViewModel>(navController = navController)
       CapsuleCreationSavingScreen(sharedViewModel) { navigationFlow ->
-       activity.onBackPressed()
+        activity.onBackPressed()
       }
     }
   }

@@ -16,7 +16,7 @@ import kotlinx.coroutines.withContext
 
 
 sealed class DisplayCapsuleDetailsState {
-  class Success(val calsuleDetails: CapsuleDetails) : DisplayCapsuleDetailsState()
+  class Success(val capsuleDetails: CapsuleDetails) : DisplayCapsuleDetailsState()
   class Error(e: Exception) : DisplayCapsuleDetailsState()
   object Loading : DisplayCapsuleDetailsState()
 }

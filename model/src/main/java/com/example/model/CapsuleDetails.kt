@@ -16,8 +16,9 @@ data class CapsuleDetails(
   val imageUrl:String,
   var ownerUserName:String,
   val location :GeoPoint?=null,
-  val fileUrls:List<String>,
+  val fileUrls:List<Map<String,String>>,
   val isOpened:Boolean?=null,
+  val letter:String?=null
 )
 
 data class CapsuleAsset(

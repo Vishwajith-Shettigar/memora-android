@@ -172,8 +172,6 @@ fun DateTimePicker(modifier: Modifier = Modifier, viewModel: CapsuleCreationView
     convertToTimeFormat(it.hour, it.minute)
   }
 
-
-
   LaunchedEffect(selectedDate, selectedTime) {
     val selectedTimestamp = getSelectedTimestamp(
       datePickerState.selectedDateMillis,
