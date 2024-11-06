@@ -38,7 +38,7 @@
         <receiver android:name=".viewmodel.OpenCapsuleViewModel$DownloadProgressReceiver"
             android:exported="true">
             <intent-filter>
-                <action android:name="com.example.timecapsule.DOWNLOAD_COMPLETE"/>
+                <action android:name="com.example.timecapsule.DOWNLOAD_PROGRESS"/>
             </intent-filter>
         </receiver>
         <service

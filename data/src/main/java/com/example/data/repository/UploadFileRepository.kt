@@ -15,7 +15,7 @@ interface UploadFileRepository {
   fun cancelUpLoading(uri: Uri)
   fun cancelAllUpLoading()
  suspend fun deleteUploadedFile(uri: Uri,capsuleId: String)
- suspend fun downloadFiles(url: DownloadFile):ByteArray?
+ suspend fun downloadFiles(file: DownloadFile):ByteArray?
 }
 
 class UploadFileRepositoryImpl @Inject constructor(
@@ -45,7 +45,7 @@ class UploadFileRepositoryImpl @Inject constructor(
     filesRemoteDataSource.deleteUploadedFile(uri,capsuleId)
   }
 
-  override suspend fun downloadFiles(url:DownloadFile):ByteArray? {
-   return filesRemoteDataSource.downloadFile(url)
+  override suspend fun downloadFiles(file:DownloadFile):ByteArray? {
+   return filesRemoteDataSource.downloadFile(file)
   }
 }

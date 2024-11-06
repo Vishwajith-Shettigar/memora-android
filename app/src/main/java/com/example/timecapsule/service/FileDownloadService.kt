@@ -1,6 +1,5 @@
 package com.example.timecapsule.service
 
-// FileDownloadService.kt
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -35,41 +34,39 @@ class FileDownloadService : Service() {
   private val notificationManager by lazy { getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager }
 
   override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-    val urls = intent?.getParcelableArrayListExtra<DownloadFile>("fileUrls") ?: arrayListOf()
-    Log.e("error",urls.size.toString())
+    val files = intent?.getParcelableArrayListExtra<DownloadFile>("files") ?: arrayListOf()
+
     startForeground(1, createNotification())
 
     CoroutineScope(Dispatchers.IO).launch {
-      val totalFiles = urls.size
+      val totalFiles = files.size
       var completedFiles = 0
 
-      urls.forEach { url ->
-        downloadFilesUseCase(url)?.let {
+      files.forEach { file ->
+        downloadFilesUseCase(file)?.let {
           completedFiles++
           val progress = (completedFiles * 100) / totalFiles
           sendProgressUpdate(progress)
         }
       }
 
-      Log.e("error",completedFiles.toString()+"po")
       stopSelf()
     }
-
     return START_NOT_STICKY
   }
 
   private fun sendProgressUpdate(progress: Int) {
-    val intent = Intent("com.example.timecapsule.DOWNLOAD_COMPLETE")
+    val intent = Intent("com.example.timecapsule.DOWNLOAD_PROGRESS")
       .apply {
-      putExtra("progress", progress)
-    }
-    Log.e("error","sent")
+        putExtra("progress", progress)
+      }
     sendBroadcast(intent)
   }
 
   private fun createNotification(): Notification {
     val channelId = "file_download_channel"
-    val channel = NotificationChannel(channelId, "File Download", NotificationManager.IMPORTANCE_DEFAULT)
+    val channel =
+      NotificationChannel(channelId, "File Download", NotificationManager.IMPORTANCE_DEFAULT)
     notificationManager.createNotificationChannel(channel)
 
     return NotificationCompat.Builder(this, channelId)
@@ -78,7 +75,5 @@ class FileDownloadService : Service() {
       .setSmallIcon(R.drawable.ic_downloading)
       .build()
   }
-
   override fun onBind(intent: Intent?): IBinder? = null
-
 }

@@ -1,12 +1,14 @@
 package com.example.timecapsule.ui.opencapsule
 
 import android.net.Uri
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -15,6 +17,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -30,12 +34,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.model.DownloadFile
 import com.example.timecapsule.R
@@ -47,48 +53,6 @@ import com.example.timecapsule.viewmodel.OpenCapsuleViewModel
 @Composable
 fun ShowContentScreen(viewModel: OpenCapsuleViewModel = hiltViewModel()) {
   val fileUrls = ArrayList<DownloadFile>()
-  fileUrls.add(
-    DownloadFile(
-      url = "https://firebasestorage.googleapis.com/v0/b/time-capsule-android.appspot.com/o/uploads%2F0BG4KYWTzzNXXsDFOikZRJON9vj1%2F3cp5fynhf5%2F_document_image%3A1000016814?alt=media&token=908f55c8-743f-43ea-9b58-787d7a2dcf5e",
-      fileType = "jpeg", name = "IMG-20241102-WA0037.jpg"
-    ),
-  )
-  fileUrls.add(
-    DownloadFile(
-      url = "https://firebasestorage.googleapis.com/v0/b/time-capsule-android.appspot.com/o/uploads%2F0BG4KYWTzzNXXsDFOikZRJON9vj1%2F3cp5fynhf5%2F_document_image%3A1000016814?alt=media&token=908f55c8-743f-43ea-9b58-787d7a2dcf5e",
-      fileType = "jpeg", name = "IMG-20241102-WA0037.jpg"
-    ),
-  )
-  fileUrls.add(
-    DownloadFile(
-      url = "https://firebasestorage.googleapis.com/v0/b/time-capsule-android.appspot.com/o/uploads%2F0BG4KYWTzzNXXsDFOikZRJON9vj1%2F3cp5fynhf5%2F_document_image%3A1000016814?alt=media&token=908f55c8-743f-43ea-9b58-787d7a2dcf5e",
-      fileType = "jpeg", name = "IMG-20241102-WA0037.jpg"
-    ),
-  )
-  fileUrls.add(
-    DownloadFile(
-      url = "https://firebasestorage.googleapis.com/v0/b/time-capsule-android.appspot.com/o/uploads%2F0BG4KYWTzzNXXsDFOikZRJON9vj1%2F3cp5fynhf5%2F_document_image%3A1000016814?alt=media&token=908f55c8-743f-43ea-9b58-787d7a2dcf5e",
-      fileType = "jpeg", name = "IMG-20241102-WA0037.jpg"
-    ),
-  )
-  fileUrls.add(
-    DownloadFile(
-      url = "https://firebasestorage.googleapis.com/v0/b/time-capsule-android.appspot.com/o/uploads%2F0BG4KYWTzzNXXsDFOikZRJON9vj1%2F3cp5fynhf5%2F_document_image%3A1000016814?alt=media&token=908f55c8-743f-43ea-9b58-787d7a2dcf5e",
-      fileType = "jpeg", name = "IMG-20241102-WA0037.jpg"
-    ),
-  )
-  fileUrls.add(
-    DownloadFile(
-      url = "https://firebasestorage.googleapis.com/v0/b/time-capsule-android.appspot.com/o/uploads%2F0BG4KYWTzzNXXsDFOikZRJON9vj1%2F3cp5fynhf5%2F_document_image%3A1000016814?alt=media&token=908f55c8-743f-43ea-9b58-787d7a2dcf5e",
-      fileType = "jpeg", name = "IMG-20241102-WA0037.jpg"
-    ),
-  )
-  fileUrls.add(
-    DownloadFile(
-      url = "https://firebasestorage.googleapis.com/v0/b/time-capsule-android.appspot.com/o/uploads%2F0BG4KYWTzzNXXsDFOikZRJON9vj1%2F3cp5fynhf5%2F_document_image%3A1000016814?alt=media&token=908f55c8-743f-43ea-9b58-787d7a2dcf5e",
-      fileType = "jpeg", name = "IMG-20241102-WA0037.jpg"
-    ),
-  )
   fileUrls.add(
     DownloadFile(
       url = "https://firebasestorage.googleapis.com/v0/b/time-capsule-android.appspot.com/o/uploads%2F0BG4KYWTzzNXXsDFOikZRJON9vj1%2F3cp5fynhf5%2F_document_image%3A1000016814?alt=media&token=908f55c8-743f-43ea-9b58-787d7a2dcf5e",
@@ -130,18 +94,53 @@ fun ShowContentScreen(viewModel: OpenCapsuleViewModel = hiltViewModel()) {
         }
       }
 
-      OutlinedButton(modifier = Modifier
-          .align(Alignment.BottomCenter)
-          .padding(20.dp),
+      Box(
+        modifier = Modifier
+            .width(190.dp)
+            .height(70.dp)
+            .padding(bottom = 20.dp)
+            .align(Alignment.BottomCenter)
+            .clip(RoundedCornerShape(20.dp))
+            .background(LightBlue)
+      ) {
+        val animatedProgress by animateFloatAsState(
+          targetValue = (progress / 100f).coerceIn(
+            0f,
+            1f
+          )
+        )
+        Box(
+          modifier = Modifier
+              .fillMaxHeight()
+              .fillMaxWidth(animatedProgress)
+              .background(Color.Cyan.copy(alpha = 0.7f))
+        )
+      }
+      Button(
+        modifier = Modifier
+            .width(190.dp)
+            .height(70.dp)
+            .padding(bottom = 20.dp)
+            .align(Alignment.BottomCenter)
+            .clip(RoundedCornerShape(20.dp)),
         colors = ButtonDefaults.outlinedButtonColors(
-          containerColor = LightBlue
-        ), onClick = {
-          viewModel.startDownloadService(fileUrls = fileUrls)
-          isDownloadClicked = true
-        }) {
-
-
-        Text(text = if (isDownloadClicked) progress.toString() else "Download All")
+          containerColor = Color.Transparent
+        ),
+        onClick = {
+          if (!isDownloadClicked) {
+            viewModel.startDownloadService(files = fileUrls)
+            isDownloadClicked = true
+          }
+        }
+      ) {
+        Text(
+          text = if (isDownloadClicked) "$progress%" else "Download All",
+          color = Color.Black,
+          style = MaterialTheme.typography.titleMedium,
+          modifier = Modifier
+              .align(Alignment.CenterVertically)
+              .zIndex(10f)
+        )
       }
     }
   }

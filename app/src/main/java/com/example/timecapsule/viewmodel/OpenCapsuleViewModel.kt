@@ -121,22 +121,18 @@ class OpenCapsuleViewModel @Inject constructor(
   private val _progress = MutableStateFlow(0)
   val progress: StateFlow<Int> get() = _progress
 
-  fun startDownloadService(fileUrls: ArrayList<DownloadFile>) {
+  fun startDownloadService(files: ArrayList<DownloadFile>) {
     val intent = Intent(context, FileDownloadService::class.java).apply {
-      putParcelableArrayListExtra("fileUrls",fileUrls)
+      putParcelableArrayListExtra("files",files)
     }
     context.startForegroundService(intent)
-
-    context.registerReceiver(DownloadProgressReceiver(), IntentFilter("com.example.timecapsule.DOWNLOAD_COMPLETE"),
+    context.registerReceiver(DownloadProgressReceiver(), IntentFilter("com.example.timecapsule.DOWNLOAD_PROGRESS"),
       Context.RECEIVER_EXPORTED)
   }
 
   inner class DownloadProgressReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
-      Log.e("error","reeueiw")
-
       val progress = intent?.getIntExtra("progress", 0) ?: 0
-      Log.e("error","yoyoyo")
       _progress.value = progress
     }
   }

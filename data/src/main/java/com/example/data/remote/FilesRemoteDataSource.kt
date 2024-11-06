@@ -21,6 +21,7 @@ import com.google.firebase.storage.UploadTask
 import java.io.File
 import java.io.FileOutputStream
 import java.util.ArrayList
+import java.util.Locale
 import javax.inject.Inject
 import kotlin.random.Random
 import kotlin.random.nextULong
@@ -37,7 +38,9 @@ constructor(
   authRemoteDataSource: AuthRemoteDataSource
 ) {
 
-  private val userId: String = authRemoteDataSource.getAuth()?.uid!!
+//  private val userId: String = authRemoteDataSource.getAuth()?.uid!!
+
+  val userId=""
 
   fun getFileType(uri: Uri): String? {
     val mimeType = context.contentResolver.getType(uri)
@@ -198,16 +201,13 @@ constructor(
     uploadedFileList.clear()
   }
 
-   suspend fun downloadFile(url: DownloadFile): ByteArray? {
+   suspend fun downloadFile(file: DownloadFile): ByteArray? {
     return try {
-      Log.e("error","helooo")
-      val ref = firebaseStorage.getReferenceFromUrl(url.url)
+      val ref = firebaseStorage.getReferenceFromUrl(file.url)
       val bytes = ref.getBytes(Long.MAX_VALUE).await()
-      saveFileToStorage(fileContent =  bytes, file =url, context = context)
+      saveFileToStorage(fileContent =  bytes, file =file, context = context)
       bytes
     } catch (e: Exception) {
-      Log.e("error",e.toString())
-
       e.printStackTrace()
       null
     }
@@ -220,9 +220,7 @@ constructor(
       put(MediaStore.MediaColumns.MIME_TYPE, getMimeTypeFromExtension(file.fileType))
       put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS)
     }
-
     val uri = resolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, contentValues)
-
     uri?.let {
       resolver.openOutputStream(it).use { outputStream ->
         outputStream?.write(fileContent)
@@ -230,8 +228,9 @@ constructor(
     }
 
   }
+
   private fun getMimeTypeFromExtension(extension: String): String {
-    return when (extension.toLowerCase()) {
+    return when (extension.lowercase(Locale.ROOT)) {
       "pdf" -> "application/pdf"
       "jpg", "jpeg" -> "image/jpeg"
       "png" -> "image/png"
