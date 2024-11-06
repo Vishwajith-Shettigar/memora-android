@@ -11,6 +11,7 @@ import com.example.timecapsule.ui.findcapsule.FindCapsuleScreenV1
 import com.example.timecapsule.ui.opencapsule.CapsuleLoadingScreen
 import com.example.timecapsule.ui.opencapsule.InstructionsScreen
 import com.example.timecapsule.ui.opencapsule.MapInstructionsScreen
+import com.example.timecapsule.ui.opencapsule.ShowContentScreen
 import com.example.timecapsule.ui.opencapsule.ShowLetterScreen
 import com.example.timecapsule.viewmodel.OpenCapsuleViewModel
 
@@ -70,6 +71,11 @@ fun NavGraphBuilder.openCapsuleNavGraph(navController: NavController) {
       val sharedViewModel =
         backstackentry.sharedViewModel<OpenCapsuleViewModel>(navController = navController)
       FindCapsuleScreenV1(viewModel = sharedViewModel)
+    }
+    composable(Screen.OpenCapsuleContentScreen.route) { backstackentry ->
+      val sharedViewModel =
+        backstackentry.sharedViewModel<OpenCapsuleViewModel>(navController = navController)
+      ShowContentScreen(viewModel = sharedViewModel)
     }
   }
 }

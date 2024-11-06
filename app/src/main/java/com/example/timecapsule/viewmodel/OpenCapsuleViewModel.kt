@@ -49,6 +49,8 @@ class OpenCapsuleViewModel @Inject constructor(
 
   private val _screenCheckPoint = MutableStateFlow<String?>(null)
 
+  private val files: ArrayList<DownloadFile> = ArrayList<DownloadFile>()
+
   private val _capsuleDetailsState =
     MutableStateFlow<DisplayCapsuleDetailsState?>(null)
   val capsuleDetailsState: StateFlow<DisplayCapsuleDetailsState?> = _capsuleDetailsState
@@ -69,6 +71,9 @@ class OpenCapsuleViewModel @Inject constructor(
       null
     )
 
+  fun getFiles(): ArrayList<DownloadFile> {
+    return files
+  }
 
   fun getCapsuleDetails(capsuleId: String) {
     CAPSULE_ID = capsuleId
@@ -80,6 +85,16 @@ class OpenCapsuleViewModel @Inject constructor(
           is Response.Success -> {
             _capsuleDetailsState.value =
               DisplayCapsuleDetailsState.Success(response.data!!)
+            response.data!!.fileUrls.forEach {
+              val downloadFile =
+                DownloadFile(
+                  url = it["url"]!!,
+                  name = it["fileName"]!!,
+                  fileType = it["fileType"]!!,
+                  size = it["size"]!!
+                )
+              files.add(downloadFile)
+            }
           }
 
           is Response.Error -> {
@@ -121,13 +136,15 @@ class OpenCapsuleViewModel @Inject constructor(
   private val _progress = MutableStateFlow(0)
   val progress: StateFlow<Int> get() = _progress
 
-  fun startDownloadService(files: ArrayList<DownloadFile>) {
+  fun startDownloadService() {
     val intent = Intent(context, FileDownloadService::class.java).apply {
-      putParcelableArrayListExtra("files",files)
+      putParcelableArrayListExtra("files", files)
     }
     context.startForegroundService(intent)
-    context.registerReceiver(DownloadProgressReceiver(), IntentFilter("com.example.timecapsule.DOWNLOAD_PROGRESS"),
-      Context.RECEIVER_EXPORTED)
+    context.registerReceiver(
+      DownloadProgressReceiver(), IntentFilter("com.example.timecapsule.DOWNLOAD_PROGRESS"),
+      Context.RECEIVER_EXPORTED
+    )
   }
 
   inner class DownloadProgressReceiver : BroadcastReceiver() {

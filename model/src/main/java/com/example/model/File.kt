@@ -34,18 +34,22 @@ data class TempUploaded(
 data class DownloadFile(
   val url: String,
   val fileType: String,
-  val name: String // Rename to 'name' for clarity
+  val name: String,
+  val size: String,
 ) : Parcelable {
   constructor(parcel: Parcel) : this(
     parcel.readString() ?: "",
     parcel.readString() ?: "",
-    parcel.readString() ?: ""
+    parcel.readString() ?: "",
+    parcel.readString()?:""
   )
 
   override fun writeToParcel(parcel: Parcel, flags: Int) {
     parcel.writeString(url)
     parcel.writeString(fileType)
     parcel.writeString(name)
+    parcel.writeString(size)
+
   }
 
   override fun describeContents(): Int {

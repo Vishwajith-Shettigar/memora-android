@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -27,6 +28,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -45,25 +47,25 @@ import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.model.DownloadFile
 import com.example.timecapsule.R
+import com.example.timecapsule.routes.Screen
 import com.example.timecapsule.ui.theme.LightBlue
 import com.example.timecapsule.ui.uploadfiles.UploadedFileItem
+import com.example.timecapsule.util.getFileImageID
 import com.example.timecapsule.viewmodel.OpenCapsuleViewModel
+import com.example.util.bytesToMegabytes
 
 @Preview
 @Composable
 fun ShowContentScreen(viewModel: OpenCapsuleViewModel = hiltViewModel()) {
-  val fileUrls = ArrayList<DownloadFile>()
-  fileUrls.add(
-    DownloadFile(
-      url = "https://firebasestorage.googleapis.com/v0/b/time-capsule-android.appspot.com/o/uploads%2F0BG4KYWTzzNXXsDFOikZRJON9vj1%2F3cp5fynhf5%2F_document_image%3A1000016814?alt=media&token=908f55c8-743f-43ea-9b58-787d7a2dcf5e",
-      fileType = "jpeg", name = "IMG-20241102-WA0037.jpg"
-    ),
-  )
 
   val progress by viewModel.progress.collectAsState()
 
   var isDownloadClicked by remember {
     mutableStateOf(false)
+  }
+
+  LaunchedEffect(Unit) {
+    viewModel.saveScreenCheckPoint(Screen.OpenCapsuleContentScreen.route)
   }
 
   Scaffold(
@@ -89,8 +91,13 @@ fun ShowContentScreen(viewModel: OpenCapsuleViewModel = hiltViewModel()) {
               .padding(horizontal = 8.dp, vertical = 20.dp)
           )
         }
-        items(30) {
-          UploadedFileItem(disableDeleteBtn = true)
+        items(viewModel.getFiles()) {
+          UploadedFileItem(
+            title = it.name,
+            fileSize = "${String.format("%.2f", bytesToMegabytes(it.size.toLong()))} MB",
+            icon = getFileImageID(it.fileType),
+            disableDeleteBtn = true
+          )
         }
       }
 
@@ -128,7 +135,7 @@ fun ShowContentScreen(viewModel: OpenCapsuleViewModel = hiltViewModel()) {
         ),
         onClick = {
           if (!isDownloadClicked) {
-            viewModel.startDownloadService(files = fileUrls)
+            viewModel.startDownloadService()
             isDownloadClicked = true
           }
         }

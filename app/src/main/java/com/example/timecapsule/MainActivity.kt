@@ -46,7 +46,7 @@ class MainActivity : ComponentActivity() {
 //        NotificationScreen()
 //        WriteLetterScreen()
 //        OnBoardingNavGraph()
-//        NavGraph()
+        NavGraph()
 //        CapsuleCreationSavingScreen()
 //        InstructionsScreen()
 //        MapInstructionsScreen()
@@ -56,7 +56,7 @@ class MainActivity : ComponentActivity() {
 //
 //        }
 //        FileInfoDisplay()
-        ShowContentScreen()
+//        ShowContentScreen()
       }
     }
   }

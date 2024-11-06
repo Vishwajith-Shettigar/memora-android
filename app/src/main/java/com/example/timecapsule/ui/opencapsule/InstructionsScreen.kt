@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -34,6 +35,7 @@ import com.example.model.CapsuleDetails
 import com.example.timecapsule.ui.theme.SubTitleFontColor
 import com.example.timecapsule.R
 import com.example.timecapsule.routes.Screen
+import com.example.timecapsule.ui.theme.LightBlue
 import com.example.timecapsule.viewmodel.DisplayCapsuleDetailsState
 import com.example.timecapsule.viewmodel.OpenCapsuleViewModel
 
@@ -64,13 +66,13 @@ fun InstructionsScreen(
   }
   Box(
     modifier = Modifier
-      .fillMaxSize()
-      .background(MaterialTheme.colorScheme.primary)
+        .fillMaxSize()
+        .background(MaterialTheme.colorScheme.primary)
   ) {
     Column(
       modifier = Modifier
-        .align(Alignment.TopCenter)
-        .fillMaxSize(),
+          .align(Alignment.TopCenter)
+          .fillMaxSize(),
       verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally
     ) {
       Text(
@@ -93,9 +95,9 @@ fun InstructionsScreen(
     }
     Box(
       modifier = Modifier
-        .fillMaxWidth()
-        .wrapContentHeight()
-        .align(Alignment.BottomCenter)
+          .fillMaxWidth()
+          .wrapContentHeight()
+          .align(Alignment.BottomCenter)
     ) {
       OpenCapsuleNextButtonRow(isLocationScreen, isLetterScreen, navigate)
     }
@@ -110,28 +112,28 @@ fun OpenCapsuleNextButtonRow(
   navigateToMap: Boolean = false
 ) {
   Row(
-    Modifier
-      .fillMaxWidth()
-      .padding(bottom = 30.dp, end = 10.dp),
+      Modifier
+          .fillMaxWidth()
+          .padding(bottom = 30.dp, end = 10.dp),
     horizontalArrangement = Arrangement.Absolute.Right,
     verticalAlignment = Alignment.CenterVertically
   ) {
     Text(
       text = "Please press next to move forward.",
       color = SubTitleFontColor,
-      modifier = Modifier.padding(horizontal = 10.dp)
+      modifier = Modifier.padding(horizontal = 10.dp),
+      style = MaterialTheme.typography.titleSmall.copy(fontSize = 12.sp)
     )
-    Button(onClick = {
+    Button(colors = ButtonDefaults.buttonColors(containerColor = LightBlue), onClick = {
       if (navigateToMap) {
         navigate(Screen.OpenCapsuleFindCapsuleScreen.route)
+      } else if (isLetterScreen) {
+        navigate(Screen.OpenCapsuleLetterScreen.route)
+      } else if (isLocationScreen) {
+        navigate(Screen.OpenCapsuleMapInstructionsScreen.route)
+      } else {
+        navigate(Screen.OpenCapsuleContentScreen.route)
       }
-      else if (isLetterScreen) {
-      navigate(Screen.OpenCapsuleLetterScreen.route)
-    } else if (isLocationScreen) {
-      navigate(Screen.OpenCapsuleMapInstructionsScreen.route)
-    } else {
-      // go to content screen
-    }
     }) {
       Text(text = "next")
     }
