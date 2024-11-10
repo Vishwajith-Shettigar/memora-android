@@ -9,7 +9,7 @@ import dagger.hilt.android.components.ServiceComponent
 import dagger.hilt.android.scopes.ServiceScoped
 
 @Module
-@InstallIn(ServiceComponent::class) // Bindings are available in services
+@InstallIn(ServiceComponent::class)
 object ServiceModule {
 
   @ServiceScoped

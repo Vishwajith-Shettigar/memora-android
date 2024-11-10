@@ -38,9 +38,7 @@ constructor(
   authRemoteDataSource: AuthRemoteDataSource
 ) {
 
-//  private val userId: String = authRemoteDataSource.getAuth()?.uid!!
-
-  val userId=""
+  private val userId: String = authRemoteDataSource.getAuth()?.uid!!
 
   fun getFileType(uri: Uri): String? {
     val mimeType = context.contentResolver.getType(uri)
