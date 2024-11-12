@@ -35,6 +35,9 @@ dependencies{
 
     // Firebase Authentication dependency
     implementation(libs.firebase.auth.ktx)
+
+    implementation libs.firebase.messaging
+
     implementation(libs.hilt.android)
     kapt(libs.hilt.android.compiler)
 }

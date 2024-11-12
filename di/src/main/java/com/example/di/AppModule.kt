@@ -17,6 +17,7 @@ import com.example.data.sharedpreference.SharedPreferencesHelper
 import com.example.domain.usecase.OnBoardingDataUseCase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.storage.FirebaseStorage
 import dagger.Binds
 import dagger.Module
@@ -68,6 +69,12 @@ abstract class AppModule {
 
     @Provides
     @Singleton
+    fun provideFirebaseMessaging(): FirebaseMessaging {
+      return FirebaseMessaging.getInstance()
+    }
+
+    @Provides
+    @Singleton
     fun provideFirebaseFirestore(): FirebaseFirestore {
       return FirebaseFirestore.getInstance()
     }
@@ -92,7 +99,8 @@ abstract class AppModule {
       firebaseStorage: FirebaseStorage,
       @ApplicationContext context: Context,
       firestore: FirebaseFirestore,
-authRemoteDataSource: AuthRemoteDataSource    ): FilesRemoteDataSource {
+      authRemoteDataSource: AuthRemoteDataSource
+    ): FilesRemoteDataSource {
       return FilesRemoteDataSource(firebaseStorage, context, firestore, authRemoteDataSource)
     }
 
@@ -100,9 +108,10 @@ authRemoteDataSource: AuthRemoteDataSource    ): FilesRemoteDataSource {
     @Singleton
     fun provideUserRemoteDataSource(
       firestore: FirebaseFirestore,
-      remoteDataSource: AuthRemoteDataSource
+      firebaseMessaging: FirebaseMessaging,
+      remoteDataSource: AuthRemoteDataSource,
     ): UserRemoteDataSource {
-      return UserRemoteDataSource(firestore, remoteDataSource)
+      return UserRemoteDataSource(firestore, firebaseMessaging, remoteDataSource)
     }
 
     @Provides
@@ -112,7 +121,7 @@ authRemoteDataSource: AuthRemoteDataSource    ): FilesRemoteDataSource {
       remoteDataSource: AuthRemoteDataSource,
       userRemoteDataSource: UserRemoteDataSource
     ): CapsulesRemoteDataSource {
-      return CapsulesRemoteDataSource(firestore, remoteDataSource,userRemoteDataSource)
+      return CapsulesRemoteDataSource(firestore, remoteDataSource, userRemoteDataSource)
     }
   }
 }

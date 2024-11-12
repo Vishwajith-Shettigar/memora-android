@@ -124,6 +124,7 @@ dependencies {
     implementation "androidx.hilt:hilt-navigation-compose:1.2.0"
 
     implementation(libs.firebase.firestore.ktx)
+    implementation libs.firebase.messaging
 
     implementation (libs.stripe.android)
     implementation ("com.github.kittinunf.fuel:fuel:2.3.1")

@@ -1,7 +1,9 @@
 package com.example.di
 
+import com.example.data.remote.UserRemoteDataSource
 import com.example.data.repository.UploadFileRepository
 import com.example.domain.usecase.DownloadFilesUseCase
+import com.example.domain.usecase.UpdateFCMTokenUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -18,5 +20,13 @@ object ServiceModule {
     repository: UploadFileRepository
   ): DownloadFilesUseCase {
     return DownloadFilesUseCase(repository)
+  }
+
+  @ServiceScoped
+  @Provides
+  fun provideUpdateFCMTokenUseCase(
+    userRemoteDataSource: UserRemoteDataSource
+  ): UpdateFCMTokenUseCase {
+    return UpdateFCMTokenUseCase(userRemoteDataSource)
   }
 }
