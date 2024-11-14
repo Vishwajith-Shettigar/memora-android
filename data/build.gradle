@@ -9,7 +9,7 @@ android {
     namespace 'com.example.timecapsule'
     compileSdkVersion 34
     defaultConfig {
-        minSdkVersion 24
+        minSdkVersion 29
         targetSdkVersion 34
     }
     sourceSets {
@@ -35,6 +35,9 @@ dependencies{
 
     // Firebase Authentication dependency
     implementation(libs.firebase.auth.ktx)
+
+    implementation libs.firebase.messaging
+
     implementation(libs.hilt.android)
     kapt(libs.hilt.android.compiler)
 }

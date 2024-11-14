@@ -493,7 +493,7 @@ fun UploadingFileItem(
           )
     ) {
       Icon(
-        painter = painterResource(id = R.drawable.ic_delete), // Replace with your actual delete icon resource
+        painter = painterResource(id = R.drawable.ic_delete),
         contentDescription = "Delete File",
         tint = Color.Blue.copy(alpha = 0.5F)
       )

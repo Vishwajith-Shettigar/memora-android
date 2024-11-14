@@ -10,6 +10,7 @@ import com.example.util.defaultPictures
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
+import com.google.firebase.messaging.FirebaseMessaging
 import javax.inject.Inject
 import kotlin.math.ln
 import kotlin.random.Random
@@ -17,6 +18,7 @@ import kotlinx.coroutines.tasks.await
 
 class UserRemoteDataSource @Inject constructor(
   val firestore: FirebaseFirestore,
+  private val firebaseMessaging: FirebaseMessaging,
   val authRemoteDataSource: AuthRemoteDataSource
 ) {
 
@@ -25,7 +27,7 @@ class UserRemoteDataSource @Inject constructor(
       val userDoc = firestore.collection("users").document(userId).get().await()
       Response.Success(parseUser(userDoc))
     } catch (e: Exception) {
-      Response.Error(exception =  e)
+      Response.Error(exception = e)
     }
   }
 
@@ -55,11 +57,14 @@ class UserRemoteDataSource @Inject constructor(
         lastName = lName,
         imageUrl = defaultImageUrl,
         userNameLowerCase = userName.toLowerCase(),
-        firstNameLowerCase = fName.toLowerCase()
+        firstNameLowerCase = fName.toLowerCase(),
       )
 
       firestore.collection("users").document(newUserDetails.userId)
         .set(newUserDetails).await()
+
+      saveTokenToFirestore()
+
       Response.Success(Unit)
     } catch (e: Exception) {
       Response.Error(e)
@@ -94,6 +99,24 @@ class UserRemoteDataSource @Inject constructor(
         Response.Error(AskDetailsException())
     } catch (e: Exception) {
       Response.Error(AskDetailsException())
+    }
+  }
+
+  suspend fun saveTokenToFirestore() {
+    try {
+
+      val user = authRemoteDataSource.getAuth()
+
+      val token: String = firebaseMessaging.token.await()
+
+      val tokenData = mapOf("fcmToken" to token)
+
+      user?.uid?.let {
+        firestore.collection("users").document(it)
+          .update(tokenData).await()
+      }
+
+    } catch (_: Exception) {
     }
   }
 

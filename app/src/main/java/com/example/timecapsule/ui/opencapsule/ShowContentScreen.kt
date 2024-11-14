@@ -1,12 +1,14 @@
 package com.example.timecapsule.ui.opencapsule
 
 import android.net.Uri
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -14,7 +16,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -23,20 +28,46 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.model.DownloadFile
 import com.example.timecapsule.R
+import com.example.timecapsule.routes.Screen
 import com.example.timecapsule.ui.theme.LightBlue
+import com.example.timecapsule.ui.uploadfiles.UploadedFileItem
+import com.example.timecapsule.util.getFileImageID
+import com.example.timecapsule.viewmodel.OpenCapsuleViewModel
+import com.example.util.bytesToMegabytes
 
 @Preview
 @Composable
-fun ShowContentScreen() {
+fun ShowContentScreen(viewModel: OpenCapsuleViewModel = hiltViewModel()) {
+
+  val progress by viewModel.progress.collectAsState()
+
+  var isDownloadClicked by remember {
+    mutableStateOf(false)
+  }
+
+  LaunchedEffect(Unit) {
+    viewModel.saveScreenCheckPoint(Screen.OpenCapsuleContentScreen.route)
+  }
+
   Scaffold(
     containerColor = MaterialTheme.colorScheme.primary,
   ) { innerPadding ->
@@ -60,78 +91,64 @@ fun ShowContentScreen() {
               .padding(horizontal = 8.dp, vertical = 20.dp)
           )
         }
-        items(30) {
-          UploadedFileItem()
+        items(viewModel.getFiles()) {
+          UploadedFileItem(
+            title = it.name,
+            fileSize = "${String.format("%.2f", bytesToMegabytes(it.size.toLong()))} MB",
+            icon = getFileImageID(it.fileType),
+            disableDeleteBtn = true
+          )
         }
       }
 
-      OutlinedButton(modifier = Modifier
-          .align(Alignment.BottomCenter)
-          .padding(20.dp),
-        colors = ButtonDefaults.outlinedButtonColors(
-          containerColor = LightBlue
-        ), onClick = { /*TODO*/ }) {
-        Text(text = "Download All")
-      }
-    }
-  }
-}
-
-@Composable
-fun UploadedFileItem(
-  uri: Uri = Uri.EMPTY,
-  fileUri: Uri = Uri.EMPTY,
-  title: String = "Project Reports",
-  fileSize: String = "21.8 MB of 21.8 MB",
-  icon: Int = R.drawable.doc,
-  onDownloadClick: (Uri, Uri) -> Unit = { _, _ -> }
-) {
-  Row(
-    verticalAlignment = Alignment.CenterVertically,
-    modifier = Modifier
-        .fillMaxWidth()
-        .background(MaterialTheme.colorScheme.primary)
-        .padding(5.dp)
-  ) {
-    Image(
-      painter = painterResource(id = icon),
-      contentDescription = "Document Icon",
-      contentScale = ContentScale.Fit,
-      modifier = Modifier.size(48.dp)
-    )
-
-    Spacer(modifier = Modifier.width(8.dp))
-
-    Column(modifier = Modifier.weight(1f)) {
-      Text(
-        text = title,
-        style = MaterialTheme.typography.titleLarge.copy(
-          fontSize = 15.sp,
-          color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-      )
-      Spacer(modifier = Modifier.height(4.dp))
-      Text(
-        text = fileSize,
-        fontSize = 14.sp,
-        color = Color.Gray
-      )
-    }
-    Spacer(modifier = Modifier.width(8.dp))
-    IconButton(
-      onClick = { onDownloadClick(uri, fileUri) },
-      modifier = Modifier
-          .size(40.dp)
-          .background(
-              color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.6F),
-              shape = CircleShape
+      Box(
+        modifier = Modifier
+            .width(190.dp)
+            .height(70.dp)
+            .padding(bottom = 20.dp)
+            .align(Alignment.BottomCenter)
+            .clip(RoundedCornerShape(20.dp))
+            .background(LightBlue)
+      ) {
+        val animatedProgress by animateFloatAsState(
+          targetValue = (progress / 100f).coerceIn(
+            0f,
+            1f
           )
-    ) {
-      Icon(
-        painter = painterResource(id = R.drawable.ic_download),
-        contentDescription = "Delete File",
-        tint = Color.LightGray
-      )
+        )
+        Box(
+          modifier = Modifier
+              .fillMaxHeight()
+              .fillMaxWidth(animatedProgress)
+              .background(Color.Cyan.copy(alpha = 0.7f))
+        )
+      }
+      Button(
+        modifier = Modifier
+            .width(190.dp)
+            .height(70.dp)
+            .padding(bottom = 20.dp)
+            .align(Alignment.BottomCenter)
+            .clip(RoundedCornerShape(20.dp)),
+        colors = ButtonDefaults.outlinedButtonColors(
+          containerColor = Color.Transparent
+        ),
+        onClick = {
+          if (!isDownloadClicked) {
+            viewModel.startDownloadService()
+            isDownloadClicked = true
+          }
+        }
+      ) {
+        Text(
+          text = if (isDownloadClicked) "$progress%" else "Download All",
+          color = Color.Black,
+          style = MaterialTheme.typography.titleMedium,
+          modifier = Modifier
+              .align(Alignment.CenterVertically)
+              .zIndex(10f)
+        )
+      }
     }
   }
 }

@@ -1,6 +1,5 @@
 package com.example.timecapsule.ui.CapsuleCreationSaving
 
-import android.util.Log
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -37,10 +36,7 @@ import com.example.timecapsule.R
 import com.example.timecapsule.ui.selecttime.NavigationAddCapsule
 import com.example.timecapsule.viewmodel.CapsuleCreationState
 import com.example.timecapsule.viewmodel.CapsuleCreationViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 @Preview
 @Composable
@@ -85,13 +81,11 @@ fun SuccessScreen(onNavigate: (NavigationAddCapsule) -> Unit = {}) {
       onNavigate(NavigationAddCapsule.NEXT)
     }
   }
-  
+
   LaunchedEffect(Unit) {
-    CoroutineScope(Dispatchers.IO).launch {
-      while (true) {
-        delay(1000)
-        timer -= 1
-      }
+    while (true) {
+      delay(1000)
+      timer -= 1
     }
   }
 
@@ -132,7 +126,7 @@ fun LoadingScreen() {
 
 @Composable
 fun RotatingPicture(image: Painter) {
-  // Create an infinite transition for the rotation
+
   val infiniteTransition = rememberInfiniteTransition()
 
   // Define the animated float state for the rotation

@@ -2,8 +2,10 @@ package com.example.data.repository
 
 import android.net.Uri
 import com.example.data.remote.FilesRemoteDataSource
+import com.example.model.DownloadFile
 import com.example.model.FileUploadProgress
 import com.example.model.FileUploaded
+import java.util.ArrayList
 import javax.inject.Inject
 
 interface UploadFileRepository {
@@ -13,6 +15,7 @@ interface UploadFileRepository {
   fun cancelUpLoading(uri: Uri)
   fun cancelAllUpLoading()
  suspend fun deleteUploadedFile(uri: Uri,capsuleId: String)
+ suspend fun downloadFiles(file: DownloadFile):ByteArray?
 }
 
 class UploadFileRepositoryImpl @Inject constructor(
@@ -40,5 +43,9 @@ class UploadFileRepositoryImpl @Inject constructor(
 
   override suspend fun deleteUploadedFile(uri: Uri, capsuleId: String) {
     filesRemoteDataSource.deleteUploadedFile(uri,capsuleId)
+  }
+
+  override suspend fun downloadFiles(file:DownloadFile):ByteArray? {
+   return filesRemoteDataSource.downloadFile(file)
   }
 }
