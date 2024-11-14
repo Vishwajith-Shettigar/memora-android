@@ -9,6 +9,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
@@ -16,18 +18,17 @@ import com.example.timecapsule.routes.Screen
 import com.example.timecapsule.ui.util.DeviceType
 
 @Composable
-fun NavGraph() {
+fun NavGraph(  navController :NavHostController) {
   val isTablet = DeviceType.isTablet()
   if (isTablet)
-    TabletLayoutV1()
+    TabletLayoutV1(navController)
   else
-    MobileLayoutV1()
+    MobileLayoutV1(navController)
 }
 
 @Composable
-fun MobileLayoutV1() {
+fun MobileLayoutV1( navController :NavHostController) {
   val activity = (LocalContext.current as Activity)
-  val navController = rememberNavController()
 
   // List of screens that should display the Bottom Navigation Bar
   val bottomNavScreens = listOf(
@@ -59,9 +60,8 @@ fun MobileLayoutV1() {
 }
 
 @Composable
-fun TabletLayoutV1() {
+fun TabletLayoutV1(navController :NavHostController) {
   val activity = (LocalContext.current as Activity)
-  val navController = rememberNavController()
 
   // List of screens that should display the Bottom Navigation Bar
   val bottomNavScreens = listOf(
