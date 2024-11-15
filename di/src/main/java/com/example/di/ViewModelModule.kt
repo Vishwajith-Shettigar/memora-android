@@ -4,6 +4,7 @@ import com.example.data.repository.AuthRepository
 import com.example.data.repository.AuthRepositoryImpl
 import com.example.data.repository.CapsulesRepository
 import com.example.data.repository.CapsulesRepositoryImpl
+import com.example.data.repository.NotificationRepository
 import com.example.data.repository.UploadFileRepository
 import com.example.data.repository.UserRepository
 import com.example.data.sharedpreference.SharedPreferencesHelper
@@ -11,6 +12,7 @@ import com.example.domain.usecase.CreateCapsuleUseCase
 import com.example.domain.usecase.GetCapsuleAssetsUseCase
 import com.example.domain.usecase.GetCapsuleDetailsUseCase
 import com.example.domain.usecase.GetCapsuleListUseCase
+import com.example.domain.usecase.GetNotificationUseCase
 import com.example.domain.usecase.GetUserDetailsUseCase
 import com.example.domain.usecase.OnBoardingDataUseCase
 import com.example.domain.usecase.OpenCapsuleScreenCheckPointUseCase
@@ -55,6 +57,12 @@ class ViewModelModule {
   @ViewModelScoped
   fun provideSignOutUseCase(authRepository: AuthRepository): SignOutUseCase {
     return SignOutUseCase(authRepository)
+  }
+
+  @Provides
+  @ViewModelScoped
+  fun provideNotificationUseCase(notificationRepository: NotificationRepository): GetNotificationUseCase {
+    return GetNotificationUseCase(notificationRepository)
   }
 
   @Provides

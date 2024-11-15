@@ -4,11 +4,14 @@ import android.content.Context
 import com.example.data.remote.AuthRemoteDataSource
 import com.example.data.remote.CapsulesRemoteDataSource
 import com.example.data.remote.FilesRemoteDataSource
+import com.example.data.remote.NotificationDataSource
 import com.example.data.remote.UserRemoteDataSource
 import com.example.data.repository.AuthRepository
 import com.example.data.repository.AuthRepositoryImpl
 import com.example.data.repository.CapsulesRepository
 import com.example.data.repository.CapsulesRepositoryImpl
+import com.example.data.repository.NotificationRepository
+import com.example.data.repository.NotificationRepositoryImpl
 import com.example.data.repository.UploadFileRepository
 import com.example.data.repository.UploadFileRepositoryImpl
 import com.example.data.repository.UserRepository
@@ -42,6 +45,11 @@ abstract class AppModule {
   @Binds
   @Singleton
   abstract fun bindCapsulesRepository(capsulesRepositoryImpl: CapsulesRepositoryImpl): CapsulesRepository
+
+  @Binds
+  @Singleton
+  abstract fun bindNotificationRepository(notificationRepositoryImpl: NotificationRepositoryImpl): NotificationRepository
+
 
   @Binds
   @Singleton
@@ -112,6 +120,15 @@ abstract class AppModule {
       remoteDataSource: AuthRemoteDataSource,
     ): UserRemoteDataSource {
       return UserRemoteDataSource(firestore, firebaseMessaging, remoteDataSource)
+    }
+
+    @Provides
+    @Singleton
+    fun provideNotificationRemoteDataSource(
+      firestore: FirebaseFirestore,
+      remoteDataSource: AuthRemoteDataSource,
+    ): NotificationDataSource {
+      return NotificationDataSource(firestore, remoteDataSource)
     }
 
     @Provides
