@@ -25,9 +25,10 @@ class NotificationDataSource @Inject constructor(
         val notificationList: List<NotificationDetails> = notificationListMap.map {
           NotificationDetails(
             body = it["body"].toString(),
-            title = it["title"].toString(),
             capsuleId = it["capsuleId"]?.toString(),
-            timestamp = it["timestamp"] as Timestamp
+            timestamp = it["timestamp"] as Timestamp,
+            imageUrl = it["imageurl"].toString(),
+            username = it["username"].toString()
           )
         }
 

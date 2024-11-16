@@ -50,6 +50,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import coil.compose.AsyncImage
 import com.example.timecapsule.R
 import com.example.timecapsule.ui.theme.LightBlue
 import com.example.timecapsule.ui.util.DeviceType
@@ -132,8 +133,8 @@ fun NotificationScreen(
             (state as NotificationScreenState.Success).notificationList,
             key = { notification -> notification.timestamp }) {
             NotificationBar(
-              image = R.drawable.testimg6,
-              username = "DarkX12",
+              image = it.imageUrl,
+              username = it.username,
               text = it.body,
               isViewable = it.capsuleId != null,
               isRightRound = it.capsuleId != null,
@@ -154,7 +155,7 @@ fun NotificationScreen(
 
 @Composable
 fun NotificationBar(
-  image: Int,
+  image: String,
   username: String,
   text: String,
   isViewable: Boolean = false,
@@ -200,8 +201,8 @@ fun NotificationBar(
       verticalAlignment = Alignment.CenterVertically,
       horizontalArrangement = Arrangement.Start
     ) {
-      Image(
-        painter = painterResource(id = image),
+      AsyncImage(
+        model= image,
         modifier = Modifier
             .padding(3.dp)
             .padding(end = textStartPadding)
