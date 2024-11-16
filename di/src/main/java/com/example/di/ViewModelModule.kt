@@ -1,9 +1,7 @@
 package com.example.di
 
 import com.example.data.repository.AuthRepository
-import com.example.data.repository.AuthRepositoryImpl
 import com.example.data.repository.CapsulesRepository
-import com.example.data.repository.CapsulesRepositoryImpl
 import com.example.data.repository.NotificationRepository
 import com.example.data.repository.UploadFileRepository
 import com.example.data.repository.UserRepository
@@ -24,7 +22,7 @@ import com.example.domain.usecase.SignUpUseCase
 import com.example.domain.usecase.UploadFilesUseCase
 import com.example.domain.usecase.getAuthUseCase
 import com.example.domain.usecase.getUserIDUseCase
-import dagger.Binds
+import com.example.domain.usecase.SendCapsuleCreationNotificationUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -78,6 +76,14 @@ class ViewModelModule {
     onBoardingDataUseCase: OnBoardingDataUseCase
   ): getAuthUseCase {
     return getAuthUseCase(authRepository, onBoardingDataUseCase)
+  }
+
+  @Provides
+  @ViewModelScoped
+  fun provideSendCapsuleCreationNotificationUseCase(
+    notificationRepository: NotificationRepository
+  ): SendCapsuleCreationNotificationUseCase {
+    return SendCapsuleCreationNotificationUseCase(notificationRepository)
   }
 
   @Provides

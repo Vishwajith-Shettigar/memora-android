@@ -3,7 +3,9 @@ package com.example.timecapsule.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.data.dto.NotificationDto
 import com.example.domain.usecase.GetNotificationUseCase
+import com.example.domain.usecase.SendCapsuleCreationNotificationUseCase
 import com.example.model.CapsuleDetails
 import com.example.model.NotificationDetails
 import com.example.util.Response
@@ -30,7 +32,7 @@ sealed class NotificationScreenState {
 
 @HiltViewModel
 class NotificatioViewModel @Inject constructor(
-  private val getNotificationUseCase: GetNotificationUseCase
+  private val getNotificationUseCase: GetNotificationUseCase,
 ) : ViewModel() {
   private val _notificationListState =
     MutableStateFlow<NotificationScreenState>(NotificationScreenState.Loading)
