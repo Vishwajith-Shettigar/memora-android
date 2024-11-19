@@ -25,9 +25,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.navigation
 import com.example.timecapsule.ui.capsuledetails.CapsuleDetailsScreen
+import com.example.timecapsule.viewmodel.NotificatioViewModel
 
 fun getNavigationItems(): List<NavItem> {
   return listOf(
@@ -87,8 +90,8 @@ fun BottomNavigationBar(navController: NavController) {
   BottomNavigation(
     backgroundColor = MaterialTheme.colorScheme.primary,
     modifier = Modifier
-        .windowInsetsPadding(WindowInsets.navigationBars.only(WindowInsetsSides.Bottom))
-        .background(MaterialTheme.colorScheme.primary)
+      .windowInsetsPadding(WindowInsets.navigationBars.only(WindowInsetsSides.Bottom))
+      .background(MaterialTheme.colorScheme.primary)
   ) {
     val currentRoute = navController.currentDestination?.route
     items.forEach { item ->
@@ -141,7 +144,12 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
       })
     }
     composable(Screen.Location.route) { FindCapsuleScreenV1(navController) }
-    composable(Screen.Notification.route) { NotificationScreen(navController) }
+    composable(Screen.Notification.route) {
+      val viewmodel: NotificatioViewModel = hiltViewModel(it)
+      NotificationScreen(navController, viewmodel) { capsuleId ->
+        navController.navigate(Screen.CapsuleDetails.createRoute(capsuleId))
+      }
+    }
     composable(Screen.Profile.route) { ProfileScreen(navController) }
 
     // Capsule Details Screen (inside Main flow)

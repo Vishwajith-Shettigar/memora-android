@@ -4,15 +4,18 @@ plugins {
     id 'kotlin-kapt'
     id 'dagger.hilt.android.plugin'
     id 'org.jetbrains.kotlin.android'
-
+    id 'com.google.android.libraries.mapsplatform.secrets-gradle-plugin'
 }
 
 android {
-    namespace 'com.example.timecapsule'
+    namespace 'com.example.di'
     compileSdkVersion 34
     defaultConfig {
         minSdkVersion 29
         targetSdkVersion 34
+    }
+    buildFeatures {
+        buildConfig true
     }
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
@@ -23,6 +26,16 @@ android {
     }
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_17
+    }
+
+    secrets {
+        propertiesFileName = "secrets.properties"
+        defaultPropertiesFileName = "local.defaults.properties"
+
+        // Configure which keys should be ignored by the plugin by providing regular expressions.
+        // "sdk.dir" is ignored by default.
+        ignoreList.add("keyToIgnore") // Ignore the key "keyToIgnore"
+        ignoreList.add("sdk.*")       // Ignore all keys matching the regexp "sdk.*"
     }
 }
 
@@ -37,4 +50,8 @@ dependencies {
     implementation(libs.hilt.android)
     implementation project(':util')
     kapt(libs.hilt.android.compiler)
+
+    implementation libs.retrofit
+
+    implementation libs.converter.gson
 }

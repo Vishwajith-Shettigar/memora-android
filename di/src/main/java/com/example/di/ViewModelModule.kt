@@ -1,9 +1,8 @@
 package com.example.di
 
 import com.example.data.repository.AuthRepository
-import com.example.data.repository.AuthRepositoryImpl
 import com.example.data.repository.CapsulesRepository
-import com.example.data.repository.CapsulesRepositoryImpl
+import com.example.data.repository.NotificationRepository
 import com.example.data.repository.UploadFileRepository
 import com.example.data.repository.UserRepository
 import com.example.data.sharedpreference.SharedPreferencesHelper
@@ -11,6 +10,7 @@ import com.example.domain.usecase.CreateCapsuleUseCase
 import com.example.domain.usecase.GetCapsuleAssetsUseCase
 import com.example.domain.usecase.GetCapsuleDetailsUseCase
 import com.example.domain.usecase.GetCapsuleListUseCase
+import com.example.domain.usecase.GetNotificationUseCase
 import com.example.domain.usecase.GetUserDetailsUseCase
 import com.example.domain.usecase.OnBoardingDataUseCase
 import com.example.domain.usecase.OpenCapsuleScreenCheckPointUseCase
@@ -22,7 +22,7 @@ import com.example.domain.usecase.SignUpUseCase
 import com.example.domain.usecase.UploadFilesUseCase
 import com.example.domain.usecase.getAuthUseCase
 import com.example.domain.usecase.getUserIDUseCase
-import dagger.Binds
+import com.example.domain.usecase.SendCapsuleCreationNotificationUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -59,6 +59,12 @@ class ViewModelModule {
 
   @Provides
   @ViewModelScoped
+  fun provideNotificationUseCase(notificationRepository: NotificationRepository): GetNotificationUseCase {
+    return GetNotificationUseCase(notificationRepository)
+  }
+
+  @Provides
+  @ViewModelScoped
   fun provideSaveUserDetailsUseCase(userRepository: UserRepository): SaveUserDetailsUseCase {
     return SaveUserDetailsUseCase(userRepository)
   }
@@ -70,6 +76,14 @@ class ViewModelModule {
     onBoardingDataUseCase: OnBoardingDataUseCase
   ): getAuthUseCase {
     return getAuthUseCase(authRepository, onBoardingDataUseCase)
+  }
+
+  @Provides
+  @ViewModelScoped
+  fun provideSendCapsuleCreationNotificationUseCase(
+    notificationRepository: NotificationRepository
+  ): SendCapsuleCreationNotificationUseCase {
+    return SendCapsuleCreationNotificationUseCase(notificationRepository)
   }
 
   @Provides

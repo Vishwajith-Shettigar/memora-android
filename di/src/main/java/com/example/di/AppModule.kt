@@ -4,15 +4,19 @@ import android.content.Context
 import com.example.data.remote.AuthRemoteDataSource
 import com.example.data.remote.CapsulesRemoteDataSource
 import com.example.data.remote.FilesRemoteDataSource
+import com.example.data.remote.NotificationDataSource
 import com.example.data.remote.UserRemoteDataSource
 import com.example.data.repository.AuthRepository
 import com.example.data.repository.AuthRepositoryImpl
 import com.example.data.repository.CapsulesRepository
 import com.example.data.repository.CapsulesRepositoryImpl
+import com.example.data.repository.NotificationRepository
+import com.example.data.repository.NotificationRepositoryImpl
 import com.example.data.repository.UploadFileRepository
 import com.example.data.repository.UploadFileRepositoryImpl
 import com.example.data.repository.UserRepository
 import com.example.data.repository.UserRepositoryImpl
+import com.example.data.retrofilApi.NotificationApi
 import com.example.data.sharedpreference.SharedPreferencesHelper
 import com.example.domain.usecase.OnBoardingDataUseCase
 import com.google.firebase.auth.FirebaseAuth
@@ -26,6 +30,10 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+import java.io.File
+import java.util.Properties
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -45,9 +53,28 @@ abstract class AppModule {
 
   @Binds
   @Singleton
+  abstract fun bindNotificationRepository(notificationRepositoryImpl: NotificationRepositoryImpl): NotificationRepository
+
+
+  @Binds
+  @Singleton
   abstract fun bindUploadFilesRepository(uploadFileRepositoryImpl: UploadFileRepositoryImpl): UploadFileRepository
 
   companion object {
+
+    @Provides
+    @Singleton
+    fun provideRetrofit(): Retrofit {
+      return Retrofit.Builder()
+        .baseUrl(BuildConfig.SERVER_URL)
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+    }
+
+    @Provides
+    fun provideNotificationApi(retrofit: Retrofit): NotificationApi {
+      return retrofit.create(NotificationApi::class.java)
+    }
 
     @Provides
     @Singleton
@@ -112,6 +139,15 @@ abstract class AppModule {
       remoteDataSource: AuthRemoteDataSource,
     ): UserRemoteDataSource {
       return UserRemoteDataSource(firestore, firebaseMessaging, remoteDataSource)
+    }
+
+    @Provides
+    @Singleton
+    fun provideNotificationRemoteDataSource(
+      firestore: FirebaseFirestore,
+      remoteDataSource: AuthRemoteDataSource,
+    ): NotificationDataSource {
+      return NotificationDataSource(firestore, remoteDataSource)
     }
 
     @Provides

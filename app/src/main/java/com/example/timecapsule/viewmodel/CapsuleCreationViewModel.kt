@@ -13,10 +13,12 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.data.dto.NotificationDto
 import com.example.domain.usecase.CreateCapsuleUseCase
 import com.example.domain.usecase.GetCapsuleAssetsUseCase
 import com.example.domain.usecase.GetUserDetailsUseCase
 import com.example.domain.usecase.SearchUsersUseCase
+import com.example.domain.usecase.SendCapsuleCreationNotificationUseCase
 import com.example.domain.usecase.UploadFilesUseCase
 import com.example.domain.usecase.getUserIDUseCase
 import com.example.model.CapsuleAsset
@@ -92,10 +94,13 @@ class CapsuleCreationViewModel @Inject constructor(
   private val getUserIDUseCase: getUserIDUseCase,
   private val createCapsuleUseCase: CreateCapsuleUseCase,
   private val getUsersDetailsUseCase: GetUserDetailsUseCase,
+  private val sendCapsuleCreationNotificationUseCase: SendCapsuleCreationNotificationUseCase,
   @ApplicationContext private val context: Context
 ) : ViewModel() {
 
   var userId: String? = null
+
+  lateinit var ownerUserDetails: UserDetails
 
   init {
     CoroutineScope(Dispatchers.IO).launch {
@@ -105,8 +110,10 @@ class CapsuleCreationViewModel @Inject constructor(
 
       userId?.let {
         val userDetailsResponse = getUsersDetailsUseCase(it)
-        if (userDetailsResponse is Response.Success)
+        if (userDetailsResponse is Response.Success) {
+          ownerUserDetails = userDetailsResponse.data!!
           selectedPeoples.add(userDetailsResponse.data!!)
+        }
       }
     }
   }
@@ -201,6 +208,33 @@ class CapsuleCreationViewModel @Inject constructor(
 
   fun updateCountry(newCountry: String) {
     _country.value = newCountry
+  }
+
+  fun sendCapsuleCreationNotifications() {
+
+    val selectedUserIds = selectedPeoples.filter {
+      it.userId != ownerUserDetails.userId
+    }.map {
+      it.userId
+    }
+
+    if (selectedUserIds.size == 0)
+      return
+
+    val notificationDto = NotificationDto(
+      userIds = selectedUserIds.toList(),
+      title = "📢 New Capsule Alert! 🚀",
+      body = "has shared new capsule with you.",
+      capsuleId = CAPSULE_ID,
+      username = ownerUserDetails.userName,
+      userImageUrl = ownerUserDetails.imageUrl
+    )
+
+    viewModelScope.launch {
+      withContext(Dispatchers.IO) {
+        sendCapsuleCreationNotificationUseCase(notificationDto)
+      }
+    }
   }
 
   fun getFileStatus() {
@@ -381,6 +415,8 @@ class CapsuleCreationViewModel @Inject constructor(
           {
             when (response) {
               is Response.Success -> {
+                sendCapsuleCreationNotifications()
+                delay(2000)
                 _capsuleCreationState.value = CapsuleCreationState.Success
               }
 
@@ -390,7 +426,6 @@ class CapsuleCreationViewModel @Inject constructor(
               }
             }
           }
-
         }
       } catch (e: Exception) {
       }

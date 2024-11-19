@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -25,6 +26,12 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -40,18 +47,31 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import coil.compose.AsyncImage
 import com.example.timecapsule.R
 import com.example.timecapsule.ui.theme.LightBlue
 import com.example.timecapsule.ui.util.DeviceType
+import com.example.timecapsule.viewmodel.NotificatioViewModel
+import com.example.timecapsule.viewmodel.NotificationScreenState
 
 @OptIn(ExperimentalMaterial3Api::class)
-@Preview
 @Composable
-fun NotificationScreen(navController: NavController = rememberNavController(),) {
+fun NotificationScreen(
+  navController: NavController = rememberNavController(),
+  viewModel: NotificatioViewModel = hiltViewModel(),
+  onViewClicked: (String) -> Unit = {}
+) {
   val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
   val isTablet = DeviceType.isTablet()
+
+  val state by viewModel.notificationListState.collectAsState()
+
+  LaunchedEffect(Unit) {
+    viewModel.getNotifications()
+  }
 
   Scaffold(containerColor = MaterialTheme.colorScheme.primary,
     modifier = Modifier.background(MaterialTheme.colorScheme.primary),
@@ -68,7 +88,6 @@ fun NotificationScreen(navController: NavController = rememberNavController(),) 
             Arrangement.Center
           ) {
             Row(
-
               modifier =
               if (isTablet)
                 Modifier.fillMaxWidth(0.6f)
@@ -106,94 +125,28 @@ fun NotificationScreen(navController: NavController = rememberNavController(),) 
           .nestedScroll(scrollBehavior.nestedScrollConnection),
       horizontalAlignment = Alignment.CenterHorizontally
     ) {
-      LazyColumn(
-        modifier = modifier,
-      ) {
-        item {
-          NotificationBar(
-            image = R.drawable.testimg6,
-            username = "DarkX12",
-            text = "has shared time capsule with you, click on view to see more details",
-            isViewable = true,
-            isRightRound = true
-          )
-          NotificationBar(
-            image = R.drawable.testimg2,
-            username = "Leo13x",
-            text = "has opened the family time capsule.",
-            isViewable = false,
-            isRightRound = false
-          )
-          NotificationBar(
-            image = R.drawable.testimg1,
-            username = "poeekX15",
-            text = "has shared time capsule with you, click on view to see more details",
-            isViewable = true,
-            isRightRound = true
-          )
-          NotificationBar(
-            image = R.drawable.testimg8,
-            username = "etyqo13x",
-            text = "has opened the family time capsule.",
-            isViewable = false,
-            isRightRound = false
-          )
-          NotificationBar(
-            image = R.drawable.testimg3,
-            username = "ektyX12",
-            text = "has shared time capsule with you, click on view to see more details",
-            isViewable = true,
-            isRightRound = true
-          )
-          NotificationBar(
-            image = R.drawable.testimg9,
-            username = "hardy34",
-            text = "has opened the family time capsule.",
-            isViewable = false,
-            isRightRound = false
-          )
-          NotificationBar(
-            image = R.drawable.testimg7,
-            username = "oiokX12",
-            text = "has shared time capsule with you, click on view to see more details",
-            isViewable = true,
-            isRightRound = true
-          )
-          NotificationBar(
-            image = R.drawable.testimg2,
-            username = "Leo13x",
-            text = "has opened the family time capsule.",
-            isViewable = false,
-            isRightRound = false
-          )
-          NotificationBar(
-            image = R.drawable.testimg6,
-            username = "DarkX12",
-            text = "has shared time capsule with you, click on view to see more details",
-            isViewable = true,
-            isRightRound = true
-          )
-          NotificationBar(
-            image = R.drawable.testimg2,
-            username = "Leo13x",
-            text = "has opened the family time capsule.",
-            isViewable = false,
-            isRightRound = false
-          )
-          NotificationBar(
-            image = R.drawable.testimg6,
-            username = "DarkX12",
-            text = "has shared time capsule with you, click on view to see more details",
-            isViewable = true,
-            isRightRound = true
-          )
-          NotificationBar(
-            image = R.drawable.testimg2,
-            username = "Leo13x",
-            text = "has opened the family time capsule.",
-            isViewable = false,
-            isRightRound = false
-          )
+      if (state is NotificationScreenState.Success) {
+        LazyColumn(
+          modifier = modifier,
+        ) {
+          items(
+            (state as NotificationScreenState.Success).notificationList,
+            key = { notification -> notification.timestamp }) {
+            NotificationBar(
+              image = it.imageUrl,
+              username = it.username,
+              text = it.body,
+              isViewable = it.capsuleId != null,
+              isRightRound = it.capsuleId != null,
+              onViewClicked = {
+                it.capsuleId?.let { capsuleId ->
+                  onViewClicked(
+                    capsuleId
+                  )
+                }
+              }
+            )
+          }
         }
       }
     }
@@ -202,11 +155,12 @@ fun NotificationScreen(navController: NavController = rememberNavController(),) 
 
 @Composable
 fun NotificationBar(
-  image: Int,
+  image: String,
   username: String,
   text: String,
   isViewable: Boolean = false,
-  isRightRound: Boolean = false
+  isRightRound: Boolean = false,
+  onViewClicked: () -> Unit = {}
 ) {
 
   val isTablet = DeviceType.isTablet()
@@ -247,8 +201,8 @@ fun NotificationBar(
       verticalAlignment = Alignment.CenterVertically,
       horizontalArrangement = Arrangement.Start
     ) {
-      Image(
-        painter = painterResource(id = image),
+      AsyncImage(
+        model= image,
         modifier = Modifier
             .padding(3.dp)
             .padding(end = textStartPadding)
@@ -276,7 +230,7 @@ fun NotificationBar(
     if (isViewable)
       Box(modifier = Modifier.weight(0.2f)) {
         Button(
-          onClick = { /*TODO*/ }, modifier = Modifier
+          onClick = { onViewClicked() }, modifier = Modifier
                 .padding(3.dp)
                 .width(90.dp)
                 .height(40.dp)

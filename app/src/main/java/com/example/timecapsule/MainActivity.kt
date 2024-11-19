@@ -4,6 +4,10 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.runtime.LaunchedEffect
+import androidx.navigation.compose.rememberNavController
+import com.example.timecapsule.routes.Screen
+import com.example.timecapsule.service.CAPSULE_SHARED_NOTIFICATION
 import com.example.timecapsule.ui.CapsuleCreationSaving.CapsuleCreationSavingScreen
 import com.example.timecapsule.ui.CapsuleNameAndDescription.CapsuleNameAndDescription
 import com.example.timecapsule.ui.opencapsule.CapsuleLoadingScreen
@@ -24,6 +28,8 @@ class MainActivity : ComponentActivity() {
     setContent {
       MapboxOptions.accessToken = BuildConfig.MAP_BOX_PUBLIC_ACCESS_TOKEN
       TimeCapsuleTheme {
+        val navController = rememberNavController()
+
 //          OnboardingScreen(modifier = Modifier.padding(innerPadding))
 //          SignUpScreen(modifier = Modifier.padding(innerPadding))
 //          SignUpDetailsScreen(modifier = Modifier.padding(innerPadding))
@@ -46,7 +52,19 @@ class MainActivity : ComponentActivity() {
 //        NotificationScreen()
 //        WriteLetterScreen()
 //        OnBoardingNavGraph()
-        NavGraph()
+
+        NavGraph(navController)
+
+        val capsuleId = intent.getStringExtra("capsuleId")
+        val notificationType = intent.getStringExtra("notificationType")
+        if (notificationType == CAPSULE_SHARED_NOTIFICATION) {
+          capsuleId?.let {
+            LaunchedEffect(it) {
+              navController.navigate(Screen.CapsuleDetails.createRoute(capsuleId))
+            }
+          }
+        }
+
 //        CapsuleCreationSavingScreen()
 //        InstructionsScreen()
 //        MapInstructionsScreen()
