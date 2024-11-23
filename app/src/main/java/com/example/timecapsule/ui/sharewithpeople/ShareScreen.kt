@@ -53,6 +53,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -70,6 +71,7 @@ import com.example.timecapsule.ui.fakedata.User
 import com.example.timecapsule.ui.theme.SubTitleFontColor
 import com.example.timecapsule.ui.selecttime.NavigationRow
 import com.example.timecapsule.ui.fakedata.userList
+import com.example.timecapsule.ui.review.SharedWithALlIcon
 import com.example.timecapsule.ui.selecttime.NavigationAddCapsule
 import com.example.timecapsule.ui.util.DeviceType
 import com.example.timecapsule.viewmodel.CapsuleCreationViewModel
@@ -344,7 +346,9 @@ fun ShowSelectedPeople(
   modifier: Modifier = Modifier,
   disableCrossBtn: Boolean = false,
   selectedPeoples: MutableList<UserDetails> = mutableListOf(),
-  ownerUserId: String? = null, remove: (String) -> Unit = {}
+  ownerUserId: String? = null,
+  showSharedWithALl: Boolean = false,
+    remove: (String) -> Unit = {},
 ) {
 
   LazyHorizontalGrid(
@@ -362,6 +366,10 @@ fun ShowSelectedPeople(
           remove = remove
         )
     }
+    if (showSharedWithALl)
+      item {
+        SharedWithALlIcon()
+      }
   }
 }
 
@@ -408,7 +416,8 @@ fun Profile(
       AsyncImage(
         model = imageUrl,
         contentDescription = "selected people",
-        modifier = imageModifier.align(Alignment.Center)
+        modifier = imageModifier.align(Alignment.Center),
+        contentScale = ContentScale.Crop
       )
       if (!disableCrossBtn)
         IconButton(

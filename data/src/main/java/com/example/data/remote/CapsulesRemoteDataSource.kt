@@ -7,6 +7,8 @@ import com.example.model.UserDetails
 import com.example.util.InValidUserException
 import com.example.util.Response
 import com.example.util.UnspecifiedException
+import com.firebase.geofire.GeoFireUtils
+import com.firebase.geofire.GeoLocation
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
@@ -78,6 +80,11 @@ class CapsulesRemoteDataSource @Inject constructor(
 
   suspend fun saveCapsule(capsuleDetails: CapsuleDetails, userName: String): Response<Unit> {
     return try {
+      var geohash: String? = null
+      capsuleDetails.location?.let {
+        geohash = GeoFireUtils.getGeoHashForLocation(GeoLocation(it.latitude, it.longitude))
+      }
+      capsuleDetails.geoHash = geohash
       val ref = firestore.collection("capsules").document(capsuleDetails.id)
       capsuleDetails.ownerUserName = userName
 
@@ -120,7 +127,7 @@ class CapsulesRemoteDataSource @Inject constructor(
             imageUrl = capsuleDoc.get("imageUrl") as String,
             ownerUserName = capsuleDoc.get("ownerUserName") as String,
             location = location,
-            fileUrls = capsuleDoc.get("fileUrls") as List<Map<String,String>>,
+            fileUrls = capsuleDoc.get("fileUrls") as List<Map<String, String>>,
             isOpened = capsule["isOpened"] as Boolean
           )
           capsulesDetailsList.add(capsuleDetails)
@@ -167,7 +174,7 @@ class CapsulesRemoteDataSource @Inject constructor(
         location = it as GeoPoint
       }
 
-      var letter :String? =null
+      var letter: String? = null
       capsuleDoc.get("letter")?.let {
         letter = it as String
       }
@@ -184,9 +191,10 @@ class CapsulesRemoteDataSource @Inject constructor(
         imageUrl = capsuleDoc.get("imageUrl") as String,
         ownerUserName = capsuleDoc.get("ownerUserName") as String,
         location = location,
-        fileUrls = capsuleDoc.get("fileUrls") as List<Map<String,String>>,
+        fileUrls = capsuleDoc.get("fileUrls") as List<Map<String, String>>,
         isOpened = isOpened,
-        letter = letter
+        letter = letter,
+        isSharedWithAll = capsuleDoc.get("sharedWithAll") as Boolean
       )
       Response.Success(capsuleDetails)
     } catch (e: Exception) {

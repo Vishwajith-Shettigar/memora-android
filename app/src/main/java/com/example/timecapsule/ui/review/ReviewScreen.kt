@@ -5,6 +5,7 @@ import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,8 +20,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.BottomAppBarDefaults
@@ -48,6 +51,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
@@ -76,6 +80,7 @@ import com.example.timecapsule.ui.util.DeviceType
 import com.example.timecapsule.ui.util.DisplayTimestamp
 import com.example.timecapsule.util.getFileImageID
 import com.example.timecapsule.viewmodel.CapsuleCreationViewModel
+import com.example.timecapsule.viewmodel.ShareWithPeopleOption
 import com.example.util.bytesToMegabytes
 import com.github.kittinunf.fuel.httpPost
 import com.github.kittinunf.fuel.json.responseJson
@@ -394,16 +399,21 @@ fun ReviewScreen(
           .nestedScroll(scrollBehavior.nestedScrollConnection)
           .nestedScroll(bottomScrollBehavior.nestedScrollConnection),
     ) {
-      item { SharedPeople(viewModel.selectedPeoples) }
+      item {
+        SharedPeople(
+          viewModel.selectedPeoples,
+          viewModel.shareWithPeopleOption == ShareWithPeopleOption.SHARE_ALL
+        )
+      }
       item { DateAndTime(DisplayTimestamp(timestamp = viewModel.selectedTimeStamp!!)) }
       item { SelectedCapsule(viewModel.selectedCapsuleImageUrl!!) }
       item {
         viewModel.latLang?.let {
           SelectedLocation(
-            latlang = it, modifier =  Modifier
-              .fillMaxWidth()
-              .wrapContentHeight()
-              .padding(vertical = 10.dp)
+            latlang = it, modifier = Modifier
+                  .fillMaxWidth()
+                  .wrapContentHeight()
+                  .padding(vertical = 10.dp)
           )
         }
 
@@ -414,7 +424,7 @@ fun ReviewScreen(
 }
 
 @Composable
-fun SharedPeople(selectedPeoples: MutableList<UserDetails>) {
+fun SharedPeople(selectedPeoples: MutableList<UserDetails>, sharedWithALl: Boolean) {
   Column(
     modifier = Modifier
         .fillMaxWidth()
@@ -426,7 +436,11 @@ fun SharedPeople(selectedPeoples: MutableList<UserDetails>) {
       style = MaterialTheme.typography.titleLarge.copy(fontSize = 20.sp),
       color = MaterialTheme.colorScheme.onSurfaceVariant
     )
-    ShowSelectedPeople(disableCrossBtn = true, selectedPeoples = selectedPeoples)
+    ShowSelectedPeople(
+      disableCrossBtn = true,
+      selectedPeoples = selectedPeoples,
+      showSharedWithALl = sharedWithALl
+    )
   }
 }
 
@@ -614,5 +628,20 @@ fun MapPreviewCard(latlang: LatLng) {
         title = "Location"
       )
     }
+  }
+}
+
+@Preview
+@Composable
+fun SharedWithALlIcon() {
+  Box(
+    modifier =
+    Modifier.size(70.dp)
+  ) {
+    Text(
+      text = "+ All", modifier = Modifier.align(Alignment.Center),
+      style = MaterialTheme.typography.titleLarge.copy(fontSize = 20.sp),
+      color = MaterialTheme.colorScheme.onSurfaceVariant
+    )
   }
 }

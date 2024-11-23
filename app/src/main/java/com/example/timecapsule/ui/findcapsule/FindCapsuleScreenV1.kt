@@ -238,7 +238,7 @@ fun MapView(
       }
     ) {
       this.modelId = ModelIdValue(Expression.get(MODEL_ID_KEY))
-      modelType = ModelTypeValue.LOCATION_INDICATOR
+      modelType = ModelTypeValue.COMMON_3D
       modelScale = DoubleListValue(listOf(10.0, 10.0, 10.0))
       modelTranslation = DoubleListValue(listOf(0.0, 0.0, 0.0))
       modelRotation = DoubleListValue(listOf(0.0, 0.0, 90.0))

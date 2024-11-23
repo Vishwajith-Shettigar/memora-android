@@ -88,7 +88,6 @@ fun ProfileScreen(navController: NavController = rememberNavController(),) {
 
       Column(
         modifier =
-
         Modifier
             .fillMaxWidth()
             .background(
