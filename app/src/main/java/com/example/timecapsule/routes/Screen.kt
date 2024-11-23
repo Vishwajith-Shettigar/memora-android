@@ -12,7 +12,7 @@ sealed class Screen(val route: String) {
 
   // Main Flow with Bottom Nav
   object Home : Screen("home")
-  object Location : Screen("location")
+  object NearByCapsules : Screen("Nearby_Capsules")
   object Notification : Screen("notification")
   object Profile : Screen("profile")
   object CapsuleDetails : Screen("capsule_Details/{id}") {

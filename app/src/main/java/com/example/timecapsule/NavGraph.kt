@@ -33,7 +33,7 @@ fun MobileLayoutV1( navController :NavHostController) {
   // List of screens that should display the Bottom Navigation Bar
   val bottomNavScreens = listOf(
     Screen.Home.route,
-    Screen.Location.route,
+    Screen.NearByCapsules.route,
     Screen.Notification.route,
     Screen.Profile.route
   )
@@ -66,7 +66,7 @@ fun TabletLayoutV1(navController :NavHostController) {
   // List of screens that should display the Bottom Navigation Bar
   val bottomNavScreens = listOf(
     Screen.Home.route,
-    Screen.Location.route,
+    Screen.NearByCapsules.route,
     Screen.Notification.route,
     Screen.Profile.route
   )
