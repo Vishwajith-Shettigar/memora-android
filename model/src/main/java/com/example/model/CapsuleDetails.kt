@@ -12,21 +12,23 @@ data class CapsuleDetails(
   val isDeleted: Boolean,
   val modelId: Number,
   val users: List<Map<String, Any>>,
-  val isOwner:Boolean,
-  val imageUrl:String,
-  var ownerUserName:String,
-  val location :GeoPoint?=null,
-  val fileUrls:List<Map<String,String>>,
-  val isOpened:Boolean?=null,
-  val letter:String?=null
+  val isOwner: Boolean,
+  val imageUrl: String,
+  var ownerUserName: String,
+  val location: GeoPoint? = null,
+  var geoHash: String? = null,
+  val fileUrls: List<Map<String, String>>,
+  val isOpened: Boolean? = null,
+  val letter: String? = null,
+  val isSharedWithAll: Boolean = false
 )
 
 data class CapsuleAsset(
-  val capsule_id:String,
-  val capsuleName:String,
-  val imageUrl:String,
-  val isPaid:Boolean,
+  val capsule_id: String,
+  val capsuleName: String,
+  val imageUrl: String,
+  val isPaid: Boolean,
   val storage: Number,
-  val description:String,
+  val description: String,
   val cost: Number
 )

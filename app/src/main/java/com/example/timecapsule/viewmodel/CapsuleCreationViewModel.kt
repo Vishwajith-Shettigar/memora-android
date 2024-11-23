@@ -118,7 +118,6 @@ class CapsuleCreationViewModel @Inject constructor(
     }
   }
 
-
   val amount = 500
 
   private val CAPSULE_ID: String = Random.nextAlphanumericString(10)
@@ -165,7 +164,6 @@ class CapsuleCreationViewModel @Inject constructor(
     mutableStateOf(false)
 
   var latLang: LatLng? = null
-
 
   private val _name = mutableStateOf("")
   val name: State<String> = _name
@@ -407,7 +405,8 @@ class CapsuleCreationViewModel @Inject constructor(
             time = selectedTimeStamp!!,
             isOwner = false, // just placeholder
             ownerUserName = "",
-            letter = letter
+            letter = letter,
+            isSharedWithAll = shareWithPeopleOption == ShareWithPeopleOption.SHARE_ALL
           )
 
           val response = createCapsuleUseCase(capsuleDetails)
