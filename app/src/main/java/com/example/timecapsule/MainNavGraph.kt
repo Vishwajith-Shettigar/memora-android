@@ -145,7 +145,7 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
       })
     }
     composable(Screen.NearByCapsules.route) {
-      NearbyCapsulesScreen() {route->
+      NearbyCapsulesScreen { route->
         navController.navigate(route)
       }
     }

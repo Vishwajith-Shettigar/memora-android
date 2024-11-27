@@ -4,12 +4,15 @@ import android.content.Context
 import com.example.data.remote.AuthRemoteDataSource
 import com.example.data.remote.CapsulesRemoteDataSource
 import com.example.data.remote.FilesRemoteDataSource
+import com.example.data.remote.NearByCapsulesDataSource
 import com.example.data.remote.NotificationDataSource
 import com.example.data.remote.UserRemoteDataSource
 import com.example.data.repository.AuthRepository
 import com.example.data.repository.AuthRepositoryImpl
 import com.example.data.repository.CapsulesRepository
 import com.example.data.repository.CapsulesRepositoryImpl
+import com.example.data.repository.NearByCapsulesRepositoryImpl
+import com.example.data.repository.NearByCapsulesRepository
 import com.example.data.repository.NotificationRepository
 import com.example.data.repository.NotificationRepositoryImpl
 import com.example.data.repository.UploadFileRepository
@@ -32,8 +35,6 @@ import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import java.io.File
-import java.util.Properties
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -46,6 +47,10 @@ abstract class AppModule {
   @Binds
   @Singleton
   abstract fun bindUserRepository(userRepositoryImpl: UserRepositoryImpl): UserRepository
+
+  @Binds
+  @Singleton
+  abstract fun bindNearByCapsulesRepository(nearByCapsulesRepositoryImpl: NearByCapsulesRepositoryImpl): NearByCapsulesRepository
 
   @Binds
   @Singleton
@@ -139,6 +144,14 @@ abstract class AppModule {
       remoteDataSource: AuthRemoteDataSource,
     ): UserRemoteDataSource {
       return UserRemoteDataSource(firestore, firebaseMessaging, remoteDataSource)
+    }
+
+    @Provides
+    @Singleton
+    fun provideNearByCapsulesDataSource(
+      firestore: FirebaseFirestore,
+    ): NearByCapsulesDataSource {
+      return NearByCapsulesDataSource(firestore)
     }
 
     @Provides
