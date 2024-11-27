@@ -30,13 +30,14 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.navigation
 import com.example.timecapsule.ui.capsuledetails.CapsuleDetailsScreen
+import com.example.timecapsule.ui.nearbycapsules.NearbyCapsulesScreen
 import com.example.timecapsule.viewmodel.NotificatioViewModel
 
 fun getNavigationItems(): List<NavItem> {
   return listOf(
     NavItem(Screen.Home, R.drawable.ic_home, R.drawable.ic_outline_home, "home"),
     NavItem(
-      Screen.Location,
+      Screen.NearByCapsules,
       R.drawable.ic_location_outlined,
       R.drawable.ic_location_search,
       "location"
@@ -140,10 +141,14 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
       }, onCapsuleClicked = { id ->
         navController.navigate(Screen.CapsuleDetails.createRoute(id)) // Capsule details
       }, openCapule = { capsuleId ->
-        navController.navigate(Screen.OpenCapsuleLoadingScreen.createRoute(capsuleId))
+        navController.navigate(Screen.OpenCapsuleLoadingScreen.createRoute(capsuleId, false))
       })
     }
-    composable(Screen.Location.route) { FindCapsuleScreenV1(navController) }
+    composable(Screen.NearByCapsules.route) {
+      NearbyCapsulesScreen { route->
+        navController.navigate(route)
+      }
+    }
     composable(Screen.Notification.route) {
       val viewmodel: NotificatioViewModel = hiltViewModel(it)
       NotificationScreen(navController, viewmodel) { capsuleId ->

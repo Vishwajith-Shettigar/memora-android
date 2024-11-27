@@ -46,6 +46,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import coil.compose.AsyncImage
+import com.example.model.NearByCapsule
 import com.example.timecapsule.BuildConfig
 import com.example.timecapsule.R
 import com.example.timecapsule.ui.selectlocation.SearchBar
@@ -205,17 +207,21 @@ fun getScaledBitmapDescriptor(
 
 @Preview
 @Composable
-fun ShowDialog(closeDialog: () -> Unit = {}) {
+fun ShowDialog(
+  selectedCapsule: NearByCapsule? = null,
+  closeDialog: () -> Unit = {},
+  openCapsule: () -> Unit = {}
+) {
   val isTablet = DeviceType.isTablet()
   Dialog(onDismissRequest = { closeDialog() }) {
     Box(
       modifier = Modifier
-        .fillMaxWidth()
-        .clip(shape = RoundedCornerShape(10.dp))
-        .background(MaterialTheme.colorScheme.primary)
-        .padding(16.dp)
-        .fillMaxWidth(0.8f)
-        .wrapContentHeight()
+          .fillMaxWidth()
+          .clip(shape = RoundedCornerShape(10.dp))
+          .background(MaterialTheme.colorScheme.primary)
+          .padding(16.dp)
+          .fillMaxWidth(0.8f)
+          .wrapContentHeight()
     ) {
       Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -225,27 +231,27 @@ fun ShowDialog(closeDialog: () -> Unit = {}) {
         IconButton(
           onClick = { closeDialog() },
           modifier = Modifier
-            .align(Alignment.End)
-            .padding(bottom = 16.dp)
+              .align(Alignment.End)
+              .padding(bottom = 16.dp)
         ) {
           Icon(Icons.Filled.Close, contentDescription = "Close")
         }
 
         // Image
-        Image(
-          painter = painterResource(id = R.drawable.capsule_image10), // Replace with your image resource
+        AsyncImage(
+          model = selectedCapsule?.capsuleImageUrl,
           contentDescription = null,
           modifier = if (isTablet) {
-            Modifier
-              .fillMaxSize(0.5f)
-              .padding(bottom = 16.dp)
+              Modifier
+                  .fillMaxSize(0.5f)
+                  .padding(bottom = 16.dp)
           } else {
             Modifier.padding(bottom = 16.dp)
           }
         )
 
         Text(
-          text = "No information",
+          text = selectedCapsule?.capsuleTitle ?: "No information",
           style = MaterialTheme.typography.titleLarge,
           modifier = Modifier.padding(bottom = 16.dp)
         )
@@ -268,6 +274,7 @@ fun ShowDialog(closeDialog: () -> Unit = {}) {
           }
           Button(
             onClick = {
+              openCapsule()
             },
             colors = ButtonDefaults.outlinedButtonColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
           ) {

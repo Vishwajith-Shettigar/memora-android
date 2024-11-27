@@ -41,6 +41,7 @@ import com.example.timecapsule.viewmodel.OpenCapsuleViewModel
 @Preview
 @Composable
 fun ShowLetterScreen(
+  isCapsuleHunt: Boolean = false,
   viewModel: OpenCapsuleViewModel = hiltViewModel(),
   onNavigate: (String) -> Unit = {}
 ) {
@@ -61,9 +62,9 @@ fun ShowLetterScreen(
 
   Box(modifier = Modifier.fillMaxSize()) {
     Column(
-      Modifier
-        .fillMaxSize()
-        .align(Alignment.CenterStart),
+        Modifier
+            .fillMaxSize()
+            .align(Alignment.CenterStart),
       horizontalAlignment = Alignment.Start,
       verticalArrangement = Arrangement.Center
     ) {
@@ -75,9 +76,9 @@ fun ShowLetterScreen(
           .padding(horizontal = 8.dp, vertical = 20.dp)
       )
       Column(
-        Modifier
-          .fillMaxWidth()
-          .wrapContentHeight(),
+          Modifier
+              .fillMaxWidth()
+              .wrapContentHeight(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
       ) {
@@ -86,11 +87,15 @@ fun ShowLetterScreen(
     }
     Box(
       modifier = Modifier
-        .fillMaxWidth()
-        .wrapContentHeight()
-        .align(Alignment.BottomCenter)
+          .fillMaxWidth()
+          .wrapContentHeight()
+          .align(Alignment.BottomCenter)
     ) {
-      OpenCapsuleNextButtonRow(isLocationScreen = isLocationScreen, navigate = onNavigate)
+      OpenCapsuleNextButtonRow(
+        isLocationScreen = isLocationScreen,
+        isCapsuleHunt = isCapsuleHunt,
+        navigate = onNavigate
+      )
     }
   }
 }
@@ -105,13 +110,13 @@ fun Letter(letterText: String) {
   val lineHeight = 28.sp
 
   val boxModifier = if (isTablet) {
-    Modifier
-      .width(500.dp)
-      .height(500.dp)
+      Modifier
+          .width(500.dp)
+          .height(500.dp)
   } else {
-    Modifier
-      .fillMaxWidth(0.9f)
-      .height(500.dp)
+      Modifier
+          .fillMaxWidth(0.9f)
+          .height(500.dp)
   }
 
   val letterImage: Painter = painterResource(id = R.drawable.letterimage)
@@ -129,18 +134,18 @@ fun Letter(letterText: String) {
       color = MaterialTheme.colorScheme.onSurfaceVariant,
       fontWeight = FontWeight.Bold,
       modifier = Modifier
-        .align(Alignment.TopStart)
-        .fillMaxSize()
-        .padding(16.dp)
-        .height(maxHeight)
-        .zIndex(10F),
+          .align(Alignment.TopStart)
+          .fillMaxSize()
+          .padding(16.dp)
+          .height(maxHeight)
+          .zIndex(10F),
     )
     Image(
       painter = letterImage,
       contentDescription = "Letter Background",
       modifier = Modifier
-        .fillMaxSize()
-        .align(Alignment.Center),
+          .fillMaxSize()
+          .align(Alignment.Center),
       contentScale = ContentScale.Crop
     )
   }
