@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.location.Location
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Scaffold
@@ -20,11 +21,15 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.drawable.toBitmap
+import com.example.model.NearByCapsule
 import com.example.timecapsule.BuildConfig
+import com.example.timecapsule.routes.Screen
+import com.example.timecapsule.ui.findcapsule.ShowDialog
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
+import com.google.firebase.firestore.GeoPoint
 import com.mapbox.geojson.Point
 import com.mapbox.maps.CameraOptions
 import com.mapbox.maps.extension.compose.MapEffect
@@ -40,8 +45,24 @@ import kotlin.math.pow
 import kotlin.math.sin
 import kotlin.math.sqrt
 
+val data = listOf(
+  NearByCapsule(
+    capsuleId = "wxsvew4kyj",
+    modelId = "100",
+    capsuleImageUrl = "https://firebasestorage.googleapis.com/v0/b/time-capsule-android.appspot.com/o/capsule_images%2F200.png?alt=media&token=8d4e1bd3-0fde-4296-9d93-dab52107b442",
+    capsuleTitle = "Test",
+    location = GeoPoint(13.679263, 74.059386)
+  )
+)
+
+fun getCapsuleDetails(capsuleId: String): NearByCapsule {
+  return data.filter {
+    it.capsuleId == capsuleId
+  }[0]
+}
+
 @Composable
-fun NearbyCapsulesScreen() {
+fun NearbyCapsulesScreen(navigate: (String) -> Unit = {}) {
   val context = LocalContext.current
   val initialCamera = rememberMapViewportState {
     setCameraOptions {
@@ -53,9 +74,15 @@ fun NearbyCapsulesScreen() {
   }
   var pointAnnotationManager by remember { mutableStateOf<PointAnnotationManager?>(null) }
 
-  val nearbyCapsules = remember { mutableStateOf<List<Point>>(emptyList()) }
+  val nearbyCapsules = remember { mutableStateOf<List<NearByCapsule>>(emptyList()) }
   val userLocation = remember { mutableStateOf<Point?>(null) }
   val radiusMeters = remember { mutableStateOf(20000.0) }
+
+  var selectedCapsule by remember { mutableStateOf<NearByCapsule?>(null) }
+
+  var isCapsuleSelected by remember {
+    mutableStateOf(false)
+  }
 
   getInitialLocation(context) { location ->
     userLocation.value = location
@@ -80,6 +107,20 @@ fun NearbyCapsulesScreen() {
         false
       }
     ) {
+
+      if (isCapsuleSelected)
+        ShowDialog(selectedCapsule, closeDialog = {
+          isCapsuleSelected = false
+        }, openCapsule = {
+          isCapsuleSelected=false
+          navigate(
+            Screen.OpenCapsuleLoadingScreen.createRoute(
+              id= selectedCapsule!!.capsuleId,
+              isCapsuleHunt = true
+            )
+          )
+        })
+
       MapEffect(this) { mapView ->
         mapView.mapboxMap.apply {
           loadStyle(BuildConfig.STYLE_URI)
@@ -89,19 +130,31 @@ fun NearbyCapsulesScreen() {
 
       // Add capsule location markers.
       AddPointer(
-        isUser = false,
         context,
         points = nearbyCapsules.value, pointAnnotationManager = pointAnnotationManager
       )
 
       // Add user location marker
       userLocation.value?.let { location ->
-        AddPointer(
-          isUser = true,
+        AddUserPointer(
           context,
-          points = listOf(location),
+          point = location,
           pointAnnotationManager = pointAnnotationManager
         )
+      }
+
+      pointAnnotationManager?.addClickListener { annotation ->
+        if (!(annotation.textField.toString().equals("user_location"))) {
+          if (!arePointsWithin10Meters(
+              userLocation.value,
+              annotation.point
+            )
+          ) {
+            selectedCapsule = getCapsuleDetails(annotation.textField.toString())
+            isCapsuleSelected = true
+          }
+        }
+        true
       }
     }
   }
@@ -123,28 +176,47 @@ fun calculateDistance(point1: Point, point2: Point): Double {
   return earthRadius * c
 }
 
+fun AddUserPointer(
+  context: Context,
+  pointAnnotationManager: PointAnnotationManager?, point: Point
+) {
+  val annotation = pointAnnotationManager?.annotations?.filter {
+    it.textField == "user_location"
+  }
+  if (annotation != null) {
+    pointAnnotationManager.delete(annotation)
+  }
+  val drawable = ResourcesCompat.getDrawable(
+    context.resources,
+    com.example.timecapsule.R.drawable.direction,
+    null
+  )
+  drawable?.let {
+    val bitmap = it.toBitmap(70, 70, Bitmap.Config.ARGB_8888)
+    val annotationOptions = PointAnnotationOptions()
+      .withPoint(point)
+      .withIconImage(bitmap)
+    annotationOptions.withTextField("user_location")
+    annotationOptions.textOpacity = 0.0
+    pointAnnotationManager?.create(annotationOptions)
+  }
+
+}
+
 fun AddPointer(
-  isUser: Boolean = false,
   context: Context,
   pointAnnotationManager: PointAnnotationManager?,
-  points: List<Point> = emptyList()
+  points: List<NearByCapsule> = emptyList()
 ) {
 
-  if (isUser) {
-    val annotation = pointAnnotationManager?.annotations?.filter {
-      it.textField == "user_location"
-    }
-    if (annotation != null) {
-      pointAnnotationManager.delete(annotation)
-    }
-  } else {
-    val annotations = pointAnnotationManager?.annotations?.filter {
-      it.textField == "capsule_location"
-    }
-    if (annotations != null) {
-      pointAnnotationManager.delete(annotations)
-    }
+
+  val annotations = pointAnnotationManager?.annotations?.filter {
+    it.textField != "user_location"
   }
+  if (annotations != null) {
+    pointAnnotationManager.delete(annotations)
+  }
+
 
   val drawable = ResourcesCompat.getDrawable(
     context.resources,
@@ -155,32 +227,18 @@ fun AddPointer(
     val bitmap = it.toBitmap(70, 70, Bitmap.Config.ARGB_8888)
     points.forEach {
       val annotationOptions = PointAnnotationOptions()
-        .withPoint(it)
+        .withPoint(Point.fromLngLat(it.location.longitude, it.location.latitude))
         .withIconImage(bitmap)
-      if (isUser)
-        annotationOptions.withTextField("user_location")
-      else
-        annotationOptions.withTextField("capsule_location")
-
+      annotationOptions.withTextField(it.capsuleId)
       annotationOptions.textOpacity = 0.0
       pointAnnotationManager?.create(annotationOptions)
     }
   }
 }
 
-fun fetchNearbyCapsules(center: Point, radius: Double): List<Point> {
-  val mockCapsules = listOf(
-    Point.fromLngLat(74.059386, 13.679263),
-    Point.fromLngLat(74.959386, 13.679263),
-    Point.fromLngLat(74.859386, 13.679263),
-    Point.fromLngLat(74.659386, 13.679263),
-    Point.fromLngLat(74.559386, 13.679263),
-    Point.fromLngLat(74.659386, 13.679263),
-  )
-  return mockCapsules.filter { capsulePoint ->
-    val distance = calculateDistance(center, capsulePoint)
-    distance <= radius
-  }
+fun fetchNearbyCapsules(center: Point, radius: Double): List<NearByCapsule> {
+  val mockCapsules = data
+  return mockCapsules
 }
 
 fun getInitialLocation(context: Context, onLocationFetched: (Point) -> Unit) {
@@ -244,4 +302,28 @@ fun startLocationUpdates(context: Context, onLocationUpdate: (Location) -> Unit)
       1
     )
   }
+}
+
+fun arePointsWithin10Meters(locationPoint: Point?, capsulePoint: Point): Boolean {
+  // Return false if locationPoint is null, as we cannot perform the check
+  if (locationPoint == null) return false
+
+  // Extract the latitude and longitude from each point
+  val locationLatitude = locationPoint.latitude()
+  val locationLongitude = locationPoint.longitude()
+  val capsuleLatitude = capsulePoint.latitude()
+  val capsuleLongitude = capsulePoint.longitude()
+
+  // Use Location.distanceBetween to get the distance in meters
+  val results = FloatArray(1)
+  Location.distanceBetween(
+    locationLatitude,
+    locationLongitude,
+    capsuleLatitude,
+    capsuleLongitude,
+    results
+  )
+
+  // Check if the distance is less than or equal to 10 meters
+  return results[0] <= 10
 }

@@ -23,15 +23,21 @@ fun NavGraphBuilder.openCapsuleNavGraph(navController: NavController) {
   ) {
     composable(Screen.OpenCapsuleLoadingScreen.route) { backstackentry ->
       val capsuleId = backstackentry.arguments?.getString("id")!!
+      val isCapsuleHunt = backstackentry.arguments?.getString("isCapsuleHunt").toBoolean() ?: false
       val sharedViewModel =
         backstackentry.sharedViewModel<OpenCapsuleViewModel>(navController = navController)
-      CapsuleLoadingScreen(sharedViewModel, capsuleId, navigate = { route ->
-        navController.navigate(route) {
-          popUpTo(Screen.OpenCapsuleLoadingScreen.route) {
-            inclusive = true
+      CapsuleLoadingScreen(
+        sharedViewModel,
+        capsuleId,
+        isCapsuleHunt = isCapsuleHunt,
+        navigate = { route ->
+          navController.navigate(route) {
+            popUpTo(Screen.OpenCapsuleLoadingScreen.route) {
+              inclusive = true
+            }
           }
-        }
-      }, popBack = { navController.popBackStack() })
+        },
+        popBack = { navController.popBackStack() })
     }
 
     composable(Screen.OpenCapsuleInstructionsScreen.route) { backstackentry ->
@@ -46,9 +52,10 @@ fun NavGraphBuilder.openCapsuleNavGraph(navController: NavController) {
       }
     }
     composable(Screen.OpenCapsuleLetterScreen.route) { backstackentry ->
+      val isCapsuleHunt = backstackentry.arguments?.getString("isCapsuleHunt").toBoolean() ?: false
       val sharedViewModel =
         backstackentry.sharedViewModel<OpenCapsuleViewModel>(navController = navController)
-      ShowLetterScreen(sharedViewModel) { route ->
+      ShowLetterScreen(viewModel = sharedViewModel, isCapsuleHunt = isCapsuleHunt) { route ->
         navController.navigate(route) {
           popUpTo(Screen.OpenCapsuleLetterScreen.route) {
             inclusive = true

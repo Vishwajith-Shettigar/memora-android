@@ -62,13 +62,13 @@ fun InstructionsScreen(
   }
   Box(
     modifier = Modifier
-        .fillMaxSize()
-        .background(MaterialTheme.colorScheme.primary)
+      .fillMaxSize()
+      .background(MaterialTheme.colorScheme.primary)
   ) {
     Column(
       modifier = Modifier
-          .align(Alignment.TopCenter)
-          .fillMaxSize(),
+        .align(Alignment.TopCenter)
+        .fillMaxSize(),
       verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally
     ) {
       Text(
@@ -91,9 +91,9 @@ fun InstructionsScreen(
     }
     Box(
       modifier = Modifier
-          .fillMaxWidth()
-          .wrapContentHeight()
-          .align(Alignment.BottomCenter)
+        .fillMaxWidth()
+        .wrapContentHeight()
+        .align(Alignment.BottomCenter)
     ) {
       OpenCapsuleNextButtonRow(isLocationScreen, isLetterScreen, navigate)
     }
@@ -105,12 +105,13 @@ fun OpenCapsuleNextButtonRow(
   isLocationScreen: Boolean = false,
   isLetterScreen: Boolean = false,
   navigate: (String) -> Unit = {},
-  navigateToMap: Boolean = false
+  navigateToMap: Boolean = false,
+  isCapsuleHunt: Boolean = false
 ) {
   Row(
-      Modifier
-          .fillMaxWidth()
-          .padding(bottom = 30.dp, end = 10.dp),
+    Modifier
+      .fillMaxWidth()
+      .padding(bottom = 30.dp, end = 10.dp),
     horizontalArrangement = Arrangement.Absolute.Right,
     verticalAlignment = Alignment.CenterVertically
   ) {
@@ -121,7 +122,9 @@ fun OpenCapsuleNextButtonRow(
       style = MaterialTheme.typography.titleSmall.copy(fontSize = 12.sp)
     )
     Button(colors = ButtonDefaults.buttonColors(containerColor = LightBlue), onClick = {
-      if (navigateToMap) {
+      if (isCapsuleHunt) {
+        navigate(Screen.OpenCapsuleContentScreen.route)
+      } else if (navigateToMap) {
         navigate(Screen.OpenCapsuleFindCapsuleScreen.route)
       } else if (isLetterScreen) {
         navigate(Screen.OpenCapsuleLetterScreen.route)

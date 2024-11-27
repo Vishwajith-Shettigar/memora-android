@@ -36,37 +36,60 @@ import com.example.timecapsule.routes.Screen
 import com.example.timecapsule.viewmodel.DisplayCapsuleDetailsState
 import com.example.timecapsule.viewmodel.OpenCapsuleViewModel
 
-@Preview
 @Composable
 fun CapsuleLoadingScreen(
   viewModel: OpenCapsuleViewModel = hiltViewModel(), capsuleId: String,
+  isCapsuleHunt: Boolean = false,
   navigate: (String) -> Unit = {}, popBack: () -> Unit = {}
 ) {
   val context = LocalContext.current
   val combinedState by viewModel.combinedState.collectAsState()
 
+  val capsuleDetailsState by viewModel.capsuleDetailsState.collectAsState()
+
   LaunchedEffect(Unit) {
-    viewModel.getScreenCheckPoint(capsuleId)
+    if (!isCapsuleHunt) {
+      viewModel.getScreenCheckPoint(capsuleId)
+    }
     viewModel.getCapsuleDetails(capsuleId)
   }
 
+  LaunchedEffect(capsuleDetailsState) {
+    if (isCapsuleHunt) {
+      if (capsuleDetailsState != null) {
+        if (capsuleDetailsState is DisplayCapsuleDetailsState.Success) {
+          if ((capsuleDetailsState as DisplayCapsuleDetailsState.Success).capsuleDetails.letter != null)
+            navigate(Screen.OpenCapsuleLetterScreen.createRoute(true))
+          else {
+            navigate(Screen.OpenCapsuleContentScreen.route)
+          }
+        } else {
+          Toast.makeText(context, "Something went wrong!", Toast.LENGTH_SHORT).show()
+          popBack()
+        }
+      }
+    }
+  }
+
   LaunchedEffect(combinedState) {
-    if (combinedState != null) {
-      val checkpoint = combinedState!!.checkpoint
-      val capsuleDetailsState = combinedState!!.capsuleDetailsState
-      if (capsuleDetailsState is DisplayCapsuleDetailsState.Success) {
-        navigate(checkpoint!!)
-      } else {
-        Toast.makeText(context, "Something went wrong!", Toast.LENGTH_SHORT).show()
-        popBack()
+    if (!isCapsuleHunt) {
+      if (combinedState != null) {
+        val checkpoint = combinedState!!.checkpoint
+        val capsuleDetailsState = combinedState!!.capsuleDetailsState
+        if (capsuleDetailsState is DisplayCapsuleDetailsState.Success) {
+          navigate(checkpoint!!)
+        } else {
+          Toast.makeText(context, "Something went wrong!", Toast.LENGTH_SHORT).show()
+          popBack()
+        }
       }
     }
   }
 
   Column(
     modifier = Modifier
-        .fillMaxSize()
-        .background(MaterialTheme.colorScheme.primary),
+      .fillMaxSize()
+      .background(MaterialTheme.colorScheme.primary),
     horizontalAlignment = Alignment.CenterHorizontally,
     verticalArrangement = Arrangement.Center
   ) {

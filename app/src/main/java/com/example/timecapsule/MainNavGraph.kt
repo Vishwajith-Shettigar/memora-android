@@ -141,10 +141,14 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
       }, onCapsuleClicked = { id ->
         navController.navigate(Screen.CapsuleDetails.createRoute(id)) // Capsule details
       }, openCapule = { capsuleId ->
-        navController.navigate(Screen.OpenCapsuleLoadingScreen.createRoute(capsuleId))
+        navController.navigate(Screen.OpenCapsuleLoadingScreen.createRoute(capsuleId, false))
       })
     }
-    composable(Screen.NearByCapsules.route) { NearbyCapsulesScreen() }
+    composable(Screen.NearByCapsules.route) {
+      NearbyCapsulesScreen() {route->
+        navController.navigate(route)
+      }
+    }
     composable(Screen.Notification.route) {
       val viewmodel: NotificatioViewModel = hiltViewModel(it)
       NotificationScreen(navController, viewmodel) { capsuleId ->

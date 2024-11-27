@@ -57,13 +57,17 @@ sealed class Screen(val route: String) {
   object Help : Screen("help")
 
   // Open capsule screens.
-  object OpenCapsuleLoadingScreen : Screen("open_capsule_loading/{id}") {
-    fun createRoute(id: String) = "open_capsule_loading/${id}"
+  object OpenCapsuleLoadingScreen : Screen("open_capsule_loading/{id}/{isCapsuleHunt}") {
+    fun createRoute(id: String, isCapsuleHunt: Boolean) =
+      "open_capsule_loading/${id}/${isCapsuleHunt}"
   }
 
   object OpenCapsuleInstructionsScreen : Screen("open_capsule_instructions")
   object OpenCapsuleMapInstructionsScreen : Screen("open_capsule_map_instructions")
-  object OpenCapsuleLetterScreen : Screen("open_capsule_letter")
+  object OpenCapsuleLetterScreen : Screen("open_capsule_letter/{isCapsuleHunt}") {
+    fun createRoute(isCapsuleHunt: Boolean) =
+      "open_capsule_letter/${isCapsuleHunt}"
+  }
   object OpenCapsuleFindCapsuleScreen : Screen("open_capsule_find_capsule_screen")
   object OpenCapsuleContentScreen : Screen("open_capsule_content")
 }

@@ -80,7 +80,6 @@ class OpenCapsuleViewModel @Inject constructor(
     viewModelScope.launch {
       withContext(Dispatchers.IO) {
         val response = getCapsuleDetailsUseCase(capsuleId)
-
         when (response) {
           is Response.Success -> {
             _capsuleDetailsState.value =
