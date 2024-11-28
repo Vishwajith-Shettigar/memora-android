@@ -174,7 +174,9 @@ fun UploadFilesScreen(
   onNavigate: (NavigationAddCapsule) -> Unit = {}
 ) {
 
-  viewModel.getFileStatus()
+  LaunchedEffect(Unit) {
+    viewModel.getFileStatus()
+  }
   val fileUploadProgress by viewModel.fileProgrerssState.collectAsState()
   val fileUploaded by viewModel.fileUploadedState.collectAsState()
 
@@ -195,8 +197,8 @@ fun UploadFilesScreen(
         title = {
           Box(
             modifier = Modifier
-                .fillMaxWidth()
-                .background(MaterialTheme.colorScheme.primary),
+              .fillMaxWidth()
+              .background(MaterialTheme.colorScheme.primary),
             contentAlignment = Alignment.Center
           ) {
             Text(
@@ -217,7 +219,7 @@ fun UploadFilesScreen(
   ) { innerPadding ->
     Box(
       modifier = Modifier
-          .fillMaxSize()
+        .fillMaxSize()
         .padding(
           start = innerPadding.calculateStartPadding(LayoutDirection.Ltr),
           end = innerPadding.calculateEndPadding(LayoutDirection.Ltr),
@@ -227,10 +229,10 @@ fun UploadFilesScreen(
     {
       LazyColumn(
         modifier = if (isTablet)
-            Modifier
-                .padding(horizontal = 10.dp)
-                .width(800.dp)
-                .align(Alignment.Center)
+          Modifier
+            .padding(horizontal = 10.dp)
+            .width(800.dp)
+            .align(Alignment.Center)
         else
             Modifier
                 .padding(horizontal = 10.dp)
