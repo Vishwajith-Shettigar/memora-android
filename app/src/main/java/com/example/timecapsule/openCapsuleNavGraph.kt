@@ -77,7 +77,13 @@ fun NavGraphBuilder.openCapsuleNavGraph(navController: NavController) {
     composable(Screen.OpenCapsuleFindCapsuleScreen.route) { backstackentry ->
       val sharedViewModel =
         backstackentry.sharedViewModel<OpenCapsuleViewModel>(navController = navController)
-      FindCapsuleScreenV1(viewModel = sharedViewModel)
+      FindCapsuleScreenV1(viewModel = sharedViewModel) { route ->
+        navController.navigate(route) {
+          popUpTo(Screen.OpenCapsuleFindCapsuleScreen.route) {
+            inclusive = true
+          }
+        }
+      }
     }
     composable(Screen.OpenCapsuleContentScreen.route) { backstackentry ->
       val sharedViewModel =

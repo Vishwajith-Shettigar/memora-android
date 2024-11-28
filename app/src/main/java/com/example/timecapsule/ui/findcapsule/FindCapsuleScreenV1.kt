@@ -33,6 +33,7 @@ import androidx.core.graphics.drawable.toBitmap
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.model.NearByCapsule
 import com.example.timecapsule.BuildConfig
 import com.example.timecapsule.R
 import com.example.timecapsule.routes.Screen
@@ -43,6 +44,7 @@ import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
+import com.google.firebase.firestore.GeoPoint
 import com.mapbox.geojson.Feature
 import com.mapbox.geojson.Point
 import com.mapbox.maps.CameraOptions
@@ -107,11 +109,22 @@ fun getInitialLocation(context: Context, onLocationFetched: (Point) -> Unit) {
 @Composable
 fun FindCapsuleScreenV1(
   navController: NavController = rememberNavController(),
-  viewModel: OpenCapsuleViewModel = hiltViewModel()
+  viewModel: OpenCapsuleViewModel = hiltViewModel(),
+  navigate: (String) -> Unit = {}
 ) {
 
-  val capsuleDetails = (viewModel.capsuleDetailsState.collectAsState().value
-    as DisplayCapsuleDetailsState.Success).capsuleDetails
+  val capsuleDetails = remember {
+    (viewModel.capsuleDetailsState.value
+      as DisplayCapsuleDetailsState.Success).capsuleDetails
+  }
+
+  val selectedCapsule = remember {
+    NearByCapsule(
+      capsuleId = capsuleDetails.id, location = capsuleDetails.location!!,
+      capsuleTitle = capsuleDetails.title, capsuleImageUrl = capsuleDetails.imageUrl,
+      modelId = capsuleDetails.modelId.toString()
+    )
+  }
 
   val capsulePoint by remember {
     val lat = capsuleDetails.location!!.latitude
@@ -175,8 +188,16 @@ fun FindCapsuleScreenV1(
       }
     }
     MapView(
-      Modifier.padding(), initialCamera, initialCameraPoint, context,
-      userLocationPoint, capsulePoint, modelId.toString(), modelUri,
+      Modifier.padding(),
+      initialCamera,
+      initialCameraPoint,
+      context,
+      userLocationPoint,
+      capsulePoint,
+      modelId.toString(),
+      modelUri,
+      selectedCapsule = selectedCapsule,
+      navigate = navigate
     ) {
       userLocationPoint = it
     }
@@ -189,9 +210,16 @@ val MODEL_ID_KEY = "model-id-key"
 @Composable
 fun MapView(
   modifier: Modifier = Modifier,
-  cameraView: MapViewportState, initialPoint: Point, context: Context,
-  locationPoint: Point?, capsulePoint: Point, modelId: String, modelUri: String,
-  updateLocation: (Point) -> Unit
+  cameraView: MapViewportState,
+  initialPoint: Point,
+  context: Context,
+  locationPoint: Point?,
+  capsulePoint: Point,
+  modelId: String,
+  modelUri: String,
+  selectedCapsule: NearByCapsule,
+  navigate: (String) -> Unit,
+  updateLocation: (Point) -> Unit,
 ) {
   var pointAnnotationManager by remember { mutableStateOf<PointAnnotationManager?>(null) }
 
@@ -200,9 +228,12 @@ fun MapView(
   }
 
   if (is3dModelSelected)
-    ShowDialog() {
+    ShowDialog(selectedCapsule = selectedCapsule, openCapsule = {
       is3dModelSelected = false
-    }
+      navigate(Screen.OpenCapsuleContentScreen.route)
+    }, closeDialog = {
+      is3dModelSelected = false
+    })
 
   MapboxMap(
     modifier.fillMaxSize(),
