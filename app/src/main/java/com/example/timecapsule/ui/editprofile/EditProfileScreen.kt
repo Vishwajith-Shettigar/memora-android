@@ -90,7 +90,7 @@ fun EditProfileContent() {
           })
 
         Image(
-          painter = painterResource(id = R.drawable.testimg6), // Replace with actual drawable
+          painter = painterResource(id = R.drawable.testimg6),
           contentDescription = "Profile Picture",
           contentScale = ContentScale.Crop,
           modifier = Modifier
