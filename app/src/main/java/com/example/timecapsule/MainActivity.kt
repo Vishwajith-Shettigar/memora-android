@@ -10,6 +10,7 @@ import com.example.timecapsule.routes.Screen
 import com.example.timecapsule.service.CAPSULE_SHARED_NOTIFICATION
 import com.example.timecapsule.ui.CapsuleCreationSaving.CapsuleCreationSavingScreen
 import com.example.timecapsule.ui.CapsuleNameAndDescription.CapsuleNameAndDescription
+import com.example.timecapsule.ui.editprofile.EditProfileScreen
 import com.example.timecapsule.ui.opencapsule.CapsuleLoadingScreen
 import com.example.timecapsule.ui.opencapsule.InstructionsScreen
 import com.example.timecapsule.ui.opencapsule.MapInstructionsScreen
@@ -53,8 +54,9 @@ class MainActivity : ComponentActivity() {
 //        WriteLetterScreen()
 //        OnBoardingNavGraph()
 
-        NavGraph(navController)
+//        NavGraph(navController)
 
+        EditProfileScreen()
         val capsuleId = intent.getStringExtra("capsuleId")
         val notificationType = intent.getStringExtra("notificationType")
         if (notificationType == CAPSULE_SHARED_NOTIFICATION) {
