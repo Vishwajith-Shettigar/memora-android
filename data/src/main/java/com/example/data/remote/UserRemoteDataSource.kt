@@ -1,8 +1,11 @@
 package com.example.data.remote
 
 import android.util.Log
+import com.example.model.Profile
 import com.example.model.UserDetails
 import com.example.util.AskDetailsException
+import com.example.util.InValidUserException
+import com.example.util.NoAuthException
 import com.example.util.Response
 import com.example.util.UnspecifiedException
 import com.example.util.UsernameAlreadyExistsException
@@ -177,6 +180,60 @@ class UserRemoteDataSource @Inject constructor(
       firstNameLowerCase = ""
     )
     return user
+  }
 
+  suspend fun updateProfile(profile: Profile): Response<Unit> {
+    try {
+      val user = authRemoteDataSource.getAuth() ?: throw NoAuthException()
+
+      val usernameQuery = firestore.collection("users")
+        .whereEqualTo("userName", profile.username)
+        .get()
+        .await()
+
+      // If the username already exists, throw a custom exception
+      if (!usernameQuery.isEmpty) {
+        throw UsernameAlreadyExistsException()
+      }
+
+      firestore.collection("users").document(user.uid).update(
+        mapOf(
+          "userName" to profile.username,
+          "imageUrl" to profile.profileImageUrl,
+          "coverImageUrl" to profile.coverImageUrl,
+          "fullName" to profile.fullName
+        )
+      ).await()
+
+      return Response.Success()
+
+    } catch (e: Exception) {
+      return Response.Error(
+        exception = e
+      )
+    }
+  }
+
+  suspend fun getProfile(): Response<Profile> {
+    try {
+      val user = authRemoteDataSource.getAuth() ?: throw NoAuthException()
+
+      val doc = firestore.collection("users").document(user.uid).get().await()
+
+      val profile = Profile(
+        userId = doc.id,
+        username = doc.getString("userName")!!,
+        profileImageUrl = doc.getString("imageUrl")!!,
+        coverImageUrl = doc.getString("coverImageUrl")!!,
+        fullName = doc.getString("fullName")!!
+      )
+
+      return Response.Success(data = profile)
+
+    } catch (e: Exception) {
+      return Response.Error(
+        exception = e
+      )
+    }
   }
 }

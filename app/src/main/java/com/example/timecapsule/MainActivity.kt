@@ -55,10 +55,10 @@ class MainActivity : ComponentActivity() {
 //        WriteLetterScreen()
 //        OnBoardingNavGraph()
 
-//        NavGraph(navController)
+        NavGraph(navController)
 
 //        EditProfileScreen()
-        ViewProfileScreen()
+//        ViewProfileScreen()
 
         val capsuleId = intent.getStringExtra("capsuleId")
         val notificationType = intent.getStringExtra("notificationType")
