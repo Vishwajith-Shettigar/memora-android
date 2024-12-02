@@ -17,6 +17,7 @@ import com.example.timecapsule.ui.opencapsule.MapInstructionsScreen
 import com.example.timecapsule.ui.opencapsule.ShowContentScreen
 import com.example.timecapsule.ui.opencapsule.ShowLetterScreen
 import com.example.timecapsule.ui.theme.TimeCapsuleTheme
+import com.example.timecapsule.ui.viewprofile.ViewProfileScreen
 import com.mapbox.common.MapboxOptions
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -56,7 +57,9 @@ class MainActivity : ComponentActivity() {
 
 //        NavGraph(navController)
 
-        EditProfileScreen()
+//        EditProfileScreen()
+        ViewProfileScreen()
+
         val capsuleId = intent.getStringExtra("capsuleId")
         val notificationType = intent.getStringExtra("notificationType")
         if (notificationType == CAPSULE_SHARED_NOTIFICATION) {

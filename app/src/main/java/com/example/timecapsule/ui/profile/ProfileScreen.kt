@@ -60,11 +60,11 @@ import com.example.timecapsule.ui.util.DeviceType
 fun ProfileScreen(navController: NavController = rememberNavController(),) {
 
   val defaultColor = MaterialTheme.colorScheme.primary
-  // State to hold the background color
-  var backgroundColor by remember { mutableStateOf(defaultColor) }  // default color
+
+  var backgroundColor by remember { mutableStateOf(defaultColor) }
 
   val context = LocalContext.current
-  // Load image and get dominant color
+
   LaunchedEffect(Unit) {
     val myBitmap = BitmapFactory.decodeResource(context.resources, R.drawable.testimg1)
     val palette = Palette.from(myBitmap).generate()

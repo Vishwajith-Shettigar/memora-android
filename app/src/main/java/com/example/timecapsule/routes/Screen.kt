@@ -68,6 +68,7 @@ sealed class Screen(val route: String) {
     fun createRoute(isCapsuleHunt: Boolean) =
       "open_capsule_letter/${isCapsuleHunt}"
   }
+
   object OpenCapsuleFindCapsuleScreen : Screen("open_capsule_find_capsule_screen")
   object OpenCapsuleContentScreen : Screen("open_capsule_content")
 }
