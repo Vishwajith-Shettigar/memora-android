@@ -2,6 +2,7 @@ package com.example.timecapsule.ui.profile
 
 import android.graphics.BitmapFactory
 import android.util.Log
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -28,6 +29,7 @@ import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.ripple
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
@@ -57,6 +59,8 @@ import androidx.navigation.compose.rememberNavController
 import androidx.palette.graphics.Palette
 import coil.compose.AsyncImage
 import com.example.timecapsule.R
+import com.example.timecapsule.ui.editprofile.EditProfileContent
+import com.example.timecapsule.ui.editprofile.EditProfileScreen
 import com.example.timecapsule.ui.theme.SubTitleFontColor
 import com.example.timecapsule.ui.util.DeviceType
 import com.example.timecapsule.viewmodel.ProfileState
@@ -71,12 +75,22 @@ fun ProfileScreen(
 
   val profileState by viewModel.profile.collectAsState()
 
+  val editProfileState by viewModel.editProfileState.collectAsState()
+
   var isLoading by remember {
     mutableStateOf(true)
   }
 
   var isSuccess by remember {
     mutableStateOf(false)
+  }
+
+  var editMode by remember {
+    mutableStateOf(false)
+  }
+
+  var editedPreviewCoverImageUrl by remember {
+    mutableStateOf<String?>(null)
   }
 
   LaunchedEffect(Unit) {
@@ -99,6 +113,23 @@ fun ProfileScreen(
   }
 
   Scaffold { innerPadding ->
+
+    AnimatedVisibility(visible = editMode && (profileState is ProfileState.Success)) {
+      EditProfileScreen(editProfileState,
+        profile = (profileState as ProfileState.Success).data,
+        onUpdate = { profile ->
+          viewModel.updateProfle(profile)
+        },
+        onDismiss = {
+          editedPreviewCoverImageUrl = null
+          editMode = false
+          viewModel.resetEditProfileState()
+        },
+        changeCoverImage = { url ->
+          editedPreviewCoverImageUrl = url
+        })
+    }
+
     Box(modifier = Modifier.fillMaxSize()) {
       Column(
           Modifier
@@ -125,23 +156,41 @@ fun ProfileScreen(
           horizontalAlignment = Alignment.CenterHorizontally,
           verticalArrangement = Arrangement.Center
         ) {
-
-          // Profile Picture
-          AsyncImage(
-            model = if (isSuccess)
-              (profileState as ProfileState.Success).data.profileImageUrl
-            else
-              R.drawable.testimg1,
-            contentDescription = "Profile Picture",
+          Box(
             modifier = Modifier
-                .size(110.dp)
-                .clip(CircleShape),
-            contentScale = ContentScale.Crop,
-          )
+                .wrapContentHeight()
+                .fillMaxWidth()
+          ) {
+            AsyncImage(
+              model = if (isSuccess)
+                (profileState as ProfileState.Success).data.profileImageUrl
+              else
+                R.drawable.testimg1,
+              contentDescription = "Profile Picture",
+              modifier = Modifier
+                  .size(110.dp)
+                  .clip(CircleShape)
+                  .align(Alignment.Center),
+              contentScale = ContentScale.Crop,
+            )
+            Row(
+                Modifier
+                    .wrapContentSize()
+                    .align(Alignment.TopEnd)
+                    .padding(horizontal = 20.dp)
+            ) {
+              IconButton(modifier = Modifier
+                .size(30.dp), onClick = { editMode = true }) {
+                Icon(
+                  painter = painterResource(id = R.drawable.ic_edit),
+                  contentDescription = "edit profile icon"
+                )
+              }
+            }
+          }
 
           Spacer(modifier = Modifier.height(8.dp))
 
-          // Username and full name
           Text(
             text =
             if (isSuccess)
@@ -189,9 +238,12 @@ fun ProfileScreen(
               .fillMaxWidth()
               .height(1000.dp)
               .weight(0.7f),
-          model = if (isSuccess)
-            (profileState as ProfileState.Success).data.coverImageUrl
-          else
+          model = if (isSuccess) {
+            if (editMode && editedPreviewCoverImageUrl != null)
+              editedPreviewCoverImageUrl
+            else
+              (profileState as ProfileState.Success).data.coverImageUrl
+          } else
             R.drawable.testimg1,
           contentDescription = "cover image",
           contentScale = ContentScale.Crop,
