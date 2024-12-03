@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.CircleShape
@@ -33,6 +34,7 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -48,93 +50,158 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import androidx.palette.graphics.Palette
+import coil.compose.AsyncImage
 import com.example.timecapsule.R
 import com.example.timecapsule.ui.theme.SubTitleFontColor
 import com.example.timecapsule.ui.util.DeviceType
+import com.example.timecapsule.viewmodel.ProfileState
+import com.example.timecapsule.viewmodel.ProfileViewModel
 
 @Preview
 @Composable
-fun ProfileScreen(navController: NavController = rememberNavController(),) {
+fun ProfileScreen(
+  navController: NavController = rememberNavController(),
+  viewModel: ProfileViewModel = hiltViewModel()
+) {
 
-  val defaultColor = MaterialTheme.colorScheme.primary
+  val profileState by viewModel.profile.collectAsState()
 
-  var backgroundColor by remember { mutableStateOf(defaultColor) }
+  var isLoading by remember {
+    mutableStateOf(true)
+  }
 
-  val context = LocalContext.current
+  var isSuccess by remember {
+    mutableStateOf(false)
+  }
 
   LaunchedEffect(Unit) {
-    val myBitmap = BitmapFactory.decodeResource(context.resources, R.drawable.testimg1)
-    val palette = Palette.from(myBitmap).generate()
-    backgroundColor = Color(palette.getVibrantColor(android.graphics.Color.RED))
+    viewModel.getProfile()
   }
+
+  LaunchedEffect(profileState) {
+    when (profileState) {
+      is ProfileState.Success -> {
+        isSuccess = true
+      }
+
+      is ProfileState.Error -> {
+        isSuccess = false
+        isLoading = false
+      }
+
+      else -> {}
+    }
+  }
+
   Scaffold { innerPadding ->
-    Column(
-      modifier = Modifier
-          .padding()
-          .fillMaxSize()
-          .background((backgroundColor))
-    ) {
-      Image(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(1000.dp)
-            .weight(0.4f),
-        painter = painterResource(id = R.drawable.testimg1), contentDescription = "cover image",
-        contentScale = ContentScale.Crop,
-      )
+    Box(modifier = Modifier.fillMaxSize()) {
+      Column(
+          Modifier
+              .fillMaxSize()
+              .align(Alignment.Center)
+              .zIndex(3.0F)
+      ) {
+        Column(
+          modifier = Modifier
+              .fillMaxWidth()
+              .weight(0.4F),
+        ) {
+        }
+        Column(
+          modifier =
+          Modifier
+              .fillMaxWidth()
+              .background(
+                  MaterialTheme.colorScheme.primaryContainer,
+                  shape = RoundedCornerShape(topStart = 36.dp, topEnd = 36.dp)
+              )
+              .padding(top = 10.dp)
+              .weight(1.0f),
+          horizontalAlignment = Alignment.CenterHorizontally,
+          verticalArrangement = Arrangement.Center
+        ) {
+
+          // Profile Picture
+          AsyncImage(
+            model = if (isSuccess)
+              (profileState as ProfileState.Success).data.profileImageUrl
+            else
+              R.drawable.testimg1,
+            contentDescription = "Profile Picture",
+            modifier = Modifier
+                .size(110.dp)
+                .clip(CircleShape),
+            contentScale = ContentScale.Crop,
+          )
+
+          Spacer(modifier = Modifier.height(8.dp))
+
+          // Username and full name
+          Text(
+            text =
+            if (isSuccess)
+              (profileState as ProfileState.Success).data.username
+            else
+              "loading..",
+            style = MaterialTheme.typography.titleLarge.copy(
+              fontWeight = FontWeight.Bold,
+              color = MaterialTheme.colorScheme.onSurfaceVariant,
+              fontSize = 20.sp
+            )
+          )
+          Text(
+            text =
+            if (isSuccess)
+              (profileState as ProfileState.Success).data.firstName + " " + (profileState as ProfileState.Success).data.lastName
+            else
+              "loading..", style = MaterialTheme.typography.titleLarge.copy(
+              fontWeight = FontWeight.Bold,
+              color = SubTitleFontColor,
+              fontSize = 15.sp
+            )
+          )
+
+          Spacer(modifier = Modifier.height(16.dp))
+
+          SettingsOption(icon = R.drawable.ic_darkmode, text = "Dark Mode", true)
+          SettingsOption(icon = R.drawable.ic_setting, text = "Setting")
+          SettingsOption(icon = R.drawable.ic_contactus, text = "Contact Us")
+          SettingsOption(icon = R.drawable.ic_privacy, text = "Privacy Policy")
+          SettingsOption(icon = R.drawable.ic_signout, text = "Sign Out")
+        }
+      }
 
       Column(
-        modifier =
-        Modifier
-            .fillMaxWidth()
-            .background(
-                MaterialTheme.colorScheme.primaryContainer,
-                shape = RoundedCornerShape(topStart = 36.dp, topEnd = 36.dp)
-            )
-            .padding(top = 10.dp)
-            .weight(1f),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        modifier = Modifier
+            .padding()
+            .fillMaxSize()
+            .background((Color.Transparent))
+            .align(Alignment.Center)
+            .zIndex(2.0F)
       ) {
-
-        // Profile Picture
-        Image(
-          painter = painterResource(id = R.drawable.testimg6),
-          contentDescription = "Profile Picture",
+        AsyncImage(
           modifier = Modifier
-              .size(110.dp)
-              .clip(CircleShape),
+              .fillMaxWidth()
+              .height(1000.dp)
+              .weight(0.7f),
+          model = if (isSuccess)
+            (profileState as ProfileState.Success).data.coverImageUrl
+          else
+            R.drawable.testimg1,
+          contentDescription = "cover image",
           contentScale = ContentScale.Crop,
         )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        // Username and full name
-        Text(
-          "DarkX12", style = MaterialTheme.typography.titleLarge.copy(
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            fontSize = 20.sp
-          )
-        )
-        Text(
-          "John doe", style = MaterialTheme.typography.titleLarge.copy(
-            fontWeight = FontWeight.Bold,
-            color = SubTitleFontColor,
-            fontSize = 15.sp
-          )
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        SettingsOption(icon = R.drawable.ic_darkmode, text = "Dark Mode", true)
-        SettingsOption(icon = R.drawable.ic_setting, text = "Setting")
-        SettingsOption(icon = R.drawable.ic_contactus, text = "Contact Us")
-        SettingsOption(icon = R.drawable.ic_privacy, text = "Privacy Policy")
-        SettingsOption(icon = R.drawable.ic_signout, text = "Sign Out")
+        Column(
+          modifier = Modifier
+              .fillMaxWidth()
+              .weight(1F),
+        ) {
+        }
       }
     }
   }
@@ -160,19 +227,19 @@ fun SettingsOption(icon: Int, text: String, isDarkModeOption: Boolean = false) {
         Modifier
             .fillMaxWidth()
             .height(55.dp)
+            .padding(horizontal = 16.dp)
             .clickable(
                 onClick = {},
                 interactionSource = interactionSource,
                 indication = ripple()
-            )
-            .padding(horizontal = 16.dp),
+            ),
     verticalAlignment = Alignment.CenterVertically,
     horizontalArrangement = Arrangement.SpaceBetween
   ) {
     Row(
       modifier = Modifier
           .wrapContentWidth()
-          .fillMaxHeight(),
+          .wrapContentHeight(),
       verticalAlignment = Alignment.CenterVertically,
     ) {
       Image(

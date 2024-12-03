@@ -201,7 +201,8 @@ class UserRemoteDataSource @Inject constructor(
           "userName" to profile.username,
           "imageUrl" to profile.profileImageUrl,
           "coverImageUrl" to profile.coverImageUrl,
-          "fullName" to profile.fullName
+          "firstName" to profile.firstName,
+          "lastName" to profile.lastName
         )
       ).await()
 
@@ -225,7 +226,8 @@ class UserRemoteDataSource @Inject constructor(
         username = doc.getString("userName")!!,
         profileImageUrl = doc.getString("imageUrl")!!,
         coverImageUrl = doc.getString("coverImageUrl")!!,
-        fullName = doc.getString("fullName")!!
+        firstName = doc.getString("firstName")!!,
+        lastName = doc.getString("lastName")!!
       )
 
       return Response.Success(data = profile)
