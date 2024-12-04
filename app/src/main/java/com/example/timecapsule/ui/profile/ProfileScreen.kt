@@ -58,6 +58,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import androidx.palette.graphics.Palette
 import coil.compose.AsyncImage
+import com.example.model.Profile
 import com.example.timecapsule.R
 import com.example.timecapsule.ui.editprofile.EditProfileContent
 import com.example.timecapsule.ui.editprofile.EditProfileScreen
@@ -69,8 +70,8 @@ import com.example.timecapsule.viewmodel.ProfileViewModel
 @Preview
 @Composable
 fun ProfileScreen(
-  navController: NavController = rememberNavController(),
-  viewModel: ProfileViewModel = hiltViewModel()
+  viewModel: ProfileViewModel = hiltViewModel(),
+  onViewProfileClick: (Profile) -> Unit = {}
 ) {
 
   val profileState by viewModel.profile.collectAsState()

@@ -31,6 +31,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.navigation
 import com.example.timecapsule.ui.capsuledetails.CapsuleDetailsScreen
 import com.example.timecapsule.ui.nearbycapsules.NearbyCapsulesScreen
+import com.example.timecapsule.ui.viewprofile.ViewProfileScreen
 import com.example.timecapsule.viewmodel.NotificatioViewModel
 
 fun getNavigationItems(): List<NavItem> {
@@ -155,7 +156,12 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
         navController.navigate(Screen.CapsuleDetails.createRoute(capsuleId))
       }
     }
-    composable(Screen.Profile.route) { ProfileScreen(navController) }
+    composable(Screen.Profile.route) { ProfileScreen(){profile->
+      navController.navigate(Screen.ViewProfile.route)
+    } }
+
+    composable(Screen.ViewProfile.route) { ViewProfileScreen() }
+
 
     // Capsule Details Screen (inside Main flow)
     composable(Screen.CapsuleDetails.route) { navBackStackEntry ->

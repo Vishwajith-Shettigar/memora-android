@@ -19,6 +19,7 @@ sealed class Screen(val route: String) {
     fun createRoute(id: String) = "capsule_Details/${id}"
   }
 
+  object ViewProfile : Screen("view_profile")
 
   // Parent navigations.
   object MainScreens : Screen("main_screns")
