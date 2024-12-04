@@ -41,9 +41,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import coil.compose.AsyncImage
 import com.example.model.Profile
 import com.example.model.UpdateProfile
@@ -63,10 +67,30 @@ fun EditProfileScreen(
   val bottomSheetState =
     rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
+  val view = LocalView.current
+  var isImeVisible by remember { mutableStateOf(false) }
+
+  DisposableEffect(LocalWindowInfo.current) {
+    val listener = ViewTreeObserver.OnPreDrawListener {
+      isImeVisible = ViewCompat.getRootWindowInsets(view)
+        ?.isVisible(WindowInsetsCompat.Type.ime()) == true
+      true
+    }
+    view.viewTreeObserver.addOnPreDrawListener(listener)
+    onDispose {
+      view.viewTreeObserver.removeOnPreDrawListener(listener)
+    }
+  }
+
+  LaunchedEffect(isImeVisible) {
+    Log.e("pokemon", isImeVisible.toString())
+  }
+
   Column(
     modifier = Modifier
-      .fillMaxSize()
-      .background(Color.Transparent)
+        .fillMaxSize()
+        .background(Color.Transparent),
+    verticalArrangement = Arrangement.Bottom
   ) {
     ModalBottomSheet(
       windowInsets = WindowInsets.ime,
@@ -74,7 +98,12 @@ fun EditProfileScreen(
         onDismiss()
       },
       sheetState = bottomSheetState,
-      modifier = Modifier.fillMaxHeight(0.75F)
+      modifier = Modifier.then(
+        if (isImeVisible)
+          Modifier.fillMaxHeight(1.0F)
+        else
+          Modifier.fillMaxHeight(0.73F)
+      )
     ) {
       EditProfileContent(editProfileState, profile, changeCoverImage, onUpdate, onDismiss)
     }
@@ -156,15 +185,15 @@ fun EditProfileContent(
 
   Column(
     modifier = Modifier
-      .fillMaxWidth()
-      .wrapContentHeight()
-      .padding(16.dp)
-      .imePadding()
+        .fillMaxWidth()
+        .wrapContentHeight()
+        .padding(16.dp)
+        .imePadding()
   ) {
     Column(
       modifier = Modifier
-        .fillMaxWidth()
-        .wrapContentHeight(),
+          .fillMaxWidth()
+          .wrapContentHeight(),
       horizontalAlignment = Alignment.CenterHorizontally,
     ) {
       Row(
@@ -175,12 +204,12 @@ fun EditProfileContent(
 
         IconButton(
           modifier = Modifier
-            .size(40.dp)
-            .border(
-              width = 1.dp,
-              shape = CircleShape,
-              color = MaterialTheme.colorScheme.primaryContainer
-            ), onClick = {
+              .size(40.dp)
+              .border(
+                  width = 1.dp,
+                  shape = CircleShape,
+                  color = MaterialTheme.colorScheme.primaryContainer
+              ), onClick = {
             openFilePicker(isProfilePicture = true)
           }, content = {
             Icon(
@@ -199,18 +228,18 @@ fun EditProfileContent(
           contentDescription = "Profile Picture",
           contentScale = ContentScale.Crop,
           modifier = Modifier
-            .size(150.dp)
-            .clip(CircleShape)
+              .size(150.dp)
+              .clip(CircleShape)
         )
 
         IconButton(
           modifier = Modifier
-            .size(40.dp)
-            .border(
-              width = 1.dp,
-              shape = CircleShape,
-              color = MaterialTheme.colorScheme.primaryContainer
-            ), onClick = {
+              .size(40.dp)
+              .border(
+                  width = 1.dp,
+                  shape = CircleShape,
+                  color = MaterialTheme.colorScheme.primaryContainer
+              ), onClick = {
             openFilePicker(isProfilePicture = false)
           }, content = {
             Icon(
@@ -222,8 +251,8 @@ fun EditProfileContent(
       }
       TextField(
         modifier = Modifier
-          .wrapContentSize()
-          .width(150.dp),
+            .wrapContentSize()
+            .width(150.dp),
         value = profile.username,
         readOnly = true,
         onValueChange = {
@@ -256,8 +285,8 @@ fun EditProfileContent(
     }
     TextField(
       modifier = Modifier
-        .wrapContentSize()
-        .padding(vertical = 10.dp),
+          .wrapContentSize()
+          .padding(vertical = 10.dp),
       value = fullName,
       onValueChange = {
         fullName = it
@@ -289,9 +318,9 @@ fun EditProfileContent(
 
     TextField(
       modifier = Modifier
-        .wrapContentSize()
-        .padding(vertical = 10.dp)
-        .imePadding(),
+          .wrapContentSize()
+          .padding(vertical = 10.dp)
+          .imePadding(),
       value = aboutMe,
       onValueChange = {
         aboutMe = it
@@ -324,9 +353,9 @@ fun EditProfileContent(
 
     Button(
       modifier = Modifier
-        .wrapContentSize()
-        .padding(vertical = 10.dp)
-        .imePadding(),
+          .wrapContentSize()
+          .padding(vertical = 10.dp)
+          .imePadding(),
       onClick = {
         val updatedProfile = UpdateProfile(
           firstName = fullName.substringBefore(" "),
