@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -62,6 +63,7 @@ import com.example.model.Profile
 import com.example.timecapsule.R
 import com.example.timecapsule.ui.editprofile.EditProfileContent
 import com.example.timecapsule.ui.editprofile.EditProfileScreen
+import com.example.timecapsule.ui.theme.LightBlue
 import com.example.timecapsule.ui.theme.SubTitleFontColor
 import com.example.timecapsule.ui.util.DeviceType
 import com.example.timecapsule.viewmodel.ProfileState
@@ -157,11 +159,30 @@ fun ProfileScreen(
           horizontalAlignment = Alignment.CenterHorizontally,
           verticalArrangement = Arrangement.Center
         ) {
-          Box(
+          Row(
             modifier = Modifier
                 .wrapContentHeight()
-                .fillMaxWidth()
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.Absolute.SpaceAround,
+            verticalAlignment = Alignment.CenterVertically
           ) {
+            IconButton(modifier = Modifier
+                .size(40.dp)
+                .border(
+                    width = 1.dp,
+                    shape = CircleShape,
+                    color = MaterialTheme.colorScheme.primaryContainer
+                ), onClick = {
+              if (profileState is ProfileState.Success)
+                onViewProfileClick((profileState as ProfileState.Success).data)
+            }) {
+              Icon(
+                painter = painterResource(id = com.example.timecapsule.R.drawable.icon_face),
+                contentDescription = "edit profile icon",
+                tint = LightBlue
+              )
+            }
+
             AsyncImage(
               model = if (isSuccess)
                 (profileState as ProfileState.Success).data.profileImageUrl
@@ -170,23 +191,22 @@ fun ProfileScreen(
               contentDescription = "Profile Picture",
               modifier = Modifier
                   .size(110.dp)
-                  .clip(CircleShape)
-                  .align(Alignment.Center),
+                  .clip(CircleShape),
               contentScale = ContentScale.Crop,
             )
-            Row(
-                Modifier
-                    .wrapContentSize()
-                    .align(Alignment.TopEnd)
-                    .padding(horizontal = 20.dp)
-            ) {
-              IconButton(modifier = Modifier
-                .size(30.dp), onClick = { editMode = true }) {
-                Icon(
-                  painter = painterResource(id = R.drawable.ic_edit),
-                  contentDescription = "edit profile icon"
-                )
-              }
+
+            IconButton(modifier = Modifier
+                .size(40.dp)
+                .border(
+                    width = 1.dp,
+                    shape = CircleShape,
+                    color = MaterialTheme.colorScheme.primaryContainer
+                ), onClick = { editMode = true }) {
+              Icon(
+                painter = painterResource(id = R.drawable.ic_edit),
+                contentDescription = "edit profile icon",
+                tint = LightBlue
+              )
             }
           }
 

@@ -82,10 +82,6 @@ fun EditProfileScreen(
     }
   }
 
-  LaunchedEffect(isImeVisible) {
-    Log.e("pokemon", isImeVisible.toString())
-  }
-
   Column(
     modifier = Modifier
         .fillMaxSize()
@@ -357,15 +353,25 @@ fun EditProfileContent(
           .padding(vertical = 10.dp)
           .imePadding(),
       onClick = {
+
+        var fname = fullName
+        var lname = ""
+
+        if (fullName.trim().contains(" ")) {
+          fname = fullName.trim().substringBefore(" ")
+          lname = fullName.trim().substringAfter(" ")
+        }
+
         val updatedProfile = UpdateProfile(
-          firstName = fullName.substringBefore(" "),
-          lastName = fullName.substringAfter(" "),
+          firstName = fname.trim(),
+          lastName = lname.trim(),
           oldProfileImageUrl = profileImageUrl,
           oldCoverImageUrl = coverImageUrl,
           profileImageUri = profileImageUri,
           coverImageUri = coverImageUri,
-          aboutMe = aboutMe
+          aboutMe = aboutMe.trim()
         )
+
         onUpdate(updatedProfile)
       },
       colors = ButtonDefaults.outlinedButtonColors(containerColor = LightBlue)

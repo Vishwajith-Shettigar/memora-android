@@ -1,5 +1,7 @@
 package com.example.timecapsule
 
+import android.net.Uri
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -29,6 +31,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.navigation
+import com.example.model.Profile
 import com.example.timecapsule.ui.capsuledetails.CapsuleDetailsScreen
 import com.example.timecapsule.ui.nearbycapsules.NearbyCapsulesScreen
 import com.example.timecapsule.ui.viewprofile.ViewProfileScreen
@@ -92,8 +95,8 @@ fun BottomNavigationBar(navController: NavController) {
   BottomNavigation(
     backgroundColor = MaterialTheme.colorScheme.primary,
     modifier = Modifier
-      .windowInsetsPadding(WindowInsets.navigationBars.only(WindowInsetsSides.Bottom))
-      .background(MaterialTheme.colorScheme.primary)
+        .windowInsetsPadding(WindowInsets.navigationBars.only(WindowInsetsSides.Bottom))
+        .background(MaterialTheme.colorScheme.primary)
   ) {
     val currentRoute = navController.currentDestination?.route
     items.forEach { item ->
@@ -146,7 +149,7 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
       })
     }
     composable(Screen.NearByCapsules.route) {
-      NearbyCapsulesScreen { route->
+      NearbyCapsulesScreen { route ->
         navController.navigate(route)
       }
     }
@@ -156,12 +159,33 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
         navController.navigate(Screen.CapsuleDetails.createRoute(capsuleId))
       }
     }
-    composable(Screen.Profile.route) { ProfileScreen(){profile->
-      navController.navigate(Screen.ViewProfile.route)
-    } }
+    composable(Screen.Profile.route) {
+      ProfileScreen() { profile ->
+        navController.navigate(
+          Screen.ViewProfile.createRoute(
+            username = profile.username,
+            firstName = profile.firstName,
+            lastName = profile.lastName,
+            aboutMe = profile.aboutMe,
+            profileImageUrl = profile.profileImageUrl,
+            coverImageUrl = profile.coverImageUrl
+          )
+        )
+      }
+    }
 
-    composable(Screen.ViewProfile.route) { ViewProfileScreen() }
-
+    composable(Screen.ViewProfile.route) { backStackEntry ->
+      val profile = Profile(
+        userId = "",
+        username = backStackEntry.arguments!!.getString("username")!!,
+        firstName = backStackEntry.arguments!!.getString("firstName")!!,
+        lastName = backStackEntry.arguments!!.getString("lastName")!!,
+        aboutMe = backStackEntry.arguments!!.getString("aboutMe")!!,
+        profileImageUrl = (backStackEntry.arguments?.getString("profileImageUrl") ?: ""),
+        coverImageUrl = (backStackEntry.arguments?.getString("coverImageUrl") ?: "")
+      )
+      ViewProfileScreen(profile)
+    }
 
     // Capsule Details Screen (inside Main flow)
     composable(Screen.CapsuleDetails.route) { navBackStackEntry ->

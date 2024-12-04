@@ -1,5 +1,6 @@
 package com.example.timecapsule.routes
 
+import android.net.Uri
 import kotlin.math.cos
 
 sealed class Screen(val route: String) {
@@ -19,7 +20,22 @@ sealed class Screen(val route: String) {
     fun createRoute(id: String) = "capsule_Details/${id}"
   }
 
-  object ViewProfile : Screen("view_profile")
+  object ViewProfile :
+    Screen("view_profile/{username}/{firstName}/{lastName}/{aboutMe}/{profileImageUrl}/{coverImageUrl}") {
+    fun createRoute(
+      username: String,
+      firstName: String,
+      lastName: String,
+      aboutMe: String,
+      profileImageUrl: String,
+      coverImageUrl: String
+    ) =
+      "view_profile/${username}/${firstName}/${lastName}/${aboutMe}/${Uri.encode(profileImageUrl)}/${
+        Uri.encode(
+          coverImageUrl
+        )
+      }"
+  }
 
   // Parent navigations.
   object MainScreens : Screen("main_screns")

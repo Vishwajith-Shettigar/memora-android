@@ -1,6 +1,7 @@
 package com.example.timecapsule.ui.viewprofile
 
 import android.graphics.BitmapFactory
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -39,175 +40,176 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.palette.graphics.Palette
 import coil.compose.AsyncImage
+import com.example.model.Profile
 import com.example.timecapsule.R
 import com.example.timecapsule.ui.theme.LightBlue
 
 @OptIn(ExperimentalMaterial3Api::class)
-@Preview
 @Composable
-fun ViewProfileScreen() {
-  val context = LocalContext.current
-  val defaultColor = MaterialTheme.colorScheme.primary
+fun ViewProfileScreen(profile: Profile) {
 
-  var backgroundColor by remember { mutableStateOf(defaultColor) }
-  LaunchedEffect(Unit) {
-    val myBitmap =
-      BitmapFactory.decodeResource(context.resources, com.example.timecapsule.R.drawable.testimg6)
-    val palette = Palette.from(myBitmap).generate()
-    backgroundColor = Color(palette.getVibrantColor(android.graphics.Color.RED))
-  }
-
-  Column(
+  Box(
     modifier = Modifier
       .fillMaxSize()
-      .background(backgroundColor),
   ) {
-    Box(
-      Modifier
-        .fillMaxWidth()
-        .weight(1.0F)
-        .background(Color.Transparent)
+    Column(
+      modifier = Modifier
+          .fillMaxSize()
+          .align(Alignment.Center),
+      verticalArrangement = Arrangement.Top
     ) {
       AsyncImage(
         modifier = Modifier
-          .fillMaxSize()
-          .align(Alignment.Center),
-        model = R.drawable.testimg6,
+            .fillMaxWidth()
+            .weight(0.35F),
+        model = profile.coverImageUrl,
         contentDescription = "cover image",
         contentScale = ContentScale.Crop
       )
+      Column(modifier = Modifier.weight(0.65F)) {
+      }
     }
+
     Column(
-      Modifier
-        .fillMaxWidth()
-        .weight(2.0F)
-        .clip(RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp))
-        .background(MaterialTheme.colorScheme.primary)
-        .border(
-          1.dp,
-          shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp),
-          color = Color.Black
-        )
-        .padding(horizontal = 10.dp, vertical = 20.dp),
-      horizontalAlignment = Alignment.Start,
+      modifier = Modifier
+          .fillMaxSize()
+          .align(Alignment.Center),
       verticalArrangement = Arrangement.Top
     ) {
+      Column(modifier = Modifier.weight(0.25F)) {
+      }
       Column(
-        Modifier
-          .fillMaxWidth()
-          .background(Color.Transparent)
-          .wrapContentHeight(), horizontalAlignment = Alignment.CenterHorizontally
+          Modifier
+              .fillMaxWidth()
+              .weight(0.75F)
+              .clip(RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp))
+              .background(MaterialTheme.colorScheme.primary)
+              .border(
+                  1.dp,
+                  shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp),
+                  color = Color.Black
+              )
+              .padding(horizontal = 10.dp, vertical = 20.dp),
+        horizontalAlignment = Alignment.Start,
+        verticalArrangement = Arrangement.Top
       ) {
-        AsyncImage(
-          modifier = Modifier
-            .size(180.dp)
-            .clip(CircleShape),
-          model = R.drawable.testimg1,
-          contentDescription = "cover image",
-          contentScale = ContentScale.Crop,
-        )
+        Column(
+            Modifier
+                .fillMaxWidth()
+                .background(Color.Transparent)
+                .wrapContentHeight(), horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+          AsyncImage(
+            modifier = Modifier
+                .size(180.dp)
+                .clip(CircleShape),
+            model = profile.profileImageUrl,
+            contentDescription = "profile image",
+            contentScale = ContentScale.Crop,
+          )
+          TextField(
+            modifier = Modifier
+                .wrapContentSize()
+                .width(150.dp),
+            value = profile.username,
+            onValueChange = {},
+            label = {
+              Text(text = "username")
+            },
+            readOnly = true,
+            colors = TextFieldDefaults.textFieldColors(
+              containerColor = Color.Transparent,
+              unfocusedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
+              focusedTextColor = LightBlue,
+              cursorColor = LightBlue,
+              focusedIndicatorColor = Color.Transparent,
+              unfocusedIndicatorColor = Color.Transparent,
+              errorTextColor = Color.Red,
+              errorContainerColor = Color.Transparent,
+              errorIndicatorColor = Color.Transparent,
+              errorSupportingTextColor = Color.Red,
+              focusedLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
+              unfocusedLabelColor = LightBlue,
+              focusedTrailingIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+              unfocusedTrailingIconColor = LightBlue
+            ),
+            maxLines = 1,
+            textStyle = MaterialTheme.typography.titleMedium.copy(
+              textAlign = TextAlign.Center
+            ),
+            isError = false
+          )
+        }
+
         TextField(
           modifier = Modifier
-            .wrapContentSize()
-            .width(150.dp),
-          value = "darkX45",
+              .wrapContentSize()
+              .padding(vertical = 10.dp),
+          value = profile.firstName + " " + profile.lastName,
           onValueChange = {},
-          label = {
-            Text(text = "username")
-          },
           readOnly = true,
+          label = {
+            Text(text = "full name")
+          },
           colors = TextFieldDefaults.textFieldColors(
             containerColor = Color.Transparent,
             unfocusedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
             focusedTextColor = LightBlue,
             cursorColor = LightBlue,
-            focusedIndicatorColor = Color.Transparent,
-            unfocusedIndicatorColor = Color.Transparent,
-            errorTextColor = Color.Red,
-            errorContainerColor = Color.Transparent,
-            errorIndicatorColor = Color.Transparent,
-            errorSupportingTextColor = Color.Red,
             focusedLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
             unfocusedLabelColor = LightBlue,
-            focusedTrailingIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
-            unfocusedTrailingIconColor = LightBlue
+            focusedLeadingIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+            unfocusedLeadingIconColor = LightBlue,
+            focusedIndicatorColor = Color.Transparent,
+            unfocusedIndicatorColor = Color.Transparent,
           ),
           maxLines = 1,
           textStyle = MaterialTheme.typography.titleMedium.copy(
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Start
           ),
-          isError = false
+          leadingIcon = {
+            Icon(
+              painter = painterResource(id = R.drawable.ic_outline_person),
+              contentDescription = ""
+            )
+          },
+        )
+
+        TextField(
+          modifier = Modifier
+              .wrapContentSize()
+              .padding(vertical = 10.dp),
+          value = profile.aboutMe,
+          onValueChange = {},
+          readOnly = true,
+          label = {
+            Text(text = "about me")
+          },
+          colors = TextFieldDefaults.textFieldColors(
+            containerColor = Color.Transparent,
+            unfocusedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
+            focusedTextColor = LightBlue,
+            cursorColor = LightBlue,
+            focusedLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
+            unfocusedLabelColor = LightBlue,
+            focusedLeadingIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+            unfocusedLeadingIconColor = LightBlue,
+            focusedIndicatorColor = Color.Transparent,
+            unfocusedIndicatorColor = Color.Transparent,
+          ),
+          singleLine = false,
+          maxLines = 4,
+          textStyle = MaterialTheme.typography.titleMedium.copy(
+            textAlign = TextAlign.Start
+          ),
+          leadingIcon = {
+            Icon(
+              painter = painterResource(id = com.example.timecapsule.R.drawable.ic_subtitles),
+              contentDescription = ""
+            )
+          },
         )
       }
-
-      TextField(
-        modifier = Modifier
-          .wrapContentSize()
-          .padding(vertical = 10.dp),
-        value = "Dark dronzer",
-        onValueChange = {},
-        readOnly = true,
-        label = {
-          Text(text = "full name")
-        },
-        colors = TextFieldDefaults.textFieldColors(
-          containerColor = Color.Transparent,
-          unfocusedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
-          focusedTextColor = LightBlue,
-          cursorColor = LightBlue,
-          focusedLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
-          unfocusedLabelColor = LightBlue,
-          focusedLeadingIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
-          unfocusedLeadingIconColor = LightBlue,
-          focusedIndicatorColor = Color.Transparent,
-          unfocusedIndicatorColor = Color.Transparent,
-        ),
-        maxLines = 1,
-        textStyle = MaterialTheme.typography.titleMedium.copy(
-          textAlign = TextAlign.Start
-        ),
-        leadingIcon = {
-          Icon(
-            painter = painterResource(id = R.drawable.ic_outline_person),
-            contentDescription = ""
-          )
-        },
-      )
-
-      TextField(
-        modifier = Modifier
-          .wrapContentSize()
-          .padding(vertical = 10.dp),
-        value = "hello im dark289e.",
-        onValueChange = {},
-        readOnly = true,
-        label = {
-          Text(text = "about me")
-        },
-        colors = TextFieldDefaults.textFieldColors(
-          containerColor = Color.Transparent,
-          unfocusedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
-          focusedTextColor = LightBlue,
-          cursorColor = LightBlue,
-          focusedLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
-          unfocusedLabelColor = LightBlue,
-          focusedLeadingIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
-          unfocusedLeadingIconColor = LightBlue,
-          focusedIndicatorColor = Color.Transparent,
-          unfocusedIndicatorColor = Color.Transparent,
-        ),
-        singleLine = false,
-        maxLines = 4,
-        textStyle = MaterialTheme.typography.titleMedium.copy(
-          textAlign = TextAlign.Start
-        ),
-        leadingIcon = {
-          Icon(
-            painter = painterResource(id = com.example.timecapsule.R.drawable.ic_subtitles),
-            contentDescription = ""
-          )
-        },
-      )
     }
   }
 }
