@@ -16,6 +16,7 @@ import com.example.timecapsule.ui.opencapsule.InstructionsScreen
 import com.example.timecapsule.ui.opencapsule.MapInstructionsScreen
 import com.example.timecapsule.ui.opencapsule.ShowContentScreen
 import com.example.timecapsule.ui.opencapsule.ShowLetterScreen
+import com.example.timecapsule.ui.setting.SettingScreen
 import com.example.timecapsule.ui.theme.TimeCapsuleTheme
 import com.example.timecapsule.ui.viewprofile.ViewProfileScreen
 import com.mapbox.common.MapboxOptions
@@ -55,20 +56,21 @@ class MainActivity : ComponentActivity() {
 //        WriteLetterScreen()
 //        OnBoardingNavGraph()
 
-        NavGraph(navController)
+//        NavGraph(navController)
 
 //        EditProfileScreen()
 //        ViewProfileScreen()
+        SettingScreen()
 
-        val capsuleId = intent.getStringExtra("capsuleId")
-        val notificationType = intent.getStringExtra("notificationType")
-        if (notificationType == CAPSULE_SHARED_NOTIFICATION) {
-          capsuleId?.let {
-            LaunchedEffect(it) {
-              navController.navigate(Screen.CapsuleDetails.createRoute(capsuleId))
-            }
-          }
-        }
+//        val capsuleId = intent.getStringExtra("capsuleId")
+//        val notificationType = intent.getStringExtra("notificationType")
+//        if (notificationType == CAPSULE_SHARED_NOTIFICATION) {
+//          capsuleId?.let {
+//            LaunchedEffect(it) {
+//              navController.navigate(Screen.CapsuleDetails.createRoute(capsuleId))
+//            }
+//          }
+//        }
 
 //        CapsuleCreationSavingScreen()
 //        InstructionsScreen()
