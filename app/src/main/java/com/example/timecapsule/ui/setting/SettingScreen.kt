@@ -37,24 +37,24 @@ fun SettingScreen() {
   Scaffold() { innerPadding ->
     Box(
       modifier = Modifier
-          .fillMaxSize()
-          .background(MaterialTheme.colorScheme.primary)
-          .padding(innerPadding)
+        .fillMaxSize()
+        .background(MaterialTheme.colorScheme.primary)
+        .padding(innerPadding)
     ) {
       LazyColumn(
         modifier = Modifier
-            .fillMaxSize()
-            .padding(top = 30.dp)
-            .background(MaterialTheme.colorScheme.primary)
-            .align(Alignment.TopStart)
-            .background(Color.Transparent)
+          .fillMaxSize()
+          .padding(top = 30.dp)
+          .background(MaterialTheme.colorScheme.primary)
+          .align(Alignment.TopStart)
+          .background(Color.Transparent)
       ) {
         item {
           Row(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 20.dp, end = 20.dp)
-                .height(60.dp),
+              .fillMaxWidth()
+              .padding(start = 20.dp, end = 20.dp)
+              .height(60.dp),
             horizontalArrangement = Arrangement.Start,
             verticalAlignment = Alignment.CenterVertically
           ) {
@@ -71,31 +71,41 @@ fun SettingScreen() {
         item {
           Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight()
-                .padding(top = 40.dp, bottom = 10.dp, start = 20.dp, end = 20.dp)
+              .fillMaxWidth()
+              .wrapContentHeight()
+              .padding(top = 40.dp, bottom = 10.dp, start = 20.dp, end = 20.dp)
           ) {
             SettingOptionsTab(settingTitle = "Change Password") {
             }
 
-            com.example.timecapsule.ui.setting.Divider(color = Color.LightGray)
+            com.example.timecapsule.ui.setting.Divider(color = Color.Gray)
 
             SettingOptionsTab(settingTitle = "Change Language") {
             }
 
-            com.example.timecapsule.ui.setting.Divider(color = Color.LightGray)
+            com.example.timecapsule.ui.setting.Divider(color = Color.Gray)
+
+            SettingOptionsTab(settingTitle = "Rate out app") {
+            }
+
+            com.example.timecapsule.ui.setting.Divider(color = Color.Gray)
+
+            SettingOptionsTab(settingTitle = "Updates") {
+            }
+
+            com.example.timecapsule.ui.setting.Divider(color = Color.Gray)
           }
         }
 
         item {
           Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight()
-                .padding(top = 40.dp, bottom = 10.dp, start = 10.dp, end = 10.dp)
-                .clip(RoundedCornerShape(20.dp))
-                .background(LightBlue.copy(alpha = 0.4F))
-                .padding(start = 10.dp, end = 10.dp),
+              .fillMaxWidth()
+              .wrapContentHeight()
+              .padding(top = 40.dp, bottom = 10.dp, start = 10.dp, end = 10.dp)
+              .clip(RoundedCornerShape(20.dp))
+              .background(LightBlue.copy(alpha = 0.4F))
+              .padding(start = 10.dp, end = 10.dp),
 
             ) {
             SettingOptionsTabWithSwitch(settingTitle = "Receive Notifications", isChecked = true) {
@@ -103,7 +113,10 @@ fun SettingScreen() {
 
             com.example.timecapsule.ui.setting.Divider(color = Color.Black)
 
-            SettingOptionsTabWithSwitch(settingTitle = "Open for capsule", isChecked = false) {
+            SettingOptionsTabWithSwitch(
+              settingTitle = "Allow me in others' capsules.",
+              isChecked = false
+            ) {
             }
           }
         }
@@ -116,7 +129,7 @@ fun SettingScreen() {
 fun Divider(color: Color) {
   Divider(
     color = color,
-    modifier = Modifier.padding(horizontal = 10.dp)
+    modifier = Modifier.padding(horizontal = 4.dp)
   )
 }
 
@@ -124,14 +137,14 @@ fun Divider(color: Color) {
 fun SettingOptionsTab(settingTitle: String, onClick: () -> Unit) {
   Row(
     modifier = Modifier
-        .fillMaxWidth()
-        .height(60.dp)
-        .padding(vertical = 5.dp)
-        .clickable(
-            enabled = true
-        ) {
-            onClick()
-        },
+      .fillMaxWidth()
+      .height(60.dp)
+      .padding(vertical = 5.dp)
+      .clickable(
+        enabled = true
+      ) {
+        onClick()
+      },
     verticalAlignment = Alignment.CenterVertically,
     horizontalArrangement = Arrangement.SpaceBetween
   ) {
@@ -157,9 +170,9 @@ fun SettingOptionsTabWithSwitch(
 ) {
   Row(
     modifier = Modifier
-        .fillMaxWidth()
-        .wrapContentHeight()
-        .padding(vertical = 20.dp),
+      .fillMaxWidth()
+      .wrapContentHeight()
+      .padding(vertical = 20.dp),
     verticalAlignment = Alignment.CenterVertically,
     horizontalArrangement = Arrangement.SpaceBetween
   ) {
