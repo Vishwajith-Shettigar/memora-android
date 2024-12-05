@@ -151,7 +151,7 @@ fun ProfileScreen(
           Modifier
               .fillMaxWidth()
               .background(
-                  MaterialTheme.colorScheme.primaryContainer,
+                  MaterialTheme.colorScheme.primary,
                   shape = RoundedCornerShape(topStart = 36.dp, topEnd = 36.dp)
               )
               .padding(top = 10.dp)
@@ -239,10 +239,13 @@ fun ProfileScreen(
           Spacer(modifier = Modifier.height(16.dp))
 
           SettingsOption(icon = R.drawable.ic_darkmode, text = "Dark Mode", true)
-          SettingsOption(icon = R.drawable.ic_setting, text = "Setting")
-          SettingsOption(icon = R.drawable.ic_contactus, text = "Contact Us")
-          SettingsOption(icon = R.drawable.ic_privacy, text = "Privacy Policy")
-          SettingsOption(icon = R.drawable.ic_signout, text = "Sign Out")
+          SettingsOption(icon = com.example.timecapsule.R.drawable.ic_setting, text = "Setting")
+          SettingsOption(icon = com.example.timecapsule.R.drawable.ic_email, text = "Contact Us")
+          SettingsOption(
+            icon = com.example.timecapsule.R.drawable.ic_shield,
+            text = "Privacy Policy"
+          )
+          SettingsOption(icon = com.example.timecapsule.R.drawable.ic_logout, text = "Sign Out")
         }
       }
 
@@ -315,11 +318,18 @@ fun SettingsOption(icon: Int, text: String, isDarkModeOption: Boolean = false) {
           .wrapContentHeight(),
       verticalAlignment = Alignment.CenterVertically,
     ) {
-      Image(
-        painterResource(id = icon),
-        contentDescription = text,
-        modifier = Modifier.size(24.dp)
-      )
+      if (isDarkModeOption)
+        Image(
+          painterResource(id = icon),
+          contentDescription = text,
+          modifier = Modifier.size(24.dp),
+        ) else
+        Icon(
+          painterResource(id = icon),
+          contentDescription = text,
+          modifier = Modifier.size(24.dp),
+          tint = LightBlue.copy(alpha = 0.8F)
+        )
       Spacer(modifier = Modifier.width(16.dp))
       Text(
         text, style = MaterialTheme.typography.titleLarge.copy(

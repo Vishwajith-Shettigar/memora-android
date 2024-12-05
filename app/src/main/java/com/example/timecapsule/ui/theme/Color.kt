@@ -31,7 +31,7 @@ val lightSecondaryBackground = Color(0xFFBDABBD)
 val darkSecondaryBackground = Color(0xFF736D6D)
 
 val lightPrimaryBackground = Color(0xFFFAF4FA)
-val darkPrimaryBackground = Color(0xFF1B1B1B)
+val darkPrimaryBackground = Color(0xFF000000)
 
 val NavigatioButtons = listOf(
   Color(0xFF2760FF),
