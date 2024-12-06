@@ -39,18 +39,18 @@ fun ChangePasswordScreen() {
   Scaffold { innerPadding ->
     Column(
       modifier = Modifier
-        .fillMaxSize()
-        .background(MaterialTheme.colorScheme.primary)
-        .padding(innerPadding)
-        .padding(top = 20.dp),
+          .fillMaxSize()
+          .background(MaterialTheme.colorScheme.primary)
+          .padding(innerPadding)
+          .padding(top = 20.dp),
       verticalArrangement = Arrangement.Top
     ) {
       BackRow()
       Column(
         modifier = Modifier
-          .padding(10.dp)
-          .fillMaxWidth()
-          .fillMaxHeight(),
+            .padding(10.dp)
+            .fillMaxWidth()
+            .fillMaxHeight(),
         horizontalAlignment =
         if (isTablet)
           Alignment.CenterHorizontally
@@ -117,15 +117,15 @@ fun ChangePasswordScreen() {
           modifier =
 
           if (!isTablet)
-            Modifier
-              .fillMaxWidth()
-              .wrapContentHeight()
-              .padding(vertical = 20.dp)
+              Modifier
+                  .fillMaxWidth()
+                  .wrapContentHeight()
+                  .padding(vertical = 20.dp)
           else
-            Modifier
-              .width(600.dp)
-              .wrapContentHeight()
-              .padding(vertical = 20.dp)
+              Modifier
+                  .width(600.dp)
+                  .wrapContentHeight()
+                  .padding(vertical = 20.dp)
 
         ) {
           Text(

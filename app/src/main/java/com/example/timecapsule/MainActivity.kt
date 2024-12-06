@@ -17,6 +17,7 @@ import com.example.timecapsule.ui.opencapsule.MapInstructionsScreen
 import com.example.timecapsule.ui.opencapsule.ShowContentScreen
 import com.example.timecapsule.ui.opencapsule.ShowLetterScreen
 import com.example.timecapsule.ui.setting.SettingScreen
+import com.example.timecapsule.ui.setting.options.ChangeLanguageScreen
 import com.example.timecapsule.ui.setting.options.ChangePasswordScreen
 import com.example.timecapsule.ui.theme.TimeCapsuleTheme
 import com.example.timecapsule.ui.viewprofile.ViewProfileScreen
@@ -64,6 +65,8 @@ class MainActivity : ComponentActivity() {
 //        SettingScreen()
 
         ChangePasswordScreen()
+        ChangeLanguageScreen()
+
 //        val capsuleId = intent.getStringExtra("capsuleId")
 //        val notificationType = intent.getStringExtra("notificationType")
 //        if (notificationType == CAPSULE_SHARED_NOTIFICATION) {
