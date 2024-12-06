@@ -8,9 +8,11 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.IconButton
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -65,8 +67,10 @@ fun CustomTextField(
   hint: String,
   icon: Int,
   modifier: Modifier = Modifier,
+  trailingIcon: Int? = null,
   isTablet: Boolean = false,
-  onValueChanged: (String) -> Unit
+  onTrailingIconClicked: () -> Unit = {},
+  onValueChanged: (String) -> Unit,
 ) {
   TextField(
     value = value,
@@ -75,7 +79,7 @@ fun CustomTextField(
       Text(
         text = hint,
         fontSize = 16.sp,
-        color = Color.White.copy(alpha = 0.8f)
+        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(0.5F),
       )
     },
     leadingIcon = {
@@ -83,6 +87,16 @@ fun CustomTextField(
         painter = painterResource(id = icon),
         contentDescription = null
       )
+    },
+    trailingIcon = {
+      trailingIcon?.let {
+        IconButton(onClick = { /*TODO*/ }) {
+          Icon(
+            painter = painterResource(id = it), contentDescription = "trailing icon",
+            tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(0.5F),
+          )
+        }
+      }
     },
     shape = RoundedCornerShape(12.dp),
     colors = TextFieldDefaults.textFieldColors(
