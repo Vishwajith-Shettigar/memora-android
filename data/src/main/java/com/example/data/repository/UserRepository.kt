@@ -1,6 +1,8 @@
 package com.example.data.repository
 
 import com.example.data.remote.UserRemoteDataSource
+import com.example.model.Profile
+import com.example.model.UpdateProfile
 import com.example.model.UserDetails
 import com.example.util.Response
 import com.google.firebase.firestore.auth.User
@@ -12,6 +14,8 @@ interface UserRepository {
   suspend fun checkUserNameDoesntExists(userName: String): Response<Exception>
   suspend fun checkUserRecordExists(userId: String): Response<Any>
   suspend fun searchUsers(query: String): Response<List<UserDetails>>
+  suspend fun getProfile(): Response<Profile>
+  suspend fun updateProfile(profile: UpdateProfile): Response<Unit>
 }
 
 class UserRepositoryImpl @Inject constructor(
@@ -39,5 +43,13 @@ class UserRepositoryImpl @Inject constructor(
 
   override suspend fun searchUsers(query: String): Response<List<UserDetails>> {
     return userRemoteDataSource.searchUsers(query)
+  }
+
+  override suspend fun getProfile(): Response<Profile> {
+    return userRemoteDataSource.getProfile()
+  }
+
+  override suspend fun updateProfile(profile: UpdateProfile): Response<Unit> {
+    return userRemoteDataSource.updateProfile(profile)
   }
 }

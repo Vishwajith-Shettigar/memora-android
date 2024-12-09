@@ -54,7 +54,7 @@ fun CapsuleCard(
   rowItemSize: Int = 2,
   capsuleDetails: CapsuleDetails? = null,
   modifier: Modifier = Modifier,
-  onCapsuleClicked: (id: String) -> Unit = {}, openCapule:(id:String)->Unit ={}
+  onCapsuleClicked: (id: String) -> Unit = {}, openCapule: (id: String) -> Unit = {}
 ) {
   // State to toggle the visibility of the pane
   var isPaneVisible by remember { mutableStateOf(false) }
@@ -109,7 +109,10 @@ fun CapsuleCard(
           horizontalArrangement = Arrangement.Center
         )
         {
-          Button(onClick = { openCapule(capsuleDetails.id)}, colors = ButtonDefaults.buttonColors(containerColor = LightBlue)) {
+          Button(
+            onClick = { openCapule(capsuleDetails.id) },
+            colors = ButtonDefaults.buttonColors(containerColor = LightBlue)
+          ) {
             Text(text = "Open", color = Color.LightGray)
           }
         }

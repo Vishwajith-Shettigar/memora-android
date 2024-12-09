@@ -13,6 +13,7 @@ import com.example.domain.usecase.GetCapsuleAssetsUseCase
 import com.example.domain.usecase.GetCapsuleDetailsUseCase
 import com.example.domain.usecase.GetCapsuleListUseCase
 import com.example.domain.usecase.GetNotificationUseCase
+import com.example.domain.usecase.GetProfileUseCase
 import com.example.domain.usecase.GetUserDetailsUseCase
 import com.example.domain.usecase.OnBoardingDataUseCase
 import com.example.domain.usecase.OpenCapsuleScreenCheckPointUseCase
@@ -25,6 +26,7 @@ import com.example.domain.usecase.UploadFilesUseCase
 import com.example.domain.usecase.getAuthUseCase
 import com.example.domain.usecase.getUserIDUseCase
 import com.example.domain.usecase.SendCapsuleCreationNotificationUseCase
+import com.example.domain.usecase.UpdateProfileUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -152,5 +154,17 @@ class ViewModelModule {
   @ViewModelScoped
   fun provideGetCapsuleAssetsUseCase(capsulesRepository: CapsulesRepository): GetCapsuleAssetsUseCase {
     return GetCapsuleAssetsUseCase(capsulesRepository)
+  }
+
+  @Provides
+  @ViewModelScoped
+  fun provideGetProfileUseCase(userRepository: UserRepository): GetProfileUseCase {
+    return GetProfileUseCase(userRepository)
+  }
+
+  @Provides
+  @ViewModelScoped
+  fun provideUpdateProfileUseCase(userRepository: UserRepository): UpdateProfileUseCase {
+    return UpdateProfileUseCase(userRepository)
   }
 }

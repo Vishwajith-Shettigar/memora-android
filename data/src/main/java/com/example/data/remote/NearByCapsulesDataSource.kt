@@ -62,7 +62,6 @@ class NearByCapsulesDataSource @Inject constructor(
             }
           }
         } catch (e: Exception) {
-          Log.e("pokemon", "Error fetching capsules: ${e.message}")
         }
       }
       withContext(Dispatchers.Main) {

@@ -10,12 +10,18 @@ import com.example.timecapsule.routes.Screen
 import com.example.timecapsule.service.CAPSULE_SHARED_NOTIFICATION
 import com.example.timecapsule.ui.CapsuleCreationSaving.CapsuleCreationSavingScreen
 import com.example.timecapsule.ui.CapsuleNameAndDescription.CapsuleNameAndDescription
+import com.example.timecapsule.ui.editprofile.EditProfileScreen
 import com.example.timecapsule.ui.opencapsule.CapsuleLoadingScreen
 import com.example.timecapsule.ui.opencapsule.InstructionsScreen
 import com.example.timecapsule.ui.opencapsule.MapInstructionsScreen
 import com.example.timecapsule.ui.opencapsule.ShowContentScreen
 import com.example.timecapsule.ui.opencapsule.ShowLetterScreen
+import com.example.timecapsule.ui.setting.SettingScreen
+import com.example.timecapsule.ui.setting.options.ChangeLanguageScreen
+import com.example.timecapsule.ui.setting.options.ChangePasswordScreen
+import com.example.timecapsule.ui.setting.options.ReviewScreen
 import com.example.timecapsule.ui.theme.TimeCapsuleTheme
+import com.example.timecapsule.ui.viewprofile.ViewProfileScreen
 import com.mapbox.common.MapboxOptions
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -53,17 +59,26 @@ class MainActivity : ComponentActivity() {
 //        WriteLetterScreen()
 //        OnBoardingNavGraph()
 
-        NavGraph(navController)
+//        NavGraph(navController)
 
-        val capsuleId = intent.getStringExtra("capsuleId")
-        val notificationType = intent.getStringExtra("notificationType")
-        if (notificationType == CAPSULE_SHARED_NOTIFICATION) {
-          capsuleId?.let {
-            LaunchedEffect(it) {
-              navController.navigate(Screen.CapsuleDetails.createRoute(capsuleId))
-            }
-          }
-        }
+//        EditProfileScreen()
+//        ViewProfileScreen()
+//        SettingScreen()
+
+//        ChangePasswordScreen()
+//        ChangeLanguageScreen()
+
+        ReviewScreen()
+
+//        val capsuleId = intent.getStringExtra("capsuleId")
+//        val notificationType = intent.getStringExtra("notificationType")
+//        if (notificationType == CAPSULE_SHARED_NOTIFICATION) {
+//          capsuleId?.let {
+//            LaunchedEffect(it) {
+//              navController.navigate(Screen.CapsuleDetails.createRoute(capsuleId))
+//            }
+//          }
+//        }
 
 //        CapsuleCreationSavingScreen()
 //        InstructionsScreen()
@@ -79,4 +94,3 @@ class MainActivity : ComponentActivity() {
     }
   }
 }
-

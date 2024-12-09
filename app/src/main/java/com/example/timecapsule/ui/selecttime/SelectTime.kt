@@ -141,7 +141,7 @@ fun BackRow(clickedBack: () -> Unit = {}) {
     ) {
       Icon(
         painter = painterResource(id = R.drawable.ic_back_arrow), contentDescription = "back",
-        tint = Color.Gray
+        tint = MaterialTheme.colorScheme.onSurfaceVariant
       )
     }
   }

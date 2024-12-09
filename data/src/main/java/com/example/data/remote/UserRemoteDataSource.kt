@@ -1,8 +1,12 @@
 package com.example.data.remote
 
 import android.util.Log
+import com.example.model.Profile
+import com.example.model.UpdateProfile
 import com.example.model.UserDetails
 import com.example.util.AskDetailsException
+import com.example.util.InValidUserException
+import com.example.util.NoAuthException
 import com.example.util.Response
 import com.example.util.UnspecifiedException
 import com.example.util.UsernameAlreadyExistsException
@@ -11,6 +15,7 @@ import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.messaging.FirebaseMessaging
+import com.google.firebase.storage.FirebaseStorage
 import javax.inject.Inject
 import kotlin.math.ln
 import kotlin.random.Random
@@ -19,7 +24,8 @@ import kotlinx.coroutines.tasks.await
 class UserRemoteDataSource @Inject constructor(
   val firestore: FirebaseFirestore,
   private val firebaseMessaging: FirebaseMessaging,
-  val authRemoteDataSource: AuthRemoteDataSource
+  val authRemoteDataSource: AuthRemoteDataSource,
+  private val storage: FirebaseStorage
 ) {
 
   suspend fun getUserDetails(userId: String): Response<UserDetails> {
@@ -177,6 +183,81 @@ class UserRemoteDataSource @Inject constructor(
       firstNameLowerCase = ""
     )
     return user
+  }
 
+  fun getFileNameFromUrl(fileUrl: String): String {
+    // Decode the URL and extract the file name
+    val decodedUrl = java.net.URLDecoder.decode(fileUrl, "UTF-8")
+    val filePath = decodedUrl.substringBefore("?").substringAfterLast("/")
+    return filePath
+  }
+
+  suspend fun updateProfile(profile: UpdateProfile): Response<Unit> {
+    try {
+      val user = authRemoteDataSource.getAuth() ?: throw NoAuthException()
+
+      var newProfileUrl: String? = null
+      var newCoverUrl: String? = null
+
+      profile.profileImageUri?.let {
+        val storageRef = storage.reference.child("uploads/" + user.uid + "/" + "profileImage/")
+        storageRef.putFile(it).await()
+        newProfileUrl = storageRef.downloadUrl.await().toString()
+      }
+
+      profile.coverImageUri?.let {
+        val storageRef = storage.reference.child("uploads/" + user.uid + "/" + "coverImage/")
+        storageRef.putFile(it).await()
+        newCoverUrl = storageRef.downloadUrl.await().toString()
+      }
+
+      if (newCoverUrl == null)
+        newCoverUrl = profile.oldCoverImageUrl
+
+      if (newProfileUrl == null)
+        newProfileUrl = profile.oldProfileImageUrl
+
+      firestore.collection("users").document(user.uid).update(
+        mapOf(
+          "imageUrl" to newProfileUrl.toString(),
+          "coverImageUrl" to newCoverUrl,
+          "firstName" to profile.firstName,
+          "lastName" to profile.lastName,
+          "aboutMe" to profile.aboutMe
+        )
+      ).await()
+
+      return Response.Success()
+
+    } catch (e: Exception) {
+      return Response.Error(
+        exception = e
+      )
+    }
+  }
+
+  suspend fun getProfile(): Response<Profile> {
+    try {
+      val user = authRemoteDataSource.getAuth() ?: throw NoAuthException()
+
+      val doc = firestore.collection("users").document(user.uid).get().await()
+
+      val profile = Profile(
+        userId = doc.id,
+        username = doc.getString("userName")!!,
+        profileImageUrl = doc.getString("imageUrl")!!,
+        coverImageUrl = doc.getString("coverImageUrl")!!,
+        firstName = doc.getString("firstName")!!,
+        lastName = doc.getString("lastName")!!,
+        aboutMe = doc.getString("aboutMe")!!
+      )
+
+      return Response.Success(data = profile)
+
+    } catch (e: Exception) {
+      return Response.Error(
+        exception = e
+      )
+    }
   }
 }

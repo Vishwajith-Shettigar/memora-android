@@ -142,8 +142,9 @@ abstract class AppModule {
       firestore: FirebaseFirestore,
       firebaseMessaging: FirebaseMessaging,
       remoteDataSource: AuthRemoteDataSource,
+      storage: FirebaseStorage
     ): UserRemoteDataSource {
-      return UserRemoteDataSource(firestore, firebaseMessaging, remoteDataSource)
+      return UserRemoteDataSource(firestore, firebaseMessaging, remoteDataSource,storage)
     }
 
     @Provides

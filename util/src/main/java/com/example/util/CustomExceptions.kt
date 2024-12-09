@@ -7,6 +7,6 @@ class EmailDoesntExistException : Exception("Account doesn't exists.")
 class PasswordDoesntMatchException : Exception("Password Doesn't match.")
 class UnspecifiedException : Exception("Something went wrong, please try again")
 class AskDetailsException : Exception("")
-class NoAuthException : Exception("")
+class NoAuthException : Exception("User doesn't exist.")
 class InValidUserException : Exception("Something went wrong, please try again")
 
