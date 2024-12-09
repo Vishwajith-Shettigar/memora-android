@@ -141,9 +141,9 @@ fun ReviewScreen() {
 
   Column(
     modifier = Modifier
-        .fillMaxSize()
-        .background(bgColor)
-        .padding(top = 10.dp),
+      .fillMaxSize()
+      .background(bgColor)
+      .padding(top = 10.dp),
   ) {
     BackRow()
 
@@ -154,9 +154,9 @@ fun ReviewScreen() {
 
     Column(
       modifier = Modifier
-          .fillMaxSize()
-          .background(bgColor)
-          .padding(16.dp),
+        .fillMaxSize()
+        .background(bgColor)
+        .padding(16.dp),
       horizontalAlignment =
       Alignment.CenterHorizontally,
       verticalArrangement = Arrangement.SpaceAround
@@ -173,13 +173,13 @@ fun ReviewScreen() {
 
       Slider(modifier =
       Modifier
-          .padding(horizontal = 16.dp)
-          .then(
-              if (isTablet)
-                  Modifier.width(400.dp)
-              else
-                  Modifier.fillMaxWidth()
-          ),
+        .padding(horizontal = 16.dp)
+        .then(
+          if (isTablet)
+            Modifier.width(400.dp)
+          else
+            Modifier.fillMaxWidth()
+        ),
         value = sliderPosition,
         onValueChange = { sliderPosition = it },
         valueRange = 0f..0.5f,
@@ -193,16 +193,16 @@ fun ReviewScreen() {
         thumb = {
           Box(
             modifier = Modifier
-                .size(30.dp)
-                .background(
-                    color = Color.Black,
-                    shape = RoundedCornerShape(10.dp)
-                )
-                .border(
-                    5.dp,
-                    brush = Brush.horizontalGradient(listOf(LightBlue, Color.Gray)),
-                    shape = RoundedCornerShape(10.dp)
-                )
+              .size(30.dp)
+              .background(
+                color = Color.Black,
+                shape = RoundedCornerShape(10.dp)
+              )
+              .border(
+                5.dp,
+                brush = Brush.horizontalGradient(listOf(LightBlue, Color.Gray)),
+                shape = RoundedCornerShape(10.dp)
+              )
           )
         }
       )
@@ -212,8 +212,8 @@ fun ReviewScreen() {
           showReviewBottomSheet = true
         },
         modifier = Modifier
-            .fillMaxWidth()
-            .height(48.dp),
+          .fillMaxWidth()
+          .height(48.dp),
         colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
       ) {
         Icon(
@@ -441,8 +441,8 @@ fun ReviewBottomSheet(isTablet: Boolean, onDismiss: () -> Unit) {
     content = {
       Column(
         modifier = Modifier
-            .fillMaxSize()
-            .padding(10.dp)
+          .fillMaxSize()
+          .padding(10.dp)
       ) {
         Text(
           modifier = Modifier.padding(vertical = 10.dp),
@@ -466,10 +466,10 @@ fun ReviewBottomSheet(isTablet: Boolean, onDismiss: () -> Unit) {
 
         TextField(
           modifier = Modifier
-              .fillMaxWidth()
-              .wrapContentHeight()
-              .padding(vertical = 40.dp)
-              .imePadding(),
+            .fillMaxWidth()
+            .wrapContentHeight()
+            .padding(vertical = 40.dp)
+            .imePadding(),
           value = reviewText,
           onValueChange = {
             reviewText = it
@@ -510,15 +510,15 @@ fun ReviewBottomSheet(isTablet: Boolean, onDismiss: () -> Unit) {
           modifier =
 
           if (!isTablet)
-              Modifier
-                  .fillMaxWidth()
-                  .height(100.dp)
-                  .padding(vertical = 20.dp)
+            Modifier
+              .fillMaxWidth()
+              .height(100.dp)
+              .padding(vertical = 20.dp)
           else
-              Modifier
-                  .width(600.dp)
-                  .height(60.dp)
-                  .padding(vertical = 20.dp)
+            Modifier
+              .width(600.dp)
+              .height(60.dp)
+              .padding(vertical = 20.dp)
 
         ) {
 

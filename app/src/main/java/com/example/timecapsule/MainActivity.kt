@@ -20,6 +20,7 @@ import com.example.timecapsule.ui.setting.SettingScreen
 import com.example.timecapsule.ui.setting.options.ChangeLanguageScreen
 import com.example.timecapsule.ui.setting.options.ChangePasswordScreen
 import com.example.timecapsule.ui.setting.options.ReviewScreen
+import com.example.timecapsule.ui.setting.options.UpdateScreen
 import com.example.timecapsule.ui.theme.TimeCapsuleTheme
 import com.example.timecapsule.ui.viewprofile.ViewProfileScreen
 import com.mapbox.common.MapboxOptions
@@ -68,7 +69,9 @@ class MainActivity : ComponentActivity() {
 //        ChangePasswordScreen()
 //        ChangeLanguageScreen()
 
-        ReviewScreen()
+//        ReviewScreen()
+
+        UpdateScreen()
 
 //        val capsuleId = intent.getStringExtra("capsuleId")
 //        val notificationType = intent.getStringExtra("notificationType")
