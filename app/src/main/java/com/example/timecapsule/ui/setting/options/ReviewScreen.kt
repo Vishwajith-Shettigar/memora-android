@@ -207,7 +207,6 @@ fun ReviewScreen() {
         }
       )
 
-
       Button(
         onClick = {
           showReviewBottomSheet = true
@@ -474,6 +473,9 @@ fun ReviewBottomSheet(isTablet: Boolean, onDismiss: () -> Unit) {
           value = reviewText,
           onValueChange = {
             reviewText = it
+          },
+          placeholder = {
+            Text(text = "Write review here.")
           },
           colors = TextFieldDefaults.textFieldColors(
             containerColor = Color.Transparent,
