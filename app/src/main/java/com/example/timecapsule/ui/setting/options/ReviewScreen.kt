@@ -7,14 +7,19 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -22,9 +27,13 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -43,8 +52,12 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.timecapsule.R
 import com.example.timecapsule.ui.selecttime.BackRow
 import com.example.timecapsule.ui.theme.LightBlue
 import com.example.timecapsule.ui.theme.fiveStarColor
@@ -117,6 +130,10 @@ fun ReviewScreen() {
     mutableStateOf(RatingsArtMapper.getRatingColor(sliderPosition))
   }
 
+  var showReviewBottomSheet by remember {
+    mutableStateOf(false)
+  }
+
   LaunchedEffect(sliderPosition) {
     bgColor = RatingsArtMapper.getRatingColor(sliderPosition)
   }
@@ -128,6 +145,12 @@ fun ReviewScreen() {
         .padding(top = 10.dp),
   ) {
     BackRow()
+
+    if (showReviewBottomSheet)
+      ReviewBottomSheet(isTablet = isTablet) {
+        showReviewBottomSheet = false
+      }
+
     Column(
       modifier = Modifier
           .fillMaxSize()
@@ -185,7 +208,9 @@ fun ReviewScreen() {
 
 
       Button(
-        onClick = { },
+        onClick = {
+          showReviewBottomSheet = true
+        },
         modifier = Modifier
             .fillMaxWidth()
             .height(48.dp),
@@ -199,7 +224,7 @@ fun ReviewScreen() {
         Spacer(modifier = Modifier.width(10.dp))
 
         Text(
-          text = "Add a comment",
+          text = "Add a review",
           style = MaterialTheme.typography.labelLarge.copy(
             fontWeight = FontWeight.ExtraBold,
             color = Color.Black,
@@ -398,4 +423,121 @@ fun ThreeStarExpression() {
       style = Stroke(width = 8f, cap = StrokeCap.Round)
     )
   }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ReviewBottomSheet(isTablet: Boolean, onDismiss: () -> Unit) {
+
+  var reviewText by remember {
+    mutableStateOf("")
+  }
+
+  val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+
+  ModalBottomSheet(onDismissRequest = { onDismiss() },
+    sheetState = bottomSheetState,
+    modifier = Modifier.fillMaxHeight(0.75F),
+    content = {
+      Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(10.dp)
+      ) {
+        Text(
+          modifier = Modifier.padding(vertical = 10.dp),
+          text = "Please give a review",
+          style = MaterialTheme.typography.titleLarge.copy(
+            fontSize = 25.sp,
+            fontWeight = FontWeight.Bold
+          ),
+          color = LightBlue
+        )
+
+        Text(
+          text = "Your review will be sent to us through email.",
+          style = MaterialTheme.typography.titleLarge.copy(
+            fontSize = 15.sp,
+            fontWeight = FontWeight.SemiBold,
+            lineHeight = TextUnit(20.0F, TextUnitType.Sp)
+          ),
+          color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+
+        TextField(
+          modifier = Modifier
+              .fillMaxWidth()
+              .wrapContentHeight()
+              .padding(vertical = 40.dp)
+              .imePadding(),
+          value = reviewText,
+          onValueChange = {
+            reviewText = it
+          },
+          colors = TextFieldDefaults.textFieldColors(
+            containerColor = Color.Transparent,
+            unfocusedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
+            focusedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
+            cursorColor = LightBlue,
+            focusedLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
+            unfocusedLabelColor = LightBlue,
+            focusedLeadingIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+            unfocusedLeadingIconColor = LightBlue
+          ),
+          singleLine = false,
+          maxLines = 10,
+          textStyle = MaterialTheme.typography.titleMedium.copy(
+            textAlign = TextAlign.Start
+          ),
+          leadingIcon = {
+            Icon(
+              painter = painterResource(id = com.example.timecapsule.R.drawable.ic_subtitles),
+              contentDescription = ""
+            )
+          },
+        )
+
+        Button(
+          onClick = { /*TODO*/ }, colors =
+          ButtonDefaults.buttonColors(
+            containerColor = LightBlue
+          ),
+          contentPadding = PaddingValues(vertical = 15.dp),
+          shape = RoundedCornerShape(10.dp),
+          modifier =
+
+          if (!isTablet)
+              Modifier
+                  .fillMaxWidth()
+                  .height(100.dp)
+                  .padding(vertical = 20.dp)
+          else
+              Modifier
+                  .width(600.dp)
+                  .height(60.dp)
+                  .padding(vertical = 20.dp)
+
+        ) {
+
+          Row(
+            modifier = Modifier.fillMaxSize(), horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+          ) {
+            Text(
+              modifier = Modifier.padding(horizontal = 10.dp),
+              text = "Send",
+              style = MaterialTheme.typography.titleLarge.copy(
+                fontSize = 19.sp,
+                fontWeight = FontWeight.Bold
+              ),
+              color = MaterialTheme.colorScheme.primary
+            )
+            Icon(
+              painter = painterResource(id = com.example.timecapsule.R.drawable.ic_send),
+              contentDescription = "send review"
+            )
+          }
+        }
+      }
+    })
 }
