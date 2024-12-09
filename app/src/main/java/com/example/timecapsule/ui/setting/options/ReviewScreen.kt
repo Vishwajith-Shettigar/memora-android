@@ -75,17 +75,18 @@ object RatingsArtMapper {
    * Returns a composable function that represents the rating expression (stars) for a given rating.
    *
    * This function maps the rating value to a corresponding composable expression:
-   * - 0.0f to 0.19f: ZeroStarExpression (No stars)
+   * - 0.0f to 0.19999f: ZeroStarExpression (No stars)
    * - 0.2f to 0.4f: ThreeStarExpression (Three stars)
-   * - 0.4f and above: FiveStarExpression (Five stars)
+   * - 0.41f and above: FiveStarExpression (Five stars)
    *
    * @param rating The rating value used to determine the expression.
    * @return A composable function representing the rating expression (ZeroStar, ThreeStar, or FiveStar).
    */
   @Composable
   fun getRatingExpression(rating: Float): @Composable () -> Unit {
+    Log.e("pokemon", rating.toString())
     return when (rating) {
-      in 0.0f..0.19f -> {
+      in 0.0f..0.199999f -> {
         { ZeroStarExpression() }
       }
 
@@ -103,7 +104,7 @@ object RatingsArtMapper {
    * Returns the color associated with the given rating.
    *
    * This function maps the rating value to a corresponding color:
-   * - 0.0f to 0.19f: `zeroStarColor` (representing no stars)
+   * - 0.0f to 0.19999f: `zeroStarColor` (representing no stars)
    * - 0.2f to 0.4f: `threeStarColor` (representing three stars)
    * - 0.4f and above: `fiveStarColor` (representing five stars)
    *
@@ -112,7 +113,7 @@ object RatingsArtMapper {
    */
   fun getRatingColor(rating: Float): Color {
     return when (rating) {
-      in 0.0f..0.19f -> zeroStarColor
+      in 0.0f..0.1999f -> zeroStarColor
       in 0.2f..0.4f -> threeStarColor
       else -> fiveStarColor
     }
@@ -122,7 +123,7 @@ object RatingsArtMapper {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ReviewScreen() {
-  var sliderPosition by remember { mutableStateOf(0.0f) }
+  var sliderPosition by remember { mutableStateOf(0.0F) }
 
   val isTablet = DeviceType.isTablet()
 
