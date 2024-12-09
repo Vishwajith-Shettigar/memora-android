@@ -71,7 +71,6 @@ object RatingsArtMapper {
    */
   @Composable
   fun getRatingExpression(rating: Float): @Composable () -> Unit {
-    Log.e("pokemon", rating.toString())
     return when (rating) {
       in 0.0f..0.19f -> {
         { ZeroStarExpression() }
