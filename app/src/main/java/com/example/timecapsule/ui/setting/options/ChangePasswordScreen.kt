@@ -32,112 +32,112 @@ import com.example.timecapsule.ui.util.DeviceType
 
 
 @Composable
-fun ChangePasswordScreen() {
+fun ChangePasswordScreen(onBackClick: () -> Unit) {
 
   val isTablet = DeviceType.isTablet()
 
-  Scaffold { innerPadding ->
+  Column(
+    modifier = Modifier
+      .fillMaxSize()
+      .background(MaterialTheme.colorScheme.primary)
+      .padding(top = 20.dp),
+    verticalArrangement = Arrangement.Top
+  ) {
+    BackRow() {
+      onBackClick()
+    }
     Column(
       modifier = Modifier
-          .fillMaxSize()
-          .background(MaterialTheme.colorScheme.primary)
-          .padding(innerPadding)
-          .padding(top = 20.dp),
-      verticalArrangement = Arrangement.Top
+        .padding(10.dp)
+        .fillMaxWidth()
+        .fillMaxHeight(),
+      horizontalAlignment =
+      if (isTablet)
+        Alignment.CenterHorizontally
+      else
+        Alignment.Start
     ) {
-      BackRow()
-      Column(
-        modifier = Modifier
-            .padding(10.dp)
+      Text(
+        modifier = Modifier.padding(vertical = 10.dp),
+        text = "Reset Password",
+        style = MaterialTheme.typography.titleLarge.copy(
+          fontSize = 30.sp,
+          fontWeight = FontWeight.ExtraBold
+        ),
+        color = LightBlue
+      )
+      Text(
+        text = "Your new password must be different from previous used password.",
+        style = MaterialTheme.typography.titleLarge.copy(
+          fontSize = 15.sp,
+          fontWeight = FontWeight.SemiBold,
+          lineHeight = TextUnit(20.0F, TextUnitType.Sp)
+        ),
+        color = MaterialTheme.colorScheme.onSurfaceVariant
+      )
+
+      CustomTextField(
+        modifier = Modifier.padding(vertical = 20.dp),
+        value = "",
+        hint = "Enter current password",
+        icon = R.drawable.ic_password1,
+        isTablet = isTablet,
+        trailingIcon = R.drawable.ic_eye,
+        onTrailingIconClicked = {},
+        onValueChanged = {}
+      )
+
+      CustomTextField(
+        value = "",
+        hint = "Enter new password",
+        icon = R.drawable.ic_password1,
+        isTablet = isTablet,
+        trailingIcon = R.drawable.ic_eye,
+        onTrailingIconClicked = {},
+        onValueChanged = {}
+      )
+
+      CustomTextField(
+        value = "",
+        hint = "Confirm new password",
+        icon = R.drawable.ic_cnpassword,
+        isTablet = isTablet,
+        trailingIcon = R.drawable.ic_eye,
+        onTrailingIconClicked = {},
+        onValueChanged = {}
+      )
+
+      Button(
+        onClick = { /*TODO*/ }, colors =
+        ButtonDefaults.buttonColors(
+          containerColor = LightBlue
+        ),
+        contentPadding = PaddingValues(vertical = 15.dp),
+        shape = RoundedCornerShape(10.dp),
+        modifier =
+
+        if (!isTablet)
+          Modifier
             .fillMaxWidth()
-            .fillMaxHeight(),
-        horizontalAlignment =
-        if (isTablet)
-          Alignment.CenterHorizontally
+            .wrapContentHeight()
+            .padding(vertical = 20.dp)
         else
-          Alignment.Start
+          Modifier
+            .width(600.dp)
+            .wrapContentHeight()
+            .padding(vertical = 20.dp)
+
       ) {
         Text(
-          modifier = Modifier.padding(vertical = 10.dp),
           text = "Reset Password",
           style = MaterialTheme.typography.titleLarge.copy(
-            fontSize = 30.sp,
-            fontWeight = FontWeight.ExtraBold
+            fontSize = 19.sp,
+            fontWeight = FontWeight.Bold
           ),
-          color = LightBlue
+          color = MaterialTheme.colorScheme.primary
         )
-        Text(
-          text = "Your new password must be different from previous used password.",
-          style = MaterialTheme.typography.titleLarge.copy(
-            fontSize = 15.sp,
-            fontWeight = FontWeight.SemiBold,
-            lineHeight = TextUnit(20.0F, TextUnitType.Sp)
-          ),
-          color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-
-        CustomTextField(
-          modifier = Modifier.padding(vertical = 20.dp),
-          value = "",
-          hint = "Enter current password",
-          icon = R.drawable.ic_password1,
-          isTablet = isTablet,
-          trailingIcon = R.drawable.ic_eye,
-          onTrailingIconClicked = {},
-          onValueChanged = {}
-        )
-
-        CustomTextField(
-          value = "",
-          hint = "Enter new password",
-          icon = R.drawable.ic_password1,
-          isTablet = isTablet,
-          trailingIcon = R.drawable.ic_eye,
-          onTrailingIconClicked = {},
-          onValueChanged = {}
-        )
-
-        CustomTextField(
-          value = "",
-          hint = "Confirm new password",
-          icon = R.drawable.ic_cnpassword,
-          isTablet = isTablet,
-          trailingIcon = R.drawable.ic_eye,
-          onTrailingIconClicked = {},
-          onValueChanged = {}
-        )
-
-        Button(
-          onClick = { /*TODO*/ }, colors =
-          ButtonDefaults.buttonColors(
-            containerColor = LightBlue
-          ),
-          contentPadding = PaddingValues(vertical = 15.dp),
-          shape = RoundedCornerShape(10.dp),
-          modifier =
-
-          if (!isTablet)
-              Modifier
-                  .fillMaxWidth()
-                  .wrapContentHeight()
-                  .padding(vertical = 20.dp)
-          else
-              Modifier
-                  .width(600.dp)
-                  .wrapContentHeight()
-                  .padding(vertical = 20.dp)
-
-        ) {
-          Text(
-            text = "Reset Password",
-            style = MaterialTheme.typography.titleLarge.copy(
-              fontSize = 19.sp,
-              fontWeight = FontWeight.Bold
-            ),
-            color = MaterialTheme.colorScheme.primary
-          )
-        }
       }
     }
   }
 }
+

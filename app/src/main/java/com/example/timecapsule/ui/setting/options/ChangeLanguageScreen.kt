@@ -40,65 +40,64 @@ import com.example.timecapsule.ui.theme.LightBlue
 import com.example.timecapsule.ui.util.DeviceType
 
 @Composable
-fun ChangeLanguageScreen() {
+fun ChangeLanguageScreen(onBackClick: () -> Unit) {
   val isTablet = DeviceType.isTablet()
 
-  Scaffold { innerPadding ->
+  Column(
+    modifier = Modifier
+        .fillMaxSize()
+        .background(MaterialTheme.colorScheme.primary)
+        .padding(top = 20.dp),
+    verticalArrangement = Arrangement.Top
+  ) {
+    BackRow() {
+      onBackClick()
+    }
     Column(
       modifier = Modifier
-          .fillMaxSize()
-          .background(MaterialTheme.colorScheme.primary)
-          .padding(innerPadding)
-          .padding(top = 20.dp),
-      verticalArrangement = Arrangement.Top
+          .fillMaxWidth()
+          .fillMaxHeight()
+          .padding(10.dp),
+      horizontalAlignment =
+      if (isTablet)
+        Alignment.CenterHorizontally
+      else
+        Alignment.Start
     ) {
-      BackRow()
-      Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .fillMaxHeight()
-            .padding(10.dp),
-        horizontalAlignment =
-        if (isTablet)
-          Alignment.CenterHorizontally
-        else
-          Alignment.Start
+      Text(
+        modifier = Modifier.padding(top = 10.dp, bottom = 10.dp),
+        text = "Choose your language",
+        style = MaterialTheme.typography.titleLarge.copy(
+          fontSize = 30.sp,
+          fontWeight = FontWeight.ExtraBold
+        ),
+        color = LightBlue
+      )
+      Text(
+        modifier = Modifier.padding(bottom = 30.dp),
+        text = "You could choose any of the available languages below.",
+        style = MaterialTheme.typography.titleLarge.copy(
+          fontSize = 15.sp,
+          fontWeight = FontWeight.SemiBold,
+          lineHeight = TextUnit(20.0F, TextUnitType.Sp)
+        ),
+        color = MaterialTheme.colorScheme.onSurfaceVariant
+      )
+
+      LanguageOption(
+        language = "English",
+        flagAssetPath = "flags/english_flag.png",
+        selected = true,
+        isTablet = isTablet
       ) {
-        Text(
-          modifier = Modifier.padding(top = 10.dp, bottom = 10.dp),
-          text = "Choose your language",
-          style = MaterialTheme.typography.titleLarge.copy(
-            fontSize = 30.sp,
-            fontWeight = FontWeight.ExtraBold
-          ),
-          color = LightBlue
-        )
-        Text(
-          modifier = Modifier.padding(bottom = 30.dp),
-          text = "You could choose any of the available languages below.",
-          style = MaterialTheme.typography.titleLarge.copy(
-            fontSize = 15.sp,
-            fontWeight = FontWeight.SemiBold,
-            lineHeight = TextUnit(20.0F, TextUnitType.Sp)
-          ),
-          color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
+      }
 
-        LanguageOption(
-          language = "English",
-          flagAssetPath = "flags/english_flag.png",
-          selected = true,
-          isTablet = isTablet
-        ) {
-        }
-
-        LanguageOption(
-          language = "English",
-          flagAssetPath = "flags/english_flag.png",
-          selected = false,
-          isTablet = isTablet
-        ) {
-        }
+      LanguageOption(
+        language = "English",
+        flagAssetPath = "flags/english_flag.png",
+        selected = false,
+        isTablet = isTablet
+      ) {
       }
     }
   }

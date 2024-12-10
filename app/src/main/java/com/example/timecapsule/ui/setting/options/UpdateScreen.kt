@@ -35,118 +35,117 @@ val featureDescriptions = listOf(
 )
 
 @Composable
-fun UpdateScreen() {
+fun UpdateScreen(onBackClick: () -> Unit) {
 
   val isTablet = DeviceType.isTablet()
 
-  Scaffold { innerPadding ->
-    Column(
-      modifier = Modifier
+  Column(
+    modifier = Modifier
         .fillMaxSize()
         .background(MaterialTheme.colorScheme.primary)
-        .padding(innerPadding)
         .padding(top = 20.dp),
-      verticalArrangement = Arrangement.Top
-    ) {
-      BackRow()
-      Column(
-        modifier = Modifier
+    verticalArrangement = Arrangement.Top
+  ) {
+    BackRow() {
+      onBackClick()
+    }
+    Column(
+      modifier = Modifier
           .fillMaxSize()
           .padding(20.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-      ) {
-        Text(
-          modifier = Modifier.padding(vertical = 20.dp),
-          text = "Your app is up to date.",
-          style = MaterialTheme.typography.titleLarge.copy(
-            fontSize = 25.sp,
-            fontWeight = FontWeight.ExtraBold
-          ),
-          color = LightBlue
-        )
+      horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+      Text(
+        modifier = Modifier.padding(vertical = 20.dp),
+        text = "Your app is up to date.",
+        style = MaterialTheme.typography.titleLarge.copy(
+          fontSize = 25.sp,
+          fontWeight = FontWeight.ExtraBold
+        ),
+        color = LightBlue
+      )
 
-        Column(
-          modifier = Modifier
+      Column(
+        modifier = Modifier
             .then(
-              if (isTablet)
-                Modifier.width(600.dp)
-              else
-                Modifier.fillMaxWidth()
+                if (isTablet)
+                    Modifier.width(600.dp)
+                else
+                    Modifier.fillMaxWidth()
             )
             .fillMaxWidth()
             .wrapContentHeight()
             .clip(RoundedCornerShape(20.dp))
             .background(MaterialTheme.colorScheme.primaryContainer)
             .padding(10.dp)
-        ) {
-          Text(
-            text = "Update Information:",
-            style = MaterialTheme.typography.titleLarge.copy(
-              fontSize = 15.sp,
-              fontWeight = FontWeight.Bold,
-              color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
+      ) {
+        Text(
+          text = "Update Information:",
+          style = MaterialTheme.typography.titleLarge.copy(
+            fontSize = 15.sp,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
           )
-          Spacer(modifier = Modifier.height(10.dp))
-          Text(
-            text = "version: v1.0",
-            style = MaterialTheme.typography.titleLarge.copy(
-              fontSize = 15.sp,
-              color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
+        )
+        Spacer(modifier = Modifier.height(10.dp))
+        Text(
+          text = "version: v1.0",
+          style = MaterialTheme.typography.titleLarge.copy(
+            fontSize = 15.sp,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
           )
+        )
 
-          Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(10.dp))
 
+        Text(
+          text = "Whats new:",
+          style = MaterialTheme.typography.titleLarge.copy(
+            fontSize = 15.sp,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+          )
+        )
+        featureDescriptions.forEach {
           Text(
-            text = "Whats new:",
+            text = it,
             style = MaterialTheme.typography.titleLarge.copy(
               fontSize = 15.sp,
-              fontWeight = FontWeight.Bold,
               color = MaterialTheme.colorScheme.onSurfaceVariant
             )
           )
-          featureDescriptions.forEach {
-            Text(
-              text = it,
-              style = MaterialTheme.typography.titleLarge.copy(
-                fontSize = 15.sp,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-              )
-            )
-          }
         }
+      }
 
-        Button(
-          onClick = { /*TODO*/ }, colors =
-          ButtonDefaults.buttonColors(
-            containerColor = LightBlue
+      Button(
+        onClick = { /*TODO*/ }, colors =
+        ButtonDefaults.buttonColors(
+          containerColor = LightBlue
+        ),
+        contentPadding = PaddingValues(vertical = 15.dp),
+        shape = RoundedCornerShape(10.dp),
+        modifier =
+
+        if (!isTablet)
+            Modifier
+                .fillMaxWidth()
+                .height(100.dp)
+                .padding(vertical = 20.dp)
+        else
+            Modifier
+                .width(600.dp)
+                .height(100.dp)
+                .padding(vertical = 20.dp)
+      ) {
+        Text(
+          modifier = Modifier.padding(horizontal = 10.dp),
+          text = "Update",
+          style = MaterialTheme.typography.titleLarge.copy(
+            fontSize = 19.sp,
+            fontWeight = FontWeight.Bold
           ),
-          contentPadding = PaddingValues(vertical = 15.dp),
-          shape = RoundedCornerShape(10.dp),
-          modifier =
-
-          if (!isTablet)
-            Modifier
-              .fillMaxWidth()
-              .height(100.dp)
-              .padding(vertical = 20.dp)
-          else
-            Modifier
-              .width(600.dp)
-              .height(100.dp)
-              .padding(vertical = 20.dp)
-        ) {
-          Text(
-            modifier = Modifier.padding(horizontal = 10.dp),
-            text = "Update",
-            style = MaterialTheme.typography.titleLarge.copy(
-              fontSize = 19.sp,
-              fontWeight = FontWeight.Bold
-            ),
-            color = MaterialTheme.colorScheme.primary
-          )
-        }
+          color = MaterialTheme.colorScheme.primary
+        )
       }
     }
   }

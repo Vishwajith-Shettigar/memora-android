@@ -19,8 +19,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -42,7 +40,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
@@ -57,7 +54,6 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.timecapsule.R
 import com.example.timecapsule.ui.selecttime.BackRow
 import com.example.timecapsule.ui.theme.LightBlue
 import com.example.timecapsule.ui.theme.fiveStarColor
@@ -122,7 +118,7 @@ object RatingsArtMapper {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ReviewScreen() {
+fun RateUsScreen(onBackClick:()->Unit) {
   var sliderPosition by remember { mutableStateOf(0.0F) }
 
   val isTablet = DeviceType.isTablet()
@@ -145,7 +141,9 @@ fun ReviewScreen() {
       .background(bgColor)
       .padding(top = 10.dp),
   ) {
-    BackRow()
+    BackRow(){
+      onBackClick()
+    }
 
     if (showReviewBottomSheet)
       ReviewBottomSheet(isTablet = isTablet) {

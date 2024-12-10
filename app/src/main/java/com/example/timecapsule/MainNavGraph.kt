@@ -1,13 +1,10 @@
 package com.example.timecapsule
 
-import android.net.Uri
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.windowInsetsPadding
@@ -17,23 +14,25 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.composable
 import com.example.timecapsule.routes.Screen
 import com.example.timecapsule.ui.capsulelist.CapsuleCardListScreen
-import com.example.timecapsule.ui.findcapsule.FindCapsuleScreenV1
 import com.example.timecapsule.ui.notification.NotificationScreen
 import com.example.timecapsule.ui.profile.ProfileScreen
 import androidx.compose.material3.*
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.navigation
 import com.example.model.Profile
 import com.example.timecapsule.ui.capsuledetails.CapsuleDetailsScreen
 import com.example.timecapsule.ui.nearbycapsules.NearbyCapsulesScreen
+import com.example.timecapsule.ui.setting.SettingScreen
+import com.example.timecapsule.ui.setting.options.ChangeLanguageScreen
+import com.example.timecapsule.ui.setting.options.ChangePasswordScreen
+import com.example.timecapsule.ui.setting.options.ContactUsScreen
+import com.example.timecapsule.ui.setting.options.RateUsScreen
+import com.example.timecapsule.ui.setting.options.UpdateScreen
 import com.example.timecapsule.ui.viewprofile.ViewProfileScreen
 import com.example.timecapsule.viewmodel.NotificatioViewModel
 
@@ -95,8 +94,8 @@ fun BottomNavigationBar(navController: NavController) {
   BottomNavigation(
     backgroundColor = MaterialTheme.colorScheme.primary,
     modifier = Modifier
-        .windowInsetsPadding(WindowInsets.navigationBars.only(WindowInsetsSides.Bottom))
-        .background(MaterialTheme.colorScheme.primary)
+      .windowInsetsPadding(WindowInsets.navigationBars.only(WindowInsetsSides.Bottom))
+      .background(MaterialTheme.colorScheme.primary)
   ) {
     val currentRoute = navController.currentDestination?.route
     items.forEach { item ->
@@ -160,7 +159,7 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
       }
     }
     composable(Screen.Profile.route) {
-      ProfileScreen() { profile ->
+      ProfileScreen(onViewProfileClick = { profile ->
         navController.navigate(
           Screen.ViewProfile.createRoute(
             username = profile.username,
@@ -171,7 +170,16 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
             coverImageUrl = profile.coverImageUrl
           )
         )
-      }
+      },
+        onSettingClick = {
+          navController.navigate(Screen.Setting.route)
+        },
+        onPrivacyClicked = {
+          navController.navigate(Screen.Privacy.route)
+        },
+        onContactUsClicked = {
+          navController.navigate(Screen.ContactUs.route)
+        })
     }
 
     composable(Screen.ViewProfile.route) { backStackEntry ->
@@ -185,6 +193,57 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
         coverImageUrl = (backStackEntry.arguments?.getString("coverImageUrl") ?: "")
       )
       ViewProfileScreen(profile)
+    }
+
+    composable(Screen.Setting.route) { backStackEntry ->
+      SettingScreen(onBackClick = {
+        navController.popBackStack()
+      },
+        onChangePasswordClicked = {
+          navController.navigate(Screen.ChangePasswordScreen.route)
+        },
+        onChangeLanguageClicked = {
+          navController.navigate(Screen.ChangeLanguageScreen.route)
+        },
+        onRateAppClicked = {
+          navController.navigate(Screen.RateAppScreen.route)
+        }, onUpdatesClicked = {
+          navController.navigate(Screen.UpdatesScreen.route)
+        })
+    }
+
+    composable(Screen.Privacy.route) { backStackEntry ->
+
+    }
+
+
+    composable(Screen.ContactUs.route) { backStackEntry ->
+      ContactUsScreen {
+        navController.popBackStack()
+      }
+    }
+
+    composable(Screen.ChangePasswordScreen.route) { backStackEntry ->
+      ChangePasswordScreen() {
+        navController.popBackStack()
+      }
+    }
+
+    composable(Screen.ChangeLanguageScreen.route) { backStackEntry ->
+      ChangeLanguageScreen() {
+        navController.popBackStack()
+      }
+    }
+
+    composable(Screen.RateAppScreen.route) { backStackEntry ->
+      RateUsScreen() {
+        navController.popBackStack()
+      }
+    }
+    composable(Screen.UpdatesScreen.route) { backStackEntry ->
+      UpdateScreen() {
+        navController.popBackStack()
+      }
     }
 
     // Capsule Details Screen (inside Main flow)

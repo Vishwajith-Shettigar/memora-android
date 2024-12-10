@@ -32,113 +32,124 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.timecapsule.ui.selecttime.BackRow
 import com.example.timecapsule.ui.theme.LightBlue
 import com.example.timecapsule.ui.util.DeviceType
 
-@Preview
+
 @Composable
-fun SettingScreen() {
+fun SettingScreen(
+  onBackClick: () -> Unit, onChangePasswordClicked: () -> Unit,
+  onChangeLanguageClicked: () -> Unit,
+  onRateAppClicked: () -> Unit, onUpdatesClicked: () -> Unit
+) {
 
   val context = LocalContext.current
 
   val isTablet = DeviceType.isTablet()
 
-  Scaffold() { innerPadding ->
-    Box(
+  Column(
+    modifier = Modifier
+      .fillMaxSize()
+      .background(MaterialTheme.colorScheme.primary),
+    horizontalAlignment = Alignment.CenterHorizontally
+  ) {
+    BackRow() {
+      onBackClick()
+    }
+
+    LazyColumn(
       modifier = Modifier
-        .fillMaxSize()
+        .fillMaxHeight()
+        .then(
+          if (isTablet)
+            Modifier.width(600.dp)
+          else
+            Modifier.fillMaxWidth()
+        )
+        .padding(top = 10.dp)
         .background(MaterialTheme.colorScheme.primary)
-        .padding(innerPadding)
+        .background(Color.Transparent)
     ) {
-      LazyColumn(
-        modifier = Modifier
-          .fillMaxHeight()
-          .then(
-            if (isTablet)
-              Modifier.width(600.dp)
-            else
-              Modifier.fillMaxWidth()
-          )
-          .padding(top = 30.dp)
-          .background(MaterialTheme.colorScheme.primary)
-          .align(Alignment.TopCenter)
-          .background(Color.Transparent)
-      ) {
-        item {
-          Row(
-            modifier = Modifier
-              .fillMaxWidth()
-              .padding(start = 20.dp, end = 20.dp)
-              .height(60.dp),
-            horizontalArrangement = Arrangement.Start,
-            verticalAlignment = Alignment.CenterVertically
-          ) {
-            Text(
-              text = "Settings",
-              style = MaterialTheme.typography.titleMedium.copy(
-                fontSize = 30.sp,
-                color = LightBlue,
-                fontWeight = FontWeight.SemiBold
-              )
+      item {
+        Row(
+          modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 20.dp, end = 20.dp)
+            .wrapContentHeight(),
+          horizontalArrangement = Arrangement.Start,
+          verticalAlignment = Alignment.CenterVertically
+        ) {
+          Text(
+            text = "Settings",
+            style = MaterialTheme.typography.titleMedium.copy(
+              fontSize = 30.sp,
+              color = LightBlue,
+              fontWeight = FontWeight.SemiBold
             )
-          }
+          )
         }
-        item {
-          Column(
-            modifier = Modifier
-              .fillMaxWidth()
-              .wrapContentHeight()
-              .padding(top = 40.dp, bottom = 10.dp, start = 20.dp, end = 20.dp)
+      }
+      item {
+        Column(
+          modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight()
+            .padding(top = 40.dp, bottom = 10.dp, start = 20.dp, end = 20.dp)
+        ) {
+          SettingOptionsTab(settingTitle = "Change Password") {
+            onChangePasswordClicked()
+          }
+
+          com.example.timecapsule.ui.setting.Divider(color = Color.Gray)
+
+          SettingOptionsTab(settingTitle = "Change Language") {
+            onChangeLanguageClicked()
+          }
+
+          com.example.timecapsule.ui.setting.Divider(color = Color.Gray)
+
+          SettingOptionsTab(settingTitle = "Rate our app") {
+            onRateAppClicked()
+          }
+
+          com.example.timecapsule.ui.setting.Divider(color = Color.Gray)
+
+          SettingOptionsTab(settingTitle = "Updates") {
+            onUpdatesClicked()
+          }
+
+          com.example.timecapsule.ui.setting.Divider(color = Color.Gray)
+        }
+      }
+
+      item {
+        Column(
+          modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight()
+            .padding(top = 40.dp, bottom = 10.dp, start = 10.dp, end = 10.dp)
+            .clip(RoundedCornerShape(20.dp))
+            .background(LightBlue.copy(alpha = 0.4F))
+            .padding(start = 10.dp, end = 10.dp),
+
           ) {
-            SettingOptionsTab(settingTitle = "Change Password") {
-            }
-
-            com.example.timecapsule.ui.setting.Divider(color = Color.Gray)
-
-            SettingOptionsTab(settingTitle = "Change Language") {
-            }
-
-            com.example.timecapsule.ui.setting.Divider(color = Color.Gray)
-
-            SettingOptionsTab(settingTitle = "Rate our app") {
-            }
-
-            com.example.timecapsule.ui.setting.Divider(color = Color.Gray)
-
-            SettingOptionsTab(settingTitle = "Updates") {
-            }
-
-            com.example.timecapsule.ui.setting.Divider(color = Color.Gray)
+          SettingOptionsTabWithSwitch(settingTitle = "Receive Notifications", isChecked = true) {
           }
-        }
 
-        item {
-          Column(
-            modifier = Modifier
-              .fillMaxWidth()
-              .wrapContentHeight()
-              .padding(top = 40.dp, bottom = 10.dp, start = 10.dp, end = 10.dp)
-              .clip(RoundedCornerShape(20.dp))
-              .background(LightBlue.copy(alpha = 0.4F))
-              .padding(start = 10.dp, end = 10.dp),
+          com.example.timecapsule.ui.setting.Divider(color = Color.Black)
 
-            ) {
-            SettingOptionsTabWithSwitch(settingTitle = "Receive Notifications", isChecked = true) {
-            }
-
-            com.example.timecapsule.ui.setting.Divider(color = Color.Black)
-
-            SettingOptionsTabWithSwitch(
-              settingTitle = "Allow me in others' capsules.",
-              isChecked = false
-            ) {
-            }
+          SettingOptionsTabWithSwitch(
+            settingTitle = "Allow me in others' capsules.",
+            isChecked = false
+          ) {
           }
         }
       }
     }
   }
 }
+
 
 @Composable
 fun Divider(color: Color) {
