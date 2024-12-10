@@ -31,7 +31,10 @@ import com.example.timecapsule.ui.setting.SettingScreen
 import com.example.timecapsule.ui.setting.options.ChangeLanguageScreen
 import com.example.timecapsule.ui.setting.options.ChangePasswordScreen
 import com.example.timecapsule.ui.setting.options.ContactUsScreen
+import com.example.timecapsule.ui.setting.options.PrivacyPolicyScreen
+import com.example.timecapsule.ui.setting.options.PrivacyScreen
 import com.example.timecapsule.ui.setting.options.RateUsScreen
+import com.example.timecapsule.ui.setting.options.TermsAndServiceScreen
 import com.example.timecapsule.ui.setting.options.UpdateScreen
 import com.example.timecapsule.ui.viewprofile.ViewProfileScreen
 import com.example.timecapsule.viewmodel.NotificatioViewModel
@@ -94,8 +97,8 @@ fun BottomNavigationBar(navController: NavController) {
   BottomNavigation(
     backgroundColor = MaterialTheme.colorScheme.primary,
     modifier = Modifier
-      .windowInsetsPadding(WindowInsets.navigationBars.only(WindowInsetsSides.Bottom))
-      .background(MaterialTheme.colorScheme.primary)
+        .windowInsetsPadding(WindowInsets.navigationBars.only(WindowInsetsSides.Bottom))
+        .background(MaterialTheme.colorScheme.primary)
   ) {
     val currentRoute = navController.currentDestination?.route
     items.forEach { item ->
@@ -219,6 +222,24 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
 
     composable(Screen.ContactUs.route) { backStackEntry ->
       ContactUsScreen {
+        navController.popBackStack()
+      }
+    }
+    composable(Screen.Privacy.route) { backStackEntry ->
+      PrivacyScreen(
+        onBackClick = { navController.popBackStack() },
+        onPrivacyPolicyClicked = { navController.navigate(Screen.PrivacyPolicy.route) },
+        onTermsAndServicesClicked = { navController.navigate(Screen.TermsAndServices.route) })
+    }
+
+    composable(Screen.PrivacyPolicy.route) { backStackEntry ->
+      PrivacyPolicyScreen() {
+        navController.popBackStack()
+      }
+    }
+
+    composable(Screen.TermsAndServices.route) { backStackEntry ->
+      TermsAndServiceScreen() {
         navController.popBackStack()
       }
     }
