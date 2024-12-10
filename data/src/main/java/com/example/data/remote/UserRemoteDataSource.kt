@@ -11,6 +11,7 @@ import com.example.util.Response
 import com.example.util.UnspecifiedException
 import com.example.util.UsernameAlreadyExistsException
 import com.example.util.defaultPictures
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
@@ -23,6 +24,7 @@ import kotlinx.coroutines.tasks.await
 
 class UserRemoteDataSource @Inject constructor(
   val firestore: FirebaseFirestore,
+  val firebaseAuth: FirebaseAuth,
   private val firebaseMessaging: FirebaseMessaging,
   val authRemoteDataSource: AuthRemoteDataSource,
   private val storage: FirebaseStorage
@@ -258,6 +260,31 @@ class UserRemoteDataSource @Inject constructor(
       return Response.Error(
         exception = e
       )
+    }
+  }
+
+  fun getUserEmail(): Response<String> {
+    return try {
+      val auth = authRemoteDataSource.getAuth()
+      if (auth != null && auth.isEmailVerified) {
+        Response.Success(auth.email)
+      } else
+        throw NoAuthException()
+
+    } catch (e: Exception) {
+      Response.Error(exception = e)
+    }
+  }
+
+  suspend fun sendResetPasswordEmail(): Response<Unit> {
+    return try {
+      val auth = authRemoteDataSource.getAuth() ?: throw NoAuthException()
+
+      firebaseAuth.sendPasswordResetEmail(auth.email!!).await()
+      Response.Success()
+
+    } catch (e: Exception) {
+      Response.Error(exception = e)
     }
   }
 }

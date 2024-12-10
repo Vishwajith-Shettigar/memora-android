@@ -14,7 +14,9 @@ import com.example.domain.usecase.GetCapsuleDetailsUseCase
 import com.example.domain.usecase.GetCapsuleListUseCase
 import com.example.domain.usecase.GetNotificationUseCase
 import com.example.domain.usecase.GetProfileUseCase
+import com.example.domain.usecase.GetResetPasswordEmailUseCase
 import com.example.domain.usecase.GetUserDetailsUseCase
+import com.example.domain.usecase.GetUserEmailUseCase
 import com.example.domain.usecase.OnBoardingDataUseCase
 import com.example.domain.usecase.OpenCapsuleScreenCheckPointUseCase
 import com.example.domain.usecase.SaveUserDetailsUseCase
@@ -166,5 +168,17 @@ class ViewModelModule {
   @ViewModelScoped
   fun provideUpdateProfileUseCase(userRepository: UserRepository): UpdateProfileUseCase {
     return UpdateProfileUseCase(userRepository)
+  }
+
+  @Provides
+  @ViewModelScoped
+  fun provideGetUserEmailUseCase(userRepository: UserRepository): GetUserEmailUseCase {
+    return GetUserEmailUseCase(userRepository)
+  }
+
+  @Provides
+  @ViewModelScoped
+  fun provideGetResetPasswordEmailUseCase(userRepository: UserRepository): GetResetPasswordEmailUseCase {
+    return GetResetPasswordEmailUseCase(userRepository)
   }
 }

@@ -140,11 +140,18 @@ abstract class AppModule {
     @Singleton
     fun provideUserRemoteDataSource(
       firestore: FirebaseFirestore,
+      firebaseAuth: FirebaseAuth,
       firebaseMessaging: FirebaseMessaging,
       remoteDataSource: AuthRemoteDataSource,
       storage: FirebaseStorage
     ): UserRemoteDataSource {
-      return UserRemoteDataSource(firestore, firebaseMessaging, remoteDataSource,storage)
+      return UserRemoteDataSource(
+        firestore,
+        firebaseAuth,
+        firebaseMessaging,
+        remoteDataSource,
+        storage
+      )
     }
 
     @Provides

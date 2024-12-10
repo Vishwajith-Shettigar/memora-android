@@ -68,6 +68,8 @@ fun CustomTextField(
   icon: Int,
   modifier: Modifier = Modifier,
   trailingIcon: Int? = null,
+  isError: Boolean = false,
+  errorText: String? = null,
   isTablet: Boolean = false,
   onTrailingIconClicked: () -> Unit = {},
   onValueChanged: (String) -> Unit,
@@ -75,6 +77,7 @@ fun CustomTextField(
   TextField(
     value = value,
     onValueChange = { onValueChanged(it) },
+    isError = isError,
     placeholder = {
       Text(
         text = hint,
@@ -97,6 +100,13 @@ fun CustomTextField(
           )
         }
       }
+    },
+    supportingText = {
+      if (isError && errorText!=null)
+        Text(
+          text = errorText,
+          color = Color.Red
+        )
     },
     shape = RoundedCornerShape(12.dp),
     colors = TextFieldDefaults.textFieldColors(

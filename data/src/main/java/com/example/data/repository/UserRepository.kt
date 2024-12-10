@@ -16,6 +16,8 @@ interface UserRepository {
   suspend fun searchUsers(query: String): Response<List<UserDetails>>
   suspend fun getProfile(): Response<Profile>
   suspend fun updateProfile(profile: UpdateProfile): Response<Unit>
+  fun getUserEmail(): Response<String>
+  suspend fun sendResetPasswordEmail(): Response<Unit>
 }
 
 class UserRepositoryImpl @Inject constructor(
@@ -51,5 +53,13 @@ class UserRepositoryImpl @Inject constructor(
 
   override suspend fun updateProfile(profile: UpdateProfile): Response<Unit> {
     return userRemoteDataSource.updateProfile(profile)
+  }
+
+  override fun getUserEmail(): Response<String> {
+    return userRemoteDataSource.getUserEmail()
+  }
+
+  override suspend fun sendResetPasswordEmail(): Response<Unit> {
+    return userRemoteDataSource.sendResetPasswordEmail()
   }
 }

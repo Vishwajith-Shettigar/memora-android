@@ -272,7 +272,7 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
       val capsuleId = navBackStackEntry.arguments?.getString("id")
       if (capsuleId != null) {
         CapsuleDetailsScreen(capsuleId) {
-          navController.popBackStack() // Return to previous screen
+          navController.popBackStack()
         }
       }
     }
