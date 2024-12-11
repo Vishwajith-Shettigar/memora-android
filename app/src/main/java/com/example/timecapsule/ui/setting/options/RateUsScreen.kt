@@ -1,6 +1,5 @@
 package com.example.timecapsule.ui.setting.options
 
-import android.util.Log
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -55,7 +54,7 @@ import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.data.local.Review
+import com.example.data.local.entity.Review
 import com.example.timecapsule.ui.selecttime.BackRow
 import com.example.timecapsule.ui.theme.LightBlue
 import com.example.timecapsule.ui.theme.fiveStarColor
@@ -63,8 +62,6 @@ import com.example.timecapsule.ui.theme.threeStarColor
 import com.example.timecapsule.ui.theme.zeroStarColor
 import com.example.timecapsule.ui.util.DeviceType
 import com.example.timecapsule.viewmodel.ReviewViewModel
-import java.sql.Date
-import java.sql.Timestamp
 
 /**
  * An object that provides rating expressions and colors based on the given rating.

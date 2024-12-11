@@ -1,6 +1,6 @@
 package com.example.data.repository
 
-import com.example.data.local.Review
+import com.example.data.local.entity.Review
 import com.example.data.local.ReviewDao
 import javax.inject.Inject
 

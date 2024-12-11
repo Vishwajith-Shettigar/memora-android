@@ -1,6 +1,6 @@
 package com.example.domain.usecase
 
-import com.example.data.local.Review
+import com.example.data.local.entity.Review
 import com.example.data.repository.ReviewRepository
 import com.example.data.repository.UserRepository
 

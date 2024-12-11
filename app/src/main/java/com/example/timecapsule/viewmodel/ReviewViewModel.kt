@@ -2,11 +2,12 @@ package com.example.timecapsule.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.data.local.Review
+import com.example.data.local.entity.Review
 import com.example.domain.usecase.GetReviewUseCase
 import com.example.domain.usecase.InsertReviewUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @HiltViewModel
@@ -23,7 +24,7 @@ class ReviewViewModel @Inject constructor(
 
   // Get the review from repository
   fun getReview() {
-    viewModelScope.launch {
+    viewModelScope.launch(Dispatchers.IO) {
       review = getReviewUseCase()
     }
   }

@@ -20,6 +20,8 @@ import com.example.data.repository.NotificationRepository
 import com.example.data.repository.NotificationRepositoryImpl
 import com.example.data.repository.ReviewRepository
 import com.example.data.repository.ReviewRepositoryImpl
+import com.example.data.repository.UpdateDetailsRepository
+import com.example.data.repository.UpdateDetailsRepositoryImpl
 import com.example.data.repository.UploadFileRepository
 import com.example.data.repository.UploadFileRepositoryImpl
 import com.example.data.repository.UserRepository
@@ -52,6 +54,10 @@ abstract class AppModule {
   @Binds
   @Singleton
   abstract fun bindUserRepository(userRepositoryImpl: UserRepositoryImpl): UserRepository
+
+  @Binds
+  @Singleton
+  abstract fun bindUpdateDetailsRepository(updateDetailsRepositoryImpl: UpdateDetailsRepositoryImpl): UpdateDetailsRepository
 
   @Binds
   @Singleton
@@ -203,5 +209,9 @@ abstract class AppModule {
     @Provides
     @Singleton
     fun provideReviewDao(database: AppDatabase) = database.reviewDao()
+
+    @Provides
+    @Singleton
+    fun provideUpdateDetailsDao(database: AppDatabase) = database.updateDetailsDao()
   }
 }

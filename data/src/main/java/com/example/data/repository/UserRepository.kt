@@ -1,12 +1,11 @@
 package com.example.data.repository
 
-import com.example.data.local.Review
+import com.example.data.local.entity.Review
 import com.example.data.remote.UserRemoteDataSource
 import com.example.model.Profile
 import com.example.model.UpdateProfile
 import com.example.model.UserDetails
 import com.example.util.Response
-import com.google.firebase.firestore.auth.User
 import javax.inject.Inject
 
 interface UserRepository {

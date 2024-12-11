@@ -4,14 +4,19 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.domain.usecase.GetCapsuleListUseCase
+import com.example.domain.usecase.GetRemoteAppUpdateDetailsUseCase
+import com.example.domain.usecase.InsertUpdateDetailsUseCase
 import com.example.model.CapsuleDetails
 import com.example.util.Response
 import dagger.hilt.android.lifecycle.HiltViewModel
-import java.lang.Exception
 import javax.inject.Inject
+import kotlin.Exception
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 
 sealed class CapsuleListScreenState {
@@ -28,27 +33,46 @@ sealed class CapsuleListScreenState {
 
 @HiltViewModel
 class ShowCapsulesListViewModel @Inject constructor(
-  private val getCapsuleListUseCase: GetCapsuleListUseCase
+  private val getCapsuleListUseCase: GetCapsuleListUseCase,
+  private val getRemoteAppUpdateDetailsUseCase: GetRemoteAppUpdateDetailsUseCase,
+  private val insertUpdateDetailsUseCase: InsertUpdateDetailsUseCase
 ) : ViewModel() {
   private val _capsuleListState =
     MutableStateFlow<CapsuleListScreenState>(CapsuleListScreenState.Loading)
   val capsuleListState: StateFlow<CapsuleListScreenState> = _capsuleListState
 
-  fun getCapsulesList() {
-    viewModelScope.launch {
-      val result = getCapsuleListUseCase()
-      _capsuleListState.value = when (result) {
-        is Response.Success -> {
-          CapsuleListScreenState.Success(result.data!!)
-        }
+  init {
+    viewModelScope.launch(Dispatchers.IO) {
+      getCapsulesList()
+      syncLocalDBUpdateDetailsWithRemote()
+    }
+  }
 
-        is Response.Error -> {
-          CapsuleListScreenState.Error(
-            result.exception.message.toString(),
-            result.exception
-          )
+  suspend fun getCapsulesList() {
+    val result = getCapsuleListUseCase()
+    _capsuleListState.value = when (result) {
+      is Response.Success -> {
+        CapsuleListScreenState.Success(result.data!!)
+      }
+
+      is Response.Error -> {
+        CapsuleListScreenState.Error(
+          result.exception.message.toString(),
+          result.exception
+        )
+      }
+    }
+  }
+
+  fun syncLocalDBUpdateDetailsWithRemote() {
+    try {
+      viewModelScope.launch(Dispatchers.IO) {
+        val res = getRemoteAppUpdateDetailsUseCase()
+        if (res is Response.Success) {
+          insertUpdateDetailsUseCase(res.data!!)
         }
       }
+    } catch (_: Exception) {
     }
   }
 }

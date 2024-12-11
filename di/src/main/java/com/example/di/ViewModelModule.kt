@@ -1,10 +1,12 @@
 package com.example.di
 
+import com.example.data.remote.UserRemoteDataSource
 import com.example.data.repository.AuthRepository
 import com.example.data.repository.CapsulesRepository
 import com.example.data.repository.NearByCapsulesRepository
 import com.example.data.repository.NotificationRepository
 import com.example.data.repository.ReviewRepository
+import com.example.data.repository.UpdateDetailsRepository
 import com.example.data.repository.UploadFileRepository
 import com.example.data.repository.UserRepository
 import com.example.data.sharedpreference.SharedPreferencesHelper
@@ -17,11 +19,14 @@ import com.example.domain.usecase.GetCapsuleDetailsUseCase
 import com.example.domain.usecase.GetCapsuleListUseCase
 import com.example.domain.usecase.GetNotificationUseCase
 import com.example.domain.usecase.GetProfileUseCase
+import com.example.domain.usecase.GetRemoteAppUpdateDetailsUseCase
 import com.example.domain.usecase.GetResetPasswordEmailUseCase
 import com.example.domain.usecase.GetReviewUseCase
+import com.example.domain.usecase.GetUpdateDetailsUseCase
 import com.example.domain.usecase.GetUserDetailsUseCase
 import com.example.domain.usecase.GetUserEmailUseCase
 import com.example.domain.usecase.InsertReviewUseCase
+import com.example.domain.usecase.InsertUpdateDetailsUseCase
 import com.example.domain.usecase.OnBoardingDataUseCase
 import com.example.domain.usecase.OpenCapsuleScreenCheckPointUseCase
 import com.example.domain.usecase.SaveUserDetailsUseCase
@@ -147,6 +152,12 @@ class ViewModelModule {
 
   @Provides
   @ViewModelScoped
+  fun provideGetRemoteAppUpdateDetailsUseCase(userRemoteDataSource: UserRemoteDataSource): GetRemoteAppUpdateDetailsUseCase {
+    return GetRemoteAppUpdateDetailsUseCase(userRemoteDataSource)
+  }
+
+  @Provides
+  @ViewModelScoped
   fun provideGetUserDetailsUseCase(userRepository: UserRepository): GetUserDetailsUseCase {
     return GetUserDetailsUseCase(userRepository)
   }
@@ -207,4 +218,14 @@ class ViewModelModule {
   @ViewModelScoped
   fun provideInsertReviewUseCase(repository: ReviewRepository, userRepository: UserRepository) =
     InsertReviewUseCase(repository, userRepository = userRepository)
+
+  @Provides
+  @ViewModelScoped
+  fun provideGetUpdateDetailsUseCase(updateDetailsRepository: UpdateDetailsRepository) =
+    GetUpdateDetailsUseCase(updateDetailsRepository)
+
+  @Provides
+  @ViewModelScoped
+  fun provideInsertUpdateDetailsUseCase(updateDetailsRepository: UpdateDetailsRepository) =
+    InsertUpdateDetailsUseCase(updateDetailsRepository)
 }
