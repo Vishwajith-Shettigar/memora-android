@@ -1,10 +1,8 @@
 package com.example.timecapsule.viewmodel
 
-import android.util.Log
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.domain.usecase.CanResetPasswordCounterUseCase
 import com.example.domain.usecase.GetResetPasswordEmailUseCase
 import com.example.domain.usecase.GetUserEmailUseCase
 import com.example.util.Response
@@ -20,14 +18,14 @@ sealed class ResetPasswordState {
   object Idle : ResetPasswordState()
   object Success : ResetPasswordState()
   object Loading : ResetPasswordState()
-  object Error : ResetPasswordState()
-
+  class Error(val message: String?) : ResetPasswordState()
 }
 
 @HiltViewModel
 class ResetPasswordViewModel @Inject constructor(
   private val getResetPasswordEmailUseCase: GetResetPasswordEmailUseCase,
-  private val getUserEmailUseCase: GetUserEmailUseCase
+  getUserEmailUseCase: GetUserEmailUseCase,
+  private val canResetPasswordCounterUseCase: CanResetPasswordCounterUseCase
 ) : ViewModel() {
 
   private val _resetPasswordState = MutableStateFlow<ResetPasswordState>(ResetPasswordState.Idle)
@@ -40,17 +38,25 @@ class ResetPasswordViewModel @Inject constructor(
   }
 
   fun sendPasswordResetEmail() {
+
+    _resetPasswordState.value = ResetPasswordState.Loading
+    val canSendResetEmail = canResetPasswordCounterUseCase()
+    if (!canSendResetEmail) {
+      _resetPasswordState.value =
+        ResetPasswordState.Error(message = "Password reset limit exceeded, please try again tomorrow")
+      return
+    }
     viewModelScope.launch {
-      _resetPasswordState.value = ResetPasswordState.Loading
       withContext(Dispatchers.IO) {
         val response = getResetPasswordEmailUseCase()
         _resetPasswordState.value = when (response) {
           is Response.Success -> {
+            canResetPasswordCounterUseCase.incrementCounter()
             ResetPasswordState.Success
           }
 
           is Response.Error -> {
-            ResetPasswordState.Error
+            ResetPasswordState.Error(null)
           }
         }
       }

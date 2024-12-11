@@ -114,7 +114,7 @@ fun CustomTextField(
       focusedIndicatorColor = Color.Transparent,
       unfocusedIndicatorColor = Color.Transparent,
       disabledIndicatorColor = Color.Transparent,
-      focusedTextColor = Color.White
+      focusedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
     ),
     modifier =
 

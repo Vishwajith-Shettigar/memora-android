@@ -9,6 +9,8 @@ class SharedPreferencesHelper(context: Context) {
   companion object {
     private const val PREF_NAME = "user_preferences"
     private const val KEY_IS_DETAILS_COMPLETED = "isDetailsCompleted"
+    private const val LAST_PASSWORD_RESET_DATE = "last_password_reset_date"
+    private const val RESET_COUNTER = "reset_counter"
   }
 
   private val sharedPreferences: SharedPreferences =
@@ -27,10 +29,26 @@ class SharedPreferencesHelper(context: Context) {
   }
 
   fun getCapsuleOpeningLastScreenRoute(capsuleId: String): String? {
-    return sharedPreferences.getString(capsuleId,null)
+    return sharedPreferences.getString(capsuleId, null)
   }
 
-  fun deleteCapsuleOpeningLastScreenRoute(capsuleId: String){
+  fun deleteCapsuleOpeningLastScreenRoute(capsuleId: String) {
     sharedPreferences.edit().remove(capsuleId).apply()
+  }
+
+  fun setLastPasswordResetDate(date: String) {
+    sharedPreferences.edit().putString(LAST_PASSWORD_RESET_DATE, date).apply()
+  }
+
+  fun getLastPasswordResetDate(): String? {
+    return sharedPreferences.getString(LAST_PASSWORD_RESET_DATE, null)
+  }
+
+  fun setResetPasswordCounter(counter: Int) {
+    sharedPreferences.edit().putInt(RESET_COUNTER, counter).apply()
+  }
+
+  fun getResetPasswordCounter(): Int {
+    return sharedPreferences.getInt(RESET_COUNTER, 0)
   }
 }

@@ -7,6 +7,7 @@ import com.example.data.repository.NotificationRepository
 import com.example.data.repository.UploadFileRepository
 import com.example.data.repository.UserRepository
 import com.example.data.sharedpreference.SharedPreferencesHelper
+import com.example.domain.usecase.CanResetPasswordCounterUseCase
 import com.example.domain.usecase.CreateCapsuleUseCase
 import com.example.domain.usecase.FetchNearByCapsulesUseCase
 import com.example.domain.usecase.GetCapsuleAssetsUseCase
@@ -180,5 +181,11 @@ class ViewModelModule {
   @ViewModelScoped
   fun provideGetResetPasswordEmailUseCase(userRepository: UserRepository): GetResetPasswordEmailUseCase {
     return GetResetPasswordEmailUseCase(userRepository)
+  }
+
+  @Provides
+  @ViewModelScoped
+  fun provideCanResetPasswordCounterUseCase(sharedPreferencesHelper: SharedPreferencesHelper): CanResetPasswordCounterUseCase {
+    return CanResetPasswordCounterUseCase(sharedPreferencesHelper)
   }
 }

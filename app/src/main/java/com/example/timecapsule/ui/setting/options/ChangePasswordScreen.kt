@@ -63,7 +63,11 @@ fun ChangePasswordScreen(
 
   val resetPasswordState by viewModel.resetPasswordState.collectAsState()
 
-  var showDialog by remember {
+  var showSuccessDialog by remember {
+    mutableStateOf(false)
+  }
+
+  var showResetLimitExceededDialog by remember {
     mutableStateOf(false)
   }
 
@@ -79,9 +83,16 @@ fun ChangePasswordScreen(
 
     if (resetPasswordState is ResetPasswordState.Success) {
       emailInput = ""
-      showDialog = true
+      showSuccessDialog = true
+      return@LaunchedEffect
+    }
+    if (resetPasswordState is ResetPasswordState.Error && (resetPasswordState as ResetPasswordState.Error).message != null) {
+      showResetLimitExceededDialog = true
+      return@LaunchedEffect
     }
   }
+
+
 
   LaunchedEffect(isEmailError) {
     if (isEmailError) {
@@ -90,13 +101,23 @@ fun ChangePasswordScreen(
     }
   }
 
-  if (showDialog)
+  if (showSuccessDialog) {
     TitleSubtitleWithOkayButtonDialog(
-      title = "Email Sent",
+      title = "Email has Sent",
       subtitle = "An email has been sent to your email address. Please follow the instructions to reset your password."
     ) {
-      showDialog = false
+      showSuccessDialog = false
     }
+  }
+
+  if (showResetLimitExceededDialog) {
+    TitleSubtitleWithOkayButtonDialog(
+      title = "Limit Exceeded",
+      subtitle = (resetPasswordState as ResetPasswordState.Error).message ?: ""
+    ) {
+      showResetLimitExceededDialog = false
+    }
+  }
 
   Column(
     modifier = Modifier
