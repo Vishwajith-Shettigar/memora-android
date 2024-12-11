@@ -22,6 +22,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -35,13 +37,23 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.timecapsule.ui.selecttime.BackRow
 import com.example.timecapsule.ui.theme.LightBlue
 import com.example.timecapsule.ui.util.DeviceType
+import com.example.timecapsule.ui.util.languageList
+import com.example.timecapsule.viewmodel.LanguageSelectionViewModel
+
+private const val b = true
 
 @Composable
-fun ChangeLanguageScreen(onBackClick: () -> Unit) {
+fun ChangeLanguageScreen(
+  viewModel: LanguageSelectionViewModel = hiltViewModel(),
+  onBackClick: () -> Unit
+) {
   val isTablet = DeviceType.isTablet()
+
+  val code by viewModel.selectedLanguageCode.collectAsState()
 
   Column(
     modifier = Modifier
@@ -84,20 +96,15 @@ fun ChangeLanguageScreen(onBackClick: () -> Unit) {
         color = MaterialTheme.colorScheme.onSurfaceVariant
       )
 
-      LanguageOption(
-        language = "English",
-        flagAssetPath = "flags/english_flag.png",
-        selected = true,
-        isTablet = isTablet
-      ) {
-      }
-
-      LanguageOption(
-        language = "English",
-        flagAssetPath = "flags/english_flag.png",
-        selected = false,
-        isTablet = isTablet
-      ) {
+      languageList.forEach {
+        LanguageOption(
+          language = it.name,
+          flagAssetPath = it.iconPath,
+          selected = code == it.code,
+          isTablet = isTablet
+        ) {
+          viewModel.setSelectedLanguageCode(it.code)
+        }
       }
     }
   }

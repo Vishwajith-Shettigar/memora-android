@@ -8,6 +8,7 @@ import com.example.data.repository.UploadFileRepository
 import com.example.data.repository.UserRepository
 import com.example.data.sharedpreference.SharedPreferencesHelper
 import com.example.domain.usecase.CanResetPasswordCounterUseCase
+import com.example.domain.usecase.ChooseLanguageUseCase
 import com.example.domain.usecase.CreateCapsuleUseCase
 import com.example.domain.usecase.FetchNearByCapsulesUseCase
 import com.example.domain.usecase.GetCapsuleAssetsUseCase
@@ -187,5 +188,11 @@ class ViewModelModule {
   @ViewModelScoped
   fun provideCanResetPasswordCounterUseCase(sharedPreferencesHelper: SharedPreferencesHelper): CanResetPasswordCounterUseCase {
     return CanResetPasswordCounterUseCase(sharedPreferencesHelper)
+  }
+
+  @Provides
+  @ViewModelScoped
+  fun provideChooseLanguageUseCase(sharedPreferencesHelper: SharedPreferencesHelper): ChooseLanguageUseCase {
+    return ChooseLanguageUseCase(sharedPreferencesHelper)
   }
 }

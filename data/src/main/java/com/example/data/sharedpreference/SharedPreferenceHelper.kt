@@ -11,6 +11,7 @@ class SharedPreferencesHelper(context: Context) {
     private const val KEY_IS_DETAILS_COMPLETED = "isDetailsCompleted"
     private const val LAST_PASSWORD_RESET_DATE = "last_password_reset_date"
     private const val RESET_COUNTER = "reset_counter"
+    private const val SELECTED_LANGUAGE = "selected_language"
   }
 
   private val sharedPreferences: SharedPreferences =
@@ -50,5 +51,13 @@ class SharedPreferencesHelper(context: Context) {
 
   fun getResetPasswordCounter(): Int {
     return sharedPreferences.getInt(RESET_COUNTER, 0)
+  }
+
+  fun setSelectedLanguageCode(code: String) {
+    sharedPreferences.edit().putString(SELECTED_LANGUAGE, code).apply()
+  }
+
+  fun getSelectedLanguageCode(): String {
+    return sharedPreferences.getString(SELECTED_LANGUAGE, "en") ?: "en"
   }
 }
