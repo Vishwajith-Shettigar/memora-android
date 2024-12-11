@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Scaffold
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -40,13 +39,6 @@ import com.example.timecapsule.ui.selecttime.BackRow
 import com.example.timecapsule.ui.theme.LightBlue
 import com.example.timecapsule.ui.util.DeviceType
 import com.example.timecapsule.viewmodel.UpdateViewModel
-
-val featureDescriptions = listOf(
-  "UI changes",
-  "Bux fixes and improvements",
-  "Google auth added"
-)
-
 
 const val versionCode = BuildConfig.VERSION_CODE
 
