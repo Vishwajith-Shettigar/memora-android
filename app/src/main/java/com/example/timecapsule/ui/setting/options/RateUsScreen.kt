@@ -54,12 +54,17 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.data.local.Review
 import com.example.timecapsule.ui.selecttime.BackRow
 import com.example.timecapsule.ui.theme.LightBlue
 import com.example.timecapsule.ui.theme.fiveStarColor
 import com.example.timecapsule.ui.theme.threeStarColor
 import com.example.timecapsule.ui.theme.zeroStarColor
 import com.example.timecapsule.ui.util.DeviceType
+import com.example.timecapsule.viewmodel.ReviewViewModel
+import java.sql.Date
+import java.sql.Timestamp
 
 /**
  * An object that provides rating expressions and colors based on the given rating.
@@ -117,8 +122,22 @@ object RatingsArtMapper {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RateUsScreen(onBackClick: () -> Unit) {
-  var sliderPosition by remember { mutableStateOf(0.0F) }
+fun RateUsScreen(viewModel: ReviewViewModel = hiltViewModel(), onBackClick: () -> Unit) {
+  var sliderPosition by remember {
+    mutableStateOf(
+      0.0F
+    )
+  }
+  var reviewText by remember {
+    mutableStateOf("")
+  }
+
+  LaunchedEffect(viewModel.review) {
+    if (viewModel.review != null) {
+      sliderPosition = viewModel.review!!.rating.toFloat()
+      reviewText = viewModel.review!!.reviewText
+    }
+  }
 
   val isTablet = DeviceType.isTablet()
 
@@ -145,9 +164,19 @@ fun RateUsScreen(onBackClick: () -> Unit) {
     }
 
     if (showReviewBottomSheet)
-      ReviewBottomSheet(isTablet = isTablet) {
+      ReviewBottomSheet(reviewText, isTablet = isTablet, onSubmit = {
+        reviewText = it
+        viewModel.insertReview(
+          Review(
+            rating = sliderPosition.toDouble(),
+            timestamp = System.currentTimeMillis(),
+            reviewText = reviewText
+          )
+        )
         showReviewBottomSheet = false
-      }
+      }, onDismiss = {
+        showReviewBottomSheet = false
+      })
 
     Column(
       modifier = Modifier
@@ -179,6 +208,15 @@ fun RateUsScreen(onBackClick: () -> Unit) {
           ),
         value = sliderPosition,
         onValueChange = { sliderPosition = it },
+        onValueChangeFinished = {
+          viewModel.insertReview(
+            Review(
+              rating = sliderPosition.toDouble(),
+              timestamp = System.currentTimeMillis(),
+              reviewText = reviewText
+            )
+          )
+        },
         valueRange = 0f..0.5f,
         colors = SliderDefaults.colors(
           thumbColor = Color.Black,
@@ -424,10 +462,15 @@ fun ThreeStarExpression() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ReviewBottomSheet(isTablet: Boolean, onDismiss: () -> Unit) {
+fun ReviewBottomSheet(
+  text: String,
+  isTablet: Boolean,
+  onSubmit: (String) -> Unit,
+  onDismiss: () -> Unit
+) {
 
   var reviewText by remember {
-    mutableStateOf("")
+    mutableStateOf(text)
   }
 
   val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -498,43 +541,47 @@ fun ReviewBottomSheet(isTablet: Boolean, onDismiss: () -> Unit) {
         )
 
         Button(
-          onClick = { /*TODO*/ }, colors =
+          onClick = { onSubmit(reviewText) }, colors =
           ButtonDefaults.buttonColors(
             containerColor = LightBlue
           ),
-          contentPadding = PaddingValues(vertical = 15.dp),
+          contentPadding = PaddingValues(vertical = 8.dp),
           shape = RoundedCornerShape(10.dp),
           modifier =
 
           if (!isTablet)
               Modifier
                   .fillMaxWidth()
-                  .height(100.dp)
-                  .padding(vertical = 20.dp)
+                  .wrapContentHeight()
+                  .padding(vertical = 2.dp)
           else
               Modifier
                   .width(600.dp)
-                  .height(60.dp)
-                  .padding(vertical = 20.dp)
+                  .height(100.dp)
+                  .padding(vertical = 10.dp)
 
         ) {
 
           Row(
-            modifier = Modifier.fillMaxSize(), horizontalArrangement = Arrangement.Center,
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight(),
+            horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
           ) {
             Text(
               modifier = Modifier.padding(horizontal = 10.dp),
               text = "Send",
               style = MaterialTheme.typography.titleLarge.copy(
-                fontSize = 19.sp,
+                fontSize = 15.sp,
                 fontWeight = FontWeight.Bold
               ),
               color = MaterialTheme.colorScheme.primary
             )
             Icon(
               painter = painterResource(id = com.example.timecapsule.R.drawable.ic_send),
-              contentDescription = "send review"
+              contentDescription = "send review",
+              Modifier.size(25.dp)
             )
           }
         }

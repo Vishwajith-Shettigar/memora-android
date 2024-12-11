@@ -1,6 +1,9 @@
 package com.example.di
 
 import android.content.Context
+import androidx.room.Room
+import com.example.data.local.AppDatabase
+import com.example.data.local.ReviewDao
 import com.example.data.remote.AuthRemoteDataSource
 import com.example.data.remote.CapsulesRemoteDataSource
 import com.example.data.remote.FilesRemoteDataSource
@@ -15,6 +18,8 @@ import com.example.data.repository.NearByCapsulesRepositoryImpl
 import com.example.data.repository.NearByCapsulesRepository
 import com.example.data.repository.NotificationRepository
 import com.example.data.repository.NotificationRepositoryImpl
+import com.example.data.repository.ReviewRepository
+import com.example.data.repository.ReviewRepositoryImpl
 import com.example.data.repository.UploadFileRepository
 import com.example.data.repository.UploadFileRepositoryImpl
 import com.example.data.repository.UserRepository
@@ -55,6 +60,10 @@ abstract class AppModule {
   @Binds
   @Singleton
   abstract fun bindCapsulesRepository(capsulesRepositoryImpl: CapsulesRepositoryImpl): CapsulesRepository
+
+  @Binds
+  @Singleton
+  abstract fun bindReviewRepository(reviewRepositoryImpl: ReviewRepositoryImpl): ReviewRepository
 
   @Binds
   @Singleton
@@ -180,5 +189,19 @@ abstract class AppModule {
     ): CapsulesRemoteDataSource {
       return CapsulesRemoteDataSource(firestore, remoteDataSource, userRemoteDataSource)
     }
+
+    @Provides
+    @Singleton
+    fun provideDatabase(@ApplicationContext context: Context): AppDatabase {
+      return Room.databaseBuilder(
+        context,
+        AppDatabase::class.java,
+        "app_database"
+      ).build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideReviewDao(database: AppDatabase) = database.reviewDao()
   }
 }

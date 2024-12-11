@@ -1,5 +1,6 @@
 package com.example.data.repository
 
+import com.example.data.local.Review
 import com.example.data.remote.UserRemoteDataSource
 import com.example.model.Profile
 import com.example.model.UpdateProfile
@@ -18,6 +19,7 @@ interface UserRepository {
   suspend fun updateProfile(profile: UpdateProfile): Response<Unit>
   fun getUserEmail(): Response<String>
   suspend fun sendResetPasswordEmail(): Response<Unit>
+  suspend fun insertOrUpdateUserReview(review: Review)
 }
 
 class UserRepositoryImpl @Inject constructor(
@@ -61,5 +63,9 @@ class UserRepositoryImpl @Inject constructor(
 
   override suspend fun sendResetPasswordEmail(): Response<Unit> {
     return userRemoteDataSource.sendResetPasswordEmail()
+  }
+
+  override suspend fun insertOrUpdateUserReview(review: Review) {
+    userRemoteDataSource.insertOrUpdateUserReview(review)
   }
 }

@@ -4,6 +4,7 @@ import com.example.data.repository.AuthRepository
 import com.example.data.repository.CapsulesRepository
 import com.example.data.repository.NearByCapsulesRepository
 import com.example.data.repository.NotificationRepository
+import com.example.data.repository.ReviewRepository
 import com.example.data.repository.UploadFileRepository
 import com.example.data.repository.UserRepository
 import com.example.data.sharedpreference.SharedPreferencesHelper
@@ -17,8 +18,10 @@ import com.example.domain.usecase.GetCapsuleListUseCase
 import com.example.domain.usecase.GetNotificationUseCase
 import com.example.domain.usecase.GetProfileUseCase
 import com.example.domain.usecase.GetResetPasswordEmailUseCase
+import com.example.domain.usecase.GetReviewUseCase
 import com.example.domain.usecase.GetUserDetailsUseCase
 import com.example.domain.usecase.GetUserEmailUseCase
+import com.example.domain.usecase.InsertReviewUseCase
 import com.example.domain.usecase.OnBoardingDataUseCase
 import com.example.domain.usecase.OpenCapsuleScreenCheckPointUseCase
 import com.example.domain.usecase.SaveUserDetailsUseCase
@@ -195,4 +198,13 @@ class ViewModelModule {
   fun provideChooseLanguageUseCase(sharedPreferencesHelper: SharedPreferencesHelper): ChooseLanguageUseCase {
     return ChooseLanguageUseCase(sharedPreferencesHelper)
   }
+
+  @Provides
+  @ViewModelScoped
+  fun provideGetReviewUseCase(repository: ReviewRepository) = GetReviewUseCase(repository)
+
+  @Provides
+  @ViewModelScoped
+  fun provideInsertReviewUseCase(repository: ReviewRepository, userRepository: UserRepository) =
+    InsertReviewUseCase(repository, userRepository = userRepository)
 }

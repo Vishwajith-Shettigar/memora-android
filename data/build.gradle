@@ -3,6 +3,7 @@ plugins {
     id 'kotlin-android'
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-kapt'
+    id 'com.google.devtools.ksp'
 }
 
 android {
@@ -46,5 +47,8 @@ dependencies{
     implementation libs.retrofit
     implementation libs.converter.gson
 
-
+    def room_version = "2.6.0"
+    implementation libs.androidx.room.runtime
+    implementation libs.androidx.room.ktx
+    ksp "androidx.room:room-compiler:$room_version"
 }

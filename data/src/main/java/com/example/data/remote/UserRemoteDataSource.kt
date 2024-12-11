@@ -1,6 +1,7 @@
 package com.example.data.remote
 
 import android.util.Log
+import com.example.data.local.Review
 import com.example.model.Profile
 import com.example.model.UpdateProfile
 import com.example.model.UserDetails
@@ -285,6 +286,13 @@ class UserRemoteDataSource @Inject constructor(
 
     } catch (e: Exception) {
       Response.Error(exception = e)
+    }
+  }
+
+  suspend fun insertOrUpdateUserReview(review: Review) {
+    try {
+      firestore.collection("reviews").document(firebaseAuth.uid!!).set(review).await()
+    } catch (_: Exception) {
     }
   }
 }
