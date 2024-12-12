@@ -12,6 +12,8 @@ class SharedPreferencesHelper(context: Context) {
     private const val LAST_PASSWORD_RESET_DATE = "last_password_reset_date"
     private const val RESET_COUNTER = "reset_counter"
     private const val SELECTED_LANGUAGE = "selected_language"
+    private const val IS_RECEIVE_NOTIFICATIONS = "is_receive_notification"
+    private const val CAN_SHARE_CAPSULES = "can_share_capsules"
   }
 
   private val sharedPreferences: SharedPreferences =
@@ -59,5 +61,21 @@ class SharedPreferencesHelper(context: Context) {
 
   fun getSelectedLanguageCode(): String {
     return sharedPreferences.getString(SELECTED_LANGUAGE, "en") ?: "en"
+  }
+
+  fun setReceiveNotificaions(isEnabled: Boolean) {
+    sharedPreferences.edit().putBoolean(IS_RECEIVE_NOTIFICATIONS, isEnabled).apply()
+  }
+
+  fun setCanShareCapsules(isEnabled: Boolean) {
+    sharedPreferences.edit().putBoolean(CAN_SHARE_CAPSULES, isEnabled).apply()
+  }
+
+  fun getReceiveNotificaions(): Boolean {
+    return sharedPreferences.getBoolean(IS_RECEIVE_NOTIFICATIONS, true)
+  }
+
+  fun getCanShareCapsules(): Boolean {
+    return sharedPreferences.getBoolean(CAN_SHARE_CAPSULES, true)
   }
 }

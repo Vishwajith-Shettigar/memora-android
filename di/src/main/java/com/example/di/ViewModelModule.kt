@@ -19,9 +19,13 @@ import com.example.domain.usecase.GetCapsuleDetailsUseCase
 import com.example.domain.usecase.GetCapsuleListUseCase
 import com.example.domain.usecase.GetNotificationUseCase
 import com.example.domain.usecase.GetProfileUseCase
+import com.example.domain.usecase.GetReceiveNotificationCacheUseCase
+import com.example.domain.usecase.GetReceiveNotificationUseCase
 import com.example.domain.usecase.GetRemoteAppUpdateDetailsUseCase
 import com.example.domain.usecase.GetResetPasswordEmailUseCase
 import com.example.domain.usecase.GetReviewUseCase
+import com.example.domain.usecase.GetShareCapsulesCacheUseCase
+import com.example.domain.usecase.GetShareCapsulesUseCase
 import com.example.domain.usecase.GetUpdateDetailsUseCase
 import com.example.domain.usecase.GetUserDetailsUseCase
 import com.example.domain.usecase.GetUserEmailUseCase
@@ -38,6 +42,10 @@ import com.example.domain.usecase.UploadFilesUseCase
 import com.example.domain.usecase.getAuthUseCase
 import com.example.domain.usecase.getUserIDUseCase
 import com.example.domain.usecase.SendCapsuleCreationNotificationUseCase
+import com.example.domain.usecase.SetReceiveNotificationCacheUseCase
+import com.example.domain.usecase.SetReceiveNotificationUseCase
+import com.example.domain.usecase.SetShareCapsulesCacheUseCase
+import com.example.domain.usecase.SetShareCapsulesUseCase
 import com.example.domain.usecase.UpdateProfileUseCase
 import dagger.Module
 import dagger.Provides
@@ -228,4 +236,45 @@ class ViewModelModule {
   @ViewModelScoped
   fun provideInsertUpdateDetailsUseCase(updateDetailsRepository: UpdateDetailsRepository) =
     InsertUpdateDetailsUseCase(updateDetailsRepository)
+
+  @Provides
+  @ViewModelScoped
+  fun provideGetReceiveNotificationCacheUseCase(sharedPreferencesHelper: SharedPreferencesHelper) =
+    GetReceiveNotificationCacheUseCase(sharedPreferencesHelper)
+
+  @Provides
+  @ViewModelScoped
+  fun provideGetShareCapsulesCacheUseCase(sharedPreferencesHelper: SharedPreferencesHelper) =
+    GetShareCapsulesCacheUseCase(sharedPreferencesHelper)
+
+
+  @Provides
+  @ViewModelScoped
+  fun provideSetReceiveNotificationCacheUseCase(sharedPreferencesHelper: SharedPreferencesHelper) =
+    SetReceiveNotificationCacheUseCase(sharedPreferencesHelper)
+
+  @Provides
+  @ViewModelScoped
+  fun provideSetShareCapsulesCacheUseCase(sharedPreferencesHelper: SharedPreferencesHelper) =
+    SetShareCapsulesCacheUseCase(sharedPreferencesHelper)
+
+  @Provides
+  @ViewModelScoped
+  fun provideGetReceiveNotificationUseCase(userRepository: UserRepository) =
+    GetReceiveNotificationUseCase(userRepository)
+
+  @Provides
+  @ViewModelScoped
+  fun provideGetShareCapsulesUseCase(userRepository: UserRepository) =
+    GetShareCapsulesUseCase(userRepository)
+
+  @Provides
+  @ViewModelScoped
+  fun provideSetReceiveNotificationUseCase(userRepository: UserRepository) =
+    SetReceiveNotificationUseCase(userRepository)
+
+  @Provides
+  @ViewModelScoped
+  fun provideSetShareCapsulesUseCase(userRepository: UserRepository) =
+    SetShareCapsulesUseCase(userRepository)
 }

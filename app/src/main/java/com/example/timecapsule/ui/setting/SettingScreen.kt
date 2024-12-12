@@ -50,8 +50,8 @@ fun SettingScreen(
 
   Column(
     modifier = Modifier
-      .fillMaxSize()
-      .background(MaterialTheme.colorScheme.primary),
+        .fillMaxSize()
+        .background(MaterialTheme.colorScheme.primary),
     horizontalAlignment = Alignment.CenterHorizontally
   ) {
     BackRow() {
@@ -60,23 +60,23 @@ fun SettingScreen(
 
     LazyColumn(
       modifier = Modifier
-        .fillMaxHeight()
-        .then(
-          if (isTablet)
-            Modifier.width(600.dp)
-          else
-            Modifier.fillMaxWidth()
-        )
-        .padding(top = 10.dp)
-        .background(MaterialTheme.colorScheme.primary)
-        .background(Color.Transparent)
+          .fillMaxHeight()
+          .then(
+              if (isTablet)
+                  Modifier.width(600.dp)
+              else
+                  Modifier.fillMaxWidth()
+          )
+          .padding(top = 10.dp)
+          .background(MaterialTheme.colorScheme.primary)
+          .background(Color.Transparent)
     ) {
       item {
         Row(
           modifier = Modifier
-            .fillMaxWidth()
-            .padding(start = 20.dp, end = 20.dp)
-            .wrapContentHeight(),
+              .fillMaxWidth()
+              .padding(start = 20.dp, end = 20.dp)
+              .wrapContentHeight(),
           horizontalArrangement = Arrangement.Start,
           verticalAlignment = Alignment.CenterVertically
         ) {
@@ -93,9 +93,9 @@ fun SettingScreen(
       item {
         Column(
           modifier = Modifier
-            .fillMaxWidth()
-            .wrapContentHeight()
-            .padding(top = 40.dp, bottom = 10.dp, start = 20.dp, end = 20.dp)
+              .fillMaxWidth()
+              .wrapContentHeight()
+              .padding(top = 40.dp, bottom = 10.dp, start = 20.dp, end = 20.dp)
         ) {
           SettingOptionsTab(settingTitle = "Change Password") {
             onChangePasswordClicked()
@@ -126,12 +126,12 @@ fun SettingScreen(
       item {
         Column(
           modifier = Modifier
-            .fillMaxWidth()
-            .wrapContentHeight()
-            .padding(top = 40.dp, bottom = 10.dp, start = 10.dp, end = 10.dp)
-            .clip(RoundedCornerShape(20.dp))
-            .background(LightBlue.copy(alpha = 0.4F))
-            .padding(start = 10.dp, end = 10.dp),
+              .fillMaxWidth()
+              .wrapContentHeight()
+              .padding(top = 40.dp, bottom = 10.dp, start = 10.dp, end = 10.dp)
+              .clip(RoundedCornerShape(20.dp))
+              .background(LightBlue.copy(alpha = 0.4F))
+              .padding(start = 10.dp, end = 10.dp),
 
           ) {
           SettingOptionsTabWithSwitch(settingTitle = "Receive Notifications", isChecked = true) {
@@ -140,7 +140,7 @@ fun SettingScreen(
           com.example.timecapsule.ui.setting.Divider(color = Color.Black)
 
           SettingOptionsTabWithSwitch(
-            settingTitle = "Allow me in others' capsules.",
+            settingTitle = "Share capsules with me",
             isChecked = false
           ) {
           }
@@ -163,14 +163,14 @@ fun Divider(color: Color) {
 fun SettingOptionsTab(settingTitle: String, onClick: () -> Unit) {
   Row(
     modifier = Modifier
-      .fillMaxWidth()
-      .height(60.dp)
-      .padding(vertical = 5.dp)
-      .clickable(
-        enabled = true
-      ) {
-        onClick()
-      },
+        .fillMaxWidth()
+        .height(60.dp)
+        .padding(vertical = 5.dp)
+        .clickable(
+            enabled = true
+        ) {
+            onClick()
+        },
     verticalAlignment = Alignment.CenterVertically,
     horizontalArrangement = Arrangement.SpaceBetween
   ) {
@@ -196,9 +196,9 @@ fun SettingOptionsTabWithSwitch(
 ) {
   Row(
     modifier = Modifier
-      .fillMaxWidth()
-      .wrapContentHeight()
-      .padding(vertical = 20.dp),
+        .fillMaxWidth()
+        .wrapContentHeight()
+        .padding(vertical = 20.dp),
     verticalAlignment = Alignment.CenterVertically,
     horizontalArrangement = Arrangement.SpaceBetween
   ) {

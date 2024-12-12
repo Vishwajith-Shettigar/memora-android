@@ -294,6 +294,7 @@ class UserRemoteDataSource @Inject constructor(
     }
   }
 
+
   suspend fun getRemoteAppUpdateDetails(): Response<UpdateDetails> {
     return try {
       val querySnapshot = firestore.collection("update_details").get().await()
@@ -307,6 +308,54 @@ class UserRemoteDataSource @Inject constructor(
       )
 
       Response.Success(updateDetails)
+    } catch (e: Exception) {
+      Response.Error(exception = e)
+    }
+  }
+
+  suspend fun setReceiveNotification(isEnabled: Boolean): Response<Unit> {
+    return try {
+      val auth = authRemoteDataSource.getAuth() ?: throw NoAuthException()
+      firestore.collection("users").document(auth.uid).update(
+        mapOf(
+          "receiveNotification" to isEnabled
+        )
+      ).await()
+      Response.Success()
+    } catch (e: Exception) {
+      Response.Error(exception = e)
+    }
+  }
+
+  suspend fun getReceiveNotification(): Response<Boolean> {
+    return try {
+      val auth = authRemoteDataSource.getAuth() ?: throw NoAuthException()
+      val doc = firestore.collection("users").document(auth.uid).get().await()
+      Response.Success(doc.getBoolean("receiveNotification"))
+    } catch (e: Exception) {
+      Response.Error(exception = e)
+    }
+  }
+
+  suspend fun setShareCapsules(isEnabled: Boolean): Response<Unit> {
+    return try {
+      val auth = authRemoteDataSource.getAuth() ?: throw NoAuthException()
+      firestore.collection("users").document(auth.uid).update(
+        mapOf(
+          "shareCapsules" to isEnabled
+        )
+      ).await()
+      Response.Success()
+    } catch (e: Exception) {
+      Response.Error(exception = e)
+    }
+  }
+
+  suspend fun getShareCapsules(): Response<Boolean> {
+    return try {
+      val auth = authRemoteDataSource.getAuth() ?: throw NoAuthException()
+      val doc = firestore.collection("users").document(auth.uid).get().await()
+      Response.Success(doc.getBoolean("shareCapsules"))
     } catch (e: Exception) {
       Response.Error(exception = e)
     }

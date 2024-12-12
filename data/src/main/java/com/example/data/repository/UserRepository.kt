@@ -19,6 +19,10 @@ interface UserRepository {
   fun getUserEmail(): Response<String>
   suspend fun sendResetPasswordEmail(): Response<Unit>
   suspend fun insertOrUpdateUserReview(review: Review)
+  suspend fun setReceiveNotification(isEnabled: Boolean): Response<Unit>
+  suspend fun setShareCapsules(isEnabled: Boolean): Response<Unit>
+  suspend fun getReceiveNotification(): Response<Boolean>
+  suspend fun getShareCapsules(): Response<Boolean>
 }
 
 class UserRepositoryImpl @Inject constructor(
@@ -66,5 +70,21 @@ class UserRepositoryImpl @Inject constructor(
 
   override suspend fun insertOrUpdateUserReview(review: Review) {
     userRemoteDataSource.insertOrUpdateUserReview(review)
+  }
+
+  override suspend fun setReceiveNotification(isEnabled: Boolean): Response<Unit> {
+    return userRemoteDataSource.setReceiveNotification(isEnabled)
+  }
+
+  override suspend fun setShareCapsules(isEnabled: Boolean): Response<Unit> {
+    return userRemoteDataSource.setShareCapsules(isEnabled)
+  }
+
+  override suspend fun getReceiveNotification(): Response<Boolean> {
+    return userRemoteDataSource.getReceiveNotification()
+  }
+
+  override suspend fun getShareCapsules(): Response<Boolean> {
+    return userRemoteDataSource.getShareCapsules()
   }
 }

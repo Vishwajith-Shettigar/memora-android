@@ -42,5 +42,4 @@ class OnBoardingDetailsViewModel @Inject constructor(
       signOutUseCase()
     }
   }
-
 }
