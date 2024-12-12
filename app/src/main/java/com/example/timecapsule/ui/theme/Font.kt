@@ -21,3 +21,7 @@ val RubikBubble = FontFamily(
 val overSeer = FontFamily(
   Font(com.example.timecapsule.R.font.overseer)
 )
+
+val openSansExtraBold = FontFamily(
+  Font(com.example.timecapsule.R.font.opensansextrabold)
+)

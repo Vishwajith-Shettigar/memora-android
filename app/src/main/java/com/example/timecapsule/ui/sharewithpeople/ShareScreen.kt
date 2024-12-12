@@ -59,6 +59,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -348,7 +349,7 @@ fun ShowSelectedPeople(
   selectedPeoples: MutableList<UserDetails> = mutableListOf(),
   ownerUserId: String? = null,
   showSharedWithALl: Boolean = false,
-    remove: (String) -> Unit = {},
+  remove: (String) -> Unit = {},
 ) {
 
   LazyHorizontalGrid(
@@ -380,19 +381,21 @@ fun Profile(
   imageUrl: String = "",
   disableCrossBtn: Boolean = false,
   isOwner: Boolean = false,
+  size: Dp = 70.dp,
+  hideUserName: Boolean = false,
   remove: (String) -> Unit = {}
 ) {
 
   val imageModifier = if (isOwner)
       Modifier
-          .height(70.dp)
-          .width(70.dp)
+          .height(size)
+          .width(size)
           .clip(shape = CircleShape)
           .border(2.dp, color = Color.Red, shape = CircleShape)
   else
       Modifier
-          .height(70.dp)
-          .width(70.dp)
+          .height(size)
+          .width(size)
           .clip(shape = CircleShape)
 
 
@@ -437,13 +440,14 @@ fun Profile(
         }
 
     }
-    Text(
-      text = userName,
-      style = MaterialTheme.typography.titleLarge.copy(
-        fontSize =
-        17.sp
-      ),
-      color = MaterialTheme.colorScheme.onSurfaceVariant,
-    )
+    if (!hideUserName)
+      Text(
+        text = userName,
+        style = MaterialTheme.typography.titleLarge.copy(
+          fontSize =
+          17.sp
+        ),
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+      )
   }
 }
