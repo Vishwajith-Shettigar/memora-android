@@ -11,6 +11,7 @@ import com.example.timecapsule.service.CAPSULE_SHARED_NOTIFICATION
 import com.example.timecapsule.ui.CapsuleCreationSaving.CapsuleCreationSavingScreen
 import com.example.timecapsule.ui.CapsuleNameAndDescription.CapsuleNameAndDescription
 import com.example.timecapsule.ui.capsulelist.v2.CapsuleCard
+import com.example.timecapsule.ui.capsulelist.v2.CapsuleCardListScreen
 import com.example.timecapsule.ui.editprofile.EditProfileScreen
 import com.example.timecapsule.ui.opencapsule.CapsuleLoadingScreen
 import com.example.timecapsule.ui.opencapsule.InstructionsScreen
@@ -66,8 +67,10 @@ class MainActivity : ComponentActivity() {
 
 //        NavGraph(navController)
 
-        CapsuleCard()
+//        CapsuleCard()
 
+
+        CapsuleCardListScreen()
 //        ContactUsScreen {
 //
 //        }

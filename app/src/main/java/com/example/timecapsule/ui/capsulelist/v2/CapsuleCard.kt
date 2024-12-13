@@ -54,157 +54,137 @@ import com.example.timecapsule.viewmodel.ProfileState
 
 
 @Composable
-fun CapsuleCard() {
-  Scaffold { innerPadding ->
-    Column(modifier = Modifier.padding(vertical = 100.dp, horizontal = 5.dp)) {
+fun CapsuleCard(isExpanded: Boolean, onClick: () -> Unit) {
 
-      var isExpanded by remember {
-        mutableStateOf(false)
+  Card(
+    modifier = Modifier
+      .fillMaxWidth()
+      .wrapContentSize()
+      .animateContentSize()
+      .clip(RoundedCornerShape(30.dp))
+      .clickable(enabled = true) {
+        onClick()
       }
-
-      Card(
+      .background(fiveStarColor)
+      .padding(horizontal = 1.dp, vertical = 10.dp),
+    colors = CardDefaults.cardColors(containerColor = fiveStarColor),
+    content = {
+      Column(
         modifier = Modifier
-            .then(
-                if (!isExpanded)
-                    Modifier.fillMaxWidth(0.5F)
-                else
-                    Modifier.fillMaxWidth(1F)
+          .fillMaxWidth()
+          .background(Color.Transparent)
+      ) {
+        Row(
+          modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 8.dp),
+          horizontalArrangement = Arrangement.SpaceBetween,
+          verticalAlignment = Alignment.CenterVertically
+        ) {
+          Text(
+            text = "The Family",
+            style = MaterialTheme.typography.titleLarge.copy(
+              fontSize = if (isExpanded) 25.sp else 17.sp,
+              color = Color.Black,
+              fontWeight = FontWeight.ExtraBold,
             )
-            .fillMaxWidth(1F)
-            .wrapContentSize()
-            .animateContentSize()
-            .clip(RoundedCornerShape(30.dp))
-            .clickable(enabled = true) {
-                isExpanded = !isExpanded
-            }
-            .background(fiveStarColor)
-            .padding(horizontal = 5.dp, vertical = 10.dp),
-        colors = CardDefaults.cardColors(containerColor = fiveStarColor),
-        content = {
-          Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(Color.Transparent)
-          ) {
-            Row(
-              modifier = Modifier
-                  .fillMaxWidth()
-                  .padding(horizontal = 8.dp),
-              horizontalArrangement = Arrangement.SpaceBetween,
-              verticalAlignment = Alignment.CenterVertically
-            ) {
-              Text(
-                text = "The Family",
-                style = MaterialTheme.typography.titleLarge.copy(
-                  fontSize = if (isExpanded) 25.sp else 17.sp,
-                  color = Color.Black,
-                  fontWeight = FontWeight.ExtraBold,
-                )
-              )
+          )
 
-              IconButton(modifier = Modifier
-                  .size(30.dp)
-                  .border(
-                      width = 1.dp,
-                      shape = CircleShape,
-                      color = MaterialTheme.colorScheme.primaryContainer
-                  ), onClick = {
-              }) {
-                Icon(
-                  painter = painterResource(id = com.example.timecapsule.R.drawable.ic_open_in_new),
-                  contentDescription = "Open",
-                  tint = Color.Black
-                )
-              }
-            }
-
-            Row(
-              modifier = Modifier
-                  .fillMaxWidth()
-                  .padding(top = 20.dp, bottom = 10.dp),
-              horizontalArrangement = Arrangement.Start,
-              verticalAlignment = Alignment.CenterVertically
-            ) {
-              Icon(
-                painter = painterResource(id = com.example.timecapsule.R.drawable.ic_time_range),
-                contentDescription = "timer icon",
-                tint = Color.Black,
-                modifier = Modifier.size(55.dp)
-              )
-
-              Text(
-                text = "160:10",
-                style = MaterialTheme.typography.titleLarge.copy(
-                  fontSize = 33.sp,
-                  color = Color.Black,
-                  fontWeight = FontWeight.ExtraBold,
-                  fontFamily = openSansExtraBold
-                )
-              )
-            }
-
-            Row(
-              modifier = Modifier
-                  .fillMaxWidth()
-                  .padding(top = 2.dp, bottom = 5.dp)
-                  .padding(horizontal = 10.dp),
-              horizontalArrangement = Arrangement.Start,
-              verticalAlignment = Alignment.CenterVertically
-            ) {
-              Text(
-                text = "Lorem ipsum diotelah oeo minmoto imsush koyo keio hyetya okmoa",
-                style = MaterialTheme.typography.titleLarge.copy(
-                  fontSize = 14.sp,
-                  color = Color.Black,
-                  fontWeight = FontWeight.Bold,
-                  lineHeight = TextUnit(20F, TextUnitType.Sp)
-                )
-              )
-            }
-            if (isExpanded)
-              Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 10.dp, bottom = 5.dp)
-                    .padding(horizontal = 10.dp),
-                horizontalArrangement = Arrangement.Start,
-                verticalAlignment = Alignment.CenterVertically
-              ) {
-                Profile(
-                  userName = "dark6v",
-                  "https://firebasestorage.googleapis.com/v0/b/time-capsule-android.appspot.com/o/default_profile_pictures%2Ftestimg3.jpg?alt=media&token=0f8ad9af-9661-462f-9dfd-d99612109170",
-                  true,
-                  isOwner = true,
-                  size = 40.dp,
-                  hideUserName = true,
-                  remove = {}
-                )
-                Profile(
-                  userName = "dark6v",
-                  "https://firebasestorage.googleapis.com/v0/b/time-capsule-android.appspot.com/o/default_profile_pictures%2Ftestimg3.jpg?alt=media&token=0f8ad9af-9661-462f-9dfd-d99612109170",
-                  true,
-                  size = 40.dp,
-                  hideUserName = true,
-                  remove = {}
-                )
-                Profile(
-                  userName = "dark6v",
-                  "https://firebasestorage.googleapis.com/v0/b/time-capsule-android.appspot.com/o/default_profile_pictures%2Ftestimg3.jpg?alt=media&token=0f8ad9af-9661-462f-9dfd-d99612109170",
-                  true,
-                  size = 40.dp,
-                  hideUserName = true,
-                  remove = {}
-                )
-              }
+          IconButton(modifier = Modifier
+            .size(30.dp)
+            .border(
+              width = 1.dp,
+              shape = CircleShape,
+              color = MaterialTheme.colorScheme.primaryContainer
+            ), onClick = {
+          }) {
+            Icon(
+              painter = painterResource(id = com.example.timecapsule.R.drawable.ic_open_in_new),
+              contentDescription = "Open",
+              tint = Color.Black
+            )
           }
         }
-      )
-    }
-  }
-}
 
-@Preview
-@Composable
-fun PreviewCapsuleCard() {
-  CapsuleCard()
+        Row(
+          modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 20.dp, bottom = 10.dp),
+          horizontalArrangement = Arrangement.Start,
+          verticalAlignment = Alignment.CenterVertically
+        ) {
+          Icon(
+            painter = painterResource(id = com.example.timecapsule.R.drawable.ic_time_range),
+            contentDescription = "timer icon",
+            tint = Color.Black,
+            modifier = Modifier.size(55.dp)
+          )
+
+          Text(
+            text = "160:10",
+            style = MaterialTheme.typography.titleLarge.copy(
+              fontSize = 33.sp,
+              color = Color.Black,
+              fontWeight = FontWeight.ExtraBold,
+              fontFamily = openSansExtraBold
+            )
+          )
+        }
+
+        Row(
+          modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 2.dp, bottom = 5.dp)
+            .padding(horizontal = 10.dp),
+          horizontalArrangement = Arrangement.Start,
+          verticalAlignment = Alignment.CenterVertically
+        ) {
+          Text(
+            text = "Lorem ipsum diotelah oeo minmoto imsush koyo keio hyetya okmoa",
+            style = MaterialTheme.typography.titleLarge.copy(
+              fontSize = 14.sp,
+              color = Color.Black,
+              fontWeight = FontWeight.Bold,
+              lineHeight = TextUnit(20F, TextUnitType.Sp)
+            )
+          )
+        }
+        if (isExpanded)
+          Row(
+            modifier = Modifier
+              .fillMaxWidth()
+              .padding(top = 10.dp, bottom = 5.dp)
+              .padding(horizontal = 10.dp),
+            horizontalArrangement = Arrangement.Start,
+            verticalAlignment = Alignment.CenterVertically
+          ) {
+            Profile(
+              userName = "dark6v",
+              "https://firebasestorage.googleapis.com/v0/b/time-capsule-android.appspot.com/o/default_profile_pictures%2Ftestimg3.jpg?alt=media&token=0f8ad9af-9661-462f-9dfd-d99612109170",
+              true,
+              isOwner = true,
+              size = 40.dp,
+              hideUserName = true,
+              remove = {}
+            )
+            Profile(
+              userName = "dark6v",
+              "https://firebasestorage.googleapis.com/v0/b/time-capsule-android.appspot.com/o/default_profile_pictures%2Ftestimg3.jpg?alt=media&token=0f8ad9af-9661-462f-9dfd-d99612109170",
+              true,
+              size = 40.dp,
+              hideUserName = true,
+              remove = {}
+            )
+            Profile(
+              userName = "dark6v",
+              "https://firebasestorage.googleapis.com/v0/b/time-capsule-android.appspot.com/o/default_profile_pictures%2Ftestimg3.jpg?alt=media&token=0f8ad9af-9661-462f-9dfd-d99612109170",
+              true,
+              size = 40.dp,
+              hideUserName = true,
+              remove = {}
+            )
+          }
+      }
+    }
+  )
 }
