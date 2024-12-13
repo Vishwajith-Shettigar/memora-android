@@ -12,42 +12,204 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeContentPadding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.Chip
+import androidx.compose.material.ChipDefaults
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
+import com.example.timecapsule.R
+import com.example.timecapsule.ui.theme.LightBlue
+import com.example.timecapsule.ui.theme.openSansExtraBold
 
-@OptIn(ExperimentalLayoutApi::class)
+enum class Filter {
+  ALL,
+  ACTIVE,
+  OPENED
+}
+
+@OptIn(
+  ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class,
+  ExperimentalMaterialApi::class
+)
 @Composable
 fun CapsuleCardListScreen() {
-  Scaffold()
+  val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+
+  var filter by remember {
+    mutableStateOf(Filter.ALL)
+  }
+
+  Scaffold(
+    floatingActionButton = {
+      FloatingActionButton(
+        onClick = { },
+        containerColor = LightBlue
+      ) {
+        Icon(
+          painter = painterResource(id = R.drawable.ic_add),
+          tint = Color.White.copy(alpha = 0.7F),
+          contentDescription = "add time capsule",
+          modifier = Modifier.size(30.dp)
+        )
+      }
+    }
+  )
   { innerPadding ->
 
     Column(
       modifier = Modifier
-        .padding(innerPadding)
-        .padding(vertical = 10.dp, horizontal = 2.dp)
+          .background(MaterialTheme.colorScheme.primary)
+          .padding(innerPadding)
+
     ) {
 
-      var expandedCardIndex by remember { mutableStateOf(-1) } // Track expanded card
+      var expandedCardIndex by remember { mutableStateOf(-1) }
 
       LazyColumn(
         modifier = Modifier
-          .fillMaxSize()
-          .padding(8.dp),
+            .fillMaxSize()
+            .padding(horizontal = 3.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
-        contentPadding = PaddingValues(8.dp)
+        contentPadding = PaddingValues(0.dp),
       ) {
+        item {
+          Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(100.dp)
+                .padding(horizontal = 10.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+          ) {
+
+            Text(
+              "Time Capsule",
+              style = MaterialTheme.typography.titleLarge.copy(
+                fontSize = 29.sp,
+                fontWeight = FontWeight.ExtraBold,
+                fontFamily = openSansExtraBold
+              )
+            )
+            AsyncImage(
+              model = R.drawable.onboarding_image,
+              contentDescription = "Profile Picture",
+              modifier = Modifier
+                  .size(70.dp)
+                  .clip(CircleShape)
+                  .padding(end = 1.dp)
+            )
+          }
+        }
+
+        item {
+          Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(50.dp)
+                .padding(horizontal = 10.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Start,
+          ) {
+
+            Chip(
+              colors = ChipDefaults.chipColors(backgroundColor = LightBlue),
+              onClick = { filter = Filter.ALL },
+              modifier = Modifier
+                  .padding(horizontal = 3.dp)
+                  .height(40.dp)
+                  .animateContentSize()
+            ) {
+              Icon(
+                modifier = Modifier.padding(end = 3.dp),
+                painter = painterResource(id = com.example.timecapsule.R.drawable.ic_view_list),
+                contentDescription = "all icon",
+                tint =
+                if (filter == Filter.ALL)
+                  Color.Black
+                else
+                  Color.White
+              )
+              if (filter == Filter.ALL)
+                Text(text = "All", color = Color.Black)
+            }
+            Chip(
+              colors = ChipDefaults.chipColors(backgroundColor = LightBlue),
+              onClick = { filter = Filter.ACTIVE },
+              modifier = Modifier
+                  .padding(horizontal = 3.dp)
+                  .height(40.dp)
+                  .animateContentSize()
+            ) {
+              Icon(
+                modifier = Modifier.padding(end = 3.dp),
+                painter = painterResource(id = com.example.timecapsule.R.drawable.ic_time_range),
+                contentDescription = "active icon",
+                tint =
+                if (filter == Filter.ACTIVE)
+                  Color.Black
+                else
+                  Color.White
+              )
+              if (filter == Filter.ACTIVE)
+                Text(
+                  text = "Active",
+                  color = Color.Black
+                )
+            }
+            Chip(
+              colors = ChipDefaults.chipColors(backgroundColor = LightBlue),
+              onClick = { filter = Filter.OPENED },
+              modifier = Modifier
+                  .padding(horizontal = 3.dp)
+                  .height(40.dp)
+                  .animateContentSize()
+            ) {
+              Icon(
+                modifier = Modifier.padding(end = 3.dp),
+                painter = painterResource(id = com.example.timecapsule.R.drawable.ic_history),
+                contentDescription = "opened icon",
+                tint =
+                if (filter == Filter.OPENED)
+                  Color.Black
+                else
+                  Color.White
+              )
+              if (filter == Filter.OPENED)
+
+                Text(text = "Opened", color = Color.Black)
+            }
+          }
+        }
 
         items((0..9).chunked(2)) { rowItems ->
 
@@ -66,11 +228,11 @@ fun CapsuleCardListScreen() {
               } else
                 Box(
                   modifier = Modifier
-                    .weight(
-                      if (isExpanded) 1f else 0.5f,
-                      fill = false
-                    )
-                    .animateContentSize()
+                      .weight(
+                          if (isExpanded) 1f else 0.5f,
+                          fill = false
+                      )
+                      .animateContentSize()
                 ) {
                   CapsuleCard(
                     isExpanded = isExpanded,
@@ -85,8 +247,8 @@ fun CapsuleCardListScreen() {
             if (rowItems[0] != expandedCardIndex)
               Box(
                 modifier = Modifier
-                  .fillMaxWidth(0.5F)
-                  .padding(top = 8.dp)
+                    .fillMaxWidth(0.5F)
+                    .padding(top = 8.dp)
               ) {
                 CapsuleCard(
                   isExpanded = expandedCardIndex == rowItems[0],
@@ -98,8 +260,8 @@ fun CapsuleCardListScreen() {
             else
               Box(
                 modifier = Modifier
-                  .fillMaxWidth(0.5F)
-                  .padding(top = 8.dp)
+                    .fillMaxWidth(0.5F)
+                    .padding(top = 8.dp)
               ) {
                 CapsuleCard(
                   isExpanded = expandedCardIndex == rowItems[1],
