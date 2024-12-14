@@ -42,7 +42,6 @@ val SubTitleFontColor = Color(0xFFABA5A5)
 
 val LightBlue = Color(0xFF638BF8)
 
-
 val zeroStarColor = Color(0xFF9C1414)
 val threeStarColor = Color(0xFFBB911E)
 val fiveStarColor = Color(0xFF178842)
@@ -50,3 +49,7 @@ val fiveStarColor = Color(0xFF178842)
 val ReviewScreenCommondColor = Color(0xFF5C82EB)
 
 val viewCapsuleDark = Color(0xFF121212)
+
+val cardGreen = Color(0xFF178842)
+val cardYellow = Color(0xFFBB911E)
+val cardViolet = Color(0xFF9867F3)

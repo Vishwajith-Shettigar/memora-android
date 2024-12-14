@@ -62,6 +62,7 @@ import com.example.model.CapsuleDetails
 import com.example.timecapsule.R
 import com.example.timecapsule.ui.theme.LightBlue
 import com.example.timecapsule.ui.theme.openSansExtraBold
+import com.example.timecapsule.ui.util.ColorsMap
 import com.example.timecapsule.viewmodel.CapsuleListScreenState
 import com.example.timecapsule.viewmodel.ShowCapsulesListViewModel
 import kotlinx.coroutines.launch
@@ -159,17 +160,17 @@ fun CapsuleCardListScreen(
 
       LazyColumn(
         modifier = Modifier
-          .fillMaxSize()
-          .padding(horizontal = 3.dp),
+            .fillMaxSize()
+            .padding(horizontal = 3.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
         contentPadding = PaddingValues(0.dp),
       ) {
         item {
           Row(
             modifier = Modifier
-              .fillMaxWidth()
-              .height(100.dp)
-              .padding(start = 12.dp, end = 17.dp),
+                .fillMaxWidth()
+                .height(100.dp)
+                .padding(start = 12.dp, end = 17.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
           ) {
@@ -185,10 +186,10 @@ fun CapsuleCardListScreen(
               model = R.drawable.onboarding_image,
               contentDescription = "Profile Picture",
               modifier = Modifier
-                .size(50.dp)
-                .clip(CircleShape)
-                .padding(end = 1.dp)
-                .graphicsLayer(rotationZ = rotation.value),
+                  .size(50.dp)
+                  .clip(CircleShape)
+                  .padding(end = 1.dp)
+                  .graphicsLayer(rotationZ = rotation.value),
               contentScale = ContentScale.Crop
             )
           }
@@ -197,9 +198,9 @@ fun CapsuleCardListScreen(
         item {
           Row(
             modifier = Modifier
-              .fillMaxWidth()
-              .height(50.dp)
-              .padding(horizontal = 10.dp),
+                .fillMaxWidth()
+                .height(50.dp)
+                .padding(horizontal = 10.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Start,
           ) {
@@ -208,9 +209,9 @@ fun CapsuleCardListScreen(
               colors = ChipDefaults.chipColors(backgroundColor = LightBlue),
               onClick = { filter = Filter.ALL },
               modifier = Modifier
-                .padding(horizontal = 3.dp)
-                .height(40.dp)
-                .animateContentSize()
+                  .padding(horizontal = 3.dp)
+                  .height(40.dp)
+                  .animateContentSize()
             ) {
               Icon(
                 modifier = Modifier.padding(end = 3.dp),
@@ -229,9 +230,9 @@ fun CapsuleCardListScreen(
               colors = ChipDefaults.chipColors(backgroundColor = LightBlue),
               onClick = { filter = Filter.ACTIVE },
               modifier = Modifier
-                .padding(horizontal = 3.dp)
-                .height(40.dp)
-                .animateContentSize()
+                  .padding(horizontal = 3.dp)
+                  .height(40.dp)
+                  .animateContentSize()
             ) {
               Icon(
                 modifier = Modifier.padding(end = 3.dp),
@@ -253,9 +254,9 @@ fun CapsuleCardListScreen(
               colors = ChipDefaults.chipColors(backgroundColor = LightBlue),
               onClick = { filter = Filter.OPENED },
               modifier = Modifier
-                .padding(horizontal = 3.dp)
-                .height(40.dp)
-                .animateContentSize()
+                  .padding(horizontal = 3.dp)
+                  .height(40.dp)
+                  .animateContentSize()
             ) {
               Icon(
                 modifier = Modifier.padding(end = 3.dp),
@@ -296,21 +297,22 @@ fun CapsuleCardListScreen(
                 } else
                   Box(
                     modifier = Modifier
-                      .then(
-                        if (rowItems.size == 2 || isExpanded)
-                          Modifier
-                            .weight(
-                              if (isExpanded) 1f else 0.5f,
-                              fill = false
-                            )
-                        else
-                          Modifier.fillMaxWidth(0.5F)
-                      )
-                      .animateContentSize()
+                        .then(
+                            if (rowItems.size == 2 || isExpanded)
+                                Modifier
+                                    .weight(
+                                        if (isExpanded) 1f else 0.5f,
+                                        fill = false
+                                    )
+                            else
+                                Modifier.fillMaxWidth(0.5F)
+                        )
+                        .animateContentSize()
                   ) {
                     CapsuleCard(
                       capsuleDetails = capsuleList[item],
                       isExpanded = isExpanded,
+                      bgColor = ColorsMap.getColor(item),
                       onClick = {
                         expandedCardIndex = if (isExpanded) -1 else item
                       }, onCapsuleDetailsClicked = onCapsuleClicked,
@@ -323,12 +325,13 @@ fun CapsuleCardListScreen(
               if (rowItems[0] != expandedCardIndex)
                 Box(
                   modifier = Modifier
-                    .fillMaxWidth(0.5F)
-                    .padding(top = 8.dp)
+                      .fillMaxWidth(0.5F)
+                      .padding(top = 8.dp)
                 ) {
                   CapsuleCard(
                     capsuleDetails = capsuleList[rowItems[0]],
                     isExpanded = expandedCardIndex == rowItems[0],
+                    bgColor = ColorsMap.getColor(rowItems[0]),
                     onClick = {
                       expandedCardIndex = rowItems[0]
                     }, onCapsuleDetailsClicked = onCapsuleClicked,
@@ -339,13 +342,14 @@ fun CapsuleCardListScreen(
                 if (rowItems.size == 2)
                   Box(
                     modifier = Modifier
-                      .fillMaxWidth(0.5F)
-                      .padding(top = 8.dp)
+                        .fillMaxWidth(0.5F)
+                        .padding(top = 8.dp)
                   ) {
                     CapsuleCard(
                       capsuleDetails =
                       capsuleList[rowItems[1]],
                       isExpanded = expandedCardIndex == rowItems[1],
+                      bgColor = ColorsMap.getColor(rowItems[1]),
                       onClick = {
                         expandedCardIndex = rowItems[1]
                       }, onCapsuleDetailsClicked = onCapsuleClicked,
