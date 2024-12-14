@@ -156,7 +156,7 @@ fun CapsuleCard(
         Row(
           modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 8.dp, vertical = 9.dp),
+            .padding(start = 8.dp,end=8.dp, top = 9.dp, bottom = 3.dp),
           horizontalArrangement = Arrangement.SpaceBetween,
           verticalAlignment = Alignment.CenterVertically
         ) {
@@ -205,7 +205,7 @@ fun CapsuleCard(
             painter = painterResource(id = icon),
             contentDescription = "timer icon",
             tint = Color.Black,
-            modifier = Modifier.size(55.dp)
+            modifier = Modifier.size(65.dp)
           )
 
           Text(
