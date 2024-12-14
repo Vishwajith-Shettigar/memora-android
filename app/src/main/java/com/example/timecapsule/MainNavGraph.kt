@@ -142,7 +142,7 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
     route = Screen.MainScreens.route
   ) {
     composable(Screen.Home.route) {
-      CapsuleCardListScreen(navController, addCapsuleBtnClicked = {
+      com.example.timecapsule.ui.capsulelist.v2.CapsuleCardListScreen(addCapsuleBtnClicked = {
         navController.navigate(Screen.AddCapsuleScreens.route) // Start AddCapsule flow
       }, onCapsuleClicked = { id ->
         navController.navigate(Screen.CapsuleDetails.createRoute(id)) // Capsule details

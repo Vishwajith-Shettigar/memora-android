@@ -38,7 +38,9 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -54,10 +56,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
+import com.example.model.CapsuleDetails
 import com.example.timecapsule.R
 import com.example.timecapsule.ui.theme.LightBlue
 import com.example.timecapsule.ui.theme.openSansExtraBold
+import com.example.timecapsule.viewmodel.CapsuleListScreenState
+import com.example.timecapsule.viewmodel.ShowCapsulesListViewModel
 import kotlinx.coroutines.launch
 
 enum class Filter {
@@ -71,7 +77,40 @@ enum class Filter {
   ExperimentalMaterialApi::class
 )
 @Composable
-fun CapsuleCardListScreen() {
+fun CapsuleCardListScreen(
+  viewModel: ShowCapsulesListViewModel = hiltViewModel(),
+  addCapsuleBtnClicked: () -> Unit = {},
+  onCapsuleClicked: (id: String) -> Unit = {},
+  openCapule: (id: String) -> Unit = {}
+) {
+
+  val state by viewModel.capsuleListState.collectAsState()
+
+  val isLoading: Boolean = state is CapsuleListScreenState.Loading
+  val isSuccess: Boolean = state is CapsuleListScreenState.Success
+
+  var showCapsuleList: Boolean = state is CapsuleListScreenState.Success
+
+  val capsuleList = remember {
+    mutableStateListOf<CapsuleDetails>()
+  }
+
+  LaunchedEffect(key1 = state) {
+    when (state) {
+      is CapsuleListScreenState.Loading -> {
+      }
+
+      is CapsuleListScreenState.Success -> {
+        capsuleList.clear()
+        capsuleList.addAll((state as CapsuleListScreenState.Success).capsuleList)
+      }
+
+      is CapsuleListScreenState.Error -> {}
+      CapsuleListScreenState.Idle -> {
+      }
+    }
+  }
+
 
   val rotation = remember { Animatable(0f) }
   val coroutineScope = rememberCoroutineScope()
@@ -85,9 +124,9 @@ fun CapsuleCardListScreen() {
     rotation.snapTo(0f)
     coroutineScope.launch {
       rotation.animateTo(
-        targetValue = 360f * 500F,
+        targetValue = 360f * 100F,
         animationSpec = tween(
-          durationMillis = 2000,
+          durationMillis = 1000,
           easing = LinearOutSlowInEasing
         )
       )
@@ -97,7 +136,7 @@ fun CapsuleCardListScreen() {
   Scaffold(
     floatingActionButton = {
       FloatingActionButton(
-        onClick = { },
+        onClick = { addCapsuleBtnClicked() },
         containerColor = LightBlue
       ) {
         Icon(
@@ -114,8 +153,6 @@ fun CapsuleCardListScreen() {
     Column(
       modifier = Modifier
         .background(MaterialTheme.colorScheme.primary)
-        .padding(innerPadding)
-
     ) {
 
       var expandedCardIndex by remember { mutableStateOf(-1) }
@@ -237,66 +274,85 @@ fun CapsuleCardListScreen() {
           }
         }
 
-        items((0..9).chunked(2)) { rowItems ->
+        if (isSuccess)
+          items((0..capsuleList.size - 1).chunked(2)) { rowItems ->
 
-          var p = false
-          if (rowItems[0] == expandedCardIndex || rowItems[1] == expandedCardIndex) {
-            p = true
-          }
+            var p = false
 
-          Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-          ) {
-            rowItems.forEachIndexed { index, item ->
-              val isExpanded = expandedCardIndex == item
-              if (p && isExpanded != true) {
-              } else
+            if (rowItems[0] == expandedCardIndex) {
+              p = true
+            } else if (rowItems.size == 2) {
+              if (rowItems[1] == expandedCardIndex)
+                p = true
+            }
+
+            Row(
+              modifier = Modifier.fillMaxWidth(),
+              horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+              rowItems.forEachIndexed { index, item ->
+                val isExpanded = expandedCardIndex == item
+                if (p && isExpanded != true) {
+                } else
+                  Box(
+                    modifier = Modifier
+                      .then(
+                        if (rowItems.size == 2 || isExpanded)
+                          Modifier
+                            .weight(
+                              if (isExpanded) 1f else 0.5f,
+                              fill = false
+                            )
+                        else
+                          Modifier.fillMaxWidth(0.5F)
+                      )
+                      .animateContentSize()
+                  ) {
+                    CapsuleCard(
+                      capsuleDetails = capsuleList[item],
+                      isExpanded = isExpanded,
+                      onClick = {
+                        expandedCardIndex = if (isExpanded) -1 else item
+                      }, onCapsuleDetailsClicked = onCapsuleClicked,
+                      openCapule = openCapule
+                    )
+                  }
+              }
+            }
+            if (p == true)
+              if (rowItems[0] != expandedCardIndex)
                 Box(
                   modifier = Modifier
-                    .weight(
-                      if (isExpanded) 1f else 0.5f,
-                      fill = false
-                    )
-                    .animateContentSize()
+                    .fillMaxWidth(0.5F)
+                    .padding(top = 8.dp)
                 ) {
                   CapsuleCard(
-                    isExpanded = isExpanded,
+                    capsuleDetails = capsuleList[rowItems[0]],
+                    isExpanded = expandedCardIndex == rowItems[0],
                     onClick = {
-                      expandedCardIndex = if (isExpanded) -1 else item
-                    }
+                      expandedCardIndex = rowItems[0]
+                    }, onCapsuleDetailsClicked = onCapsuleClicked,
+                    openCapule = openCapule
                   )
                 }
-            }
+              else
+                if (rowItems.size == 2)
+                  Box(
+                    modifier = Modifier
+                      .fillMaxWidth(0.5F)
+                      .padding(top = 8.dp)
+                  ) {
+                    CapsuleCard(
+                      capsuleDetails =
+                      capsuleList[rowItems[1]],
+                      isExpanded = expandedCardIndex == rowItems[1],
+                      onClick = {
+                        expandedCardIndex = rowItems[1]
+                      }, onCapsuleDetailsClicked = onCapsuleClicked,
+                      openCapule = openCapule
+                    )
+                  }
           }
-          if (p == true)
-            if (rowItems[0] != expandedCardIndex)
-              Box(
-                modifier = Modifier
-                  .fillMaxWidth(0.5F)
-                  .padding(top = 8.dp)
-              ) {
-                CapsuleCard(
-                  isExpanded = expandedCardIndex == rowItems[0],
-                  onClick = {
-                    expandedCardIndex = rowItems[0]
-                  }
-                )
-              }
-            else
-              Box(
-                modifier = Modifier
-                  .fillMaxWidth(0.5F)
-                  .padding(top = 8.dp)
-              ) {
-                CapsuleCard(
-                  isExpanded = expandedCardIndex == rowItems[1],
-                  onClick = {
-                    expandedCardIndex = rowItems[1]
-                  }
-                )
-              }
-        }
       }
     }
   }

@@ -65,12 +65,12 @@ class MainActivity : ComponentActivity() {
 //        WriteLetterScreen()
 //        OnBoardingNavGraph()
 
-//        NavGraph(navController)
+        NavGraph(navController)
 
 //        CapsuleCard()
 
 
-        CapsuleCardListScreen()
+//        CapsuleCardListScreen()
 //        ContactUsScreen {
 //
 //        }

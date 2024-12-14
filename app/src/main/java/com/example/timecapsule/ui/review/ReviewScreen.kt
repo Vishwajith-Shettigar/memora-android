@@ -633,13 +633,18 @@ fun MapPreviewCard(latlang: LatLng) {
 
 @Preview
 @Composable
-fun SharedWithALlIcon() {
+fun SharedWithALlIcon(text: String = "All") {
   Box(
     modifier =
-    Modifier.size(70.dp)
+    Modifier
+        .height(40.dp)
+        .width(40.dp)
+        .clip(shape = CircleShape)
+        .border(1.dp, Color.LightGray, CircleShape)
+        .padding(2.dp)
   ) {
     Text(
-      text = "+ All", modifier = Modifier.align(Alignment.Center),
+      text = "+${text}", modifier = Modifier.align(Alignment.Center),
       style = MaterialTheme.typography.titleLarge.copy(fontSize = 20.sp),
       color = MaterialTheme.colorScheme.onSurfaceVariant
     )
