@@ -31,7 +31,8 @@ class DisplayCapsuleDetailsViewModel @Inject constructor(
   val capsuleDetailsState: StateFlow<DisplayCapsuleDetailsState> = _capsuleDetailsState
 
   fun getCapsuleDetails(capsuleId: String) {
-
+    _capsuleDetailsState.value =
+      DisplayCapsuleDetailsState.Loading
     viewModelScope.launch {
       withContext(Dispatchers.IO) {
         val response = getCapsuleDetailsUseCase(capsuleId)

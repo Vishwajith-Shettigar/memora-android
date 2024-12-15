@@ -26,6 +26,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.navigation
 import com.example.model.Profile
 import com.example.timecapsule.ui.capsuledetails.CapsuleDetailsScreen
+import com.example.timecapsule.ui.capsuledetails.CapsuleDetailsScreenv1
 import com.example.timecapsule.ui.nearbycapsules.NearbyCapsulesScreen
 import com.example.timecapsule.ui.setting.SettingScreen
 import com.example.timecapsule.ui.setting.options.ChangeLanguageScreen
@@ -271,7 +272,7 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
     composable(Screen.CapsuleDetails.route) { navBackStackEntry ->
       val capsuleId = navBackStackEntry.arguments?.getString("id")
       if (capsuleId != null) {
-        CapsuleDetailsScreen(capsuleId) {
+        CapsuleDetailsScreenv1(capsuleId) {
           navController.popBackStack()
         }
       }

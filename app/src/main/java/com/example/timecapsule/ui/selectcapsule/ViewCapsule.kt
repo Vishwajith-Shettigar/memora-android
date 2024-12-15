@@ -96,28 +96,28 @@ fun ViewCapsule(capsuleAsset: CapsuleAsset, onBackClick: () -> Unit = {}) {
   val modelName = getModel(capsuleAsset.capsule_id)
   Scaffold(
     modifier = Modifier
-      .fillMaxSize()
-      .background(MaterialTheme.colorScheme.primary)
-      .padding(vertical = 30.dp),
+        .fillMaxSize()
+        .background(MaterialTheme.colorScheme.primary)
+        .padding(vertical = 30.dp),
   ) { innerPadding ->
     Column(
       modifier = Modifier
-        .fillMaxSize()
-        .background(MaterialTheme.colorScheme.onSecondaryContainer),
+          .fillMaxSize()
+          .background(MaterialTheme.colorScheme.onSecondaryContainer),
       verticalArrangement = Arrangement.Center,
       horizontalAlignment = Alignment.CenterHorizontally
     ) {
       Box(
         modifier = Modifier
-          .fillMaxWidth()
-          .height(400.dp)
-          .shadow(
-            2.dp,
-            ambientColor = Color.White,
-            spotColor = Color.White,
-            shape = RoundedCornerShape(bottomEnd = 50.dp, bottomStart = 50.dp)
-          )
-          .clip(shape = RoundedCornerShape(bottomEnd = 50.dp, bottomStart = 50.dp))
+            .fillMaxWidth()
+            .height(400.dp)
+            .shadow(
+                2.dp,
+                ambientColor = Color.White,
+                spotColor = Color.White,
+                shape = RoundedCornerShape(bottomEnd = 50.dp, bottomStart = 50.dp)
+            )
+            .clip(shape = RoundedCornerShape(bottomEnd = 50.dp, bottomStart = 50.dp))
       )
       {
         BackRow(Modifier.padding(innerPadding), onBackClick)
@@ -125,9 +125,9 @@ fun ViewCapsule(capsuleAsset: CapsuleAsset, onBackClick: () -> Unit = {}) {
       }
 
       val colMod = if (isTablet) {
-        Modifier
-          .fillMaxHeight()
-          .width(500.dp)
+          Modifier
+              .fillMaxHeight()
+              .width(500.dp)
       } else {
         Modifier.fillMaxSize()
 
@@ -142,26 +142,26 @@ fun ViewCapsule(capsuleAsset: CapsuleAsset, onBackClick: () -> Unit = {}) {
       ) {
         Row(
           modifier = Modifier
-            .fillMaxWidth()
-            .wrapContentHeight()
+              .fillMaxWidth()
+              .wrapContentHeight()
         ) {
           ElevatedCard(
             modifier = Modifier
-              .height(190.dp)
-              .weight(1.3F)
-              .shadow(
-                10.dp,
-                RoundedCornerShape(10.dp),
-                ambientColor = Color.White,
-                spotColor = Color.White
-              )
-              .clip(RoundedCornerShape(10.dp)),
+                .height(190.dp)
+                .weight(1.3F)
+                .shadow(
+                    10.dp,
+                    RoundedCornerShape(10.dp),
+                    ambientColor = Color.White,
+                    spotColor = Color.White
+                )
+                .clip(RoundedCornerShape(10.dp)),
             colors = CardDefaults.elevatedCardColors(darkPrimaryBackground),
           ) {
             Column(
               modifier = Modifier
-                .fillMaxSize()
-                .background(darkPrimaryBackground),
+                  .fillMaxSize()
+                  .background(darkPrimaryBackground),
               verticalArrangement = Arrangement.Center,
               horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -184,29 +184,29 @@ fun ViewCapsule(capsuleAsset: CapsuleAsset, onBackClick: () -> Unit = {}) {
 
           Column(
             modifier = Modifier
-              .padding(start = 6.dp)
-              .height(190.dp)
-              .weight(1.0F),
+                .padding(start = 6.dp)
+                .height(190.dp)
+                .weight(1.0F),
             verticalArrangement = Arrangement.SpaceBetween
           ) {
             ElevatedCard(
               modifier = Modifier
-                .fillMaxWidth()
-                .height(90.dp)
-                .shadow(
-                  2.dp,
-                  RoundedCornerShape(5.dp),
-                  ambientColor = Color.White,
-                  spotColor = Color.White
-                )
-                .clip(RoundedCornerShape(5.dp)),
+                  .fillMaxWidth()
+                  .height(90.dp)
+                  .shadow(
+                      2.dp,
+                      RoundedCornerShape(5.dp),
+                      ambientColor = Color.White,
+                      spotColor = Color.White
+                  )
+                  .clip(RoundedCornerShape(5.dp)),
               colors = CardDefaults.elevatedCardColors(darkPrimaryBackground),
               shape = RoundedCornerShape(5.dp)
             ) {
               Column(
                 modifier = Modifier
-                  .padding(5.dp)
-                  .fillMaxSize(), verticalArrangement = Arrangement.Top,
+                    .padding(5.dp)
+                    .fillMaxSize(), verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.Start
               ) {
                 Text(
@@ -229,22 +229,22 @@ fun ViewCapsule(capsuleAsset: CapsuleAsset, onBackClick: () -> Unit = {}) {
             }
             ElevatedCard(
               modifier = Modifier
-                .fillMaxWidth()
-                .height(90.dp)
-                .shadow(
-                  2.dp,
-                  RoundedCornerShape(5.dp),
-                  ambientColor = Color.White,
-                  spotColor = Color.White
-                )
-                .clip(RoundedCornerShape(5.dp)),
+                  .fillMaxWidth()
+                  .height(90.dp)
+                  .shadow(
+                      2.dp,
+                      RoundedCornerShape(5.dp),
+                      ambientColor = Color.White,
+                      spotColor = Color.White
+                  )
+                  .clip(RoundedCornerShape(5.dp)),
               colors = CardDefaults.elevatedCardColors(darkPrimaryBackground),
               shape = RoundedCornerShape(5.dp)
             ) {
               Column(
                 modifier = Modifier
-                  .padding(5.dp)
-                  .fillMaxSize(), verticalArrangement = Arrangement.Top,
+                    .padding(5.dp)
+                    .fillMaxSize(), verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.Start
               ) {
                 Text(
@@ -276,18 +276,18 @@ fun ViewCapsule(capsuleAsset: CapsuleAsset, onBackClick: () -> Unit = {}) {
 fun BackRow(modifier: Modifier, onBackClick: () -> Unit = {}) {
   Row(
     modifier = modifier
-      .fillMaxWidth()
-      .zIndex(10.0F)
-      .padding(horizontal = 20.dp)
-      .background(Color.Transparent),
+        .fillMaxWidth()
+        .zIndex(10.0F)
+        .padding(horizontal = 20.dp)
+        .background(Color.Transparent),
     horizontalArrangement = Arrangement.Start
   ) {
     IconButton(
       onClick = { onBackClick() }, modifier =
-      Modifier
-        .size(40.dp)
-        .clip(CircleShape)
-        .border(1.dp, Color.Gray, CircleShape)
+        Modifier
+            .size(40.dp)
+            .clip(CircleShape)
+            .border(1.dp, Color.Gray, CircleShape)
     ) {
       Icon(
         painter = painterResource(id = R.drawable.ic_back_arrow), contentDescription = "back",
@@ -319,8 +319,8 @@ fun Display3DModel(
 
     Scene(
       modifier = Modifier
-        .fillMaxSize()
-        .align(Alignment.Center),
+          .fillMaxSize()
+          .align(Alignment.Center),
       engine = engine,
       modelLoader = modelLoader,
       cameraNode = cameraNode,

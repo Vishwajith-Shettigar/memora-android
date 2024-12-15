@@ -59,7 +59,7 @@ fun CapsuleDetailsScreen(
 ) {
 
   LaunchedEffect(Unit) {
-    viewModel.getCapsuleDetails(capsuleId)
+//    viewModel.getCapsuleDetails(capsuleId)
   }
 
   val capsuleDetailsState by viewModel.capsuleDetailsState.collectAsState()
@@ -89,8 +89,8 @@ fun CapsuleDetailsScreen(
   ) { innerPadding ->
     LazyColumn(
       modifier = Modifier
-        .fillMaxSize()
-        .background(MaterialTheme.colorScheme.primary)
+          .fillMaxSize()
+          .background(MaterialTheme.colorScheme.primary)
     ) {
       item {
         TopPart(
@@ -121,20 +121,20 @@ fun TopPart(
 ) {
   Box(
     modifier = modifier
-      .fillMaxWidth()
-      .height(280.dp)
+        .fillMaxWidth()
+        .height(280.dp)
   ) {
     Box(
       modifier = modifier
-        .fillMaxWidth()
-        .height(280.dp)
-        .clip(
-          shape =
-          RoundedCornerShape(bottomStart = 70.dp, bottomEnd = 70.dp)
-        )
-        .shadow(8.dp, shape = RoundedCornerShape(bottomStart = 70.dp, bottomEnd = 70.dp))
-        .background(LightBlue)
-        .zIndex(1f),
+          .fillMaxWidth()
+          .height(280.dp)
+          .clip(
+              shape =
+              RoundedCornerShape(bottomStart = 70.dp, bottomEnd = 70.dp)
+          )
+          .shadow(8.dp, shape = RoundedCornerShape(bottomStart = 70.dp, bottomEnd = 70.dp))
+          .background(LightBlue)
+          .zIndex(1f),
     ) {
       BackRow {
         onBack()
@@ -143,21 +143,21 @@ fun TopPart(
       if (isLoading) {
         Box(
           modifier = Modifier
-            .size(280.dp)
-            .align(Alignment.Center)
-            .placeholder(
-              visible = isLoading,
-              color = Color.Gray.copy(alpha = 0.1f),
-              highlight = PlaceholderHighlight.shimmer()
-            )
+              .size(280.dp)
+              .align(Alignment.Center)
+              .placeholder(
+                  visible = isLoading,
+                  color = Color.Gray.copy(alpha = 0.1f),
+                  highlight = PlaceholderHighlight.shimmer()
+              )
         )
       } else if (isSuccess) {
         AsyncImage(
           model = imageUrl,
           contentDescription = "Capsule model",
           modifier = Modifier
-            .size(280.dp)
-            .align(Alignment.Center)
+              .size(280.dp)
+              .align(Alignment.Center)
         )
       }
     }
@@ -175,18 +175,18 @@ fun BottomPart(
   }
   Column(
     modifier = Modifier
-      .fillMaxWidth()
-      .padding(vertical = 10.dp)
-      .fillMaxHeight()
-      .background(MaterialTheme.colorScheme.primary),
+        .fillMaxWidth()
+        .padding(vertical = 10.dp)
+        .fillMaxHeight()
+        .background(MaterialTheme.colorScheme.primary),
     horizontalAlignment = Alignment.CenterHorizontally,
     verticalArrangement = Arrangement.Top
   ) {
     Row(
       modifier = Modifier
-        .fillMaxWidth()
-        .wrapContentHeight()
-        .padding(horizontal = 20.dp, vertical = 10.dp),
+          .fillMaxWidth()
+          .wrapContentHeight()
+          .padding(horizontal = 20.dp, vertical = 10.dp),
       horizontalArrangement = Arrangement.Center,
       verticalAlignment = Alignment.CenterVertically
     ) {
@@ -200,12 +200,12 @@ fun BottomPart(
             color = MaterialTheme.colorScheme.onSurfaceVariant
           ),
           modifier = Modifier
-            .placeholder(
-              visible = isLoading,
-              color = Color.Gray.copy(alpha = 0.1f),
-              highlight = PlaceholderHighlight.shimmer()
-            )
-            .wrapContentSize()
+              .placeholder(
+                  visible = isLoading,
+                  color = Color.Gray.copy(alpha = 0.1f),
+                  highlight = PlaceholderHighlight.shimmer()
+              )
+              .wrapContentSize()
         )
       }
 
@@ -228,12 +228,12 @@ fun BottomPart(
     if (isLoading) {
       Box(
         modifier = Modifier
-          .size(100.dp, 20.dp)
-          .placeholder(
-            visible = isLoading,
-            color = Color.Gray.copy(alpha = 0.1f),
-            highlight = PlaceholderHighlight.shimmer()
-          )
+            .size(100.dp, 20.dp)
+            .placeholder(
+                visible = isLoading,
+                color = Color.Gray.copy(alpha = 0.1f),
+                highlight = PlaceholderHighlight.shimmer()
+            )
       )
     }
 
@@ -258,19 +258,19 @@ fun BottomPart(
     // Shared with people.
     Column(
       modifier = Modifier
-        .fillMaxWidth()
-        .wrapContentHeight()
-        .padding(horizontal = 20.dp, vertical = 20.dp)
+          .fillMaxWidth()
+          .wrapContentHeight()
+          .padding(horizontal = 20.dp, vertical = 20.dp)
     ) {
       // Shimmer effect for the title text
       Text(
         modifier = Modifier
-          .padding(bottom = 5.dp)
-          .placeholder(
-            visible = isLoading,
-            highlight = PlaceholderHighlight.shimmer(),
-            color = Color.Gray.copy(alpha = 0.3f)
-          ),
+            .padding(bottom = 5.dp)
+            .placeholder(
+                visible = isLoading,
+                highlight = PlaceholderHighlight.shimmer(),
+                color = Color.Gray.copy(alpha = 0.3f)
+            ),
         text = stringResource(id = R.string.shared_with_capsule_details_screen),
         style = MaterialTheme.typography.titleLarge.copy(
           fontSize = 20.sp,
@@ -295,14 +295,14 @@ fun BottomPart(
           items(7) {
             Box(
               modifier = Modifier
-                .size(70.dp)
-                .placeholder(
-                  visible = isLoading,
-                  shape = CircleShape,
-                  highlight = PlaceholderHighlight.shimmer(),
-                  color = Color.Gray.copy(alpha = 0.3f),
-                )
-                .clip(shape = CircleShape)
+                  .size(70.dp)
+                  .placeholder(
+                      visible = isLoading,
+                      shape = CircleShape,
+                      highlight = PlaceholderHighlight.shimmer(),
+                      color = Color.Gray.copy(alpha = 0.3f),
+                  )
+                  .clip(shape = CircleShape)
             )
           }
         }
@@ -331,15 +331,15 @@ fun BottomPart(
     if (isLoading)
       Box(
         modifier = Modifier
-          .fillMaxWidth()
-          .height(200.dp)
-          .padding(horizontal = 20.dp)
-          .clip(RoundedCornerShape(20.dp))
-          .placeholder(
-            visible = isLoading,
-            highlight = PlaceholderHighlight.shimmer(),
-            color = Color.Gray.copy(alpha = 0.3f)
-          )
+            .fillMaxWidth()
+            .height(200.dp)
+            .padding(horizontal = 20.dp)
+            .clip(RoundedCornerShape(20.dp))
+            .placeholder(
+                visible = isLoading,
+                highlight = PlaceholderHighlight.shimmer(),
+                color = Color.Gray.copy(alpha = 0.3f)
+            )
       )
 
     if (isSuccess)
@@ -347,14 +347,14 @@ fun BottomPart(
         SelectedLocation(
           latlang = LatLng(it.latitude, it.longitude),
           modifier = Modifier
-            .fillMaxWidth()
-            .wrapContentHeight()
-            .padding(horizontal = 20.dp)
-            .placeholder(
-              visible = isLoading,
-              highlight = PlaceholderHighlight.shimmer(),
-              color = Color.Gray.copy(alpha = 0.3f)
-            )
+              .fillMaxWidth()
+              .wrapContentHeight()
+              .padding(horizontal = 20.dp)
+              .placeholder(
+                  visible = isLoading,
+                  highlight = PlaceholderHighlight.shimmer(),
+                  color = Color.Gray.copy(alpha = 0.3f)
+              )
         )
       }
   }

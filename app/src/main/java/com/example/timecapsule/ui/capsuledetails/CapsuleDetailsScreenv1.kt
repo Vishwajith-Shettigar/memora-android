@@ -1,26 +1,20 @@
 package com.example.timecapsule.ui.capsuledetails
 
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.ui.unit.lerp
-import androidx.compose.ui.unit.sp
-import androidx.compose.ui.zIndex
-import kotlin.math.max
-import kotlin.math.min
-
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -30,437 +24,370 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.unit.Dp
-import com.example.timecapsule.R
+import androidx.compose.ui.zIndex
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.model.CapsuleDetails
+import com.example.timecapsule.ui.review.MapPreviewCard
+import com.example.timecapsule.ui.review.SharedWithALlIcon
+import com.example.timecapsule.ui.selecttime.BackRow
+import com.example.timecapsule.ui.sharewithpeople.Profile
 import com.example.timecapsule.ui.theme.LightBlue
-import com.example.timecapsule.ui.theme.cardViolet
+import com.example.timecapsule.ui.theme.overSeer
+import com.example.timecapsule.viewmodel.DisplayCapsuleDetailsState
+import com.example.timecapsule.viewmodel.DisplayCapsuleDetailsViewModel
+import com.google.accompanist.placeholder.PlaceholderHighlight
+import com.google.accompanist.placeholder.material.shimmer
+import com.google.accompanist.placeholder.placeholder
+import com.google.firebase.Timestamp
+import com.google.firebase.firestore.GeoPoint
 
 @Composable
-fun CapsuleDetailsScreenv1() {
-  SwipeToRevealCapsuleScreen()
-}
+fun CapsuleDetailsScreenv1(
+  capsuleId: String = "",
+  viewModel: DisplayCapsuleDetailsViewModel = hiltViewModel(),
+  onBack: () -> Unit = {}
+) {
 
-//@Composable
-//fun EnhancedCapsuleDetailScreen() {
-//  Column(
-//    modifier = Modifier
-//      .fillMaxSize().background(cardViolet)
-//      .padding(16.dp)
-//      .verticalScroll(rememberScrollState())
-//  ) {
-//    // Capsule Image
-//    Box(
-//      modifier = Modifier
-//          .fillMaxWidth()
-//          .padding(top = 16.dp),
-//      contentAlignment = Alignment.Center
-//    ) {
-//      Image(
-//        painter = painterResource(id = com.example.timecapsule.R.drawable.capsule_image3), // Replace with your image resource
-//        contentDescription = "Capsule Image",
-//        contentScale = ContentScale.Crop,
-//        modifier = Modifier
-//          .size(200.dp)
-//          .clip(CircleShape)
-//          .background(Color.LightGray)
-//          .shadow(8.dp, CircleShape)
-//      )
-//    }
-//
-//    Spacer(modifier = Modifier.height(16.dp))
-//
-//    // Capsule Title and Description
-//    Text(
-//      text = "Time Capsule Title",
-//      fontSize = 28.sp,
-//      fontWeight = FontWeight.Bold,
-//      color = MaterialTheme.colors.primary,
-//      modifier = Modifier
-//          .fillMaxWidth()
-//          .padding(horizontal = 16.dp)
-//    )
-//
-//    Spacer(modifier = Modifier.height(8.dp))
-//
-//    Card(
-//      shape = RoundedCornerShape(16.dp),
-//      elevation = 4.dp,
-//      modifier = Modifier.fillMaxWidth()
-//    ) {
-//      Text(
-//        text = "This is the description of the capsule. It provides a detailed explanation of its contents and significance.",
-//        fontSize = 16.sp,
-//        modifier = Modifier
-//            .padding(16.dp)
-//            .background(MaterialTheme.colors.surface)
-//      )
-//    }
-//
-//    Spacer(modifier = Modifier.height(16.dp))
-//
-//    // Opening Time
-//    Row(
-//      modifier = Modifier
-//          .fillMaxWidth()
-//          .padding(horizontal = 16.dp)
-//          .background(
-//              MaterialTheme.colors.primary.copy(alpha = 0.1f),
-//              shape = RoundedCornerShape(50)
-//          )
-//          .padding(16.dp),
-//      verticalAlignment = Alignment.CenterVertically
-//    ) {
-//      Icon(
-//        painter = painterResource(id = com.example.timecapsule.R.drawable.ic_time_range), // Replace with your clock icon
-//        contentDescription = "Clock Icon",
-//        tint = MaterialTheme.colors.primary,
-//        modifier = Modifier.size(24.dp)
-//      )
-//      Spacer(modifier = Modifier.width(8.dp))
-//      Text(
-//        text = "Opens: 12 Dec 2024, 10:00 AM",
-//        fontSize = 16.sp,
-//        color = MaterialTheme.colors.primary
-//      )
-//    }
-//
-//    Spacer(modifier = Modifier.height(16.dp))
-//
-//    // Shared Profiles
-//    Column(modifier = Modifier.fillMaxWidth()) {
-//      Text(
-//        text = "Shared With:",
-//        fontSize = 20.sp,
-//        fontWeight = FontWeight.Medium,
-//        modifier = Modifier.padding(horizontal = 16.dp)
-//      )
-//
-//      Spacer(modifier = Modifier.height(8.dp))
-//
-//      Row(
-//        modifier = Modifier
-//            .fillMaxWidth()
-//            .padding(horizontal = 16.dp),
-//        horizontalArrangement = Arrangement.spacedBy(12.dp)
-//      ) {
-//        repeat(5) {
-//          Image(
-//            painter = painterResource(id = com.example.timecapsule.R.drawable.testimg1), // Replace with actual images
-//            contentDescription = "Profile Picture",
-//            contentScale = ContentScale.Crop,
-//            modifier = Modifier
-//                .size(60.dp)
-//                .clip(CircleShape)
-//                .background(Color.Gray)
-//          )
-//        }
-//      }
-//    }
-//
-//    Spacer(modifier = Modifier.height(16.dp))
-//
-//    // Google Map Location
-//    Text(
-//      text = "Location:",
-//      fontSize = 20.sp,
-//      fontWeight = FontWeight.Medium,
-//      modifier = Modifier.padding(horizontal = 16.dp)
-//    )
-//
-//    Spacer(modifier = Modifier.height(8.dp))
-//
-//    Card(
-//      shape = RoundedCornerShape(16.dp),
-//      elevation = 4.dp,
-//      modifier = Modifier
-//          .fillMaxWidth()
-//          .height(200.dp)
-//          .padding(horizontal = 16.dp)
-//    ) {
-//      Box(
-//        modifier = Modifier
-//            .fillMaxSize()
-//            .background(Color.LightGray)
-//      ) {
-//        Text(
-//          text = "Google Map Preview",
-//          modifier = Modifier.align(Alignment.Center),
-//          fontSize = 16.sp,
-//          fontWeight = FontWeight.Bold,
-//          color = Color.White
-//        )
-//      }
-//    }
-//
-//    Spacer(modifier = Modifier.height(16.dp))
-//
-//    // Action Buttons
-//    Row(
-//      modifier = Modifier
-//          .fillMaxWidth()
-//          .padding(horizontal = 16.dp),
-//      horizontalArrangement = Arrangement.SpaceBetween
-//    ) {
-//      Button(onClick = { /* TODO: Open Capsule */ }) {
-//        Text(text = "Open Capsule")
-//      }
-//
-//      Button(onClick = { /* TODO: Share Location */ }) {
-//        Text(text = "Share Location")
-//      }
-//    }
-//  }
-//}
-//
-//@Preview(showBackground = true)
-//@Composable
-//fun EnhancedCapsuleDetailScreenPreview() {
-//  EnhancedCapsuleDetailScreen()
-//}
+  LaunchedEffect(Unit) {
+    viewModel.getCapsuleDetails(capsuleId)
+  }
 
-@Composable
-fun SwipeToRevealCapsuleScreen() {
-  val maxHeight = 300.dp  // Full height for the image at the start
-  val minHeight = 100.dp  // Height of the image when collapsed at the top
-  var scrollOffset by remember { mutableStateOf(0f) }  // Track scroll offset for animation
+  val capsuleDetailsState by viewModel.capsuleDetailsState.collectAsState()
 
-  // Collapsing height logic
-  val imageHeight = lerp(
-    start = maxHeight,
-    stop = minHeight,
-    fraction = min(1f, scrollOffset / 300f)
-  )
+  val isLoading = capsuleDetailsState is DisplayCapsuleDetailsState.Loading
 
+  val isSuccess = capsuleDetailsState is DisplayCapsuleDetailsState.Success
+
+  var capsuleDetails: CapsuleDetails? by remember {
+    mutableStateOf(null)
+  }
+
+  LaunchedEffect(capsuleDetailsState) {
+    when (capsuleDetailsState) {
+      is DisplayCapsuleDetailsState.Success -> {
+        capsuleDetails =
+          (capsuleDetailsState as DisplayCapsuleDetailsState.Success).capsuleDetails
+      }
+
+      is DisplayCapsuleDetailsState.Error -> {}
+      is DisplayCapsuleDetailsState.Loading -> {}
+    }
+  }
   Box(
     modifier = Modifier
         .fillMaxSize()
-        .background(Color.White)
+        .background(androidx.compose.material3.MaterialTheme.colorScheme.primary)
   ) {
-    // LazyColumn for Scrollable Content
     LazyColumn(
       modifier = Modifier
           .fillMaxSize()
-          // Add dynamic padding based on image height
           .zIndex(0f),
-      contentPadding = PaddingValues(horizontal = 16.dp),
+      contentPadding = PaddingValues(horizontal = 4.dp, vertical = 10.dp),
     ) {
-      // Capsule Details
       item {
-        CapsuleDetailsSection()
+        BackRow(onBack)
+      }
+      item {
+        CapsuleDetailsSection(capsuleDetails, isSuccess, isLoading)
       }
     }
   }
 }
 
 @Composable
-fun TopImageSection(imageHeight: Dp) {
-  Box(
-    modifier = Modifier
-        .fillMaxWidth()
-        .padding(horizontal = 16.dp, vertical = 16.dp)
-  ) {
-    // Left Card
-    Card(
-      elevation = 8.dp,
-      shape = RoundedCornerShape(16.dp),
-      modifier = Modifier
-          .padding(vertical = 10.dp)
-          .fillMaxWidth(0.3F)
-          .height(100.dp)
-          .align(Alignment.TopEnd)
-    ) {
-      Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.LightGray),
-        contentAlignment = Alignment.Center
-      ) {
-        Text("Right Card", color = Color.Black, fontSize = 16.sp)
+fun TopImageSection(isSuccess: Boolean, modelId: Int) {
+
+  if (isSuccess) {
+    val context = LocalContext.current
+
+    val flagBitmap: Bitmap? = remember("capsule_images/model1.png") {
+      try {
+        val inputStream = context.assets.open("capsule_images/model1.png")
+        BitmapFactory.decodeStream(inputStream)
+      } catch (e: Exception) {
+        null
       }
     }
-
-    // Center Card with Capsule Image
-    Card(
-      elevation = 12.dp,
-      shape = RoundedCornerShape(16.dp),
+    Box(
       modifier = Modifier
-          .height(300.dp)
-          .fillMaxWidth(0.7F)
-          .align(Alignment.TopStart)
-          .zIndex(3.0F)
-          .padding(horizontal = 5.dp),
-      backgroundColor = Color.LightGray
-    ) {
-      Image(
-        painter = painterResource(id = com.example.timecapsule.R.drawable.capsule_image3), // Replace with your image
-        contentDescription = "Capsule Image",
-        contentScale = ContentScale.Fit,
-        modifier = Modifier.fillMaxSize()
-      )
-    }
+          .fillMaxWidth()
+          .wrapContentHeight()
+          .padding(horizontal = 16.dp, vertical = 15.dp)
+          .padding(bottom = 25.dp)
 
-    // Right Card
-    Card(
-      elevation = 8.dp,
-      shape = RoundedCornerShape(16.dp),
-      modifier = Modifier
-          .padding(vertical = 10.dp)
-          .fillMaxWidth(0.3F)
-          .height(100.dp)
-          .align(Alignment.BottomEnd)
     ) {
-      Box(
+      // Left Card
+      Card(
+        elevation = 8.dp,
+        shape = RoundedCornerShape(16.dp),
         modifier = Modifier
-            .fillMaxSize()
-            .background(Color.LightGray),
-        contentAlignment = Alignment.Center
+            .padding(vertical = 10.dp)
+            .fillMaxWidth(0.3F)
+            .height(100.dp)
+            .align(Alignment.TopEnd),
       ) {
-        Text("Right Card", color = Color.Black, fontSize = 16.sp)
+        Box(
+          modifier = Modifier
+              .fillMaxSize()
+              .background(Color.Black),
+          contentAlignment = Alignment.Center
+        ) {
+          androidx.compose.material3.Text(
+            text = "Model 100",
+            style = androidx.compose.material3.MaterialTheme.typography.titleMedium.copy(
+              color = Color.White,
+              fontSize = 20.sp, fontFamily = overSeer
+            )
+          )
+        }
+      }
+
+      // Center Card with Capsule Image
+      Card(
+        elevation = 10.dp,
+        shape = RoundedCornerShape(16.dp),
+        modifier = Modifier
+            .height(300.dp)
+            .fillMaxWidth(0.7F)
+            .align(Alignment.TopStart)
+            .zIndex(3.0F)
+            .padding(horizontal = 5.dp)
+            .shadow(
+                10.dp,
+                shape = RoundedCornerShape(16.dp),
+                spotColor = Color.Blue, clip = true
+            ),
+        backgroundColor = Color.Black,
+
+        ) {
+        Image(
+          bitmap = flagBitmap!!.asImageBitmap(), // Replace with your image
+          contentDescription = "Capsule Image",
+          contentScale = ContentScale.Fit,
+          modifier = Modifier.fillMaxSize()
+        )
       }
     }
   }
 }
 
 @Composable
-fun CapsuleDetailsSection() {
+fun CapsuleDetailsSection(capsuleDetails: CapsuleDetails?, isSuccess: Boolean, isLoading: Boolean) {
   Column(
     modifier = Modifier
         .fillMaxSize()
-        .padding(vertical = 16.dp)
+        .padding(vertical = 5.dp, horizontal = 10.dp)
   ) {
-    TopImageSection(imageHeight = 150.dp)
+    if (isSuccess)
+      capsuleDetails?.let {
+        TopImageSection(isSuccess, capsuleDetails.modelId.toInt())
 
-    // Title
-    Text(
-      text = "Time Capsule Title",
-      fontSize = 28.sp,
-      fontWeight = FontWeight.Bold,
-      color = MaterialTheme.colors.primary
-    )
+      }
+
+    if (isLoading) {
+      Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(300.dp)
+
+            .padding(horizontal = 16.dp, vertical = 15.dp)
+            .padding(bottom = 25.dp)
+            .clip(RoundedCornerShape(20.dp))
+            .placeholder(
+                visible = isLoading,
+                color = Color.Gray.copy(alpha = 0.1f),
+                highlight = PlaceholderHighlight.shimmer()
+            )
+      )
+    }
+
+    if (isSuccess)
+      capsuleDetails?.let {
+        Text(
+          text = capsuleDetails.title,
+          fontSize = 28.sp,
+          fontWeight = FontWeight.Bold,
+          color = LightBlue
+        )
+      }
+
+    if (isLoading) {
+      Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(80.dp)
+            .clip(RoundedCornerShape(10.dp))
+            .placeholder(
+                visible = isLoading,
+                color = Color.Gray.copy(alpha = 0.1f),
+                highlight = PlaceholderHighlight.shimmer()
+            )
+      )
+    }
 
     Spacer(modifier = Modifier.height(8.dp))
 
-    // Description
-    Text(
-      text = "This is a detailed description of the capsule. It explains the content and significance.",
-      fontSize = 16.sp,
-      color = Color.Gray
-    )
+    if (isSuccess) {
+      capsuleDetails?.let {
+        Text(
+          text = capsuleDetails.description,
+          fontSize = 16.sp,
+          color = Color.Gray
+        )
+      }
+    }
 
     Spacer(modifier = Modifier.height(16.dp))
 
     // Opening Time
-    CapsuleOpeningTime()
+    CapsuleOpeningTime(isSuccess, capsuleDetails?.time)
+
+    if (isLoading) {
+      Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(80.dp)
+            .clip(RoundedCornerShape(60.dp))
+            .placeholder(
+                visible = isLoading,
+                color = Color.Gray.copy(alpha = 0.1f),
+                highlight = PlaceholderHighlight.shimmer()
+            )
+      )
+    }
 
     Spacer(modifier = Modifier.height(16.dp))
 
+    if (isLoading)
+      Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+        for (i in 0..3) {
+          Box(
+            modifier = Modifier
+                .size(70.dp)
+                .placeholder(
+                    visible = isLoading,
+                    shape = CircleShape,
+                    highlight = PlaceholderHighlight.shimmer(),
+                    color = Color.Gray.copy(alpha = 0.3f),
+                )
+                .clip(shape = CircleShape)
+          )
+          Spacer(modifier = Modifier.width(10.dp))
+        }
+
+      }
+
+
     // Shared Profiles Section
-    SharedProfilesSection()
+    SharedProfilesSection(isSuccess, capsuleDetails?.isSharedWithAll, capsuleDetails?.users)
 
     Spacer(modifier = Modifier.height(16.dp))
 
     // Map Section
-    GoogleMapPreview()
+    GoogleMapPreview(isSuccess, capsuleDetails?.location)
   }
 }
 
 @Composable
-fun CapsuleOpeningTime() {
-  Row(
-    modifier = Modifier
-        .fillMaxWidth()
-        .background(
-            MaterialTheme.colors.primary.copy(alpha = 0.1f),
-            shape = RoundedCornerShape(50)
-        )
-        .padding(16.dp),
-    verticalAlignment = Alignment.CenterVertically
-  ) {
-    Icon(
-      painter = painterResource(id = com.example.timecapsule.R.drawable.ic_time_range),  // Replace with clock icon
-      contentDescription = "Clock Icon",
-      tint = MaterialTheme.colors.primary,
-      modifier = Modifier.size(24.dp)
-    )
-    Spacer(modifier = Modifier.width(8.dp))
-    Text(
-      text = "Opens: 12 Dec 2024, 10:00 AM",
-      fontSize = 16.sp,
-      color = MaterialTheme.colors.primary
-    )
-  }
-}
+fun CapsuleOpeningTime(isSuccess: Boolean, timestamp: Timestamp?) {
 
-@Composable
-fun SharedProfilesSection() {
-  Text(
-    text = "Shared With:",
-    fontSize = 20.sp,
-    fontWeight = FontWeight.Medium
-  )
-
-  Spacer(modifier = Modifier.height(8.dp))
-
-  Row(
-    modifier = Modifier.fillMaxWidth(),
-    horizontalArrangement = Arrangement.spacedBy(12.dp)
-  ) {
-    repeat(5) {
-      Image(
-        painter = painterResource(id = com.example.timecapsule.R.drawable.img),  // Replace with real images
-        contentDescription = "Profile Picture",
-        contentScale = ContentScale.Crop,
+  if (isSuccess)
+    timestamp?.let {
+      Row(
         modifier = Modifier
-            .size(60.dp)
-            .clip(CircleShape)
-            .background(Color.Gray)
-      )
+            .fillMaxWidth()
+            .background(
+                LightBlue.copy(alpha = 0.1f),
+                shape = RoundedCornerShape(50)
+            )
+            .padding(16.dp),
+        verticalAlignment = Alignment.CenterVertically
+      ) {
+        Icon(
+          painter = painterResource(id = com.example.timecapsule.R.drawable.ic_time_range),  // Replace with clock icon
+          contentDescription = "Clock Icon",
+          tint = LightBlue,
+          modifier = Modifier.size(24.dp)
+        )
+        Spacer(modifier = Modifier.width(8.dp))
+        Text(
+          text = "Opens: " + timestamp.toDate().toString(),
+          fontSize = 16.sp,
+          color = LightBlue
+        )
+      }
     }
-  }
 }
 
 @Composable
-fun GoogleMapPreview() {
-  Text(
-    text = "Location:",
-    fontSize = 20.sp,
-    fontWeight = FontWeight.Medium
-  )
-
-  Spacer(modifier = Modifier.height(8.dp))
-
-  Card(
-    shape = RoundedCornerShape(16.dp),
-    elevation = 4.dp,
-    modifier = Modifier
-        .fillMaxWidth()
-        .height(200.dp)
-  ) {
-    Box(
-      modifier = Modifier
-          .fillMaxSize()
-          .background(Color.LightGray)
-    ) {
+fun SharedProfilesSection(
+  isSuccess: Boolean,
+  isSharedWithAll: Boolean?,
+  users: List<Map<String, Any>>?
+) {
+  if (isSuccess) {
+    users?.let {
       Text(
-        text = "Google Map Preview",
-        modifier = Modifier.align(Alignment.Center),
-        fontSize = 16.sp,
-        fontWeight = FontWeight.Bold,
-        color = Color.White
+        text = "Shared With:",
+        fontSize = 20.sp,
+        fontWeight = FontWeight.Medium
       )
+
+      Spacer(modifier = Modifier.height(8.dp))
+
+      LazyRow(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        verticalAlignment = Alignment.CenterVertically
+      ) {
+
+        users.let {
+          items(it) { user ->
+            Profile(
+              isOwner = user["isOwner"] as Boolean,
+              userName = user["userName"] as String,
+              imageUrl = user["imageUrl"] as String,
+              disableCrossBtn = true,
+              remove = {})
+          }
+        }
+        if (isSharedWithAll == true) {
+          item {
+            SharedWithALlIcon(modifier = Modifier.size(70.dp))
+          }
+        }
+      }
     }
   }
 }
 
-@Preview(showBackground = true)
 @Composable
-fun SwipeToRevealCapsuleScreenPreview() {
-  SwipeToRevealCapsuleScreen()
+fun GoogleMapPreview(isSuccess: Boolean, geoPoint: GeoPoint?) {
+  if (isSuccess) {
+
+    geoPoint?.let {
+      Text(
+        text = "Location:",
+        fontSize = 20.sp,
+        fontWeight = FontWeight.Medium
+      )
+
+      Spacer(modifier = Modifier.height(8.dp))
+
+
+      MapPreviewCard(
+        latlang = com.google.android.gms.maps.model.LatLng(
+          geoPoint.latitude,
+          geoPoint.longitude
+        )
+      )
+    }
+  }
 }

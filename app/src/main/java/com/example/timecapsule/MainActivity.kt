@@ -66,9 +66,9 @@ class MainActivity : ComponentActivity() {
 //        WriteLetterScreen()
 //        OnBoardingNavGraph()
 
-//        NavGraph(navController)
+        NavGraph(navController)
 
-        CapsuleDetailsScreenv1()
+//        CapsuleDetailsScreenv1()
 
 //        CapsuleCard()
 
