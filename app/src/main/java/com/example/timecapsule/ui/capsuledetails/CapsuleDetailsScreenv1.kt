@@ -42,6 +42,7 @@ import com.example.timecapsule.ui.theme.LightBlue
 import com.example.timecapsule.ui.theme.overSeer
 import com.example.timecapsule.viewmodel.DisplayCapsuleDetailsState
 import com.example.timecapsule.viewmodel.DisplayCapsuleDetailsViewModel
+import com.example.util.getModelImage
 import com.google.accompanist.placeholder.PlaceholderHighlight
 import com.google.accompanist.placeholder.material.shimmer
 import com.google.accompanist.placeholder.placeholder
@@ -82,13 +83,13 @@ fun CapsuleDetailsScreenv1(
   }
   Box(
     modifier = Modifier
-        .fillMaxSize()
-        .background(androidx.compose.material3.MaterialTheme.colorScheme.primary)
+      .fillMaxSize()
+      .background(androidx.compose.material3.MaterialTheme.colorScheme.primary)
   ) {
     LazyColumn(
       modifier = Modifier
-          .fillMaxSize()
-          .zIndex(0f),
+        .fillMaxSize()
+        .zIndex(0f),
       contentPadding = PaddingValues(horizontal = 4.dp, vertical = 10.dp),
     ) {
       item {
@@ -105,11 +106,15 @@ fun CapsuleDetailsScreenv1(
 fun TopImageSection(isSuccess: Boolean, modelId: Int) {
 
   if (isSuccess) {
+    val imagePath: String by remember {
+      mutableStateOf(getModelImage(modelId.toString()))
+    }
+
     val context = LocalContext.current
 
-    val flagBitmap: Bitmap? = remember("capsule_images/model1.png") {
+    val flagBitmap: Bitmap? = remember(imagePath) {
       try {
-        val inputStream = context.assets.open("capsule_images/model1.png")
+        val inputStream = context.assets.open(imagePath)
         BitmapFactory.decodeStream(inputStream)
       } catch (e: Exception) {
         null
@@ -117,10 +122,10 @@ fun TopImageSection(isSuccess: Boolean, modelId: Int) {
     }
     Box(
       modifier = Modifier
-          .fillMaxWidth()
-          .wrapContentHeight()
-          .padding(horizontal = 16.dp, vertical = 15.dp)
-          .padding(bottom = 25.dp)
+        .fillMaxWidth()
+        .wrapContentHeight()
+        .padding(horizontal = 16.dp, vertical = 15.dp)
+        .padding(bottom = 25.dp)
 
     ) {
       // Left Card
@@ -128,19 +133,19 @@ fun TopImageSection(isSuccess: Boolean, modelId: Int) {
         elevation = 8.dp,
         shape = RoundedCornerShape(16.dp),
         modifier = Modifier
-            .padding(vertical = 10.dp)
-            .fillMaxWidth(0.3F)
-            .height(100.dp)
-            .align(Alignment.TopEnd),
+          .padding(vertical = 10.dp)
+          .fillMaxWidth(0.3F)
+          .height(100.dp)
+          .align(Alignment.TopEnd),
       ) {
         Box(
           modifier = Modifier
-              .fillMaxSize()
-              .background(Color.Black),
+            .fillMaxSize()
+            .background(Color.Black),
           contentAlignment = Alignment.Center
         ) {
           androidx.compose.material3.Text(
-            text = "Model 100",
+            text = "Model ${modelId}",
             style = androidx.compose.material3.MaterialTheme.typography.titleMedium.copy(
               color = Color.White,
               fontSize = 20.sp, fontFamily = overSeer
@@ -154,16 +159,16 @@ fun TopImageSection(isSuccess: Boolean, modelId: Int) {
         elevation = 10.dp,
         shape = RoundedCornerShape(16.dp),
         modifier = Modifier
-            .height(300.dp)
-            .fillMaxWidth(0.7F)
-            .align(Alignment.TopStart)
-            .zIndex(3.0F)
-            .padding(horizontal = 5.dp)
-            .shadow(
-                10.dp,
-                shape = RoundedCornerShape(16.dp),
-                spotColor = Color.Blue, clip = true
-            ),
+          .height(300.dp)
+          .fillMaxWidth(0.7F)
+          .align(Alignment.TopStart)
+          .zIndex(3.0F)
+          .padding(horizontal = 5.dp)
+          .shadow(
+            10.dp,
+            shape = RoundedCornerShape(16.dp),
+            spotColor = Color.Blue, clip = true
+          ),
         backgroundColor = Color.Black,
 
         ) {
@@ -182,8 +187,8 @@ fun TopImageSection(isSuccess: Boolean, modelId: Int) {
 fun CapsuleDetailsSection(capsuleDetails: CapsuleDetails?, isSuccess: Boolean, isLoading: Boolean) {
   Column(
     modifier = Modifier
-        .fillMaxSize()
-        .padding(vertical = 5.dp, horizontal = 10.dp)
+      .fillMaxSize()
+      .padding(vertical = 5.dp, horizontal = 10.dp)
   ) {
     if (isSuccess)
       capsuleDetails?.let {
@@ -194,17 +199,17 @@ fun CapsuleDetailsSection(capsuleDetails: CapsuleDetails?, isSuccess: Boolean, i
     if (isLoading) {
       Box(
         modifier = Modifier
-            .fillMaxWidth()
-            .height(300.dp)
+          .fillMaxWidth()
+          .height(300.dp)
 
-            .padding(horizontal = 16.dp, vertical = 15.dp)
-            .padding(bottom = 25.dp)
-            .clip(RoundedCornerShape(20.dp))
-            .placeholder(
-                visible = isLoading,
-                color = Color.Gray.copy(alpha = 0.1f),
-                highlight = PlaceholderHighlight.shimmer()
-            )
+          .padding(horizontal = 16.dp, vertical = 15.dp)
+          .padding(bottom = 25.dp)
+          .clip(RoundedCornerShape(20.dp))
+          .placeholder(
+            visible = isLoading,
+            color = Color.Gray.copy(alpha = 0.1f),
+            highlight = PlaceholderHighlight.shimmer()
+          )
       )
     }
 
@@ -221,14 +226,14 @@ fun CapsuleDetailsSection(capsuleDetails: CapsuleDetails?, isSuccess: Boolean, i
     if (isLoading) {
       Box(
         modifier = Modifier
-            .fillMaxWidth()
-            .height(80.dp)
-            .clip(RoundedCornerShape(10.dp))
-            .placeholder(
-                visible = isLoading,
-                color = Color.Gray.copy(alpha = 0.1f),
-                highlight = PlaceholderHighlight.shimmer()
-            )
+          .fillMaxWidth()
+          .height(80.dp)
+          .clip(RoundedCornerShape(10.dp))
+          .placeholder(
+            visible = isLoading,
+            color = Color.Gray.copy(alpha = 0.1f),
+            highlight = PlaceholderHighlight.shimmer()
+          )
       )
     }
 
@@ -252,14 +257,14 @@ fun CapsuleDetailsSection(capsuleDetails: CapsuleDetails?, isSuccess: Boolean, i
     if (isLoading) {
       Box(
         modifier = Modifier
-            .fillMaxWidth()
-            .height(80.dp)
-            .clip(RoundedCornerShape(60.dp))
-            .placeholder(
-                visible = isLoading,
-                color = Color.Gray.copy(alpha = 0.1f),
-                highlight = PlaceholderHighlight.shimmer()
-            )
+          .fillMaxWidth()
+          .height(80.dp)
+          .clip(RoundedCornerShape(60.dp))
+          .placeholder(
+            visible = isLoading,
+            color = Color.Gray.copy(alpha = 0.1f),
+            highlight = PlaceholderHighlight.shimmer()
+          )
       )
     }
 
@@ -270,14 +275,14 @@ fun CapsuleDetailsSection(capsuleDetails: CapsuleDetails?, isSuccess: Boolean, i
         for (i in 0..3) {
           Box(
             modifier = Modifier
-                .size(70.dp)
-                .placeholder(
-                    visible = isLoading,
-                    shape = CircleShape,
-                    highlight = PlaceholderHighlight.shimmer(),
-                    color = Color.Gray.copy(alpha = 0.3f),
-                )
-                .clip(shape = CircleShape)
+              .size(70.dp)
+              .placeholder(
+                visible = isLoading,
+                shape = CircleShape,
+                highlight = PlaceholderHighlight.shimmer(),
+                color = Color.Gray.copy(alpha = 0.3f),
+              )
+              .clip(shape = CircleShape)
           )
           Spacer(modifier = Modifier.width(10.dp))
         }
@@ -302,12 +307,12 @@ fun CapsuleOpeningTime(isSuccess: Boolean, timestamp: Timestamp?) {
     timestamp?.let {
       Row(
         modifier = Modifier
-            .fillMaxWidth()
-            .background(
-                LightBlue.copy(alpha = 0.1f),
-                shape = RoundedCornerShape(50)
-            )
-            .padding(16.dp),
+          .fillMaxWidth()
+          .background(
+            LightBlue.copy(alpha = 0.1f),
+            shape = RoundedCornerShape(50)
+          )
+          .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically
       ) {
         Icon(
