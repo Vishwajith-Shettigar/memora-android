@@ -1,16 +1,15 @@
 package com.example.timecapsule.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.domain.usecase.GetCapsuleDetailsUseCase
 import com.example.model.CapsuleDetails
+import com.example.util.Response
+import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import androidx.lifecycle.viewModelScope
-import com.example.util.Response
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -24,15 +23,13 @@ sealed class DisplayCapsuleDetailsState {
 @HiltViewModel
 class DisplayCapsuleDetailsViewModel @Inject constructor(
   private val getCapsuleDetailsUseCase: GetCapsuleDetailsUseCase
-) :ViewModel(){
+) : ViewModel() {
 
   private val _capsuleDetailsState =
     MutableStateFlow<DisplayCapsuleDetailsState>(DisplayCapsuleDetailsState.Loading)
   val capsuleDetailsState: StateFlow<DisplayCapsuleDetailsState> = _capsuleDetailsState
 
   fun getCapsuleDetails(capsuleId: String) {
-    _capsuleDetailsState.value =
-      DisplayCapsuleDetailsState.Loading
     viewModelScope.launch {
       withContext(Dispatchers.IO) {
         val response = getCapsuleDetailsUseCase(capsuleId)
@@ -49,8 +46,6 @@ class DisplayCapsuleDetailsViewModel @Inject constructor(
           }
         }
       }
-
     }
   }
-
 }

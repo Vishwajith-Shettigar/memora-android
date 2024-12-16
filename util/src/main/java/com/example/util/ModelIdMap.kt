@@ -16,7 +16,6 @@ private val modelIdImageMap = mapOf(
   "400" to "capsule_images/model4.png",
   )
 
-
 fun getModel(id: String): String {
   return modelIdMap.get(id) ?: "testmodel.glb"
 }

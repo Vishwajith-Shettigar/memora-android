@@ -268,7 +268,6 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
       }
     }
 
-    // Capsule Details Screen (inside Main flow)
     composable(Screen.CapsuleDetails.route) { navBackStackEntry ->
       val capsuleId = navBackStackEntry.arguments?.getString("id")
       if (capsuleId != null) {

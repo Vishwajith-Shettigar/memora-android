@@ -54,3 +54,8 @@ val cardGreen = Color(0xFF178842)
 val cardYellow = Color(0xFFBB911E)
 val cardViolet = Color(0xFF9867F3)
 val cardOrange = Color(0xFF99204C)
+
+val model1Color = Color(0xFF638BF8).copy(alpha = 0.5F)
+val model4Color = Color.LightGray.copy(alpha = 0.5F)
+val model3Color = Color.Red.copy(alpha = 0.3F)
+val model2Color = Color(0xFF638BF8).copy(alpha = 0.3F)
