@@ -225,7 +225,6 @@ fun CapsuleDetailsSection(capsuleDetails: CapsuleDetails?, isSuccess: Boolean, i
     if (isSuccess)
       capsuleDetails?.let {
         TopImageSection(isSuccess, capsuleDetails.modelId.toInt())
-
       }
 
     if (isLoading) {

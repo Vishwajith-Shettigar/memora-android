@@ -20,11 +20,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeContentPadding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Chip
 import androidx.compose.material.ChipDefaults
 import androidx.compose.material.ExperimentalMaterialApi
@@ -65,6 +67,9 @@ import com.example.timecapsule.ui.theme.openSansExtraBold
 import com.example.timecapsule.ui.util.ColorsMap
 import com.example.timecapsule.viewmodel.CapsuleListScreenState
 import com.example.timecapsule.viewmodel.ShowCapsulesListViewModel
+import com.google.accompanist.placeholder.PlaceholderHighlight
+import com.google.accompanist.placeholder.material.shimmer
+import com.google.accompanist.placeholder.placeholder
 import kotlinx.coroutines.launch
 
 enum class Filter {
@@ -275,11 +280,46 @@ fun CapsuleCardListScreen(
           }
         }
 
+        if (isLoading)
+          items(3) {
+            Row(
+              modifier = Modifier
+                  .fillMaxWidth()
+                  .wrapContentHeight(),
+              horizontalArrangement = Arrangement.spacedBy(8.dp)
+
+            ) {
+              Box(
+                modifier = Modifier
+                    .weight(0.5F)
+                    .height(200.dp)
+                    .placeholder(
+                        visible = true,
+                        shape = RoundedCornerShape(30.dp),
+                        highlight = PlaceholderHighlight.shimmer(),
+                        color = Color.Gray.copy(alpha = 0.3f),
+                    )
+                    .clip(shape = RoundedCornerShape(30.dp))
+              )
+              Box(
+                modifier = Modifier
+                    .weight(0.5F)
+                    .height(200.dp)
+                    .placeholder(
+                        visible = true,
+                        shape = RoundedCornerShape(30.dp),
+                        highlight = PlaceholderHighlight.shimmer(),
+                        color = Color.Gray.copy(alpha = 0.3f),
+                    )
+                    .clip(shape = RoundedCornerShape(30.dp))
+              )
+            }
+          }
+
         if (isSuccess)
-          items((0..capsuleList.size - 1).chunked(2)) { rowItems ->
+          items((0..<capsuleList.size).chunked(2)) { rowItems ->
 
             var p = false
-
             if (rowItems[0] == expandedCardIndex) {
               p = true
             } else if (rowItems.size == 2) {
