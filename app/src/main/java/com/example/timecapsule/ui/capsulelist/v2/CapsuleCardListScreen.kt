@@ -179,65 +179,69 @@ fun CapsuleCardListScreen(
   { innerPadding ->
 
     if (isError) {
-      if (((state as CapsuleListScreenState.Error).exception is NetWorkException)) {
-        Box(
+
+      Box(
+        modifier = Modifier
+          .fillMaxSize()
+          .zIndex(5.0F)
+      ) {
+        Column(
           modifier = Modifier
-            .fillMaxSize()
-            .zIndex(5.0F)
+            .fillMaxWidth()
+            .fillMaxHeight()
+            .align(Alignment.Center),
+          verticalArrangement = Arrangement.Center,
+          horizontalAlignment = Alignment.CenterHorizontally
         ) {
-          Column(
+          Box(
+            contentAlignment = Alignment.Center,
             modifier = Modifier
-              .fillMaxWidth()
-              .fillMaxHeight()
-              .align(Alignment.Center),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-          ) {
-            Box(
-              contentAlignment = Alignment.Center,
-              modifier = Modifier
-                .padding(vertical = 20.dp)
-                .size(220.dp)
-                .background(
-                  brush = Brush.radialGradient(
-                    colors = listOf(
-                      Color.Red,
-                      Color.Red,
-                      Color.LightGray.copy(0.1f)
-                    ),
-                    center = Offset.Unspecified,
-                    radius = 220f
+              .padding(vertical = 20.dp)
+              .size(220.dp)
+              .background(
+                brush = Brush.radialGradient(
+                  colors = listOf(
+                    Color.Red,
+                    Color.Red,
+                    Color.LightGray.copy(0.1f)
                   ),
-                  shape = CircleShape
-                )
-            ) {
-              Image(
-                painter = painterResource(id = com.example.timecapsule.R.drawable.nonetwork_graphic),
-                contentDescription = "No network",
-                modifier = Modifier.size(200.dp)
+                  center = Offset.Unspecified,
+                  radius = 220f
+                ),
+                shape = CircleShape
               )
-            }
-            Text(
-              "No Connection",
-              style = MaterialTheme.typography.titleLarge.copy(
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Light,
-                fontFamily = openSansExtraBold
-              )
+          ) {
+            Image(
+              painter = painterResource(id = com.example.timecapsule.R.drawable.nonetwork_graphic),
+              contentDescription = "No network",
+              modifier = Modifier.size(200.dp)
             )
+          }
 
-            androidx.compose.material3.Button(
-              onClick = {
-                viewModel.getCapsulesList()
+          Text(
+            if (((state as CapsuleListScreenState.Error).exception is NetWorkException)) "No Connection"
+            else
+              "Something went wrong!",
+            style = MaterialTheme.typography.titleLarge.copy(
+              fontSize = 24.sp,
+              fontWeight = FontWeight.Light,
+              fontFamily = openSansExtraBold
+            )
+          )
 
-              },
-              colors = ButtonDefaults.buttonColors(containerColor = LightBlue)
-            ) {
-              Text(text = "Retry", color = Color.LightGray)
-            }
+          androidx.compose.material3.Button(
+            modifier = Modifier.padding(vertical = 5.dp),
+            onClick = {
+              viewModel.getCapsulesList()
+
+            },
+            colors = ButtonDefaults.buttonColors(containerColor = LightBlue)
+          ) {
+            Text(text = "Retry", color = Color.LightGray)
           }
         }
       }
+
     }
 
     Column(
