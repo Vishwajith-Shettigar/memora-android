@@ -13,6 +13,7 @@ import com.example.domain.usecase.SetShareCapsulesCacheUseCase
 import com.example.model.CapsuleDetails
 import com.example.util.Response
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.scopes.ViewModelScoped
 import javax.inject.Inject
 import kotlin.Exception
 import kotlinx.coroutines.CoroutineScope
@@ -52,25 +53,26 @@ class ShowCapsulesListViewModel @Inject constructor(
   val capsuleListState: StateFlow<CapsuleListScreenState> = _capsuleListState
 
   init {
-    viewModelScope.launch(Dispatchers.IO) {
-      getCapsulesList()
-      syncLocalSettingsChecksOptionsWithRemote()
-      syncLocalDBUpdateDetailsWithRemote()
-    }
+    getCapsulesList()
+    syncLocalSettingsChecksOptionsWithRemote()
+    syncLocalDBUpdateDetailsWithRemote()
   }
 
-  suspend fun getCapsulesList() {
-    val result = getCapsuleListUseCase()
-    _capsuleListState.value = when (result) {
-      is Response.Success -> {
-        CapsuleListScreenState.Success(result.data!!)
-      }
+  fun getCapsulesList() {
+    _capsuleListState.value = CapsuleListScreenState.Loading
+    viewModelScope.launch(Dispatchers.IO) {
+      val result = getCapsuleListUseCase()
+      _capsuleListState.value = when (result) {
+        is Response.Success -> {
+          CapsuleListScreenState.Success(result.data!!)
+        }
 
-      is Response.Error -> {
-        CapsuleListScreenState.Error(
-          result.exception.message.toString(),
-          result.exception
-        )
+        is Response.Error -> {
+          CapsuleListScreenState.Error(
+            result.exception.message.toString(),
+            result.exception
+          )
+        }
       }
     }
   }

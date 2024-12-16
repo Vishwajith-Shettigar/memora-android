@@ -6,6 +6,7 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowColumn
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -27,9 +29,11 @@ import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Button
 import androidx.compose.material.Chip
 import androidx.compose.material.ChipDefaults
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -50,6 +54,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -58,18 +64,28 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.example.model.CapsuleDetails
 import com.example.timecapsule.R
+import com.example.timecapsule.ui.theme.DMSerifText
+import com.example.timecapsule.ui.theme.Inter
 import com.example.timecapsule.ui.theme.LightBlue
+import com.example.timecapsule.ui.theme.RubikBubble
 import com.example.timecapsule.ui.theme.openSansExtraBold
+import com.example.timecapsule.ui.theme.overSeer
 import com.example.timecapsule.ui.util.ColorsMap
 import com.example.timecapsule.viewmodel.CapsuleListScreenState
 import com.example.timecapsule.viewmodel.ShowCapsulesListViewModel
+import com.example.util.NetWorkException
 import com.google.accompanist.placeholder.PlaceholderHighlight
 import com.google.accompanist.placeholder.material.shimmer
 import com.google.accompanist.placeholder.placeholder
+import com.google.firebase.firestore.FirebaseFirestoreException
+import com.mapbox.maps.extension.style.layers.generated.backgroundLayer
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 enum class Filter {
@@ -90,10 +106,14 @@ fun CapsuleCardListScreen(
   openCapule: (id: String) -> Unit = {}
 ) {
 
+  val scope = CoroutineScope(Dispatchers.Main)
+
   val state by viewModel.capsuleListState.collectAsState()
 
   val isLoading: Boolean = state is CapsuleListScreenState.Loading
   val isSuccess: Boolean = state is CapsuleListScreenState.Success
+
+  val isError: Boolean = state is CapsuleListScreenState.Error
 
   var showCapsuleList: Boolean = state is CapsuleListScreenState.Success
 
@@ -111,7 +131,9 @@ fun CapsuleCardListScreen(
         capsuleList.addAll((state as CapsuleListScreenState.Success).capsuleList)
       }
 
-      is CapsuleListScreenState.Error -> {}
+      is CapsuleListScreenState.Error -> {
+      }
+
       CapsuleListScreenState.Idle -> {
       }
     }
@@ -156,8 +178,71 @@ fun CapsuleCardListScreen(
   )
   { innerPadding ->
 
+    if (isError) {
+      if (((state as CapsuleListScreenState.Error).exception is NetWorkException)) {
+        Box(
+          modifier = Modifier
+            .fillMaxSize()
+            .zIndex(5.0F)
+        ) {
+          Column(
+            modifier = Modifier
+              .fillMaxWidth()
+              .fillMaxHeight()
+              .align(Alignment.Center),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+          ) {
+            Box(
+              contentAlignment = Alignment.Center,
+              modifier = Modifier
+                .padding(vertical = 20.dp)
+                .size(220.dp)
+                .background(
+                  brush = Brush.radialGradient(
+                    colors = listOf(
+                      Color.Red,
+                      Color.Red,
+                      Color.LightGray.copy(0.1f)
+                    ),
+                    center = Offset.Unspecified,
+                    radius = 220f
+                  ),
+                  shape = CircleShape
+                )
+            ) {
+              Image(
+                painter = painterResource(id = com.example.timecapsule.R.drawable.nonetwork_graphic),
+                contentDescription = "No network",
+                modifier = Modifier.size(200.dp)
+              )
+            }
+            Text(
+              "No Connection",
+              style = MaterialTheme.typography.titleLarge.copy(
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Light,
+                fontFamily = openSansExtraBold
+              )
+            )
+
+            androidx.compose.material3.Button(
+              onClick = {
+                viewModel.getCapsulesList()
+
+              },
+              colors = ButtonDefaults.buttonColors(containerColor = LightBlue)
+            ) {
+              Text(text = "Retry", color = Color.LightGray)
+            }
+          }
+        }
+      }
+    }
+
     Column(
       modifier = Modifier
+        .fillMaxSize()
         .background(MaterialTheme.colorScheme.primary)
     ) {
 
@@ -165,17 +250,17 @@ fun CapsuleCardListScreen(
 
       LazyColumn(
         modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 3.dp),
+          .fillMaxSize()
+          .padding(horizontal = 3.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
         contentPadding = PaddingValues(0.dp),
       ) {
         item {
           Row(
             modifier = Modifier
-                .fillMaxWidth()
-                .height(100.dp)
-                .padding(start = 12.dp, end = 17.dp),
+              .fillMaxWidth()
+              .height(100.dp)
+              .padding(start = 12.dp, end = 17.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
           ) {
@@ -191,10 +276,10 @@ fun CapsuleCardListScreen(
               model = R.drawable.onboarding_image,
               contentDescription = "Profile Picture",
               modifier = Modifier
-                  .size(50.dp)
-                  .clip(CircleShape)
-                  .padding(end = 1.dp)
-                  .graphicsLayer(rotationZ = rotation.value),
+                .size(50.dp)
+                .clip(CircleShape)
+                .padding(end = 1.dp)
+                .graphicsLayer(rotationZ = rotation.value),
               contentScale = ContentScale.Crop
             )
           }
@@ -203,20 +288,19 @@ fun CapsuleCardListScreen(
         item {
           Row(
             modifier = Modifier
-                .fillMaxWidth()
-                .height(50.dp)
-                .padding(horizontal = 10.dp),
+              .fillMaxWidth()
+              .height(50.dp)
+              .padding(horizontal = 10.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Start,
           ) {
-
             Chip(
               colors = ChipDefaults.chipColors(backgroundColor = LightBlue),
               onClick = { filter = Filter.ALL },
               modifier = Modifier
-                  .padding(horizontal = 3.dp)
-                  .height(40.dp)
-                  .animateContentSize()
+                .padding(horizontal = 3.dp)
+                .height(40.dp)
+                .animateContentSize()
             ) {
               Icon(
                 modifier = Modifier.padding(end = 3.dp),
@@ -235,9 +319,9 @@ fun CapsuleCardListScreen(
               colors = ChipDefaults.chipColors(backgroundColor = LightBlue),
               onClick = { filter = Filter.ACTIVE },
               modifier = Modifier
-                  .padding(horizontal = 3.dp)
-                  .height(40.dp)
-                  .animateContentSize()
+                .padding(horizontal = 3.dp)
+                .height(40.dp)
+                .animateContentSize()
             ) {
               Icon(
                 modifier = Modifier.padding(end = 3.dp),
@@ -259,9 +343,9 @@ fun CapsuleCardListScreen(
               colors = ChipDefaults.chipColors(backgroundColor = LightBlue),
               onClick = { filter = Filter.OPENED },
               modifier = Modifier
-                  .padding(horizontal = 3.dp)
-                  .height(40.dp)
-                  .animateContentSize()
+                .padding(horizontal = 3.dp)
+                .height(40.dp)
+                .animateContentSize()
             ) {
               Icon(
                 modifier = Modifier.padding(end = 3.dp),
@@ -284,34 +368,34 @@ fun CapsuleCardListScreen(
           items(3) {
             Row(
               modifier = Modifier
-                  .fillMaxWidth()
-                  .wrapContentHeight(),
+                .fillMaxWidth()
+                .wrapContentHeight(),
               horizontalArrangement = Arrangement.spacedBy(8.dp)
 
             ) {
               Box(
                 modifier = Modifier
-                    .weight(0.5F)
-                    .height(200.dp)
-                    .placeholder(
-                        visible = true,
-                        shape = RoundedCornerShape(30.dp),
-                        highlight = PlaceholderHighlight.shimmer(),
-                        color = Color.Gray.copy(alpha = 0.3f),
-                    )
-                    .clip(shape = RoundedCornerShape(30.dp))
+                  .weight(0.5F)
+                  .height(200.dp)
+                  .placeholder(
+                    visible = true,
+                    shape = RoundedCornerShape(30.dp),
+                    highlight = PlaceholderHighlight.shimmer(),
+                    color = Color.Gray.copy(alpha = 0.3f),
+                  )
+                  .clip(shape = RoundedCornerShape(30.dp))
               )
               Box(
                 modifier = Modifier
-                    .weight(0.5F)
-                    .height(200.dp)
-                    .placeholder(
-                        visible = true,
-                        shape = RoundedCornerShape(30.dp),
-                        highlight = PlaceholderHighlight.shimmer(),
-                        color = Color.Gray.copy(alpha = 0.3f),
-                    )
-                    .clip(shape = RoundedCornerShape(30.dp))
+                  .weight(0.5F)
+                  .height(200.dp)
+                  .placeholder(
+                    visible = true,
+                    shape = RoundedCornerShape(30.dp),
+                    highlight = PlaceholderHighlight.shimmer(),
+                    color = Color.Gray.copy(alpha = 0.3f),
+                  )
+                  .clip(shape = RoundedCornerShape(30.dp))
               )
             }
           }
@@ -337,17 +421,17 @@ fun CapsuleCardListScreen(
                 } else
                   Box(
                     modifier = Modifier
-                        .then(
-                            if (rowItems.size == 2 || isExpanded)
-                                Modifier
-                                    .weight(
-                                        if (isExpanded) 1f else 0.5f,
-                                        fill = false
-                                    )
-                            else
-                                Modifier.fillMaxWidth(0.5F)
-                        )
-                        .animateContentSize()
+                      .then(
+                        if (rowItems.size == 2 || isExpanded)
+                          Modifier
+                            .weight(
+                              if (isExpanded) 1f else 0.5f,
+                              fill = false
+                            )
+                        else
+                          Modifier.fillMaxWidth(0.5F)
+                      )
+                      .animateContentSize()
                   ) {
                     CapsuleCard(
                       capsuleDetails = capsuleList[item],
@@ -365,8 +449,8 @@ fun CapsuleCardListScreen(
               if (rowItems[0] != expandedCardIndex)
                 Box(
                   modifier = Modifier
-                      .fillMaxWidth(0.5F)
-                      .padding(top = 8.dp)
+                    .fillMaxWidth(0.5F)
+                    .padding(top = 8.dp)
                 ) {
                   CapsuleCard(
                     capsuleDetails = capsuleList[rowItems[0]],
@@ -382,8 +466,8 @@ fun CapsuleCardListScreen(
                 if (rowItems.size == 2)
                   Box(
                     modifier = Modifier
-                        .fillMaxWidth(0.5F)
-                        .padding(top = 8.dp)
+                      .fillMaxWidth(0.5F)
+                      .padding(top = 8.dp)
                   ) {
                     CapsuleCard(
                       capsuleDetails =
