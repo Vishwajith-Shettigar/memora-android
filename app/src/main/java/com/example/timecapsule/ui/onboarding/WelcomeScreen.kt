@@ -76,16 +76,13 @@ fun WelcomeScreen() {
             .border(2.dp, color = Color.Black, shape = RoundedCornerShape(50.dp)),
         shape = RoundedCornerShape(50.dp),
         onClick = {},
-        colors = ButtonDefaults.outlinedButtonColors(
-
-        )
       ) {
         Text(
           text = "Explore",
           style = MaterialTheme.typography.titleLarge.copy(
-            color = Color.Black,
-            fontSize = 25.sp,
-            fontWeight = FontWeight.SemiBold,
+            color = Color.White,
+            fontSize = 22.sp,
+            fontWeight = FontWeight.Bold,
             fontFamily = FontFamily.SansSerif,
           ),
         )

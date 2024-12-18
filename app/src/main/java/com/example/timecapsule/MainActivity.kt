@@ -73,7 +73,7 @@ class MainActivity : ComponentActivity() {
 
 //        NavGraph(navController)
 
-//        WelcomeScreen()
+        WelcomeScreen()
 
 
 //        SlideOne()
@@ -82,7 +82,7 @@ class MainActivity : ComponentActivity() {
 
 //        SlideThree()
 
-        SlidersScreen()
+//        SlidersScreen()
 
 //        CapsuleDetailsScreenv1()
 
