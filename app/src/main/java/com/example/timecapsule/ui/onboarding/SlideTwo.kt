@@ -43,36 +43,35 @@ fun SlideTwo() {
 
   Column(
     modifier = Modifier
-        .fillMaxSize()
-        .background(LightBlue.copy(alpha = 0.8F))
-        .padding(20.dp),
+      .fillMaxSize()
+      .padding(horizontal = 20.dp),
     verticalArrangement = Arrangement.Center,
     horizontalAlignment = Alignment.CenterHorizontally
   ) {
     Column(
-        Modifier
-            .then(
-                if (isTablet) Modifier.width(600.dp) else
-                    Modifier.fillMaxWidth()
-            )
-            .fillMaxHeight(),
+      Modifier
+        .then(
+          if (isTablet) Modifier.width(600.dp) else
+            Modifier.fillMaxWidth()
+        )
+        .fillMaxHeight(),
 
       verticalArrangement = Arrangement.Center,
-      horizontalAlignment = Alignment.CenterHorizontally
+      horizontalAlignment = Alignment.Start
     ) {
       Text(
-        text = "Share the capsule \nwith friends, family, or \nthe entire world.",
+        text = "Share the capsule with friends, family, or \nthe entire world.",
         style = MaterialTheme.typography.titleLarge.copy(
           color = Color.Black,
-          fontSize = 35.sp,
+          fontSize = 30.sp,
           fontWeight = FontWeight.SemiBold,
           fontFamily = FontFamily.SansSerif,
-          lineHeight = TextUnit(50.0F, TextUnitType.Sp)
+          lineHeight = TextUnit(40.0F, TextUnitType.Sp)
         ),
         modifier = Modifier
-            .padding(top = 50.dp)
-            .background(Color.Transparent)
-            .zIndex(3.0F),
+          .padding(top = 20.dp)
+          .background(Color.Transparent)
+          .zIndex(3.0F),
       )
 
       Image(

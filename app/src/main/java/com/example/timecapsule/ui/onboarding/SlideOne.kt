@@ -43,8 +43,8 @@ fun SlideOne() {
   Column(
     modifier = Modifier
         .fillMaxSize()
-        .background(LightBlue.copy(alpha = 0.8F))
-        .padding(20.dp),
+        .background(Color.Transparent)
+        .padding(horizontal = 20.dp),
     verticalArrangement = Arrangement.Center,
     horizontalAlignment = Alignment.CenterHorizontally
   ) {
@@ -57,18 +57,18 @@ fun SlideOne() {
             .fillMaxHeight(),
 
       verticalArrangement = Arrangement.Center,
-      horizontalAlignment = Alignment.CenterHorizontally
+      horizontalAlignment = Alignment.Start
     ) {
       Text(
         text = "Hide your capsule anywhere \non Earth, and no one will find it until time \nruns out.",
         style = MaterialTheme.typography.titleLarge.copy(
           color = Color.Black,
-          fontSize = 35.sp,
+          fontSize = 30.sp,
           fontWeight = FontWeight.SemiBold,
           fontFamily = FontFamily.SansSerif,
-          lineHeight = TextUnit(50.0F, TextUnitType.Sp)
+          lineHeight = TextUnit(40.0F, TextUnitType.Sp)
         ),
-        modifier = Modifier.padding(top = 50.dp),
+        modifier = Modifier.padding(top = 20.dp),
       )
 
       Image(

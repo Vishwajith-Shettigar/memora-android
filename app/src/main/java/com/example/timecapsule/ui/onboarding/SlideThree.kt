@@ -43,21 +43,20 @@ fun SlideThree() {
 
   Column(
     modifier = Modifier
-      .fillMaxSize()
-      .background(LightBlue.copy(alpha = 0.8F))
-      .padding(20.dp),
-    verticalArrangement = Arrangement.Top,
+        .fillMaxSize()
+        .padding(horizontal = 20.dp),
+    verticalArrangement = Arrangement.Center,
     horizontalAlignment = Alignment.CenterHorizontally
   ) {
     Column(
-      Modifier
-        .then(
-          if (isTablet) Modifier.width(600.dp) else
-            Modifier.fillMaxWidth()
-        )
-        .fillMaxHeight(),
+        Modifier
+            .then(
+                if (isTablet) Modifier.width(600.dp) else
+                    Modifier.fillMaxWidth()
+            )
+            .fillMaxHeight(),
 
-      verticalArrangement = Arrangement.Top,
+      verticalArrangement = Arrangement.Center,
       horizontalAlignment = Alignment.CenterHorizontally
     ) {
       Text(
@@ -70,9 +69,9 @@ fun SlideThree() {
           lineHeight = TextUnit(40.0F, TextUnitType.Sp)
         ),
         modifier = Modifier
-          .padding(top = 50.dp)
-          .background(Color.Transparent)
-          .zIndex(3.0F),
+            .padding(top = 20.dp)
+            .background(Color.Transparent)
+            .zIndex(3.0F),
       )
 
       Image(

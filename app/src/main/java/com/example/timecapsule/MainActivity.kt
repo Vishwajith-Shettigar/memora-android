@@ -17,6 +17,7 @@ import com.example.timecapsule.ui.editprofile.EditProfileScreen
 import com.example.timecapsule.ui.onboarding.SlideOne
 import com.example.timecapsule.ui.onboarding.SlideThree
 import com.example.timecapsule.ui.onboarding.SlideTwo
+import com.example.timecapsule.ui.onboarding.SlidersScreen
 import com.example.timecapsule.ui.onboarding.WelcomeScreen
 import com.example.timecapsule.ui.opencapsule.CapsuleLoadingScreen
 import com.example.timecapsule.ui.opencapsule.InstructionsScreen
@@ -79,7 +80,10 @@ class MainActivity : ComponentActivity() {
 
 //        SlideTwo()
 
-        SlideThree()
+//        SlideThree()
+
+        SlidersScreen()
+
 //        CapsuleDetailsScreenv1()
 
 //        CapsuleCard()

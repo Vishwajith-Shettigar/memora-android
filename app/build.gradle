@@ -135,6 +135,9 @@ dependencies {
 
 //    implementation "com.google.accompanist:accompanist-swiperefresh:0.35.1"
 
+    implementation "com.google.accompanist:accompanist-pager:0.28.0"
+    implementation "com.google.accompanist:accompanist-pager-indicators:0.28.0"
+
     def room_version = "2.6.0"
     implementation libs.androidx.room.runtime
     implementation libs.androidx.room.ktx
