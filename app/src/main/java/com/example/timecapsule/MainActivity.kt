@@ -14,6 +14,7 @@ import com.example.timecapsule.ui.capsuledetails.CapsuleDetailsScreenv1
 import com.example.timecapsule.ui.capsulelist.v2.CapsuleCard
 import com.example.timecapsule.ui.capsulelist.v2.CapsuleCardListScreen
 import com.example.timecapsule.ui.editprofile.EditProfileScreen
+import com.example.timecapsule.ui.onboarding.WelcomeScreen
 import com.example.timecapsule.ui.opencapsule.CapsuleLoadingScreen
 import com.example.timecapsule.ui.opencapsule.InstructionsScreen
 import com.example.timecapsule.ui.opencapsule.MapInstructionsScreen
@@ -66,7 +67,9 @@ class MainActivity : ComponentActivity() {
 //        WriteLetterScreen()
 //        OnBoardingNavGraph()
 
-        NavGraph(navController)
+//        NavGraph(navController)
+
+        WelcomeScreen()
 
 //        CapsuleDetailsScreenv1()
 
