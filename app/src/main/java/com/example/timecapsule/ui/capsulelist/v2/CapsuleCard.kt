@@ -1,5 +1,6 @@
 package com.example.timecapsule.ui.capsulelist.v2
 
+import android.util.Log
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -91,6 +92,9 @@ fun CapsuleCard(
         val minutesLeft = TimeUnit.MILLISECONDS.toMinutes(diffInMillis) % 60
         val secondsLeft = TimeUnit.MILLISECONDS.toSeconds(diffInMillis) % 60
 
+        if (isReadyToOpen)
+          isReadyToOpen = false
+
         remainingTime = when {
           daysLeft > 0 -> {
             if (daysLeft > 100) {
@@ -106,7 +110,7 @@ fun CapsuleCard(
             "${hoursLeft}h"
           }// If more than 1 hour is left, show in hours
           minutesLeft > 0 -> "${minutesLeft}m ${secondsLeft}s" // Less than an hour, show minutes and seconds
-          else -> "${secondsLeft}S" // Less than a minute, show in seconds
+          else -> "${secondsLeft}s" // Less than a minute, show in seconds
         }
       } else {
         remainingTime = "000:00"
@@ -119,44 +123,44 @@ fun CapsuleCard(
 
   Card(
     modifier = Modifier
-      .fillMaxWidth()
-      .then(
-        if (!isExpanded)
+        .fillMaxWidth()
+        .then(
+            if (!isExpanded)
 
-          Modifier.defaultMinSize(minHeight = 210.dp)
-        else
-          Modifier.wrapContentHeight()
-      )
+                Modifier.defaultMinSize(minHeight = 210.dp)
+            else
+                Modifier.wrapContentHeight()
+        )
 
-      .animateContentSize()
-      .clip(RoundedCornerShape(30.dp))
-      .clickable(enabled = true) {
-        if (!isTablet)
-          onClick()
-      }
-      .background(bgColor)
-      .padding(
-        horizontal =
+        .animateContentSize()
+        .clip(RoundedCornerShape(30.dp))
+        .clickable(enabled = true) {
+            if (!isTablet)
+                onClick()
+        }
+        .background(bgColor)
+        .padding(
+            horizontal =
 
-        if (isTablet) 15.dp
-        else
-          2.dp, vertical =
-        if (isTablet)
-          14.dp
-        else
-          10.dp
-      ),
+            if (isTablet) 15.dp
+            else
+                2.dp, vertical =
+            if (isTablet)
+                14.dp
+            else
+                10.dp
+        ),
     colors = CardDefaults.cardColors(containerColor = bgColor),
     content = {
       Column(
         modifier = Modifier
-          .fillMaxWidth()
-          .background(Color.Transparent)
+            .fillMaxWidth()
+            .background(Color.Transparent)
       ) {
         Row(
           modifier = Modifier
-            .fillMaxWidth()
-            .padding(start = 8.dp,end=8.dp, top = 9.dp, bottom = 3.dp),
+              .fillMaxWidth()
+              .padding(start = 8.dp, end = 8.dp, top = 9.dp, bottom = 3.dp),
           horizontalArrangement = Arrangement.SpaceBetween,
           verticalAlignment = Alignment.CenterVertically
         ) {
@@ -176,13 +180,13 @@ fun CapsuleCard(
               .weight(0.3F)
           ) {
             IconButton(modifier = Modifier
-              .align(Alignment.Center)
-              .size(30.dp)
-              .border(
-                width = 1.dp,
-                shape = CircleShape,
-                color = MaterialTheme.colorScheme.primaryContainer
-              ), onClick = {
+                .align(Alignment.Center)
+                .size(30.dp)
+                .border(
+                    width = 1.dp,
+                    shape = CircleShape,
+                    color = MaterialTheme.colorScheme.primaryContainer
+                ), onClick = {
               onCapsuleDetailsClicked(capsuleDetails.id)
             }) {
               Icon(
@@ -196,8 +200,8 @@ fun CapsuleCard(
 
         Row(
           modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 20.dp, bottom = 10.dp),
+              .fillMaxWidth()
+              .padding(top = 20.dp, bottom = 10.dp),
           horizontalArrangement = Arrangement.Start,
           verticalAlignment = Alignment.CenterVertically
         ) {
@@ -221,9 +225,9 @@ fun CapsuleCard(
 
         Row(
           modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 2.dp, bottom = 5.dp)
-            .padding(horizontal = 10.dp),
+              .fillMaxWidth()
+              .padding(top = 2.dp, bottom = 5.dp)
+              .padding(horizontal = 10.dp),
           horizontalArrangement = Arrangement.Start,
           verticalAlignment = Alignment.CenterVertically
         ) {
@@ -240,9 +244,9 @@ fun CapsuleCard(
         if (isExpanded || isTablet)
           Row(
             modifier = Modifier
-              .fillMaxWidth()
-              .padding(top = 10.dp, bottom = 5.dp)
-              .padding(horizontal = 10.dp),
+                .fillMaxWidth()
+                .padding(top = 10.dp, bottom = 5.dp)
+                .padding(horizontal = 10.dp),
             horizontalArrangement = Arrangement.Start,
             verticalAlignment = Alignment.CenterVertically
           ) {
@@ -277,11 +281,10 @@ fun CapsuleCard(
                     remove = {}
                   )
                 }
-
               }
             }
 
-            if (isReadyToOpen)
+            if (isReadyToOpen) {
               Row(
                 modifier = Modifier.weight(0.3F),
                 horizontalArrangement = Arrangement.Center,
@@ -301,6 +304,7 @@ fun CapsuleCard(
                   )
                 }
               }
+            }
           }
       }
 
