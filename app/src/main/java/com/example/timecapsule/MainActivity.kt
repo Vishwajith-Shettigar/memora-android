@@ -32,6 +32,7 @@ import com.example.timecapsule.ui.setting.options.PrivacyPolicyScreen
 import com.example.timecapsule.ui.setting.options.PrivacyScreen
 import com.example.timecapsule.ui.setting.options.TermsAndServiceScreen
 import com.example.timecapsule.ui.setting.options.UpdateScreen
+import com.example.timecapsule.ui.splash.SplashScreen
 import com.example.timecapsule.ui.theme.TimeCapsuleTheme
 import com.example.timecapsule.ui.viewprofile.ViewProfileScreen
 import com.mapbox.common.MapboxOptions
@@ -73,8 +74,9 @@ class MainActivity : ComponentActivity() {
 
 //        NavGraph(navController)
 
-        WelcomeScreen()
+//        WelcomeScreen()
 
+        SplashScreen(navController = navController)
 
 //        SlideOne()
 
