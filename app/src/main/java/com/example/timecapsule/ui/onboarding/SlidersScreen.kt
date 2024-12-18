@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.timecapsule.ui.theme.LightBlue
 import com.google.accompanist.pager.ExperimentalPagerApi
@@ -21,8 +22,8 @@ fun SlidersScreen() {
   val pagerState = rememberPagerState()
   Box(
     modifier = Modifier
-        .fillMaxSize().background(LightBlue.copy(alpha = 0.8F))
-        .padding(vertical = 30.dp)
+        .fillMaxSize()
+        .background(Color.Transparent)
   ) {
     HorizontalPager(
       state = pagerState,
@@ -34,7 +35,9 @@ fun SlidersScreen() {
 
     HorizontalPagerIndicator(
       pagerState = pagerState,
-      modifier = Modifier.align(Alignment.BottomCenter)
+      modifier = Modifier
+          .align(Alignment.BottomCenter)
+          .padding(bottom = 20.dp)
     )
   }
 }

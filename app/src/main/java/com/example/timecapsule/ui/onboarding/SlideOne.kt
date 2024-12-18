@@ -32,6 +32,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.timecapsule.ui.theme.Inter
 import com.example.timecapsule.ui.theme.LightBlue
+import com.example.timecapsule.ui.theme.cardViolet
+import com.example.timecapsule.ui.theme.model1Color
 import com.example.timecapsule.ui.theme.overSeer
 import com.example.timecapsule.ui.util.DeviceType
 
@@ -43,7 +45,7 @@ fun SlideOne() {
   Column(
     modifier = Modifier
         .fillMaxSize()
-        .background(Color.Transparent)
+        .background(cardViolet)
         .padding(horizontal = 20.dp),
     verticalArrangement = Arrangement.Center,
     horizontalAlignment = Alignment.CenterHorizontally
@@ -60,17 +62,28 @@ fun SlideOne() {
       horizontalAlignment = Alignment.Start
     ) {
       Text(
-        text = "Hide your capsule anywhere \non Earth, and no one will find it until time \nruns out.",
+        text = "Hide Your Capsule at Any Place",
         style = MaterialTheme.typography.titleLarge.copy(
-          color = Color.Black,
-          fontSize = 30.sp,
-          fontWeight = FontWeight.SemiBold,
+          color = Color.White,
+          fontSize = 32.sp,
+          fontWeight = FontWeight.Bold,
           fontFamily = FontFamily.SansSerif,
-          lineHeight = TextUnit(40.0F, TextUnitType.Sp)
+          lineHeight = TextUnit(36.0F, TextUnitType.Sp)
         ),
-        modifier = Modifier.padding(top = 20.dp),
+        modifier = Modifier.padding(top = 20.dp)
       )
 
+      Text(
+        text = "Place it anywhere on Earth, and no one will find it until time runs out.",
+        style = MaterialTheme.typography.titleMedium.copy(
+          color = Color.White,
+          fontSize = 20.sp,
+          fontWeight = FontWeight.Light,
+          fontFamily = FontFamily.SansSerif,
+          lineHeight = TextUnit(28.0F, TextUnitType.Sp)
+        ),
+        modifier = Modifier.padding(top = 8.dp)
+      )
       Image(
         modifier = Modifier.size(350.dp),
         painter = painterResource(id = com.example.timecapsule.R.drawable.slide_one_graphic),

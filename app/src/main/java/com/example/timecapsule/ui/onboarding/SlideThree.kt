@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -33,6 +34,9 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import com.example.timecapsule.ui.theme.Inter
 import com.example.timecapsule.ui.theme.LightBlue
+import com.example.timecapsule.ui.theme.cardOrange
+import com.example.timecapsule.ui.theme.model1Color
+import com.example.timecapsule.ui.theme.model3Color
 import com.example.timecapsule.ui.theme.overSeer
 import com.example.timecapsule.ui.util.DeviceType
 
@@ -43,42 +47,73 @@ fun SlideThree() {
 
   Column(
     modifier = Modifier
-        .fillMaxSize()
-        .padding(horizontal = 20.dp),
-    verticalArrangement = Arrangement.Center,
+      .fillMaxSize()
+      .background(cardOrange)
+      .padding(horizontal = 20.dp),
+    verticalArrangement = Arrangement.Top,
     horizontalAlignment = Alignment.CenterHorizontally
   ) {
     Column(
-        Modifier
-            .then(
-                if (isTablet) Modifier.width(600.dp) else
-                    Modifier.fillMaxWidth()
-            )
-            .fillMaxHeight(),
+      Modifier
+        .then(
+          if (isTablet) Modifier.width(600.dp) else
+            Modifier.fillMaxWidth()
+        )
+        .fillMaxHeight(),
 
       verticalArrangement = Arrangement.Center,
       horizontalAlignment = Alignment.CenterHorizontally
     ) {
+
       Text(
-        text = "AR that lets you experience the capsule as if it's physically present, with immersive realism.",
+        text = "Immersive AR Experience",
         style = MaterialTheme.typography.titleLarge.copy(
-          color = Color.Black,
-          fontSize = 30.sp,
-          fontWeight = FontWeight.SemiBold,
+          color = Color.White,
+          fontSize = 32.sp,
+          fontWeight = FontWeight.Bold,
           fontFamily = FontFamily.SansSerif,
-          lineHeight = TextUnit(40.0F, TextUnitType.Sp)
+          lineHeight = TextUnit(36.0F, TextUnitType.Sp)
         ),
-        modifier = Modifier
-            .padding(top = 20.dp)
-            .background(Color.Transparent)
-            .zIndex(3.0F),
+        modifier = Modifier.padding(top = 20.dp)
       )
 
+      Text(
+        text = "Experience your capsule as if it's physically present, with stunning AR realism.",
+        style = MaterialTheme.typography.titleMedium.copy(
+          color = Color.White,
+          fontSize = 20.sp,
+          fontWeight = FontWeight.Light,
+          fontFamily = FontFamily.SansSerif,
+          lineHeight = TextUnit(28.0F, TextUnitType.Sp)
+        ),
+        modifier = Modifier.padding(top = 8.dp)
+      )
+
+
       Image(
-        modifier = Modifier.size(400.dp),
+        modifier = Modifier.size(300.dp),
         painter = painterResource(id = com.example.timecapsule.R.drawable.slide_three_graphic),
         contentDescription = "Logo",
       )
+
+      Button(
+        modifier = Modifier
+          .padding(vertical = 40.dp)
+          .border(3.dp, color = Color.Black, shape = RoundedCornerShape(50.dp)),
+        shape = RoundedCornerShape(50.dp),
+        onClick = {},
+        colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent)
+      ) {
+        Text(
+          text = "Lets Start",
+          style = MaterialTheme.typography.titleLarge.copy(
+            color = Color.Black,
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Bold,
+            fontFamily = FontFamily.SansSerif,
+          ),
+        )
+      }
     }
   }
 }
