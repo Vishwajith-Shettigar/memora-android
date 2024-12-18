@@ -51,7 +51,7 @@ fun WelcomeScreen() {
       )
     ) {
       Text(
-        text = "Relive your moments with Time Capsule",
+        text = "Relive your moments with",
         style = MaterialTheme.typography.titleLarge.copy(
           color = Color.Black,
           fontSize = 50.sp,
@@ -61,6 +61,18 @@ fun WelcomeScreen() {
         ),
         modifier = Modifier.padding(top = 50.dp),
       )
+      Text(
+        text = "Time Capsule",
+        style = MaterialTheme.typography.titleLarge.copy(
+          color = Color.Red.copy(alpha = 0.5F),
+          fontSize = 50.sp,
+          fontWeight = FontWeight.ExtraBold,
+          fontFamily = FontFamily.SansSerif,
+          lineHeight = TextUnit(50.0F, TextUnitType.Sp)
+        ),
+        modifier = Modifier.padding(vertical = 1.dp),
+      )
+
       Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Start) {
         Image(
           modifier = Modifier.size(60.dp),
