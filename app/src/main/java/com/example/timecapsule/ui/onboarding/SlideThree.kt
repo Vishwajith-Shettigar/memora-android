@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -53,7 +54,7 @@ fun SlideThree() {
     verticalArrangement = Arrangement.Top,
     horizontalAlignment = Alignment.CenterHorizontally
   ) {
-    Column(
+    LazyColumn(
       Modifier
         .then(
           if (isTablet) Modifier.width(600.dp) else
@@ -64,55 +65,57 @@ fun SlideThree() {
       verticalArrangement = Arrangement.Center,
       horizontalAlignment = Alignment.CenterHorizontally
     ) {
+      item {
 
-      Text(
-        text = "Immersive AR Experience",
-        style = MaterialTheme.typography.titleLarge.copy(
-          color = Color.White,
-          fontSize = 32.sp,
-          fontWeight = FontWeight.Bold,
-          fontFamily = FontFamily.SansSerif,
-          lineHeight = TextUnit(36.0F, TextUnitType.Sp)
-        ),
-        modifier = Modifier.padding(top = 20.dp)
-      )
-
-      Text(
-        text = "Experience your capsule as if it's physically present, with stunning AR realism.",
-        style = MaterialTheme.typography.titleMedium.copy(
-          color = Color.White,
-          fontSize = 20.sp,
-          fontWeight = FontWeight.Light,
-          fontFamily = FontFamily.SansSerif,
-          lineHeight = TextUnit(28.0F, TextUnitType.Sp)
-        ),
-        modifier = Modifier.padding(top = 8.dp)
-      )
-
-
-      Image(
-        modifier = Modifier.size(300.dp),
-        painter = painterResource(id = com.example.timecapsule.R.drawable.slide_three_graphic),
-        contentDescription = "Logo",
-      )
-
-      Button(
-        modifier = Modifier
-          .padding(vertical = 40.dp)
-          .border(3.dp, color = Color.Black, shape = RoundedCornerShape(50.dp)),
-        shape = RoundedCornerShape(50.dp),
-        onClick = {},
-        colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent)
-      ) {
         Text(
-          text = "Lets Start",
+          text = "Immersive AR Experience",
           style = MaterialTheme.typography.titleLarge.copy(
-            color = Color.Black,
-            fontSize = 20.sp,
+            color = Color.White,
+            fontSize = 32.sp,
             fontWeight = FontWeight.Bold,
             fontFamily = FontFamily.SansSerif,
+            lineHeight = TextUnit(36.0F, TextUnitType.Sp)
           ),
+          modifier = Modifier.padding(top = 20.dp)
         )
+
+        Text(
+          text = "Experience your capsule as if it's physically present, with stunning AR realism.",
+          style = MaterialTheme.typography.titleMedium.copy(
+            color = Color.White,
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Light,
+            fontFamily = FontFamily.SansSerif,
+            lineHeight = TextUnit(28.0F, TextUnitType.Sp)
+          ),
+          modifier = Modifier.padding(top = 8.dp)
+        )
+
+
+        Image(
+          modifier = Modifier.size(300.dp),
+          painter = painterResource(id = com.example.timecapsule.R.drawable.slide_three_graphic),
+          contentDescription = "Logo",
+        )
+
+        Button(
+          modifier = Modifier
+            .padding(vertical = 40.dp)
+            .border(3.dp, color = Color.Black, shape = RoundedCornerShape(50.dp)),
+          shape = RoundedCornerShape(50.dp),
+          onClick = {},
+          colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent)
+        ) {
+          Text(
+            text = "Lets Start",
+            style = MaterialTheme.typography.titleLarge.copy(
+              color = Color.Black,
+              fontSize = 20.sp,
+              fontWeight = FontWeight.Bold,
+              fontFamily = FontFamily.SansSerif,
+            ),
+          )
+        }
       }
     }
   }

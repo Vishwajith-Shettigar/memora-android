@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -52,7 +53,7 @@ fun SlideTwo() {
     verticalArrangement = Arrangement.Center,
     horizontalAlignment = Alignment.CenterHorizontally
   ) {
-    Column(
+    LazyColumn(
         Modifier
             .then(
                 if (isTablet) Modifier.width(600.dp) else
@@ -63,42 +64,43 @@ fun SlideTwo() {
       verticalArrangement = Arrangement.Center,
       horizontalAlignment = Alignment.Start
     ) {
-      Text(
-        text = "Share Your Capsule",
-        style = MaterialTheme.typography.titleLarge.copy(
-          color = Color.White,
-          fontSize = 32.sp,
-          fontWeight = FontWeight.Bold,
-          fontFamily = FontFamily.SansSerif,
-          lineHeight = TextUnit(36.0F, TextUnitType.Sp)
-        ),
-        modifier = Modifier
-            .padding(top = 20.dp)
-            .background(Color.Transparent)
-            .zIndex(3.0F)
-      )
+      item {
+        Text(
+          text = "Share Your Capsule",
+          style = MaterialTheme.typography.titleLarge.copy(
+            color = Color.White,
+            fontSize = 32.sp,
+            fontWeight = FontWeight.Bold,
+            fontFamily = FontFamily.SansSerif,
+            lineHeight = TextUnit(36.0F, TextUnitType.Sp)
+          ),
+          modifier = Modifier
+              .padding(top = 20.dp)
+              .background(Color.Transparent)
+              .zIndex(3.0F)
+        )
 
-      Text(
-        text = "Invite friends, family, or even the entire world to discover your capsule.",
-        style = MaterialTheme.typography.titleMedium.copy(
-          color = Color.White,
-          fontSize = 20.sp,
-          fontWeight = FontWeight.Light,
-          fontFamily = FontFamily.SansSerif,
-          lineHeight = TextUnit(28.0F, TextUnitType.Sp)
-        ),
-        modifier = Modifier
-            .padding(top = 8.dp)
-            .background(Color.Transparent)
-            .zIndex(3.0F)
-      )
+        Text(
+          text = "Invite friends, family, or even the entire world to discover your capsule.",
+          style = MaterialTheme.typography.titleMedium.copy(
+            color = Color.White,
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Light,
+            fontFamily = FontFamily.SansSerif,
+            lineHeight = TextUnit(28.0F, TextUnitType.Sp)
+          ),
+          modifier = Modifier
+              .padding(top = 8.dp)
+              .background(Color.Transparent)
+              .zIndex(3.0F)
+        )
 
-
-      Image(
-        modifier = Modifier.size(500.dp),
-        painter = painterResource(id = com.example.timecapsule.R.drawable.slide_two_graphic),
-        contentDescription = "Logo",
-      )
+        Image(
+          modifier = Modifier.size(500.dp),
+          painter = painterResource(id = com.example.timecapsule.R.drawable.slide_two_graphic),
+          contentDescription = "Logo",
+        )
+      }
     }
   }
 }

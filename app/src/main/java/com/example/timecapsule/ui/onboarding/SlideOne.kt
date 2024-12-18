@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -50,7 +51,7 @@ fun SlideOne() {
     verticalArrangement = Arrangement.Center,
     horizontalAlignment = Alignment.CenterHorizontally
   ) {
-    Column(
+    LazyColumn(
         Modifier
             .then(
                 if (isTablet) Modifier.width(600.dp) else
@@ -61,35 +62,37 @@ fun SlideOne() {
       verticalArrangement = Arrangement.Center,
       horizontalAlignment = Alignment.Start
     ) {
-      Text(
-        text = "Hide Your Capsule at Any Place",
-        style = MaterialTheme.typography.titleLarge.copy(
-          color = Color.White,
-          fontSize = 32.sp,
-          fontWeight = FontWeight.Bold,
-          fontFamily = FontFamily.SansSerif,
-          lineHeight = TextUnit(36.0F, TextUnitType.Sp)
-        ),
-        modifier = Modifier.padding(top = 20.dp)
-      )
+      item {
+        Text(
+          text = "Hide Your Capsule at Any Place",
+          style = MaterialTheme.typography.titleLarge.copy(
+            color = Color.White,
+            fontSize = 32.sp,
+            fontWeight = FontWeight.Bold,
+            fontFamily = FontFamily.SansSerif,
+            lineHeight = TextUnit(36.0F, TextUnitType.Sp)
+          ),
+          modifier = Modifier.padding(top = 20.dp)
+        )
 
-      Text(
-        text = "Place it anywhere on Earth, and no one will find it until time runs out.",
-        style = MaterialTheme.typography.titleMedium.copy(
-          color = Color.White,
-          fontSize = 20.sp,
-          fontWeight = FontWeight.Light,
-          fontFamily = FontFamily.SansSerif,
-          lineHeight = TextUnit(28.0F, TextUnitType.Sp)
-        ),
-        modifier = Modifier.padding(top = 8.dp)
-      )
-      Image(
-        modifier = Modifier.size(350.dp),
-        painter = painterResource(id = com.example.timecapsule.R.drawable.slide_one_graphic),
-        contentDescription = "Logo",
-        contentScale = ContentScale.Crop
-      )
+        Text(
+          text = "Place it anywhere on Earth, and no one will find it until time runs out.",
+          style = MaterialTheme.typography.titleMedium.copy(
+            color = Color.White,
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Light,
+            fontFamily = FontFamily.SansSerif,
+            lineHeight = TextUnit(28.0F, TextUnitType.Sp)
+          ),
+          modifier = Modifier.padding(top = 8.dp)
+        )
+        Image(
+          modifier = Modifier.size(350.dp),
+          painter = painterResource(id = com.example.timecapsule.R.drawable.slide_one_graphic),
+          contentDescription = "Logo",
+          contentScale = ContentScale.Crop
+        )
+      }
     }
   }
 }
