@@ -6,11 +6,13 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -28,68 +30,56 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
+import com.example.timecapsule.ui.theme.Inter
 import com.example.timecapsule.ui.theme.LightBlue
+import com.example.timecapsule.ui.theme.overSeer
 import com.example.timecapsule.ui.util.DeviceType
 
 @Composable
-fun WelcomeScreen() {
+fun SlideThree() {
 
   val isTablet = DeviceType.isTablet()
 
   Column(
     modifier = Modifier
-        .fillMaxSize()
-        .background(LightBlue.copy(alpha = 0.8F))
-        .padding(20.dp),
-    verticalArrangement = Arrangement.Center,
+      .fillMaxSize()
+      .background(LightBlue.copy(alpha = 0.8F))
+      .padding(20.dp),
+    verticalArrangement = Arrangement.Top,
     horizontalAlignment = Alignment.CenterHorizontally
   ) {
     Column(
-      Modifier.then(
-        if (isTablet) Modifier.width(600.dp) else
-          Modifier.fillMaxWidth()
-      )
+      Modifier
+        .then(
+          if (isTablet) Modifier.width(600.dp) else
+            Modifier.fillMaxWidth()
+        )
+        .fillMaxHeight(),
+
+      verticalArrangement = Arrangement.Top,
+      horizontalAlignment = Alignment.CenterHorizontally
     ) {
       Text(
-        text = "Relive your moments with Time Capsule",
+        text = "AR that lets you experience the capsule as if it's physically present, with immersive realism.",
         style = MaterialTheme.typography.titleLarge.copy(
           color = Color.Black,
-          fontSize = 50.sp,
-          fontWeight = FontWeight.ExtraBold,
+          fontSize = 30.sp,
+          fontWeight = FontWeight.SemiBold,
           fontFamily = FontFamily.SansSerif,
-          lineHeight = TextUnit(50.0F, TextUnitType.Sp)
+          lineHeight = TextUnit(40.0F, TextUnitType.Sp)
         ),
-        modifier = Modifier.padding(top = 50.dp),
-      )
-      Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Start) {
-        Image(
-          modifier = Modifier.size(60.dp),
-          painter = painterResource(id = com.example.timecapsule.R.drawable.onboarding_image),
-          contentDescription = "Logo",
-          contentScale = ContentScale.Crop
-        )
-      }
-
-      OutlinedButton(
         modifier = Modifier
-            .padding(vertical = 40.dp)
-            .border(2.dp, color = Color.Black, shape = RoundedCornerShape(50.dp)),
-        shape = RoundedCornerShape(50.dp),
-        onClick = {},
-        colors = ButtonDefaults.outlinedButtonColors(
+          .padding(top = 50.dp)
+          .background(Color.Transparent)
+          .zIndex(3.0F),
+      )
 
-        )
-      ) {
-        Text(
-          text = "Explore",
-          style = MaterialTheme.typography.titleLarge.copy(
-            color = Color.Black,
-            fontSize = 25.sp,
-            fontWeight = FontWeight.SemiBold,
-            fontFamily = FontFamily.SansSerif,
-          ),
-        )
-      }
+      Image(
+        modifier = Modifier.size(400.dp),
+        painter = painterResource(id = com.example.timecapsule.R.drawable.slide_three_graphic),
+        contentDescription = "Logo",
+      )
     }
   }
 }

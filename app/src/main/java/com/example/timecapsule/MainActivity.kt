@@ -14,6 +14,9 @@ import com.example.timecapsule.ui.capsuledetails.CapsuleDetailsScreenv1
 import com.example.timecapsule.ui.capsulelist.v2.CapsuleCard
 import com.example.timecapsule.ui.capsulelist.v2.CapsuleCardListScreen
 import com.example.timecapsule.ui.editprofile.EditProfileScreen
+import com.example.timecapsule.ui.onboarding.SlideOne
+import com.example.timecapsule.ui.onboarding.SlideThree
+import com.example.timecapsule.ui.onboarding.SlideTwo
 import com.example.timecapsule.ui.onboarding.WelcomeScreen
 import com.example.timecapsule.ui.opencapsule.CapsuleLoadingScreen
 import com.example.timecapsule.ui.opencapsule.InstructionsScreen
@@ -69,8 +72,14 @@ class MainActivity : ComponentActivity() {
 
 //        NavGraph(navController)
 
-        WelcomeScreen()
+//        WelcomeScreen()
 
+
+//        SlideOne()
+
+//        SlideTwo()
+
+        SlideThree()
 //        CapsuleDetailsScreenv1()
 
 //        CapsuleCard()
