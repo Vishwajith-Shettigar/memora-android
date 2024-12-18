@@ -67,7 +67,7 @@ fun SplashScreen(navController: NavController, viewModel: SplashViewModel = hilt
             }
           }
         } else {
-          navController.navigate(Screen.Onboarding.route) {
+          navController.navigate(Screen.WelCome.route) {
             popUpTo(Screen.OnboardingScreens.route)
           }
         }

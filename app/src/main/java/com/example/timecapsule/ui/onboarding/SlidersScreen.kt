@@ -18,7 +18,7 @@ import com.google.accompanist.pager.rememberPagerState
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-fun SlidersScreen() {
+fun SlidersScreen(onClick:()->Unit) {
   val pagerState = rememberPagerState()
   Box(
     modifier = Modifier
@@ -30,7 +30,7 @@ fun SlidersScreen() {
       count = 3,
       modifier = Modifier.fillMaxSize()
     ) { pageIndex ->
-      Screen(pageIndex = pageIndex)
+      Screen(pageIndex = pageIndex,onClick)
     }
 
     HorizontalPagerIndicator(
@@ -43,7 +43,7 @@ fun SlidersScreen() {
 }
 
 @Composable
-fun Screen(pageIndex: Int) {
+fun Screen(pageIndex: Int,onClick:()->Unit) {
   // Customize this content based on the pageIndex
   when (pageIndex) {
     0 -> {
@@ -58,7 +58,7 @@ fun Screen(pageIndex: Int) {
 
     2 -> {
       // Third screen content
-      SlideThree()
+      SlideThree(onClick)
     }
   }
 }

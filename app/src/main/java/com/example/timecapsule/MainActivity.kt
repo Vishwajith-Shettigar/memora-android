@@ -72,11 +72,11 @@ class MainActivity : ComponentActivity() {
 //        WriteLetterScreen()
 //        OnBoardingNavGraph()
 
-//        NavGraph(navController)
+        NavGraph(navController)
 
 //        WelcomeScreen()
 
-        SplashScreen(navController = navController)
+//        SplashScreen(navController = navController)
 
 //        SlideOne()
 

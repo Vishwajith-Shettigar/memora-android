@@ -6,6 +6,8 @@ import kotlin.math.cos
 sealed class Screen(val route: String) {
   // Auth Flow
   object Splash : Screen("splash")
+  object WelCome : Screen("welcome")
+  object Sliders : Screen("sliders")
   object Onboarding : Screen("onboarding")
   object Login : Screen("login")
   object Signup : Screen("signup")

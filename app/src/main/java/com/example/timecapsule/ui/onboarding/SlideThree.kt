@@ -42,25 +42,25 @@ import com.example.timecapsule.ui.theme.overSeer
 import com.example.timecapsule.ui.util.DeviceType
 
 @Composable
-fun SlideThree() {
+fun SlideThree(onClick: () -> Unit) {
 
   val isTablet = DeviceType.isTablet()
 
   Column(
     modifier = Modifier
-      .fillMaxSize()
-      .background(cardOrange)
-      .padding(horizontal = 20.dp),
+        .fillMaxSize()
+        .background(cardOrange)
+        .padding(horizontal = 20.dp),
     verticalArrangement = Arrangement.Top,
     horizontalAlignment = Alignment.CenterHorizontally
   ) {
     LazyColumn(
-      Modifier
-        .then(
-          if (isTablet) Modifier.width(600.dp) else
-            Modifier.fillMaxWidth()
-        )
-        .fillMaxHeight(),
+        Modifier
+            .then(
+                if (isTablet) Modifier.width(600.dp) else
+                    Modifier.fillMaxWidth()
+            )
+            .fillMaxHeight(),
 
       verticalArrangement = Arrangement.Center,
       horizontalAlignment = Alignment.CenterHorizontally
@@ -100,10 +100,10 @@ fun SlideThree() {
 
         Button(
           modifier = Modifier
-            .padding(vertical = 40.dp)
-            .border(3.dp, color = Color.Black, shape = RoundedCornerShape(50.dp)),
+              .padding(vertical = 40.dp)
+              .border(3.dp, color = Color.Black, shape = RoundedCornerShape(50.dp)),
           shape = RoundedCornerShape(50.dp),
-          onClick = {},
+          onClick = { onClick() },
           colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent)
         ) {
           Text(

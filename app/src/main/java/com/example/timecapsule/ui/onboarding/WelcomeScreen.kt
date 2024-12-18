@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -32,7 +33,7 @@ import com.example.timecapsule.ui.theme.LightBlue
 import com.example.timecapsule.ui.util.DeviceType
 
 @Composable
-fun WelcomeScreen() {
+fun WelcomeScreen(onClick: () -> Unit) {
 
   val isTablet = DeviceType.isTablet()
 
@@ -82,12 +83,13 @@ fun WelcomeScreen() {
         )
       }
 
-      OutlinedButton(
+      Button(
         modifier = Modifier
             .padding(vertical = 40.dp)
             .border(2.dp, color = Color.Black, shape = RoundedCornerShape(50.dp)),
         shape = RoundedCornerShape(50.dp),
-        onClick = {},
+        onClick = { onClick() },
+        colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent)
       ) {
         Text(
           text = "Explore",
