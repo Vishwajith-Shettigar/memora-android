@@ -1,7 +1,7 @@
 <resources>
     <!--    Onboarding screen-->
-    <string name="app_name">Lorem Ispum</string>
-    <string name="app_subtitle">lorea aupum poek jddie outa fpia those knd shpi uei bsui spoke atyle </string>
+    <string name="app_name">Time Capsule</string>
+    <string name="app_subtitle">Relive the moments with your loved ones.</string>
     <string name="login_btn"> LOG IN </string>
     <string name="signup_btn"> SIGN UP </string>
 
@@ -18,7 +18,7 @@
 
     <!--    Details Screen-->
     <string name="details_headline">Could we get to know you better, please?</string>
-    <string name="letsgo_button">Lets go  🚀</string>
+    <string name="letsgo_button">Lets go 🚀</string>
 
     <!--     Log in Screen-->
     <string name="login_headline">Log In</string>

@@ -55,6 +55,7 @@ import com.example.timecapsule.R
 import com.example.timecapsule.routes.Screen
 import com.example.timecapsule.ui.theme.LightBlue
 import com.example.timecapsule.ui.theme.SignUpBackground
+import com.example.timecapsule.ui.theme.openSansExtraBold
 import com.example.timecapsule.ui.util.Device
 import com.example.timecapsule.ui.util.DeviceType
 import com.example.timecapsule.viewmodel.AuthState
@@ -117,13 +118,13 @@ fun CustomTextField(
     modifier =
 
     if (!isTablet)
-        modifier
-            .fillMaxWidth()
-            .padding(vertical = 3.dp)
+      modifier
+        .fillMaxWidth()
+        .padding(vertical = 3.dp)
     else
-        modifier
-            .width(600.dp)
-            .padding(vertical = 3.dp)
+      modifier
+        .width(600.dp)
+        .padding(vertical = 3.dp)
   )
 }
 
@@ -193,17 +194,18 @@ fun LogInScreenMobile(
     horizontalAlignment = Alignment.CenterHorizontally,
     verticalArrangement = Arrangement.SpaceBetween,
     modifier = modifier
-        .fillMaxSize()
-        .background(
-                LightBlue.copy(alpha = 0.6f)
-        )
-        .padding(horizontal = 16.dp).systemBarsPadding()
+      .fillMaxSize()
+      .background(
+        LightBlue.copy(alpha = 0.6f)
+      )
+      .padding(horizontal = 16.dp)
+      .systemBarsPadding()
   ) {
 
     Spacer(modifier = Modifier.height(5.dp))
 
-    // Top Decorative Image
-    TopImage()
+//    // Top Decorative Image
+//    TopImage()
 
     Spacer(modifier = Modifier.height(15.dp))
     BodyPart(
@@ -289,16 +291,18 @@ fun BodyPart(
     verticalArrangement =
     if (isTablet) Arrangement.Center
     else
-      Arrangement.Top,
+      Arrangement.Center,
     modifier = Modifier.fillMaxSize()
   ) {
     // Title
     Text(
+      modifier = Modifier.fillMaxWidth(),
       text = stringResource(id = R.string.login_headline),
-      fontSize = 32.sp,
+      fontSize = 62.sp,
       fontWeight = FontWeight.Bold,
       color = Color.White,
-      textAlign = TextAlign.Center
+      textAlign = TextAlign.Start,
+      fontFamily = openSansExtraBold
     )
     Spacer(modifier = Modifier.height(35.dp))
     // Input Fields
@@ -328,18 +332,18 @@ fun LogInButton(isLoading: Boolean, buttonClicked: (ButtonName) -> Unit = {}) {
       containerColor = Color.Transparent
     ),
     modifier = Modifier
-        .width(270.dp)
-        .height(46.dp)
-        .shadow(
-            elevation = 10.dp, // Shadow size
-            shape = RoundedCornerShape(20.dp)
-        )
-        .background(
-            brush = Brush.horizontalGradient(
-                colors = listOf(Color(0xFF4F46E5), Color(0xFF3B82F6))
-            ),
-            shape = RoundedCornerShape(20.dp)
-        )
+      .width(270.dp)
+      .height(46.dp)
+      .shadow(
+        elevation = 10.dp, // Shadow size
+        shape = RoundedCornerShape(20.dp)
+      )
+      .background(
+        brush = Brush.horizontalGradient(
+          colors = listOf(Color(0xFF4F46E5), Color(0xFF3B82F6))
+        ),
+        shape = RoundedCornerShape(20.dp)
+      )
   ) {
     if (isLoading)
       CircularProgressIndicator(
@@ -374,8 +378,8 @@ fun LogInButton(isLoading: Boolean, buttonClicked: (ButtonName) -> Unit = {}) {
         color = Color.White.copy(alpha = 0.8f)
       ),
       modifier = Modifier
-          .padding(horizontal = 3.dp)
-          .clickable(onClick = { buttonClicked(ButtonName.SIGN_UP) }),
+        .padding(horizontal = 3.dp)
+        .clickable(onClick = { buttonClicked(ButtonName.SIGN_UP) }),
     )
   }
 }
@@ -441,13 +445,13 @@ fun LogInScreenTablet(
     verticalAlignment = Alignment.CenterVertically,
     horizontalArrangement = Arrangement.SpaceBetween,
     modifier = modifier
-        .fillMaxSize()
-        .background(
-            Brush.horizontalGradient(
-                SignUpBackground
-            )
+      .fillMaxSize()
+      .background(
+        Brush.horizontalGradient(
+          SignUpBackground
         )
-        .padding(horizontal = 16.dp)
+      )
+      .padding(horizontal = 16.dp)
   ) {
     Spacer(modifier = Modifier.width(5.dp))
 
