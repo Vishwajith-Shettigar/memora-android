@@ -97,9 +97,9 @@ fun BottomNavigationBar(navController: NavController) {
   val items = getNavigationItems()
   BottomNavigation(
     backgroundColor = MaterialTheme.colorScheme.primary,
-    modifier = Modifier
+    modifier = Modifier .background(MaterialTheme.colorScheme.primary)
         .windowInsetsPadding(WindowInsets.navigationBars.only(WindowInsetsSides.Bottom))
-        .background(MaterialTheme.colorScheme.primary)
+
   ) {
     val currentRoute = navController.currentDestination?.route
     items.forEach { item ->

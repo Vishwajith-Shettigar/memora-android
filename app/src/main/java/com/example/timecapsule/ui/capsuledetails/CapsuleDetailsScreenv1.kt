@@ -87,25 +87,29 @@ fun CapsuleDetailsScreenv1(
       is DisplayCapsuleDetailsState.Loading -> {}
     }
   }
-  Box(
-    modifier = Modifier
-        .fillMaxSize()
-        .background(androidx.compose.material3.MaterialTheme.colorScheme.primary)
-  ) {
-    LazyColumn(
+  androidx.compose.material3.Scaffold { innerPadding ->
+    Box(
       modifier = Modifier
           .fillMaxSize()
-          .zIndex(0f),
-      contentPadding = PaddingValues(horizontal = 1.dp, vertical = 10.dp),
+          .background(androidx.compose.material3.MaterialTheme.colorScheme.primary)
+          .padding(innerPadding)
     ) {
-      item {
-        BackRow(onBack)
-      }
-      item {
-        CapsuleDetailsSection(capsuleDetails, isSuccess, isLoading)
+      LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+            .zIndex(0f),
+        contentPadding = PaddingValues(horizontal = 1.dp, vertical = 10.dp),
+      ) {
+        item {
+          BackRow(onBack)
+        }
+        item {
+          CapsuleDetailsSection(capsuleDetails, isSuccess, isLoading)
+        }
       }
     }
   }
+
 }
 
 @Composable

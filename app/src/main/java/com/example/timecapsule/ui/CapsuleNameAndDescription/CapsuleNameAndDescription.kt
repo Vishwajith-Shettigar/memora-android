@@ -64,8 +64,8 @@ fun CapsuleNameAndDescription(viewModel:CapsuleCreationViewModel,onNavigate: (Na
       Column(
         Modifier
           .fillMaxWidth()
-          .padding(16.dp)
-          .align(Alignment.Center)
+          .padding(16.dp).padding(top = 50.dp)
+          .align(Alignment.TopCenter)
       ) {
         Text(
           text = "Please name your capsule and provide a brief description.",

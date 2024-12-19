@@ -156,7 +156,7 @@ fun SearchBar(isSataliteView: MutableState<Boolean>, onSearch: (String) -> Unit)
         .fillMaxWidth()
         .wrapContentWidth()
         .zIndex(1f)
-        .padding(vertical = 10.dp, horizontal = 5.dp), horizontalArrangement = Arrangement.Center,
+        .padding(vertical = 30.dp, horizontal = 5.dp), horizontalArrangement = Arrangement.Center,
     verticalAlignment = Alignment.CenterVertically
   ) {
     OutlinedTextField(

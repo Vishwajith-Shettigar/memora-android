@@ -132,7 +132,7 @@ fun SelectCapsuleScreen(
               Modifier.padding(vertical = 38.dp, horizontal = 20.dp)
 
             } else {
-              Modifier.padding(vertical = 28.dp, horizontal = 10.dp)
+              Modifier.padding(vertical = 18.dp, horizontal = 10.dp)
             }
           )
         },
@@ -149,7 +149,6 @@ fun SelectCapsuleScreen(
           top = innerPadding.calculateTopPadding()
         )
         .fillMaxSize()
-        .background(Color.Red)
 
     ) {
       if (isLoading)
