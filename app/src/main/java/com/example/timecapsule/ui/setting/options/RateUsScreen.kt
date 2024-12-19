@@ -1,30 +1,36 @@
 package com.example.timecapsule.ui.setting.options
 
-import android.util.Log
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -33,7 +39,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
@@ -43,14 +48,20 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.data.local.entity.Review
 import com.example.timecapsule.ui.selecttime.BackRow
 import com.example.timecapsule.ui.theme.LightBlue
 import com.example.timecapsule.ui.theme.fiveStarColor
 import com.example.timecapsule.ui.theme.threeStarColor
 import com.example.timecapsule.ui.theme.zeroStarColor
 import com.example.timecapsule.ui.util.DeviceType
+import com.example.timecapsule.viewmodel.ReviewViewModel
 
 /**
  * An object that provides rating expressions and colors based on the given rating.
@@ -62,9 +73,9 @@ object RatingsArtMapper {
    * Returns a composable function that represents the rating expression (stars) for a given rating.
    *
    * This function maps the rating value to a corresponding composable expression:
-   * - 0.0f to 0.19f: ZeroStarExpression (No stars)
+   * - 0.0f to 0.19999f: ZeroStarExpression (No stars)
    * - 0.2f to 0.4f: ThreeStarExpression (Three stars)
-   * - 0.4f and above: FiveStarExpression (Five stars)
+   * - 0.41f and above: FiveStarExpression (Five stars)
    *
    * @param rating The rating value used to determine the expression.
    * @return A composable function representing the rating expression (ZeroStar, ThreeStar, or FiveStar).
@@ -72,7 +83,7 @@ object RatingsArtMapper {
   @Composable
   fun getRatingExpression(rating: Float): @Composable () -> Unit {
     return when (rating) {
-      in 0.0f..0.19f -> {
+      in 0.0f..0.199999f -> {
         { ZeroStarExpression() }
       }
 
@@ -90,7 +101,7 @@ object RatingsArtMapper {
    * Returns the color associated with the given rating.
    *
    * This function maps the rating value to a corresponding color:
-   * - 0.0f to 0.19f: `zeroStarColor` (representing no stars)
+   * - 0.0f to 0.19999f: `zeroStarColor` (representing no stars)
    * - 0.2f to 0.4f: `threeStarColor` (representing three stars)
    * - 0.4f and above: `fiveStarColor` (representing five stars)
    *
@@ -99,7 +110,7 @@ object RatingsArtMapper {
    */
   fun getRatingColor(rating: Float): Color {
     return when (rating) {
-      in 0.0f..0.19f -> zeroStarColor
+      in 0.0f..0.1999f -> zeroStarColor
       in 0.2f..0.4f -> threeStarColor
       else -> fiveStarColor
     }
@@ -108,13 +119,31 @@ object RatingsArtMapper {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ReviewScreen() {
-  var sliderPosition by remember { mutableStateOf(0.0f) }
+fun RateUsScreen(viewModel: ReviewViewModel = hiltViewModel(), onBackClick: () -> Unit) {
+  var sliderPosition by remember {
+    mutableStateOf(
+      0.0F
+    )
+  }
+  var reviewText by remember {
+    mutableStateOf("")
+  }
+
+  LaunchedEffect(viewModel.review) {
+    if (viewModel.review != null) {
+      sliderPosition = viewModel.review!!.rating.toFloat()
+      reviewText = viewModel.review!!.reviewText
+    }
+  }
 
   val isTablet = DeviceType.isTablet()
 
   var bgColor by remember {
     mutableStateOf(RatingsArtMapper.getRatingColor(sliderPosition))
+  }
+
+  var showReviewBottomSheet by remember {
+    mutableStateOf(false)
   }
 
   LaunchedEffect(sliderPosition) {
@@ -127,7 +156,25 @@ fun ReviewScreen() {
         .background(bgColor)
         .padding(top = 10.dp),
   ) {
-    BackRow()
+    BackRow() {
+      onBackClick()
+    }
+
+    if (showReviewBottomSheet)
+      ReviewBottomSheet(reviewText, isTablet = isTablet, onSubmit = {
+        reviewText = it
+        viewModel.insertReview(
+          Review(
+            rating = sliderPosition.toDouble(),
+            timestamp = System.currentTimeMillis(),
+            reviewText = reviewText
+          )
+        )
+        showReviewBottomSheet = false
+      }, onDismiss = {
+        showReviewBottomSheet = false
+      })
+
     Column(
       modifier = Modifier
           .fillMaxSize()
@@ -158,6 +205,15 @@ fun ReviewScreen() {
           ),
         value = sliderPosition,
         onValueChange = { sliderPosition = it },
+        onValueChangeFinished = {
+          viewModel.insertReview(
+            Review(
+              rating = sliderPosition.toDouble(),
+              timestamp = System.currentTimeMillis(),
+              reviewText = reviewText
+            )
+          )
+        },
         valueRange = 0f..0.5f,
         colors = SliderDefaults.colors(
           thumbColor = Color.Black,
@@ -183,9 +239,10 @@ fun ReviewScreen() {
         }
       )
 
-
       Button(
-        onClick = { },
+        onClick = {
+          showReviewBottomSheet = true
+        },
         modifier = Modifier
             .fillMaxWidth()
             .height(48.dp),
@@ -199,7 +256,7 @@ fun ReviewScreen() {
         Spacer(modifier = Modifier.width(10.dp))
 
         Text(
-          text = "Add a comment",
+          text = "Add a review",
           style = MaterialTheme.typography.labelLarge.copy(
             fontWeight = FontWeight.ExtraBold,
             color = Color.Black,
@@ -398,4 +455,133 @@ fun ThreeStarExpression() {
       style = Stroke(width = 8f, cap = StrokeCap.Round)
     )
   }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ReviewBottomSheet(
+  text: String,
+  isTablet: Boolean,
+  onSubmit: (String) -> Unit,
+  onDismiss: () -> Unit
+) {
+
+  var reviewText by remember {
+    mutableStateOf(text)
+  }
+
+  val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+
+  ModalBottomSheet(onDismissRequest = { onDismiss() },
+    sheetState = bottomSheetState,
+    modifier = Modifier.fillMaxHeight(0.75F),
+    content = {
+      Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(10.dp)
+      ) {
+        Text(
+          modifier = Modifier.padding(vertical = 10.dp),
+          text = "Please give a review",
+          style = MaterialTheme.typography.titleLarge.copy(
+            fontSize = 25.sp,
+            fontWeight = FontWeight.Bold
+          ),
+          color = LightBlue
+        )
+
+        Text(
+          text = "Your review will be sent to us through email.",
+          style = MaterialTheme.typography.titleLarge.copy(
+            fontSize = 15.sp,
+            fontWeight = FontWeight.SemiBold,
+            lineHeight = TextUnit(20.0F, TextUnitType.Sp)
+          ),
+          color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+
+        TextField(
+          modifier = Modifier
+              .fillMaxWidth()
+              .wrapContentHeight()
+              .padding(vertical = 40.dp)
+              .imePadding(),
+          value = reviewText,
+          onValueChange = {
+            reviewText = it
+          },
+          placeholder = {
+            Text(text = "Write review here.")
+          },
+          colors = TextFieldDefaults.textFieldColors(
+            containerColor = Color.Transparent,
+            unfocusedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
+            focusedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
+            cursorColor = LightBlue,
+            focusedLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
+            unfocusedLabelColor = LightBlue,
+            focusedLeadingIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+            unfocusedLeadingIconColor = LightBlue
+          ),
+          singleLine = false,
+          maxLines = 10,
+          textStyle = MaterialTheme.typography.titleMedium.copy(
+            textAlign = TextAlign.Start
+          ),
+          leadingIcon = {
+            Icon(
+              painter = painterResource(id = com.example.timecapsule.R.drawable.ic_subtitles),
+              contentDescription = ""
+            )
+          },
+        )
+
+        Button(
+          onClick = { onSubmit(reviewText) }, colors =
+          ButtonDefaults.buttonColors(
+            containerColor = LightBlue
+          ),
+          contentPadding = PaddingValues(vertical = 8.dp),
+          shape = RoundedCornerShape(10.dp),
+          modifier =
+
+          if (!isTablet)
+              Modifier
+                  .fillMaxWidth()
+                  .wrapContentHeight()
+                  .padding(vertical = 2.dp)
+          else
+              Modifier
+                  .width(600.dp)
+                  .height(100.dp)
+                  .padding(vertical = 10.dp)
+
+        ) {
+
+          Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight(),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+          ) {
+            Text(
+              modifier = Modifier.padding(horizontal = 10.dp),
+              text = "Send",
+              style = MaterialTheme.typography.titleLarge.copy(
+                fontSize = 15.sp,
+                fontWeight = FontWeight.Bold
+              ),
+              color = MaterialTheme.colorScheme.primary
+            )
+            Icon(
+              painter = painterResource(id = com.example.timecapsule.R.drawable.ic_send),
+              contentDescription = "send review",
+              Modifier.size(25.dp)
+            )
+          }
+        }
+      }
+    })
 }

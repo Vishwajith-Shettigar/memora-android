@@ -28,4 +28,8 @@ apply plugin: 'kotlin-kapt'
 dependencies{
 
 
+implementation libs.androidx.room.common
+    implementation libs.gson
+
+
 }

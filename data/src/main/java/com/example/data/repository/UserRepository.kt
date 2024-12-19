@@ -1,11 +1,11 @@
 package com.example.data.repository
 
+import com.example.data.local.entity.Review
 import com.example.data.remote.UserRemoteDataSource
 import com.example.model.Profile
 import com.example.model.UpdateProfile
 import com.example.model.UserDetails
 import com.example.util.Response
-import com.google.firebase.firestore.auth.User
 import javax.inject.Inject
 
 interface UserRepository {
@@ -16,6 +16,13 @@ interface UserRepository {
   suspend fun searchUsers(query: String): Response<List<UserDetails>>
   suspend fun getProfile(): Response<Profile>
   suspend fun updateProfile(profile: UpdateProfile): Response<Unit>
+  fun getUserEmail(): Response<String>
+  suspend fun sendResetPasswordEmail(): Response<Unit>
+  suspend fun insertOrUpdateUserReview(review: Review)
+  suspend fun setReceiveNotification(isEnabled: Boolean): Response<Unit>
+  suspend fun setShareCapsules(isEnabled: Boolean): Response<Unit>
+  suspend fun getReceiveNotification(): Response<Boolean>
+  suspend fun getShareCapsules(): Response<Boolean>
 }
 
 class UserRepositoryImpl @Inject constructor(
@@ -51,5 +58,33 @@ class UserRepositoryImpl @Inject constructor(
 
   override suspend fun updateProfile(profile: UpdateProfile): Response<Unit> {
     return userRemoteDataSource.updateProfile(profile)
+  }
+
+  override fun getUserEmail(): Response<String> {
+    return userRemoteDataSource.getUserEmail()
+  }
+
+  override suspend fun sendResetPasswordEmail(): Response<Unit> {
+    return userRemoteDataSource.sendResetPasswordEmail()
+  }
+
+  override suspend fun insertOrUpdateUserReview(review: Review) {
+    userRemoteDataSource.insertOrUpdateUserReview(review)
+  }
+
+  override suspend fun setReceiveNotification(isEnabled: Boolean): Response<Unit> {
+    return userRemoteDataSource.setReceiveNotification(isEnabled)
+  }
+
+  override suspend fun setShareCapsules(isEnabled: Boolean): Response<Unit> {
+    return userRemoteDataSource.setShareCapsules(isEnabled)
+  }
+
+  override suspend fun getReceiveNotification(): Response<Boolean> {
+    return userRemoteDataSource.getReceiveNotification()
+  }
+
+  override suspend fun getShareCapsules(): Response<Boolean> {
+    return userRemoteDataSource.getShareCapsules()
   }
 }

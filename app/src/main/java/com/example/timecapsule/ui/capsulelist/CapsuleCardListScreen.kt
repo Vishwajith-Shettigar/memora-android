@@ -78,10 +78,6 @@ fun CapsuleCardListScreen(
     mutableStateListOf<CapsuleDetails>()
   }
 
-  LaunchedEffect(key1 = Unit) {
-    viewModel.getCapsulesList()
-  }
-
   LaunchedEffect(key1 = state) {
     when (state) {
       is CapsuleListScreenState.Loading -> {

@@ -5,6 +5,7 @@ plugins {
     id 'com.google.gms.google-services'
     id 'kotlin-kapt'
     id 'dagger.hilt.android.plugin'
+    id 'com.google.devtools.ksp'
 }
 
 android {
@@ -42,7 +43,7 @@ android {
         buildConfig true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion '1.5.1'
+        kotlinCompilerExtensionVersion '1.5.3'
     }
     packaging {
         resources {
@@ -131,4 +132,14 @@ dependencies {
     implementation ("com.github.kittinunf.fuel:fuel-json:2.3.1")
 
     implementation "com.google.accompanist:accompanist-placeholder-material:0.31.0-alpha"
+
+//    implementation "com.google.accompanist:accompanist-swiperefresh:0.35.1"
+
+    implementation "com.google.accompanist:accompanist-pager:0.28.0"
+    implementation "com.google.accompanist:accompanist-pager-indicators:0.28.0"
+
+    def room_version = "2.6.0"
+    implementation libs.androidx.room.runtime
+    implementation libs.androidx.room.ktx
+    ksp "androidx.room:room-compiler:$room_version"
 }

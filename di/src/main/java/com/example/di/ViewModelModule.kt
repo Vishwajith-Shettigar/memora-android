@@ -1,12 +1,17 @@
 package com.example.di
 
+import com.example.data.remote.UserRemoteDataSource
 import com.example.data.repository.AuthRepository
 import com.example.data.repository.CapsulesRepository
 import com.example.data.repository.NearByCapsulesRepository
 import com.example.data.repository.NotificationRepository
+import com.example.data.repository.ReviewRepository
+import com.example.data.repository.UpdateDetailsRepository
 import com.example.data.repository.UploadFileRepository
 import com.example.data.repository.UserRepository
 import com.example.data.sharedpreference.SharedPreferencesHelper
+import com.example.domain.usecase.CanResetPasswordCounterUseCase
+import com.example.domain.usecase.ChooseLanguageUseCase
 import com.example.domain.usecase.CreateCapsuleUseCase
 import com.example.domain.usecase.FetchNearByCapsulesUseCase
 import com.example.domain.usecase.GetCapsuleAssetsUseCase
@@ -14,7 +19,18 @@ import com.example.domain.usecase.GetCapsuleDetailsUseCase
 import com.example.domain.usecase.GetCapsuleListUseCase
 import com.example.domain.usecase.GetNotificationUseCase
 import com.example.domain.usecase.GetProfileUseCase
+import com.example.domain.usecase.GetReceiveNotificationCacheUseCase
+import com.example.domain.usecase.GetReceiveNotificationUseCase
+import com.example.domain.usecase.GetRemoteAppUpdateDetailsUseCase
+import com.example.domain.usecase.GetResetPasswordEmailUseCase
+import com.example.domain.usecase.GetReviewUseCase
+import com.example.domain.usecase.GetShareCapsulesCacheUseCase
+import com.example.domain.usecase.GetShareCapsulesUseCase
+import com.example.domain.usecase.GetUpdateDetailsUseCase
 import com.example.domain.usecase.GetUserDetailsUseCase
+import com.example.domain.usecase.GetUserEmailUseCase
+import com.example.domain.usecase.InsertReviewUseCase
+import com.example.domain.usecase.InsertUpdateDetailsUseCase
 import com.example.domain.usecase.OnBoardingDataUseCase
 import com.example.domain.usecase.OpenCapsuleScreenCheckPointUseCase
 import com.example.domain.usecase.SaveUserDetailsUseCase
@@ -26,6 +42,10 @@ import com.example.domain.usecase.UploadFilesUseCase
 import com.example.domain.usecase.getAuthUseCase
 import com.example.domain.usecase.getUserIDUseCase
 import com.example.domain.usecase.SendCapsuleCreationNotificationUseCase
+import com.example.domain.usecase.SetReceiveNotificationCacheUseCase
+import com.example.domain.usecase.SetReceiveNotificationUseCase
+import com.example.domain.usecase.SetShareCapsulesCacheUseCase
+import com.example.domain.usecase.SetShareCapsulesUseCase
 import com.example.domain.usecase.UpdateProfileUseCase
 import dagger.Module
 import dagger.Provides
@@ -140,6 +160,12 @@ class ViewModelModule {
 
   @Provides
   @ViewModelScoped
+  fun provideGetRemoteAppUpdateDetailsUseCase(userRemoteDataSource: UserRemoteDataSource): GetRemoteAppUpdateDetailsUseCase {
+    return GetRemoteAppUpdateDetailsUseCase(userRemoteDataSource)
+  }
+
+  @Provides
+  @ViewModelScoped
   fun provideGetUserDetailsUseCase(userRepository: UserRepository): GetUserDetailsUseCase {
     return GetUserDetailsUseCase(userRepository)
   }
@@ -167,4 +193,88 @@ class ViewModelModule {
   fun provideUpdateProfileUseCase(userRepository: UserRepository): UpdateProfileUseCase {
     return UpdateProfileUseCase(userRepository)
   }
+
+  @Provides
+  @ViewModelScoped
+  fun provideGetUserEmailUseCase(userRepository: UserRepository): GetUserEmailUseCase {
+    return GetUserEmailUseCase(userRepository)
+  }
+
+  @Provides
+  @ViewModelScoped
+  fun provideGetResetPasswordEmailUseCase(userRepository: UserRepository): GetResetPasswordEmailUseCase {
+    return GetResetPasswordEmailUseCase(userRepository)
+  }
+
+  @Provides
+  @ViewModelScoped
+  fun provideCanResetPasswordCounterUseCase(sharedPreferencesHelper: SharedPreferencesHelper): CanResetPasswordCounterUseCase {
+    return CanResetPasswordCounterUseCase(sharedPreferencesHelper)
+  }
+
+  @Provides
+  @ViewModelScoped
+  fun provideChooseLanguageUseCase(sharedPreferencesHelper: SharedPreferencesHelper): ChooseLanguageUseCase {
+    return ChooseLanguageUseCase(sharedPreferencesHelper)
+  }
+
+  @Provides
+  @ViewModelScoped
+  fun provideGetReviewUseCase(repository: ReviewRepository) = GetReviewUseCase(repository)
+
+  @Provides
+  @ViewModelScoped
+  fun provideInsertReviewUseCase(repository: ReviewRepository, userRepository: UserRepository) =
+    InsertReviewUseCase(repository, userRepository = userRepository)
+
+  @Provides
+  @ViewModelScoped
+  fun provideGetUpdateDetailsUseCase(updateDetailsRepository: UpdateDetailsRepository) =
+    GetUpdateDetailsUseCase(updateDetailsRepository)
+
+  @Provides
+  @ViewModelScoped
+  fun provideInsertUpdateDetailsUseCase(updateDetailsRepository: UpdateDetailsRepository) =
+    InsertUpdateDetailsUseCase(updateDetailsRepository)
+
+  @Provides
+  @ViewModelScoped
+  fun provideGetReceiveNotificationCacheUseCase(sharedPreferencesHelper: SharedPreferencesHelper) =
+    GetReceiveNotificationCacheUseCase(sharedPreferencesHelper)
+
+  @Provides
+  @ViewModelScoped
+  fun provideGetShareCapsulesCacheUseCase(sharedPreferencesHelper: SharedPreferencesHelper) =
+    GetShareCapsulesCacheUseCase(sharedPreferencesHelper)
+
+
+  @Provides
+  @ViewModelScoped
+  fun provideSetReceiveNotificationCacheUseCase(sharedPreferencesHelper: SharedPreferencesHelper) =
+    SetReceiveNotificationCacheUseCase(sharedPreferencesHelper)
+
+  @Provides
+  @ViewModelScoped
+  fun provideSetShareCapsulesCacheUseCase(sharedPreferencesHelper: SharedPreferencesHelper) =
+    SetShareCapsulesCacheUseCase(sharedPreferencesHelper)
+
+  @Provides
+  @ViewModelScoped
+  fun provideGetReceiveNotificationUseCase(userRepository: UserRepository) =
+    GetReceiveNotificationUseCase(userRepository)
+
+  @Provides
+  @ViewModelScoped
+  fun provideGetShareCapsulesUseCase(userRepository: UserRepository) =
+    GetShareCapsulesUseCase(userRepository)
+
+  @Provides
+  @ViewModelScoped
+  fun provideSetReceiveNotificationUseCase(userRepository: UserRepository) =
+    SetReceiveNotificationUseCase(userRepository)
+
+  @Provides
+  @ViewModelScoped
+  fun provideSetShareCapsulesUseCase(userRepository: UserRepository) =
+    SetShareCapsulesUseCase(userRepository)
 }

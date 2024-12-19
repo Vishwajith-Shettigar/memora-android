@@ -6,6 +6,8 @@ import kotlin.math.cos
 sealed class Screen(val route: String) {
   // Auth Flow
   object Splash : Screen("splash")
+  object WelCome : Screen("welcome")
+  object Sliders : Screen("sliders")
   object Onboarding : Screen("onboarding")
   object Login : Screen("login")
   object Signup : Screen("signup")
@@ -36,6 +38,21 @@ sealed class Screen(val route: String) {
         )
       }"
   }
+
+  // Sub screens in profile
+  object Setting : Screen("setting")
+  object ContactUs : Screen("contact_us")
+  object Privacy : Screen("privacy")
+
+  object PrivacyPolicy : Screen("privacy_policy")
+  object TermsAndServices : Screen("terms_and_services")
+
+  // Settings options screen
+  object ChangePasswordScreen : Screen("change_password_screen")
+  object ChangeLanguageScreen : Screen("change_language_screen")
+  object RateAppScreen : Screen("rate_app_screen")
+  object UpdatesScreen : Screen("updates_screen")
+
 
   // Parent navigations.
   object MainScreens : Screen("main_screns")
@@ -69,9 +86,6 @@ sealed class Screen(val route: String) {
   object LetterScreen : Screen("write_letter")
   object CapsuleCreationSavingScreen : Screen("capsule_creation_saving")
 
-  // Subscreens in Profile
-  object Settings : Screen("settings")
-  object Help : Screen("help")
 
   // Open capsule screens.
   object OpenCapsuleLoadingScreen : Screen("open_capsule_loading/{id}/{isCapsuleHunt}") {

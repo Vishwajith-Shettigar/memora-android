@@ -69,11 +69,11 @@ import com.example.timecapsule.ui.util.DeviceType
 import com.example.timecapsule.viewmodel.ProfileState
 import com.example.timecapsule.viewmodel.ProfileViewModel
 
-@Preview
 @Composable
 fun ProfileScreen(
   viewModel: ProfileViewModel = hiltViewModel(),
-  onViewProfileClick: (Profile) -> Unit = {}
+  onViewProfileClick: (Profile) -> Unit = {}, onSettingClick: () -> Unit,
+  onContactUsClicked: () -> Unit, onPrivacyClicked: () -> Unit
 ) {
 
   val profileState by viewModel.profile.collectAsState()
@@ -238,14 +238,20 @@ fun ProfileScreen(
 
           Spacer(modifier = Modifier.height(16.dp))
 
-          SettingsOption(icon = R.drawable.ic_darkmode, text = "Dark Mode", true)
-          SettingsOption(icon = com.example.timecapsule.R.drawable.ic_setting, text = "Setting")
-          SettingsOption(icon = com.example.timecapsule.R.drawable.ic_email, text = "Contact Us")
+          SettingsOption(icon = R.drawable.ic_darkmode, text = "Dark Mode", true) {}
+          SettingsOption(icon = com.example.timecapsule.R.drawable.ic_setting, text = "Setting") {
+            onSettingClick()
+          }
+          SettingsOption(icon = com.example.timecapsule.R.drawable.ic_email, text = "Contact Us") {
+            onContactUsClicked()
+          }
           SettingsOption(
             icon = com.example.timecapsule.R.drawable.ic_shield,
-            text = "Privacy Policy"
-          )
-          SettingsOption(icon = com.example.timecapsule.R.drawable.ic_logout, text = "Sign Out")
+            text = "Privacy"
+          ) {
+            onPrivacyClicked()
+          }
+          SettingsOption(icon = com.example.timecapsule.R.drawable.ic_logout, text = "Sign Out") {}
         }
       }
 
@@ -284,7 +290,12 @@ fun ProfileScreen(
 }
 
 @Composable
-fun SettingsOption(icon: Int, text: String, isDarkModeOption: Boolean = false) {
+fun SettingsOption(
+  icon: Int,
+  text: String,
+  isDarkModeOption: Boolean = false,
+  onClick: () -> Unit
+) {
   val interactionSource = remember { MutableInteractionSource() }
   val isTablet = DeviceType.isTablet()
   Row(
@@ -294,7 +305,7 @@ fun SettingsOption(icon: Int, text: String, isDarkModeOption: Boolean = false) {
             .width(600.dp)
             .height(55.dp)
             .clickable(
-                onClick = {},
+                onClick = { onClick() },
                 interactionSource = interactionSource,
                 indication = ripple()
             )
@@ -305,7 +316,7 @@ fun SettingsOption(icon: Int, text: String, isDarkModeOption: Boolean = false) {
             .height(55.dp)
             .padding(horizontal = 16.dp)
             .clickable(
-                onClick = {},
+                onClick = { onClick() },
                 interactionSource = interactionSource,
                 indication = ripple()
             ),

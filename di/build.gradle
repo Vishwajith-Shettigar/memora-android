@@ -5,6 +5,7 @@ plugins {
     id 'dagger.hilt.android.plugin'
     id 'org.jetbrains.kotlin.android'
     id 'com.google.android.libraries.mapsplatform.secrets-gradle-plugin'
+    id 'com.google.devtools.ksp'
 }
 
 android {
@@ -52,6 +53,11 @@ dependencies {
     kapt(libs.hilt.android.compiler)
 
     implementation libs.retrofit
+
+    def room_version = "2.6.0"
+    implementation libs.androidx.room.runtime
+    implementation libs.androidx.room.ktx
+    ksp "androidx.room:room-compiler:$room_version"
 
     implementation libs.converter.gson
 }

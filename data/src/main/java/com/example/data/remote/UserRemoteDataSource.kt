@@ -1,28 +1,29 @@
 package com.example.data.remote
 
-import android.util.Log
+import androidx.room.Update
+import com.example.data.local.entity.Review
+import com.example.data.local.entity.UpdateDetails
 import com.example.model.Profile
 import com.example.model.UpdateProfile
 import com.example.model.UserDetails
 import com.example.util.AskDetailsException
-import com.example.util.InValidUserException
 import com.example.util.NoAuthException
 import com.example.util.Response
 import com.example.util.UnspecifiedException
 import com.example.util.UsernameAlreadyExistsException
 import com.example.util.defaultPictures
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.storage.FirebaseStorage
 import javax.inject.Inject
-import kotlin.math.ln
 import kotlin.random.Random
 import kotlinx.coroutines.tasks.await
 
 class UserRemoteDataSource @Inject constructor(
   val firestore: FirebaseFirestore,
+  val firebaseAuth: FirebaseAuth,
   private val firebaseMessaging: FirebaseMessaging,
   val authRemoteDataSource: AuthRemoteDataSource,
   private val storage: FirebaseStorage
@@ -258,6 +259,105 @@ class UserRemoteDataSource @Inject constructor(
       return Response.Error(
         exception = e
       )
+    }
+  }
+
+  fun getUserEmail(): Response<String> {
+    return try {
+      val auth = authRemoteDataSource.getAuth()
+      if (auth != null && auth.isEmailVerified) {
+        Response.Success(auth.email)
+      } else
+        throw NoAuthException()
+
+    } catch (e: Exception) {
+      Response.Error(exception = e)
+    }
+  }
+
+  suspend fun sendResetPasswordEmail(): Response<Unit> {
+    return try {
+      val auth = authRemoteDataSource.getAuth() ?: throw NoAuthException()
+
+      firebaseAuth.sendPasswordResetEmail(auth.email!!).await()
+      Response.Success()
+
+    } catch (e: Exception) {
+      Response.Error(exception = e)
+    }
+  }
+
+  suspend fun insertOrUpdateUserReview(review: Review) {
+    try {
+      firestore.collection("reviews").document(firebaseAuth.uid!!).set(review).await()
+    } catch (_: Exception) {
+    }
+  }
+
+
+  suspend fun getRemoteAppUpdateDetails(): Response<UpdateDetails> {
+    return try {
+      val querySnapshot = firestore.collection("update_details").get().await()
+      val doc = querySnapshot.documents.get(0)
+
+      val updateDetails = UpdateDetails(
+        id = 1, versionCode =
+        doc.getLong("versionCode")!!.toInt(),
+        versionName = doc.getString("versionName")!!,
+        details = doc.get("details") as List<String>
+      )
+
+      Response.Success(updateDetails)
+    } catch (e: Exception) {
+      Response.Error(exception = e)
+    }
+  }
+
+  suspend fun setReceiveNotification(isEnabled: Boolean): Response<Unit> {
+    return try {
+      val auth = authRemoteDataSource.getAuth() ?: throw NoAuthException()
+      firestore.collection("users").document(auth.uid).update(
+        mapOf(
+          "receiveNotification" to isEnabled
+        )
+      ).await()
+      Response.Success()
+    } catch (e: Exception) {
+      Response.Error(exception = e)
+    }
+  }
+
+  suspend fun getReceiveNotification(): Response<Boolean> {
+    return try {
+      val auth = authRemoteDataSource.getAuth() ?: throw NoAuthException()
+      val doc = firestore.collection("users").document(auth.uid).get().await()
+      Response.Success(doc.getBoolean("receiveNotification"))
+    } catch (e: Exception) {
+      Response.Error(exception = e)
+    }
+  }
+
+  suspend fun setShareCapsules(isEnabled: Boolean): Response<Unit> {
+    return try {
+      val auth = authRemoteDataSource.getAuth() ?: throw NoAuthException()
+      firestore.collection("users").document(auth.uid).update(
+        mapOf(
+          "shareCapsules" to isEnabled
+        )
+      ).await()
+      Response.Success()
+    } catch (e: Exception) {
+      Response.Error(exception = e)
+    }
+  }
+
+  suspend fun getShareCapsules(): Response<Boolean> {
+    return try {
+      val auth = authRemoteDataSource.getAuth() ?: throw NoAuthException()
+      val doc = firestore.collection("users").document(auth.uid).get().await()
+      Response.Success(doc.getBoolean("shareCapsules"))
+    } catch (e: Exception) {
+      Response.Error(exception = e)
     }
   }
 }

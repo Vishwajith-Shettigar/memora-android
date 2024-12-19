@@ -5,6 +5,7 @@ import com.example.model.CapsuleAsset
 import com.example.model.CapsuleDetails
 import com.example.model.UserDetails
 import com.example.util.InValidUserException
+import com.example.util.NetWorkException
 import com.example.util.Response
 import com.example.util.UnspecifiedException
 import com.firebase.geofire.GeoFireUtils
@@ -12,6 +13,7 @@ import com.firebase.geofire.GeoLocation
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.GeoPoint
 import javax.inject.Inject
 import kotlinx.coroutines.tasks.await
@@ -133,6 +135,8 @@ class CapsulesRemoteDataSource @Inject constructor(
           capsulesDetailsList.add(capsuleDetails)
         }
         Response.Success(capsulesDetailsList)
+      } catch (e: FirebaseFirestoreException) {
+        Response.Error(NetWorkException())
       } catch (e: Exception) {
         Response.Error(UnspecifiedException())
       }

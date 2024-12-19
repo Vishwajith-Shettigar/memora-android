@@ -181,7 +181,10 @@ fun LogInScreenMobile(
   }
 
   if (showDialog)
-    EmailVerificationDialog() {
+    TitleSubtitleWithOkayButtonDialog(
+      title = "Email Verification Required",
+      subtitle = "Please verify your email to log in. Check your inbox and click on the verification link."
+    ) {
       showDialog = false
     }
 
@@ -228,9 +231,9 @@ fun LogInScreenMobile(
   }
 }
 
-@Preview(showBackground = true)
 @Composable
-fun EmailVerificationDialog(
+fun TitleSubtitleWithOkayButtonDialog(
+  title: String, subtitle: String,
   onDismiss: () -> Unit = {}
 ) {
   // The dialog content with the message and buttons
@@ -238,7 +241,7 @@ fun EmailVerificationDialog(
     onDismissRequest = onDismiss, // Close the dialog when dismissed
     title = {
       Text(
-        text = "Email Verification Required",
+        text = title,
         style = MaterialTheme.typography.titleLarge.copy(
           fontSize = 20.sp,
           fontWeight = FontWeight.Bold,
@@ -248,7 +251,7 @@ fun EmailVerificationDialog(
     },
     text = {
       Text(
-        text = "Please verify your email to log in. Check your inbox and click on the verification link.",
+        text = subtitle,
         style = MaterialTheme.typography.titleLarge.copy(
           fontSize = 16.sp,
           color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -428,7 +431,10 @@ fun LogInScreenTablet(
   }
 
   if (showDialog)
-    EmailVerificationDialog() {
+    TitleSubtitleWithOkayButtonDialog(
+      title = "Email Verification Required",
+      subtitle = "Please verify your email to log in. Check your inbox and click on the verification link."
+    ) {
       showDialog = false
     }
 

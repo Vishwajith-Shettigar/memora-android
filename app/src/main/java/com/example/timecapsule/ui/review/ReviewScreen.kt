@@ -127,8 +127,8 @@ fun CustomerDetailsBottomSheet(
   ) {
     Column(
       modifier = Modifier
-          .fillMaxWidth()
-          .padding(16.dp),
+        .fillMaxWidth()
+        .padding(16.dp),
       verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
       Text(text = "Enter Details", style = MaterialTheme.typography.titleLarge)
@@ -352,16 +352,16 @@ fun ReviewScreen(
 
   Scaffold(
     modifier = Modifier
-        .fillMaxSize()
-        .background(MaterialTheme.colorScheme.primary),
+      .fillMaxSize()
+      .background(MaterialTheme.colorScheme.primary),
     containerColor = MaterialTheme.colorScheme.primary,
     bottomBar = {
       BottomAppBar(
         containerColor = Color.Transparent,
         modifier = Modifier
-            .fillMaxWidth()
-            .wrapContentHeight()
-            .background(Color.Transparent),
+          .fillMaxWidth()
+          .wrapContentHeight()
+          .background(Color.Transparent),
         content = {
           BottomRow(onNavigate) {
             showDetails = true
@@ -390,14 +390,14 @@ fun ReviewScreen(
 
     LazyColumn(
       modifier = Modifier
-          .padding(
-              start = innerPadding.calculateStartPadding(LayoutDirection.Ltr),
-              end = innerPadding.calculateEndPadding(LayoutDirection.Ltr),
-              top = innerPadding.calculateTopPadding()
-          )
-          .padding(horizontal = 10.dp)
-          .nestedScroll(scrollBehavior.nestedScrollConnection)
-          .nestedScroll(bottomScrollBehavior.nestedScrollConnection),
+        .padding(
+          start = innerPadding.calculateStartPadding(LayoutDirection.Ltr),
+          end = innerPadding.calculateEndPadding(LayoutDirection.Ltr),
+          top = innerPadding.calculateTopPadding()
+        )
+        .padding(horizontal = 10.dp)
+        .nestedScroll(scrollBehavior.nestedScrollConnection)
+        .nestedScroll(bottomScrollBehavior.nestedScrollConnection),
     ) {
       item {
         SharedPeople(
@@ -411,9 +411,9 @@ fun ReviewScreen(
         viewModel.latLang?.let {
           SelectedLocation(
             latlang = it, modifier = Modifier
-                  .fillMaxWidth()
-                  .wrapContentHeight()
-                  .padding(vertical = 10.dp)
+              .fillMaxWidth()
+              .wrapContentHeight()
+              .padding(vertical = 10.dp)
           )
         }
 
@@ -427,9 +427,9 @@ fun ReviewScreen(
 fun SharedPeople(selectedPeoples: MutableList<UserDetails>, sharedWithALl: Boolean) {
   Column(
     modifier = Modifier
-        .fillMaxWidth()
-        .wrapContentHeight()
-        .padding(vertical = 10.dp)
+      .fillMaxWidth()
+      .wrapContentHeight()
+      .padding(vertical = 10.dp)
   ) {
     Text(
       text = stringResource(id = R.string.shared_with),
@@ -448,9 +448,9 @@ fun SharedPeople(selectedPeoples: MutableList<UserDetails>, sharedWithALl: Boole
 fun DateAndTime(dateAndTime: String) {
   Column(
     modifier = Modifier
-        .fillMaxWidth()
-        .wrapContentHeight()
-        .padding(vertical = 10.dp)
+      .fillMaxWidth()
+      .wrapContentHeight()
+      .padding(vertical = 10.dp)
   ) {
     Text(
       text = stringResource(id = R.string.date_and_time),
@@ -460,8 +460,8 @@ fun DateAndTime(dateAndTime: String) {
   }
   Row(
     modifier = Modifier
-        .fillMaxWidth()
-        .wrapContentHeight()
+      .fillMaxWidth()
+      .wrapContentHeight()
   ) {
     Text(
       modifier = Modifier.padding(10.dp),
@@ -480,9 +480,9 @@ fun DateAndTime(dateAndTime: String) {
 fun SelectedCapsule(imageUrl: String) {
   Column(
     modifier = Modifier
-        .fillMaxWidth()
-        .wrapContentHeight()
-        .padding(vertical = 10.dp)
+      .fillMaxWidth()
+      .wrapContentHeight()
+      .padding(vertical = 10.dp)
   ) {
     Text(
       text = stringResource(id = R.string.selected_capsule),
@@ -490,10 +490,10 @@ fun SelectedCapsule(imageUrl: String) {
       color = MaterialTheme.colorScheme.onSurfaceVariant
     )
     Box(
-        Modifier
-            .height(200.dp)
-            .width(200.dp)
-            .align(Alignment.CenterHorizontally)
+      Modifier
+        .height(200.dp)
+        .width(200.dp)
+        .align(Alignment.CenterHorizontally)
     ) {
       AsyncImage(
         model = imageUrl,
@@ -521,9 +521,9 @@ fun SelectedLocation(latlang: LatLng, modifier: Modifier = Modifier) {
 fun SharedContent(fileUploaded: List<FileUploaded>) {
   Column(
     modifier = Modifier
-        .fillMaxWidth()
-        .wrapContentHeight()
-        .padding(vertical = 10.dp)
+      .fillMaxWidth()
+      .wrapContentHeight()
+      .padding(vertical = 10.dp)
   ) {
     Text(
       modifier = Modifier.padding(bottom = 10.dp),
@@ -549,10 +549,10 @@ fun SharedContent(fileUploaded: List<FileUploaded>) {
 fun BottomRow(onNavigate: (NavigationAddCapsule) -> Unit = {}, onClick: () -> Unit) {
   Row(
     modifier = Modifier
-        .fillMaxWidth()
-        .wrapContentHeight()
-        .background(Color.Transparent)
-        .padding(horizontal = 30.dp),
+      .fillMaxWidth()
+      .wrapContentHeight()
+      .background(Color.Transparent)
+      .padding(horizontal = 30.dp),
     horizontalArrangement = Arrangement.SpaceBetween,
     verticalAlignment = Alignment.Top
   ) {
@@ -561,8 +561,8 @@ fun BottomRow(onNavigate: (NavigationAddCapsule) -> Unit = {}, onClick: () -> Un
       shape = RoundedCornerShape(10.dp),
       border = BorderStroke(1.dp, MaterialTheme.colorScheme.onSurfaceVariant),
       modifier = Modifier
-          .wrapContentWidth()
-          .height(46.dp),
+        .wrapContentWidth()
+        .height(46.dp),
       colors = ButtonDefaults.buttonColors(containerColor = ReviewScreenCommondColor.copy(alpha = 0.6F))
 
     ) {
@@ -579,8 +579,8 @@ fun BottomRow(onNavigate: (NavigationAddCapsule) -> Unit = {}, onClick: () -> Un
       },
       border = BorderStroke(1.dp, Color.Black),
       modifier = Modifier
-          .wrapContentWidth()
-          .height(46.dp),
+        .wrapContentWidth()
+        .height(46.dp),
       shape = RoundedCornerShape(10.dp),
       colors = ButtonDefaults.buttonColors(containerColor = ReviewScreenCommondColor)
     ) {
@@ -609,9 +609,9 @@ fun MapPreviewCard(latlang: LatLng) {
   // Card layout with rounded corners
   Card(
     modifier = Modifier
-        .fillMaxWidth()
-        .height(200.dp)
-        .padding(vertical = 10.dp),  // Adjust height to make it look like a preview
+      .fillMaxWidth()
+      .height(200.dp)
+      .padding(vertical = 10.dp),  // Adjust height to make it look like a preview
     shape = RoundedCornerShape(8.dp)
   ) {
     // GoogleMap composable for the map preview
@@ -633,13 +633,16 @@ fun MapPreviewCard(latlang: LatLng) {
 
 @Preview
 @Composable
-fun SharedWithALlIcon() {
+fun SharedWithALlIcon(text: String = "All", modifier: Modifier = Modifier.size(40.dp)) {
   Box(
     modifier =
-    Modifier.size(70.dp)
+    modifier
+      .clip(shape = CircleShape)
+      .border(1.dp, Color.LightGray, CircleShape)
+      .padding(2.dp)
   ) {
     Text(
-      text = "+ All", modifier = Modifier.align(Alignment.Center),
+      text = "+${text}", modifier = Modifier.align(Alignment.Center),
       style = MaterialTheme.typography.titleLarge.copy(fontSize = 20.sp),
       color = MaterialTheme.colorScheme.onSurfaceVariant
     )

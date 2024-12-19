@@ -1,5 +1,6 @@
 package com.example.timecapsule.ui.setting
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -22,6 +23,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -32,89 +35,107 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.timecapsule.ui.selecttime.BackRow
 import com.example.timecapsule.ui.theme.LightBlue
 import com.example.timecapsule.ui.util.DeviceType
+import com.example.timecapsule.viewmodel.SettingsViewModel
 
-@Preview
+
 @Composable
-fun SettingScreen() {
+fun SettingScreen(
+  viewModel: SettingsViewModel = hiltViewModel(),
+  onBackClick: () -> Unit, onChangePasswordClicked: () -> Unit,
+  onChangeLanguageClicked: () -> Unit,
+  onRateAppClicked: () -> Unit, onUpdatesClicked: () -> Unit
+) {
+
+  val isReceiveNotifications by viewModel.receiveNotifications.collectAsState()
+
+  val canCapsulesShare by viewModel.canSharCapsules.collectAsState()
 
   val context = LocalContext.current
 
   val isTablet = DeviceType.isTablet()
 
-  Scaffold() { innerPadding ->
-    Box(
-      modifier = Modifier
+  Column(
+    modifier = Modifier
         .fillMaxSize()
-        .background(MaterialTheme.colorScheme.primary)
-        .padding(innerPadding)
-    ) {
-      LazyColumn(
-        modifier = Modifier
+        .background(MaterialTheme.colorScheme.primary),
+    horizontalAlignment = Alignment.CenterHorizontally
+  ) {
+    BackRow() {
+      onBackClick()
+    }
+
+    LazyColumn(
+      modifier = Modifier
           .fillMaxHeight()
           .then(
-            if (isTablet)
-              Modifier.width(600.dp)
-            else
-              Modifier.fillMaxWidth()
+              if (isTablet)
+                  Modifier.width(600.dp)
+              else
+                  Modifier.fillMaxWidth()
           )
-          .padding(top = 30.dp)
+          .padding(top = 10.dp)
           .background(MaterialTheme.colorScheme.primary)
-          .align(Alignment.TopCenter)
           .background(Color.Transparent)
-      ) {
-        item {
-          Row(
-            modifier = Modifier
+    ) {
+      item {
+        Row(
+          modifier = Modifier
               .fillMaxWidth()
               .padding(start = 20.dp, end = 20.dp)
-              .height(60.dp),
-            horizontalArrangement = Arrangement.Start,
-            verticalAlignment = Alignment.CenterVertically
-          ) {
-            Text(
-              text = "Settings",
-              style = MaterialTheme.typography.titleMedium.copy(
-                fontSize = 30.sp,
-                color = LightBlue,
-                fontWeight = FontWeight.SemiBold
-              )
+              .wrapContentHeight(),
+          horizontalArrangement = Arrangement.Start,
+          verticalAlignment = Alignment.CenterVertically
+        ) {
+          Text(
+            text = "Settings",
+            style = MaterialTheme.typography.titleMedium.copy(
+              fontSize = 30.sp,
+              color = LightBlue,
+              fontWeight = FontWeight.SemiBold
             )
-          }
+          )
         }
-        item {
-          Column(
-            modifier = Modifier
+      }
+      item {
+        Column(
+          modifier = Modifier
               .fillMaxWidth()
               .wrapContentHeight()
               .padding(top = 40.dp, bottom = 10.dp, start = 20.dp, end = 20.dp)
-          ) {
-            SettingOptionsTab(settingTitle = "Change Password") {
-            }
-
-            com.example.timecapsule.ui.setting.Divider(color = Color.Gray)
-
-            SettingOptionsTab(settingTitle = "Change Language") {
-            }
-
-            com.example.timecapsule.ui.setting.Divider(color = Color.Gray)
-
-            SettingOptionsTab(settingTitle = "Rate our app") {
-            }
-
-            com.example.timecapsule.ui.setting.Divider(color = Color.Gray)
-
-            SettingOptionsTab(settingTitle = "Updates") {
-            }
-
-            com.example.timecapsule.ui.setting.Divider(color = Color.Gray)
+        ) {
+          SettingOptionsTab(settingTitle = "Change Password") {
+            onChangePasswordClicked()
           }
-        }
 
-        item {
-          Column(
-            modifier = Modifier
+          com.example.timecapsule.ui.setting.Divider(color = Color.Gray)
+
+          SettingOptionsTab(settingTitle = "Change Language") {
+            onChangeLanguageClicked()
+          }
+
+          com.example.timecapsule.ui.setting.Divider(color = Color.Gray)
+
+          SettingOptionsTab(settingTitle = "Rate our app") {
+            onRateAppClicked()
+          }
+
+          com.example.timecapsule.ui.setting.Divider(color = Color.Gray)
+
+          SettingOptionsTab(settingTitle = "Updates") {
+            onUpdatesClicked()
+          }
+
+          com.example.timecapsule.ui.setting.Divider(color = Color.Gray)
+        }
+      }
+
+      item {
+        Column(
+          modifier = Modifier
               .fillMaxWidth()
               .wrapContentHeight()
               .padding(top = 40.dp, bottom = 10.dp, start = 10.dp, end = 10.dp)
@@ -122,17 +143,21 @@ fun SettingScreen() {
               .background(LightBlue.copy(alpha = 0.4F))
               .padding(start = 10.dp, end = 10.dp),
 
-            ) {
-            SettingOptionsTabWithSwitch(settingTitle = "Receive Notifications", isChecked = true) {
-            }
+          ) {
+          SettingOptionsTabWithSwitch(
+            settingTitle = "Receive Notifications",
+            isChecked = isReceiveNotifications
+          ) {
+            viewModel.changeIsReceiveNotifications(it)
+          }
 
-            com.example.timecapsule.ui.setting.Divider(color = Color.Black)
+          com.example.timecapsule.ui.setting.Divider(color = Color.Black)
 
-            SettingOptionsTabWithSwitch(
-              settingTitle = "Allow me in others' capsules.",
-              isChecked = false
-            ) {
-            }
+          SettingOptionsTabWithSwitch(
+            settingTitle = "Share capsules with me",
+            isChecked = canCapsulesShare
+          ) {
+            viewModel.changeCanShareCapsules(it)
           }
         }
       }
@@ -152,14 +177,14 @@ fun Divider(color: Color) {
 fun SettingOptionsTab(settingTitle: String, onClick: () -> Unit) {
   Row(
     modifier = Modifier
-      .fillMaxWidth()
-      .height(60.dp)
-      .padding(vertical = 5.dp)
-      .clickable(
-        enabled = true
-      ) {
-        onClick()
-      },
+        .fillMaxWidth()
+        .height(60.dp)
+        .padding(vertical = 5.dp)
+        .clickable(
+            enabled = true
+        ) {
+            onClick()
+        },
     verticalAlignment = Alignment.CenterVertically,
     horizontalArrangement = Arrangement.SpaceBetween
   ) {
@@ -185,9 +210,9 @@ fun SettingOptionsTabWithSwitch(
 ) {
   Row(
     modifier = Modifier
-      .fillMaxWidth()
-      .wrapContentHeight()
-      .padding(vertical = 20.dp),
+        .fillMaxWidth()
+        .wrapContentHeight()
+        .padding(vertical = 20.dp),
     verticalAlignment = Alignment.CenterVertically,
     horizontalArrangement = Arrangement.SpaceBetween
   ) {
