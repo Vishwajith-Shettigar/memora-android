@@ -72,7 +72,7 @@ class ProfileViewModel @Inject constructor(
   fun getProfile() {
     viewModelScope.launch(Dispatchers.IO) {
       val response = getProfileUseCase()
-
+Log.e("pokemon",response.toString())
       withContext(Dispatchers.Main) {
         when (response) {
           is Response.Success -> {

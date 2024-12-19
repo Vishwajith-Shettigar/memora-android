@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.CircularProgressIndicator
@@ -194,11 +195,9 @@ fun LogInScreenMobile(
     modifier = modifier
         .fillMaxSize()
         .background(
-            Brush.verticalGradient(
-                SignUpBackground
-            )
+                LightBlue.copy(alpha = 0.6f)
         )
-        .padding(horizontal = 16.dp)
+        .padding(horizontal = 16.dp).systemBarsPadding()
   ) {
 
     Spacer(modifier = Modifier.height(5.dp))

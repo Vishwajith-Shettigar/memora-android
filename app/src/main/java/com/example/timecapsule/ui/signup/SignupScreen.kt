@@ -42,6 +42,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.timecapsule.R
 import com.example.timecapsule.routes.Screen
+import com.example.timecapsule.ui.theme.LightBlue
 import com.example.timecapsule.ui.theme.SignUpBackground
 import com.example.timecapsule.ui.util.Device
 import com.example.timecapsule.ui.util.DeviceType
@@ -102,7 +103,7 @@ fun CustomTextField(
       }
     },
     supportingText = {
-      if (isError && errorText!=null)
+      if (isError && errorText != null)
         Text(
           text = errorText,
           color = Color.Red
@@ -175,11 +176,11 @@ fun SignUpScreenMobile(
     modifier = modifier
         .fillMaxSize()
         .background(
-            Brush.verticalGradient(
-                SignUpBackground
-            )
+            LightBlue.copy(alpha = 0.6f)
+
         )
         .padding(horizontal = 16.dp)
+        .systemBarsPadding()
   ) {
 
     Spacer(modifier = Modifier.height(5.dp))

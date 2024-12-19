@@ -11,6 +11,7 @@ import com.example.util.NoAuthException
 import com.example.util.Response
 import com.example.util.UnspecifiedException
 import com.example.util.UsernameAlreadyExistsException
+import com.example.util.defaultCoverImages
 import com.example.util.defaultPictures
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentSnapshot
@@ -56,6 +57,8 @@ class UserRemoteDataSource @Inject constructor(
 
       val size = defaultPictures.size
       val defaultImageUrl = defaultPictures.get(Random.nextInt(0, size))
+      val coverImagesSize = defaultPictures.size
+      val defaultCoverImageUrl = defaultCoverImages.get(Random.nextInt(0, coverImagesSize))
       val newUserDetails = UserDetails(
         userId = user.uid,
         email = user.email.toString(),
@@ -63,8 +66,10 @@ class UserRemoteDataSource @Inject constructor(
         firstName = fName,
         lastName = lName,
         imageUrl = defaultImageUrl,
+        coverImageUrl = defaultCoverImageUrl,
         userNameLowerCase = userName.toLowerCase(),
         firstNameLowerCase = fName.toLowerCase(),
+        aboutMe = ""
       )
 
       firestore.collection("users").document(newUserDetails.userId)
@@ -171,6 +176,8 @@ class UserRemoteDataSource @Inject constructor(
     val fname = document.get("firstName") as String
     val lname = document.get("lastName") as String
     val imageUrl = document.get("imageUrl") as String
+    val coverImageUrl = document.get("coverImageUrl") as String
+    val aboutMe = document.get("aboutMe") as String
 
     val user = UserDetails(
       userId = userId,
@@ -178,10 +185,12 @@ class UserRemoteDataSource @Inject constructor(
       firstName = fname,
       lastName = lname,
       imageUrl = imageUrl,
+      coverImageUrl = coverImageUrl,
       email = "",
       capsuleList = emptyList(),
       userNameLowerCase = "",
-      firstNameLowerCase = ""
+      firstNameLowerCase = "",
+      aboutMe = aboutMe
     )
     return user
   }
