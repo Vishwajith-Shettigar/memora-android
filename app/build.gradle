@@ -108,9 +108,9 @@ dependencies {
     implementation 'io.github.sceneview:arsceneview:2.2.1'
 
     // map box
-    implementation 'com.mapbox.maps:android:11.6.0'
+    implementation 'com.mapbox.maps:android:11.9.0'
     // compose extension
-    implementation 'com.mapbox.extension:maps-compose:11.6.0'
+    implementation 'com.mapbox.extension:maps-compose:11.9.0'
 
     // image dominnat color extractor
     implementation 'androidx.palette:palette-ktx:1.0.0'
@@ -127,9 +127,9 @@ dependencies {
     implementation(libs.firebase.firestore.ktx)
     implementation libs.firebase.messaging
 
-    implementation (libs.stripe.android)
-    implementation ("com.github.kittinunf.fuel:fuel:2.3.1")
-    implementation ("com.github.kittinunf.fuel:fuel-json:2.3.1")
+    implementation(libs.stripe.android)
+    implementation("com.github.kittinunf.fuel:fuel:2.3.1")
+    implementation("com.github.kittinunf.fuel:fuel-json:2.3.1")
 
     implementation "com.google.accompanist:accompanist-placeholder-material:0.31.0-alpha"
 
