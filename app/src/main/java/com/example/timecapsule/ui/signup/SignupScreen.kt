@@ -121,13 +121,13 @@ fun CustomTextField(
     modifier =
 
     if (!isTablet)
-      modifier
-        .fillMaxWidth()
-        .padding(vertical = 3.dp)
+        modifier
+            .fillMaxWidth()
+            .padding(vertical = 3.dp)
     else
-      modifier
-        .width(600.dp)
-        .padding(vertical = 3.dp)
+        modifier
+            .width(600.dp)
+            .padding(vertical = 3.dp)
   )
 }
 
@@ -175,13 +175,13 @@ fun SignUpScreenMobile(
     horizontalAlignment = Alignment.CenterHorizontally,
     verticalArrangement = Arrangement.SpaceBetween,
     modifier = modifier
-      .fillMaxSize()
-      .background(
-        LightBlue.copy(alpha = 0.6f)
+        .fillMaxSize()
+        .background(
+            LightBlue.copy(alpha = 0.6f)
 
-      )
-      .padding(horizontal = 16.dp)
-      .systemBarsPadding()
+        )
+        .padding(horizontal = 16.dp)
+        .systemBarsPadding()
   ) {
 
     Spacer(modifier = Modifier.height(5.dp))
@@ -253,13 +253,13 @@ fun SignUpScreenTablet(
     verticalAlignment = Alignment.CenterVertically,
     horizontalArrangement = Arrangement.SpaceBetween,
     modifier = modifier
-      .fillMaxSize()
-      .background(
-        Brush.horizontalGradient(
-          SignUpBackground
+        .fillMaxSize()
+        .background(
+            Brush.horizontalGradient(
+                SignUpBackground
+            )
         )
-      )
-      .padding(horizontal = 16.dp)
+        .padding(horizontal = 16.dp)
   ) {
 
     Spacer(modifier = Modifier.width(5.dp))
@@ -364,18 +364,18 @@ fun RegisterButton(
       containerColor = Color.Transparent
     ),
     modifier = Modifier
-      .width(270.dp)
-      .height(46.dp)
-      .shadow(
-        elevation = 10.dp, // Shadow size
-        shape = RoundedCornerShape(20.dp)
-      )
-      .background(
-        brush = Brush.horizontalGradient(
-          colors = listOf(Color(0xFF4F46E5), Color(0xFF3B82F6))
-        ),
-        shape = RoundedCornerShape(20.dp)
-      )
+        .width(270.dp)
+        .height(46.dp)
+        .shadow(
+            elevation = 10.dp, // Shadow size
+            shape = RoundedCornerShape(20.dp)
+        )
+        .background(
+            brush = Brush.horizontalGradient(
+                colors = listOf(Color(0xFF4F46E5), Color(0xFF3B82F6))
+            ),
+            shape = RoundedCornerShape(20.dp)
+        )
   ) {
     if (isLoading)
       CircularProgressIndicator(
@@ -410,8 +410,8 @@ fun RegisterButton(
         color = Color.White.copy(alpha = 0.8f)
       ),
       modifier = Modifier
-        .padding(horizontal = 3.dp)
-        .clickable { routeToLogin() }
+          .padding(horizontal = 3.dp)
+          .clickable { routeToLogin() }
     )
   }
 }
