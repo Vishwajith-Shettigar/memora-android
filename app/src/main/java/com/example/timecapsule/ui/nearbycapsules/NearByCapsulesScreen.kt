@@ -27,6 +27,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.Button
@@ -87,6 +88,7 @@ import com.mapbox.maps.plugin.annotation.annotations
 import com.mapbox.maps.plugin.annotation.generated.PointAnnotationManager
 import com.mapbox.maps.plugin.annotation.generated.PointAnnotationOptions
 import com.mapbox.maps.plugin.annotation.generated.createPointAnnotationManager
+import java.util.Locale
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.pow
@@ -176,9 +178,9 @@ fun NearbyCapsulesScreen(
     ) {
       MapboxMap(
         modifier = Modifier
-            .align(Alignment.Center)
-            .zIndex(0.0F)
-            .fillMaxSize(),
+          .align(Alignment.Center)
+          .zIndex(0.0F)
+          .fillMaxSize(),
         mapViewportState = initialCamera,
         onMapClickListener = { clickedPoint ->
           false
@@ -234,7 +236,9 @@ fun NearbyCapsulesScreen(
           true
         }
       }
-      NearByCapsulesBottomSheet(isSheetVisible) { isSheetVisible = false }
+      NearByCapsulesBottomSheet(nearbyCapsules.value.toList(), userLocation.value, isSheetVisible) {
+        isSheetVisible = false
+      }
     }
   }
 }
@@ -406,20 +410,24 @@ fun arePointsWithin10Meters(locationPoint: Point?, capsulePoint: Point): Boolean
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NearByCapsulesBottomSheet(isSheetVisible: Boolean, onDismiss: () -> Unit) {
+fun NearByCapsulesBottomSheet(
+  nearbyCapsules: List<NearByCapsule>, userPoint: Point?,
+  isSheetVisible: Boolean,
+  onDismiss: () -> Unit
+) {
   val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
-  if (isSheetVisible) {
+  if (isSheetVisible && userPoint != null) {
     ModalBottomSheet(
       containerColor = MaterialTheme.colorScheme.primary,
       onDismissRequest = { onDismiss() },
       sheetState = sheetState
     ) {
       Column(
-          Modifier
-              .fillMaxWidth()
-              .background(MaterialTheme.colorScheme.primary)
-              .padding(vertical = 10.dp, horizontal = 3.dp),
+        Modifier
+          .fillMaxWidth()
+          .background(MaterialTheme.colorScheme.primary)
+          .padding(vertical = 10.dp, horizontal = 3.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top
       ) {
@@ -430,38 +438,50 @@ fun NearByCapsulesBottomSheet(isSheetVisible: Boolean, onDismiss: () -> Unit) {
         )
         Spacer(Modifier.height(15.dp))
 
-        LazyColumn(
-          Modifier
-            .fillMaxWidth()
-        ) {
-          items(10)
-          {
-            CapsuleRow()
-            Spacer(Modifier.height(15.dp))
+        if (nearbyCapsules.size == 0) {
+
+
+        } else
+          LazyColumn(
+            Modifier
+              .fillMaxWidth()
+          ) {
+            items(nearbyCapsules)
+            {
+              CapsuleRow(it, userPoint)
+              Spacer(Modifier.height(15.dp))
+            }
           }
-        }
       }
     }
   }
 }
 
 @Composable
-fun CapsuleRow() {
+fun CapsuleRow(capsule: NearByCapsule, userPoint: Point) {
+
+  val capsulePoint: Point = remember {
+    Point.fromLngLat(capsule.location.longitude, capsule.location.latitude)
+  }
+
+  val dis = calculateDistance(capsulePoint, userPoint).toFloat()
+  val roundedValue = String.format(Locale.ENGLISH, "%.1f", dis)
+
   val context = LocalContext.current
   val iconBitmap = try {
-    val inputStream = context.assets.open(getModelMapIcon("100"))
+    val inputStream = context.assets.open(getModelMapIcon(capsule.modelId))
     BitmapFactory.decodeStream(inputStream)
   } catch (e: Exception) {
     null
   }
   Row(
     modifier = Modifier
-        .fillMaxWidth()
-        .wrapContentHeight()
-        .padding(horizontal = 10.dp)
-        .clip(RoundedCornerShape(20.dp))
-        .background(LightBlue.copy(alpha = 0.6F))
-        .padding(horizontal = 10.dp, vertical = 15.dp),
+      .fillMaxWidth()
+      .wrapContentHeight()
+      .padding(horizontal = 10.dp)
+      .clip(RoundedCornerShape(20.dp))
+      .background(LightBlue.copy(alpha = 0.6F))
+      .padding(horizontal = 10.dp, vertical = 15.dp),
     horizontalArrangement = Arrangement.Start,
     verticalAlignment = Alignment.CenterVertically
   ) {
@@ -471,20 +491,20 @@ fun CapsuleRow() {
         bitmap = it,
         contentDescription = "capsule",
         modifier = Modifier
-            .weight(0.2F)
-            .size(60.dp)
+          .weight(0.2F)
+          .size(60.dp)
       )
     }
 
     Column(
       modifier = Modifier
-          .weight(0.6F)
-          .wrapContentHeight(),
+        .weight(0.5F)
+        .wrapContentHeight(),
       verticalArrangement = Arrangement.Center,
       horizontalAlignment = Alignment.Start
     ) {
       Text(
-        text = "The Family",
+        text = capsule.capsuleTitle,
         style = MaterialTheme.typography.titleMedium.copy(
           fontSize = 20.sp,
           color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -492,7 +512,7 @@ fun CapsuleRow() {
         )
       )
       Text(
-        text = "Near by capsules ,lore ipsum i had to be honest i dont vebn know hat to domso ou hjusta shity uop.",
+        text = capsule.description,
         style = MaterialTheme.typography.titleSmall.copy(
           fontSize = 10.sp,
           color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -503,11 +523,12 @@ fun CapsuleRow() {
 
     Row(
       modifier = Modifier
-        .weight(0.1F), horizontalArrangement = Arrangement.End,
+        .weight(0.2F), horizontalArrangement = Arrangement.End,
       verticalAlignment = Alignment.CenterVertically
     ) {
       Text(
-        text = "0.5m", style = MaterialTheme.typography.titleSmall.copy(
+        text = roundedValue + "m",
+        style = MaterialTheme.typography.titleSmall.copy(
           fontSize = 15.sp,
           color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
