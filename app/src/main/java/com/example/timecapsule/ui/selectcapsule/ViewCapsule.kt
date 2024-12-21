@@ -31,6 +31,7 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
@@ -331,25 +332,12 @@ fun Display3DModel(
   ) {
 
     if (!(loading3dModelState is Load3dModelState.Success))
-      Button(
+      Load3dModelButton(
         modifier = Modifier
             .align(Alignment.BottomCenter)
             .zIndex(10.0F)
-            .padding(5.dp),
-        onClick = { onViewIn3dClick() }) {
-        Row {
-          Icon(
-            modifier = Modifier.padding(horizontal = 5.dp), tint = LightBlue,
-            painter = painterResource(id = com.example.timecapsule.R.drawable.icon_view_in_ar),
-            contentDescription = "view 3d icon"
-          )
-          Text(
-            text =
-            if (loading3dModelState is Load3dModelState.Loading) "Loading..." else
-              "View 3D", color = Color.White
-          )
-        }
-      }
+            .padding(5.dp), loading3dModelState, onViewIn3dClick
+      )
 
     if (loading3dModelState is Load3dModelState.Idle
       || loading3dModelState is Load3dModelState.Error
@@ -411,6 +399,31 @@ fun Display3DModel(
         onFrame = {
           cameraNode.lookAt(centerNode)
         }
+      )
+    }
+  }
+}
+
+
+@Composable
+fun Load3dModelButton(
+  modifier: Modifier,
+  loading3dModelState: Load3dModelState,
+  onViewIn3dClick: () -> Unit
+) {
+  Button(
+    modifier = modifier, colors = ButtonDefaults.buttonColors(containerColor = Color.Black),
+    onClick = { onViewIn3dClick() }) {
+    Row {
+      Icon(
+        modifier = Modifier.padding(horizontal = 5.dp), tint = LightBlue,
+        painter = painterResource(id = com.example.timecapsule.R.drawable.icon_view_in_ar),
+        contentDescription = "view 3d icon"
+      )
+      Text(
+        text =
+        if (loading3dModelState is Load3dModelState.Loading) "Loading..." else
+          "View 3D", color = Color.White
       )
     }
   }
