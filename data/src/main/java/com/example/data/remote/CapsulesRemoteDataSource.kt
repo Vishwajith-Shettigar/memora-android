@@ -21,7 +21,8 @@ import kotlinx.coroutines.tasks.await
 class CapsulesRemoteDataSource @Inject constructor(
   val firestore: FirebaseFirestore,
   val authRemoteDataSource: AuthRemoteDataSource,
-  val userRemoteDataSource: UserRemoteDataSource
+  val userRemoteDataSource: UserRemoteDataSource,
+  val threeDModelsDataSource: ThreeDModelsDataSource
 ) {
 
   suspend fun createCapsule(capsuleDetails: CapsuleDetails): Response<Unit> {

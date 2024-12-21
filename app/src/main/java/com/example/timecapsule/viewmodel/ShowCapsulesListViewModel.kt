@@ -1,6 +1,7 @@
 package com.example.timecapsule.viewmodel
 
 import android.util.Log
+import androidx.compose.ui.graphics.DoneSegment
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.domain.usecase.GetCapsuleListUseCase
@@ -8,6 +9,7 @@ import com.example.domain.usecase.GetReceiveNotificationUseCase
 import com.example.domain.usecase.GetRemoteAppUpdateDetailsUseCase
 import com.example.domain.usecase.GetShareCapsulesUseCase
 import com.example.domain.usecase.InsertUpdateDetailsUseCase
+import com.example.domain.usecase.Load3dModelUseCase
 import com.example.domain.usecase.SetReceiveNotificationCacheUseCase
 import com.example.domain.usecase.SetShareCapsulesCacheUseCase
 import com.example.model.CapsuleDetails
@@ -46,16 +48,26 @@ class ShowCapsulesListViewModel @Inject constructor(
   private val getReceiveNotificationUseCase: GetReceiveNotificationUseCase,
   private val getShareCapsulesUseCase: GetShareCapsulesUseCase,
   private val setShareCapsulesCacheUseCase: SetShareCapsulesCacheUseCase,
-  private val setReceiveNotificationCacheUseCase: SetReceiveNotificationCacheUseCase
+  private val setReceiveNotificationCacheUseCase: SetReceiveNotificationCacheUseCase,
+  private val load3dModelUseCase: Load3dModelUseCase
 ) : ViewModel() {
   private val _capsuleListState =
     MutableStateFlow<CapsuleListScreenState>(CapsuleListScreenState.Loading)
   val capsuleListState: StateFlow<CapsuleListScreenState> = _capsuleListState
 
   init {
+    load3DModel()
     getCapsulesList()
     syncLocalSettingsChecksOptionsWithRemote()
     syncLocalDBUpdateDetailsWithRemote()
+  }
+
+  fun load3DModel() {
+    viewModelScope.launch(Dispatchers.IO) {
+      val response = load3dModelUseCase("200")
+      Log.e("pokemon", response.toString())
+
+    }
   }
 
   fun getCapsulesList() {

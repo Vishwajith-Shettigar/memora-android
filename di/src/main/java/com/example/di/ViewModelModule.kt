@@ -6,6 +6,7 @@ import com.example.data.repository.CapsulesRepository
 import com.example.data.repository.NearByCapsulesRepository
 import com.example.data.repository.NotificationRepository
 import com.example.data.repository.ReviewRepository
+import com.example.data.repository.ThreeDModelRepository
 import com.example.data.repository.UpdateDetailsRepository
 import com.example.data.repository.UploadFileRepository
 import com.example.data.repository.UserRepository
@@ -31,6 +32,7 @@ import com.example.domain.usecase.GetUserDetailsUseCase
 import com.example.domain.usecase.GetUserEmailUseCase
 import com.example.domain.usecase.InsertReviewUseCase
 import com.example.domain.usecase.InsertUpdateDetailsUseCase
+import com.example.domain.usecase.Load3dModelUseCase
 import com.example.domain.usecase.OnBoardingDataUseCase
 import com.example.domain.usecase.OpenCapsuleScreenCheckPointUseCase
 import com.example.domain.usecase.SaveUserDetailsUseCase
@@ -277,4 +279,10 @@ class ViewModelModule {
   @ViewModelScoped
   fun provideSetShareCapsulesUseCase(userRepository: UserRepository) =
     SetShareCapsulesUseCase(userRepository)
+
+  @Provides
+  @ViewModelScoped
+  fun provideLoad3dModelUseCase(
+    threeDModelRepository: ThreeDModelRepository
+  ) = Load3dModelUseCase(threeDModelRepository)
 }
