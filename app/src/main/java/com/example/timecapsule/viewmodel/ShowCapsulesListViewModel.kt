@@ -56,18 +56,9 @@ class ShowCapsulesListViewModel @Inject constructor(
   val capsuleListState: StateFlow<CapsuleListScreenState> = _capsuleListState
 
   init {
-    load3DModel()
     getCapsulesList()
     syncLocalSettingsChecksOptionsWithRemote()
     syncLocalDBUpdateDetailsWithRemote()
-  }
-
-  fun load3DModel() {
-    viewModelScope.launch(Dispatchers.IO) {
-      val response = load3dModelUseCase("200")
-      Log.e("pokemon", response.toString())
-
-    }
   }
 
   fun getCapsulesList() {

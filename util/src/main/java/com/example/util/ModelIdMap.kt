@@ -1,5 +1,6 @@
 package com.example.util
 
+import android.util.Log
 import java.util.HashMap
 
 private val modelIdMap = mapOf(
@@ -21,7 +22,6 @@ fun getModel(id: String): String {
 }
 
 fun getModelImage(id: String): String {
-
   return modelIdImageMap.get(id) ?: "capsule_images/model1.png"
 }
 
