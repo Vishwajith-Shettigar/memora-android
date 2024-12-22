@@ -160,7 +160,6 @@ fun NearbyCapsulesScreen(
 
   var isSheetVisible by remember { mutableStateOf(false) }
 
-
   Scaffold(
     floatingActionButton = {
       FloatingActionButton(onClick = { isSheetVisible = true }) {
@@ -178,9 +177,9 @@ fun NearbyCapsulesScreen(
     ) {
       MapboxMap(
         modifier = Modifier
-            .align(Alignment.Center)
-            .zIndex(0.0F)
-            .fillMaxSize(),
+          .align(Alignment.Center)
+          .zIndex(0.0F)
+          .fillMaxSize(),
         mapViewportState = initialCamera,
         onMapClickListener = { clickedPoint ->
           false
@@ -424,10 +423,10 @@ fun NearByCapsulesBottomSheet(
       sheetState = sheetState
     ) {
       Column(
-          Modifier
-              .fillMaxWidth()
-              .background(MaterialTheme.colorScheme.primary)
-              .padding(vertical = 10.dp, horizontal = 3.dp),
+        Modifier
+          .fillMaxWidth()
+          .background(MaterialTheme.colorScheme.primary)
+          .padding(vertical = 10.dp, horizontal = 3.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top
       ) {
@@ -476,12 +475,12 @@ fun CapsuleRow(capsule: NearByCapsule, userPoint: Point) {
   }
   Row(
     modifier = Modifier
-        .fillMaxWidth()
-        .wrapContentHeight()
-        .padding(horizontal = 10.dp)
-        .clip(RoundedCornerShape(20.dp))
-        .background(LightBlue.copy(alpha = 0.6F))
-        .padding(horizontal = 10.dp, vertical = 15.dp),
+      .fillMaxWidth()
+      .wrapContentHeight()
+      .padding(horizontal = 10.dp)
+      .clip(RoundedCornerShape(20.dp))
+      .background(LightBlue.copy(alpha = 0.6F))
+      .padding(horizontal = 10.dp, vertical = 15.dp),
     horizontalArrangement = Arrangement.Start,
     verticalAlignment = Alignment.CenterVertically
   ) {
@@ -491,15 +490,15 @@ fun CapsuleRow(capsule: NearByCapsule, userPoint: Point) {
         bitmap = it,
         contentDescription = "capsule",
         modifier = Modifier
-            .weight(0.2F)
-            .size(60.dp)
+          .weight(0.2F)
+          .size(60.dp)
       )
     }
 
     Column(
       modifier = Modifier
-          .weight(0.5F)
-          .wrapContentHeight(),
+        .weight(0.5F)
+        .wrapContentHeight(),
       verticalArrangement = Arrangement.Center,
       horizontalAlignment = Alignment.Start
     ) {
