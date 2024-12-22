@@ -160,10 +160,10 @@ fun FindCapsuleScreenV1(
   val context = LocalContext.current
   val initialCamera = rememberMapViewportState {
     (setCameraOptions {
-      zoom(17.0)
+      zoom(90.0)
       center(initialCameraPoint)
-      pitch(60.0)
-      bearing(16.0)
+      pitch(360.0)
+      bearing(200.0)
     })
   }
 
@@ -250,7 +250,7 @@ fun MapView(
       mapView.mapboxMap.apply {
         addModel(model(modelId) { uri("asset://$modelUri") })
       }
-      mapView.mapboxMap.loadStyle(BuildConfig.STYLE_URI)
+      mapView.mapboxMap.loadStyle(BuildConfig.MAPBOX_STYLE_URI_DAY)
 
       startLocationUpdates(context) {
         updateLocation(Point.fromLngLat(it.longitude, it.latitude))

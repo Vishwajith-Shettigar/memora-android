@@ -103,10 +103,10 @@ fun NearbyCapsulesScreen(
   val context = LocalContext.current
   val initialCamera = rememberMapViewportState {
     setCameraOptions {
-      zoom(16.0)
+      zoom(90.0)
       center(Point.fromLngLat(0.0, 0.0))
-      pitch(0.0)
-      bearing(0.0)
+      pitch(360.0)
+      bearing(200.0)
     }
   }
   var pointAnnotationManager by remember { mutableStateOf<PointAnnotationManager?>(null) }
@@ -202,7 +202,7 @@ fun NearbyCapsulesScreen(
 
         MapEffect(this) { mapView ->
           mapView.mapboxMap.apply {
-            loadStyle(BuildConfig.STYLE_URI)
+            loadStyle(BuildConfig.MAPBOX_STYLE_URI_DAY)
           }
           pointAnnotationManager = mapView.annotations.createPointAnnotationManager()
         }
