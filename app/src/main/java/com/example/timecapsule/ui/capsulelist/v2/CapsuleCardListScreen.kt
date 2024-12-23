@@ -177,7 +177,6 @@ fun CapsuleCardListScreen(
   { innerPadding ->
 
     if (isError) {
-
       Box(
         modifier = Modifier
             .fillMaxSize()

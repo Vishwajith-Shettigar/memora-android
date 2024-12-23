@@ -210,28 +210,39 @@ class CapsuleCreationViewModel @Inject constructor(
 
   fun sendCapsuleCreationNotifications() {
 
-    val selectedUserIds = selectedPeoples.filter {
-      it.userId != ownerUserDetails.userId
-    }.map {
-      it.userId
-    }
-
-    if (selectedUserIds.size == 0)
-      return
-
-    val notificationDto = NotificationDto(
-      userIds = selectedUserIds.toList(),
-      title = "📢 New Capsule Alert! 🚀",
-      body = "has shared new capsule with you.",
-      capsuleId = CAPSULE_ID,
-      username = ownerUserDetails.userName,
-      userImageUrl = ownerUserDetails.imageUrl
-    )
-
-    viewModelScope.launch {
-      withContext(Dispatchers.IO) {
-        sendCapsuleCreationNotificationUseCase(notificationDto)
+    try {
+      val selectedUserIds = selectedPeoples.filter {
+        it.userId != ownerUserDetails.userId
+      }.map {
+        it.userId
       }
+
+      if (selectedUserIds.size == 0)
+        return
+
+      val notificationDto = NotificationDto(
+        userIds = selectedUserIds.toList(),
+        title = "📢 New Capsule Alert! 🚀",
+        body = "has shared new capsule with you.",
+        capsuleId = CAPSULE_ID,
+        username = ownerUserDetails.userName,
+        userImageUrl = ownerUserDetails.imageUrl
+      )
+
+      viewModelScope.launch {
+        withContext(Dispatchers.IO) {
+
+          try {
+
+            sendCapsuleCreationNotificationUseCase(notificationDto)
+          }
+          catch (e:Exception){
+          }
+        }
+      }
+    }
+    catch (e:Exception)
+    {
     }
   }
 
@@ -415,7 +426,6 @@ class CapsuleCreationViewModel @Inject constructor(
             when (response) {
               is Response.Success -> {
                 sendCapsuleCreationNotifications()
-                delay(2000)
                 _capsuleCreationState.value = CapsuleCreationState.Success
               }
 

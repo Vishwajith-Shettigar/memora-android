@@ -43,7 +43,7 @@ class TimeCapsuleFirebaseMessagingService : FirebaseMessagingService() {
   override fun onNewToken(token: String) {
     super.onNewToken(token)
     serviceScope.launch {
-      updateFCMTokenUseCase()
+      updateFCMTokenUseCase(token)
     }
   }
 

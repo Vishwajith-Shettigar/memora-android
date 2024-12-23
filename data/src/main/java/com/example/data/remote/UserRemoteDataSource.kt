@@ -75,7 +75,7 @@ class UserRemoteDataSource @Inject constructor(
       firestore.collection("users").document(newUserDetails.userId)
         .set(newUserDetails).await()
 
-      saveTokenToFirestore()
+      saveTokenToFirestore(null)
 
       Response.Success(Unit)
     } catch (e: Exception) {
@@ -114,14 +114,15 @@ class UserRemoteDataSource @Inject constructor(
     }
   }
 
-  suspend fun saveTokenToFirestore() {
+  suspend fun saveTokenToFirestore(token:String?) {
     try {
 
       val user = authRemoteDataSource.getAuth()
 
-      val token: String = firebaseMessaging.token.await()
+      val fcmtoken: String =
+        token ?: firebaseMessaging.token.await()
 
-      val tokenData = mapOf("fcmToken" to token)
+      val tokenData = mapOf("fcmToken" to fcmtoken)
 
       user?.uid?.let {
         firestore.collection("users").document(it)
