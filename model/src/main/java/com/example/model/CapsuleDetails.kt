@@ -11,7 +11,7 @@ data class CapsuleDetails(
   val time: Timestamp,
   val isDeleted: Boolean,
   val modelId: Number,
-  val users: List<Map<String, Any>>,
+  var users: List<Map<String, Any>>,
   val isOwner: Boolean,
   val imageUrl: String,
   var ownerUserName: String,

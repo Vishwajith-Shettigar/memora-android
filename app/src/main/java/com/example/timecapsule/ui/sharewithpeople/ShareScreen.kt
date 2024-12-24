@@ -32,6 +32,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Chip
+import androidx.compose.material.ChipDefaults
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ripple
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -131,7 +132,8 @@ fun ShareScreen(
           verticalArrangement = Arrangement.Top,
           horizontalAlignment = Alignment.CenterHorizontally
         ) {
-          if (viewModel.selectedPeoples.size > 1)
+          AnimatedVisibility(visible = viewModel.selectedPeoples.size > 1)
+          {
             ShowSelectedPeople(
               modifier = Modifier,
               selectedPeoples = viewModel.selectedPeoples,
@@ -139,14 +141,16 @@ fun ShareScreen(
             ) { userName ->
               viewModel.selectedPeoples.removeIf { it.userName == userName }
             }
+          }
 
-          if (viewModel.addedEmails.size > 0)
+          AnimatedVisibility(visible = viewModel.addedEmails.size > 0)
+          {
             ShowAddedEmails(
               addedEmails = viewModel.addedEmails
             ) { email ->
               viewModel.addedEmails.remove(email)
             }
-
+          }
           // Non-scrollable SearchPeople
           SearchPeople(viewModel) { user ->
             if (!viewModel.selectedPeoples.contains(user)) {
@@ -415,9 +419,13 @@ fun ShowAddedEmails(addedEmails: List<String>, onRemoveCLicked: (String) -> Unit
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun EmailChip(email: String, onRemoveClick: (String) -> Unit) {
-  Chip(modifier = Modifier
-    .fillMaxWidth()
-    .padding(1.dp), onClick = { /*TODO*/ }) {
+  Chip(
+    modifier = Modifier
+      .fillMaxWidth()
+      .padding(1.dp),
+    onClick = { /*TODO*/ },
+    colors = ChipDefaults.chipColors(backgroundColor = Color.LightGray)
+  ) {
     Row(
       modifier = Modifier.fillMaxWidth(),
       horizontalArrangement = Arrangement.Start,
@@ -427,12 +435,14 @@ fun EmailChip(email: String, onRemoveClick: (String) -> Unit) {
         text = email,
         maxLines = 1,
         overflow = TextOverflow.Ellipsis,
-        modifier = Modifier.weight(0.8F)
+        modifier = Modifier.weight(0.8F),
+        color = Color.Black
       )
       IconButton(onClick = { onRemoveClick(email) }, modifier = Modifier.weight(0.2F)) {
         Icon(
           painter = painterResource(id = com.example.timecapsule.R.drawable.ic_close),
-          contentDescription = "close icon", Modifier.size(20.dp)
+          contentDescription = "close icon", Modifier.size(20.dp),
+          tint = Color.Black
         )
       }
     }

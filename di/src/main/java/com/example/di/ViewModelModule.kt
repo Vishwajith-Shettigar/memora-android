@@ -44,6 +44,7 @@ import com.example.domain.usecase.UploadFilesUseCase
 import com.example.domain.usecase.getAuthUseCase
 import com.example.domain.usecase.getUserIDUseCase
 import com.example.domain.usecase.SendCapsuleCreationNotificationUseCase
+import com.example.domain.usecase.SendEmailCaspuleSharingUseCase
 import com.example.domain.usecase.SetReceiveNotificationCacheUseCase
 import com.example.domain.usecase.SetReceiveNotificationUseCase
 import com.example.domain.usecase.SetShareCapsulesCacheUseCase
@@ -285,4 +286,9 @@ class ViewModelModule {
   fun provideLoad3dModelUseCase(
     threeDModelRepository: ThreeDModelRepository
   ) = Load3dModelUseCase(threeDModelRepository)
+
+  @Provides
+  @ViewModelScoped
+  fun provideSendEmailCaspuleSharingUseCase(capsulesRepository: CapsulesRepository) =
+    SendEmailCaspuleSharingUseCase(capsulesRepository)
 }

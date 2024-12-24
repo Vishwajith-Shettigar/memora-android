@@ -15,6 +15,7 @@ import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.GeoPoint
+import com.google.firebase.firestore.snapshots
 import javax.inject.Inject
 import kotlinx.coroutines.tasks.await
 
@@ -91,6 +92,16 @@ class CapsulesRemoteDataSource @Inject constructor(
       val ref = firestore.collection("capsules").document(capsuleDetails.id)
       capsuleDetails.ownerUserName = userName
 
+      val snapShot = ref.get().await()
+      var users: List<Map<String, Any>> = listOf()
+      if (snapShot.exists()) {
+        users = snapShot.data?.get("users") as List<Map<String, Any>>
+      }
+
+      val combinedUsers = (capsuleDetails.users + users)
+        .distinctBy { it["userId"] }
+
+      capsuleDetails.users = combinedUsers
       ref.set(capsuleDetails).await()
       Response.Success()
     } catch (e: Exception) {

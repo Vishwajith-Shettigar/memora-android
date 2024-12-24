@@ -30,6 +30,7 @@ import com.example.data.repository.UploadFileRepository
 import com.example.data.repository.UploadFileRepositoryImpl
 import com.example.data.repository.UserRepository
 import com.example.data.repository.UserRepositoryImpl
+import com.example.data.retrofilApi.EmailSharingCapsuleApi
 import com.example.data.retrofilApi.NotificationApi
 import com.example.data.sharedpreference.SharedPreferencesHelper
 import com.example.domain.usecase.OnBoardingDataUseCase
@@ -101,6 +102,11 @@ abstract class AppModule {
     @Provides
     fun provideNotificationApi(retrofit: Retrofit): NotificationApi {
       return retrofit.create(NotificationApi::class.java)
+    }
+
+    @Provides
+    fun provideEmailSharingCapsuleApi(retrofit: Retrofit): EmailSharingCapsuleApi {
+      return retrofit.create(EmailSharingCapsuleApi::class.java)
     }
 
     @Provides

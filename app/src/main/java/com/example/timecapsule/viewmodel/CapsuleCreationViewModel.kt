@@ -13,12 +13,14 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.data.dto.EmailSharingCapsuleDto
 import com.example.data.dto.NotificationDto
 import com.example.domain.usecase.CreateCapsuleUseCase
 import com.example.domain.usecase.GetCapsuleAssetsUseCase
 import com.example.domain.usecase.GetUserDetailsUseCase
 import com.example.domain.usecase.SearchUsersUseCase
 import com.example.domain.usecase.SendCapsuleCreationNotificationUseCase
+import com.example.domain.usecase.SendEmailCaspuleSharingUseCase
 import com.example.domain.usecase.UploadFilesUseCase
 import com.example.domain.usecase.getUserIDUseCase
 import com.example.model.CapsuleAsset
@@ -95,6 +97,7 @@ class CapsuleCreationViewModel @Inject constructor(
   private val createCapsuleUseCase: CreateCapsuleUseCase,
   private val getUsersDetailsUseCase: GetUserDetailsUseCase,
   private val sendCapsuleCreationNotificationUseCase: SendCapsuleCreationNotificationUseCase,
+  private val sendEmailCaspuleSharingUseCase: SendEmailCaspuleSharingUseCase,
   @ApplicationContext private val context: Context
 ) : ViewModel() {
 
@@ -236,14 +239,11 @@ class CapsuleCreationViewModel @Inject constructor(
           try {
 
             sendCapsuleCreationNotificationUseCase(notificationDto)
-          }
-          catch (e:Exception){
+          } catch (e: Exception) {
           }
         }
       }
-    }
-    catch (e:Exception)
-    {
+    } catch (e: Exception) {
     }
   }
 
@@ -420,6 +420,18 @@ class CapsuleCreationViewModel @Inject constructor(
             letter = letter,
             isSharedWithAll = shareWithPeopleOption == ShareWithPeopleOption.SHARE_ALL
           )
+
+          val emailSharingCapsuleDto = EmailSharingCapsuleDto(
+            emails = addedEmails.toList().filter {
+              it != ownerUserDetails.email
+            },
+            capsuleId = CAPSULE_ID,
+            username = ownerUserDetails.userName
+          )
+
+          val emailResponse = sendEmailCaspuleSharingUseCase(emailSharingCapsuleDto)
+          if (emailResponse is Response.Error)
+            return@withContext
 
           val response = createCapsuleUseCase(capsuleDetails)
           withContext(Dispatchers.Main)
