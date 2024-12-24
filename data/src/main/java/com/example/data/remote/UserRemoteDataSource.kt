@@ -220,7 +220,7 @@ class UserRemoteDataSource @Inject constructor(
       capsuleList = emptyList(),
       userNameLowerCase = "",
       firstNameLowerCase = "",
-      aboutMe = aboutMe
+      aboutMe = aboutMe,
     )
     return user
   }

@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -14,6 +15,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -37,6 +40,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -57,6 +61,9 @@ import com.example.timecapsule.ui.theme.LightBlue
 import com.example.timecapsule.ui.util.DeviceType
 import com.example.timecapsule.viewmodel.NotificatioViewModel
 import com.example.timecapsule.viewmodel.NotificationScreenState
+import com.google.accompanist.placeholder.PlaceholderHighlight
+import com.google.accompanist.placeholder.material.shimmer
+import com.google.accompanist.placeholder.placeholder
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -79,7 +86,9 @@ fun NotificationScreen(
     topBar = {
       TopAppBar(
         modifier =
-        Modifier.fillMaxWidth().systemBarsPadding(),
+        Modifier
+          .fillMaxWidth()
+          .systemBarsPadding(),
         colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.primary),
         title = {
           Row(
@@ -120,35 +129,99 @@ fun NotificationScreen(
         Modifier.fillMaxSize()
     Column(
       modifier = Modifier
-          .background(MaterialTheme.colorScheme.primary)
-          .fillMaxSize()
-          .padding(top = innerPadding.calculateTopPadding())
-          .nestedScroll(scrollBehavior.nestedScrollConnection),
-      horizontalAlignment = Alignment.CenterHorizontally
+        .background(MaterialTheme.colorScheme.primary)
+        .fillMaxSize()
+        .padding(top = innerPadding.calculateTopPadding())
+        .nestedScroll(scrollBehavior.nestedScrollConnection),
+      horizontalAlignment = Alignment.CenterHorizontally,
+      verticalArrangement = Arrangement.Center
     ) {
       if (state is NotificationScreenState.Success) {
-        LazyColumn(
-          modifier = modifier,
-        ) {
-          items(
-            (state as NotificationScreenState.Success).notificationList,
-            key = { notification -> notification.timestamp }) {
-            NotificationBar(
-              image = it.imageUrl,
-              username = it.username,
-              text = it.body,
-              isViewable = it.capsuleId != null,
-              isRightRound = it.capsuleId != null,
-              onViewClicked = {
-                it.capsuleId?.let { capsuleId ->
-                  onViewClicked(
-                    capsuleId
-                  )
-                }
-              }
+        if ((state as NotificationScreenState.Success).notificationList.size == 0) {
+
+          Column(
+            Modifier.wrapContentSize(), horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+          ) {
+            Image(
+              painter = painterResource(id = com.example.timecapsule.R.drawable.empty),
+              contentDescription = "No notification icon",
+              Modifier
+                .size(150.dp)
+                .padding(10.dp)
+            )
+            Text(
+              text = "No Notifications",
+              style = MaterialTheme.typography.labelLarge,
+              color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
             )
           }
+
+        } else
+          LazyColumn(
+            modifier = modifier,
+          ) {
+            items(
+              (state as NotificationScreenState.Success).notificationList,
+              key = { notification -> notification.timestamp }) {
+              NotificationBar(
+                image = it.imageUrl,
+                username = it.username,
+                text = it.body,
+                isViewable = it.capsuleId != null,
+                isRightRound = it.capsuleId != null,
+                onViewClicked = {
+                  it.capsuleId?.let { capsuleId ->
+                    onViewClicked(
+                      capsuleId
+                    )
+                  }
+                }
+              )
+            }
+          }
+      } else if (state is NotificationScreenState.Loading) {
+        LazyColumn(
+          modifier = modifier.padding(horizontal = 20.dp)
+        ) {
+          items(10) {
+            Row(
+              modifier = Modifier
+                .fillMaxWidth()
+                .height(80.dp)
+                .placeholder(
+                  visible = true,
+                  shape = RoundedCornerShape(10.dp),
+                  highlight = PlaceholderHighlight.shimmer(),
+                  color = Color.Gray.copy(alpha = 0.3f),
+                )
+                .clip(shape = RoundedCornerShape(10.dp))
+            ) {}
+            Spacer(modifier = Modifier.height(10.dp))
+
+
+          }
         }
+      }
+      else if (state is NotificationScreenState.Error){
+        Column(
+          Modifier.wrapContentSize(), horizontalAlignment = Alignment.CenterHorizontally,
+          verticalArrangement = Arrangement.Center
+        ) {
+          Image(
+            painter = painterResource(id = com.example.timecapsule.R.drawable.empty),
+            contentDescription = "No notification icon",
+            Modifier
+              .size(150.dp)
+              .padding(10.dp)
+          )
+          Text(
+            text = "Something went wrong, please try again.",
+            style = MaterialTheme.typography.labelLarge,
+            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
+          )
+        }
+
       }
     }
   }
@@ -172,25 +245,25 @@ fun NotificationBar(
 
   val modifier =
     if (isRightRound)
-        Modifier
-            .fillMaxWidth()
-            .padding(end = 10.dp)
-            .padding(vertical = 5.dp)
-            .shadow(
-                5.dp, RoundedCornerShape(topEnd = 20.dp, bottomEnd = 20.dp)
-            )
-            .clip(RoundedCornerShape(topEnd = 20.dp, bottomEnd = 20.dp))
-            .background(MaterialTheme.colorScheme.primaryContainer)
-            .padding(horizontal = 10.dp, vertical = 15.dp)
+      Modifier
+        .fillMaxWidth()
+        .padding(end = 10.dp)
+        .padding(vertical = 5.dp)
+        .shadow(
+          5.dp, RoundedCornerShape(topEnd = 20.dp, bottomEnd = 20.dp)
+        )
+        .clip(RoundedCornerShape(topEnd = 20.dp, bottomEnd = 20.dp))
+        .background(MaterialTheme.colorScheme.primaryContainer)
+        .padding(horizontal = 10.dp, vertical = 15.dp)
     else
-        Modifier
-            .fillMaxWidth()
-            .padding(start = 10.dp)
-            .padding(vertical = 5.dp)
-            .shadow(1.dp, RoundedCornerShape(topStart = 20.dp, bottomStart = 20.dp))
-            .clip(RoundedCornerShape(topStart = 20.dp, bottomStart = 20.dp))
-            .background(MaterialTheme.colorScheme.primaryContainer)
-            .padding(horizontal = 10.dp, vertical = 15.dp)
+      Modifier
+        .fillMaxWidth()
+        .padding(start = 10.dp)
+        .padding(vertical = 5.dp)
+        .shadow(1.dp, RoundedCornerShape(topStart = 20.dp, bottomStart = 20.dp))
+        .clip(RoundedCornerShape(topStart = 20.dp, bottomStart = 20.dp))
+        .background(MaterialTheme.colorScheme.primaryContainer)
+        .padding(horizontal = 10.dp, vertical = 15.dp)
 
 
   Row(
@@ -203,12 +276,12 @@ fun NotificationBar(
       horizontalArrangement = Arrangement.Start
     ) {
       AsyncImage(
-        model= image,
+        model = image,
         modifier = Modifier
-            .padding(3.dp)
-            .padding(end = textStartPadding)
-            .clip(shape = CircleShape)
-            .size(60.dp),
+          .padding(3.dp)
+          .padding(end = textStartPadding)
+          .clip(shape = CircleShape)
+          .size(60.dp),
         contentDescription = "profile picture",
         contentScale = ContentScale.Crop
       )
@@ -232,10 +305,10 @@ fun NotificationBar(
       Box(modifier = Modifier.weight(0.2f)) {
         Button(
           onClick = { onViewClicked() }, modifier = Modifier
-                .padding(3.dp)
-                .width(90.dp)
-                .height(40.dp)
-                .align(Alignment.CenterEnd),
+            .padding(3.dp)
+            .width(90.dp)
+            .height(40.dp)
+            .align(Alignment.CenterEnd),
           colors = ButtonDefaults.buttonColors(containerColor = LightBlue),
           contentPadding = PaddingValues(2.dp)
         ) {

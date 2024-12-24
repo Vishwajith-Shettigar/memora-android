@@ -13,5 +13,6 @@ data class UserDetails(
   val userNameLowerCase: String,
   val firstNameLowerCase: String,
   val isReceiveNotification: Boolean = true,
-  val shareCapsules: Boolean = true
+  val shareCapsules: Boolean = true,
+  val notifications:List<*> = listOf<Any>()
 )
