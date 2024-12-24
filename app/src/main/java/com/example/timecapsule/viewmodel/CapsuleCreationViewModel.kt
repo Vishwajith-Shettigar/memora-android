@@ -154,6 +154,7 @@ class CapsuleCreationViewModel @Inject constructor(
   val capsuleCreationState: StateFlow<CapsuleCreationState> = _capsuleCreationState
 
   val selectedPeoples = mutableStateListOf<UserDetails>()
+  val addedEmails = mutableStateListOf<String>()
 
   var userLetterText by mutableStateOf("")
 
