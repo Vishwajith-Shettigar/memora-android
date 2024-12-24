@@ -15,6 +15,7 @@ import com.example.util.defaultCoverImages
 import com.example.util.defaultPictures
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.storage.FirebaseStorage
@@ -55,6 +56,18 @@ class UserRemoteDataSource @Inject constructor(
 
       val user = authRemoteDataSource.getAuth() ?: throw UnspecifiedException()
 
+      val emailExists = usersCollection.whereEqualTo("email",user.email).get().await()
+
+      var capsuleList: List<Map<String,Any>> = listOf()
+
+      if (!emailExists.isEmpty) {
+        val data = emailExists.documents[0].data?.get("capsuleList")
+        if (data is List<*>) {
+          capsuleList = data.filterIsInstance<Map<String, Any>>()
+        }
+        usersCollection.document(emailExists.documents[0].id).delete().await()
+      }
+
       val size = defaultPictures.size
       val defaultImageUrl = defaultPictures.get(Random.nextInt(0, size))
       val coverImagesSize = defaultPictures.size
@@ -69,13 +82,29 @@ class UserRemoteDataSource @Inject constructor(
         coverImageUrl = defaultCoverImageUrl,
         userNameLowerCase = userName.toLowerCase(),
         firstNameLowerCase = fName.toLowerCase(),
-        aboutMe = ""
+        aboutMe = "",
+        capsuleList = capsuleList
       )
 
       firestore.collection("users").document(newUserDetails.userId)
         .set(newUserDetails).await()
-
       saveTokenToFirestore(null)
+
+      val capsuleCollection = firestore.collection("capsules")
+
+      capsuleList.forEach {
+      val  capsuleId= it.get("id").toString()
+        val newUserDetails = mapOf(
+          "imageUrl" to defaultImageUrl,
+          "isOwner" to false,
+          "userId" to user.uid,
+          "userName" to userName
+        )
+
+        capsuleCollection.document(capsuleId).update(
+          "users", FieldValue.arrayUnion(newUserDetails)
+        )
+      }
 
       Response.Success(Unit)
     } catch (e: Exception) {
