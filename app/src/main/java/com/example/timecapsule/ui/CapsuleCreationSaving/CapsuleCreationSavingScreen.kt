@@ -7,11 +7,17 @@ import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -25,17 +31,26 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.timecapsule.R
 import com.example.timecapsule.ui.selecttime.NavigationAddCapsule
+import com.example.timecapsule.ui.theme.LightBlue
+import com.example.timecapsule.ui.theme.openSansExtraBold
 import com.example.timecapsule.viewmodel.CapsuleCreationState
 import com.example.timecapsule.viewmodel.CapsuleCreationViewModel
+import com.example.timecapsule.viewmodel.CapsuleListScreenState
+import com.example.util.NetWorkException
 import kotlinx.coroutines.delay
 
 @Preview
@@ -64,6 +79,73 @@ fun CapsuleCreationSavingScreen(
       if (capsuleCreationState is CapsuleCreationState.Success)
         SuccessScreen(onNavigate)
       if (capsuleCreationState is CapsuleCreationState.Error) {
+        ErrorScreen {
+          viewModel.saveCapsule()
+        }
+      }
+    }
+  }
+}
+
+@Composable
+fun ErrorScreen(onRetryClick: () -> Unit) {
+  Box(
+    modifier = Modifier
+        .fillMaxSize()
+        .zIndex(5.0F)
+  ) {
+    Column(
+      modifier = Modifier
+          .fillMaxWidth()
+          .fillMaxHeight()
+          .align(Alignment.Center)
+          .padding(top = 20.dp),
+      verticalArrangement = Arrangement.Center,
+      horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+      Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier
+            .padding(vertical = 20.dp)
+            .size(220.dp)
+            .background(
+                brush = Brush.radialGradient(
+                    colors = listOf(
+                        Color.Red,
+                        Color.Red,
+                        Color.LightGray.copy(0.1f)
+                    ),
+                    center = Offset.Unspecified,
+                    radius = 220f
+                ),
+                shape = CircleShape
+            )
+      ) {
+        Image(
+          painter = painterResource(id = com.example.timecapsule.R.drawable.nonetwork_graphic),
+          contentDescription = "No network",
+          modifier = Modifier.size(200.dp)
+        )
+      }
+
+      Text(
+        "Something went wrong!",
+        style = MaterialTheme.typography.titleLarge.copy(
+          fontSize = 24.sp,
+          fontWeight = FontWeight.Light,
+          fontFamily = openSansExtraBold
+        )
+      )
+
+      androidx.compose.material3.Button(
+        modifier = Modifier.padding(vertical = 5.dp),
+        onClick = {
+          onRetryClick()
+
+        },
+        colors = ButtonDefaults.buttonColors(containerColor = LightBlue)
+      ) {
+        Text(text = "Retry", color = Color.LightGray)
       }
     }
   }
