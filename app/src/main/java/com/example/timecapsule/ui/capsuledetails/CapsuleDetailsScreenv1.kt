@@ -102,13 +102,12 @@ fun CapsuleDetailsScreenv1(
       modifier = Modifier
         .fillMaxSize()
         .background(androidx.compose.material3.MaterialTheme.colorScheme.primary)
-        .padding(innerPadding)
     ) {
       LazyColumn(
         modifier = Modifier
           .fillMaxSize()
           .zIndex(0f),
-        contentPadding = PaddingValues(horizontal = 1.dp, vertical = 10.dp),
+        contentPadding = PaddingValues(top = 20.dp),
       ) {
         item {
           BackRow(onBack)

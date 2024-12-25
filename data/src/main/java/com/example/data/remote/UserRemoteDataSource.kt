@@ -56,9 +56,9 @@ class UserRemoteDataSource @Inject constructor(
 
       val user = authRemoteDataSource.getAuth() ?: throw UnspecifiedException()
 
-      val emailExists = usersCollection.whereEqualTo("email",user.email).get().await()
+      val emailExists = usersCollection.whereEqualTo("email", user.email).get().await()
 
-      var capsuleList: List<Map<String,Any>> = listOf()
+      var capsuleList: List<Map<String, Any>> = listOf()
 
       if (!emailExists.isEmpty) {
         val data = emailExists.documents[0].data?.get("capsuleList")
@@ -93,7 +93,7 @@ class UserRemoteDataSource @Inject constructor(
       val capsuleCollection = firestore.collection("capsules")
 
       capsuleList.forEach {
-      val  capsuleId= it.get("id").toString()
+        val capsuleId = it.get("id").toString()
         val newUserDetails = mapOf(
           "imageUrl" to defaultImageUrl,
           "isOwner" to false,
@@ -143,7 +143,7 @@ class UserRemoteDataSource @Inject constructor(
     }
   }
 
-  suspend fun saveTokenToFirestore(token:String?) {
+  suspend fun saveTokenToFirestore(token: String?) {
     try {
 
       val user = authRemoteDataSource.getAuth()
@@ -199,7 +199,6 @@ class UserRemoteDataSource @Inject constructor(
     return Response.Success(users)
   }
 
-
   private fun parseUser(document: DocumentSnapshot): UserDetails {
     val userName = document.get("userName") as String
     val userId = document.get("userId") as String
@@ -208,6 +207,7 @@ class UserRemoteDataSource @Inject constructor(
     val imageUrl = document.get("imageUrl") as String
     val coverImageUrl = document.get("coverImageUrl") as String
     val aboutMe = document.get("aboutMe") as String
+    val email = document.get("email") as String
 
     val user = UserDetails(
       userId = userId,
@@ -216,7 +216,7 @@ class UserRemoteDataSource @Inject constructor(
       lastName = lname,
       imageUrl = imageUrl,
       coverImageUrl = coverImageUrl,
-      email = "",
+      email = email,
       capsuleList = emptyList(),
       userNameLowerCase = "",
       firstNameLowerCase = "",
