@@ -35,7 +35,7 @@ class NearByCapsulesViewModel @Inject constructor(
   var isCapsuleSelected by
   mutableStateOf(false)
 
-  fun setModelLoadingStateIdle(){
+  fun setModelLoadingStateIdle() {
     _loading3dModelState.value = Load3dModelState.Idle
   }
 

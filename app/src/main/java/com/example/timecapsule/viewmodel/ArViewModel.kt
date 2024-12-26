@@ -7,13 +7,14 @@ import androidx.lifecycle.viewModelScope
 import com.example.domain.usecase.Load3dModelUseCase
 import com.example.util.Response
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 @HiltViewModel
-class ArViewModel(
+class ArViewModel @Inject constructor(
   private val load3dModelUseCase: Load3dModelUseCase
 ) : ViewModel() {
   private val _loading3dModelState = MutableStateFlow<Load3dModelState>(Load3dModelState.Idle)

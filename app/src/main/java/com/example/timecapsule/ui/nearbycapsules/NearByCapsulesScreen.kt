@@ -177,9 +177,9 @@ fun NearbyCapsulesScreen(
     ) {
       MapboxMap(
         modifier = Modifier
-          .align(Alignment.Center)
-          .zIndex(0.0F)
-          .fillMaxSize(),
+            .align(Alignment.Center)
+            .zIndex(0.0F)
+            .fillMaxSize(),
         mapViewportState = initialCamera,
         onMapClickListener = { clickedPoint ->
           false
@@ -187,10 +187,11 @@ fun NearbyCapsulesScreen(
       ) {
 
         if (viewModel.isCapsuleSelected)
-          ShowDialog(viewModel.selectedCapsule, modelLoadingState,closeDialog = {
+          ShowDialog(viewModel.selectedCapsule, modelLoadingState, closeDialog = {
             viewModel.isCapsuleSelected = false
           }, openCapsule = {
             viewModel.isCapsuleSelected = false
+
             navigate(
               Screen.OpenCapsuleLoadingScreen.createRoute(
                 id = viewModel.selectedCapsule!!.capsuleId,
@@ -430,10 +431,10 @@ fun NearByCapsulesBottomSheet(
       sheetState = sheetState
     ) {
       Column(
-        Modifier
-          .fillMaxWidth()
-          .background(MaterialTheme.colorScheme.primary)
-          .padding(vertical = 10.dp, horizontal = 3.dp),
+          Modifier
+              .fillMaxWidth()
+              .background(MaterialTheme.colorScheme.primary)
+              .padding(vertical = 10.dp, horizontal = 3.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top
       ) {

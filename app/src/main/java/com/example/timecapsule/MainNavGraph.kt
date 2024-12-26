@@ -100,8 +100,8 @@ fun BottomNavigationBar(navController: NavController) {
   BottomNavigation(
     backgroundColor = MaterialTheme.colorScheme.primary,
     modifier = Modifier
-      .background(MaterialTheme.colorScheme.primary)
-      .windowInsetsPadding(WindowInsets.navigationBars.only(WindowInsetsSides.Bottom))
+        .background(MaterialTheme.colorScheme.primary)
+        .windowInsetsPadding(WindowInsets.navigationBars.only(WindowInsetsSides.Bottom))
 
   ) {
     val currentRoute = navController.currentDestination?.route
@@ -155,9 +155,9 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
       })
     }
     composable(Screen.NearByCapsules.route) {
-      NearbyCapsulesScreen(navigate =  { route ->
+      NearbyCapsulesScreen(navigate = { route ->
         navController.navigate(route)
-      }, onArViewclicked ={modelId->
+      }, onArViewclicked = { modelId ->
         navController.navigate(Screen.ArScreen.createRoute(modelId))
       })
     }
@@ -222,7 +222,10 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
     }
 
     composable(Screen.ArScreen.route) { backStackEntry ->
-      ArScreen()
+      val modelId = backStackEntry.arguments?.getString("modelId")
+      if (modelId != null) {
+        ArScreen(modelId)
+      }
     }
 
 
