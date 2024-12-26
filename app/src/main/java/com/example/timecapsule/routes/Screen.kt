@@ -39,6 +39,10 @@ sealed class Screen(val route: String) {
       }"
   }
 
+  object ArScreen : Screen("ar_screen/{modelId}") {
+    fun createRoute(modelId: String) = "ar_screen/${modelId}"
+  }
+
   // Sub screens in profile
   object Setting : Screen("setting")
   object ContactUs : Screen("contact_us")

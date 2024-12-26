@@ -43,9 +43,11 @@ import androidx.compose.material3.rememberDrawerState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -71,6 +73,7 @@ import com.example.timecapsule.ui.findcapsule.ShowDialog
 import com.example.timecapsule.ui.findcapsule.VerticalFABs
 import com.example.timecapsule.ui.theme.LightBlue
 import com.example.timecapsule.ui.theme.openSansExtraBold
+import com.example.timecapsule.viewmodel.Load3dModelState
 import com.example.timecapsule.viewmodel.NearByCapsulesViewModel
 import com.example.util.getModelMapIcon
 import com.google.android.gms.location.LocationCallback
@@ -98,8 +101,11 @@ import kotlin.math.sqrt
 @Composable
 fun NearbyCapsulesScreen(
   viewModel: NearByCapsulesViewModel = hiltViewModel(),
-  navigate: (String) -> Unit = {},
+  navigate: (String) -> Unit = {}, onArViewclicked: (String) -> Unit
 ) {
+
+  val modelLoadingState by viewModel.loadingLoad3dModelState.collectAsState()
+
   val context = LocalContext.current
   val initialCamera = rememberMapViewportState {
     setCameraOptions {
@@ -114,12 +120,6 @@ fun NearbyCapsulesScreen(
   val nearbyCapsules = remember { mutableStateOf<List<NearByCapsule>>(emptyList()) }
   val userLocation = remember { mutableStateOf<Point?>(null) }
   val radiusMeters = remember { 100.0 }
-
-  var selectedCapsule by remember { mutableStateOf<NearByCapsule?>(null) }
-
-  var isCapsuleSelected by remember {
-    mutableStateOf(false)
-  }
 
   fun getCapsuleDetails(capsuleId: String): NearByCapsule {
     return nearbyCapsules.value.filter {
@@ -186,17 +186,24 @@ fun NearbyCapsulesScreen(
         }
       ) {
 
-        if (isCapsuleSelected)
-          ShowDialog(selectedCapsule, closeDialog = {
-            isCapsuleSelected = false
+        if (viewModel.isCapsuleSelected)
+          ShowDialog(viewModel.selectedCapsule, modelLoadingState,closeDialog = {
+            viewModel.isCapsuleSelected = false
           }, openCapsule = {
-            isCapsuleSelected = false
+            viewModel.isCapsuleSelected = false
             navigate(
               Screen.OpenCapsuleLoadingScreen.createRoute(
-                id = selectedCapsule!!.capsuleId,
+                id = viewModel.selectedCapsule!!.capsuleId,
                 isCapsuleHunt = true
               )
             )
+          }, viewAr = {
+            viewModel.setModelLoadingStateIdle()
+            viewModel.selectedCapsule?.modelId?.let {
+              onArViewclicked(it)
+            }
+          }, load3dModel = {
+            viewModel.loadModel()
           })
 
         MapEffect(this) { mapView ->
@@ -228,8 +235,8 @@ fun NearbyCapsulesScreen(
                 annotation.point
               )
             ) {
-              selectedCapsule = getCapsuleDetails(annotation.textField.toString())
-              isCapsuleSelected = true
+              viewModel.selectedCapsule = getCapsuleDetails(annotation.textField.toString())
+              viewModel.isCapsuleSelected = true
             }
           }
           true
@@ -475,12 +482,12 @@ fun CapsuleRow(capsule: NearByCapsule, userPoint: Point) {
   }
   Row(
     modifier = Modifier
-      .fillMaxWidth()
-      .wrapContentHeight()
-      .padding(horizontal = 10.dp)
-      .clip(RoundedCornerShape(20.dp))
-      .background(LightBlue.copy(alpha = 0.6F))
-      .padding(horizontal = 10.dp, vertical = 15.dp),
+        .fillMaxWidth()
+        .wrapContentHeight()
+        .padding(horizontal = 10.dp)
+        .clip(RoundedCornerShape(20.dp))
+        .background(LightBlue.copy(alpha = 0.6F))
+        .padding(horizontal = 10.dp, vertical = 15.dp),
     horizontalArrangement = Arrangement.Start,
     verticalAlignment = Alignment.CenterVertically
   ) {
@@ -490,15 +497,15 @@ fun CapsuleRow(capsule: NearByCapsule, userPoint: Point) {
         bitmap = it,
         contentDescription = "capsule",
         modifier = Modifier
-          .weight(0.2F)
-          .size(60.dp)
+            .weight(0.2F)
+            .size(60.dp)
       )
     }
 
     Column(
       modifier = Modifier
-        .weight(0.5F)
-        .wrapContentHeight(),
+          .weight(0.5F)
+          .wrapContentHeight(),
       verticalArrangement = Arrangement.Center,
       horizontalAlignment = Alignment.Start
     ) {

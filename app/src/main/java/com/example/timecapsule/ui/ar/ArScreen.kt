@@ -4,12 +4,15 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.timecapsule.viewmodel.ArViewModel
 import com.google.android.filament.Engine
 import com.google.ar.core.Anchor
 import com.google.ar.core.Config
@@ -36,84 +39,12 @@ import io.github.sceneview.rememberOnGestureListener
 import io.github.sceneview.rememberView
 
 @Composable
-fun ArScreen() {
-//  val engine = rememberEngine()
-//  val modelLoader = rememberModelLoader(engine)
+fun ArScreen(viewModel:ArViewModel= hiltViewModel()) {
 
-//  val cameraNode = rememberARCameraNode(engine).apply {
-//    position = Position(z = 4.0f)
-//  }
-//  val centerNode = rememberNode(engine).apply {
-//    addChildNode(cameraNode)
-//  }
+  val state by viewModel.loadingLoad3dModelState.collectAsState()
+
   Scaffold { innerPadding ->
-//    ARScene(modifier = Modifier.padding(innerPadding),
-//
-//      engine = engine,
-//      modelLoader = modelLoader,
-//      cameraNode = cameraNode,
-//      childNodes = listOf(
-//        centerNode,
-//        rememberNode {
-//          ModelNode(
-//            modelInstance = modelLoader.createModelInstance(
-//              assetFileLocation = "testmodel2folder/scene.gltf"
-//            ),
-//            scaleToUnits = 0.3f
-//          )
-//        }
-//      ),
-//
-//      // Fundamental session features that can be requested.
-//      sessionFeatures = setOf(),
-//      // The camera config to use.
-//      // The config must be one returned by [Session.getSupportedCameraConfigs].
-//      // Provides details of a camera configuration such as size of the CPU image and GPU texture.
-//      sessionCameraConfig = null,
-//      // Configures the session and verifies that the enabled features in the specified session config
-//      // are supported with the currently set camera config.
-//      sessionConfiguration = { session, config ->
-//        config.depthMode =
-//          when (session.isDepthModeSupported(Config.DepthMode.AUTOMATIC)) {
-//            true -> Config.DepthMode.AUTOMATIC
-//            else -> Config.DepthMode.DISABLED
-//          }
-//        config.instantPlacementMode = Config.InstantPlacementMode.LOCAL_Y_UP
-//        config.lightEstimationMode =
-//          Config.LightEstimationMode.ENVIRONMENTAL_HDR
-//      },
-//      planeRenderer = true,
-//      // The [ARCameraStream] to render the camera texture.
-//      // Use it to control if the occlusion should be enabled or disabled.
-////      cameraStream = rememberARCameraStream(materialLoader),
-//      // The session is ready to be accessed.
-//      onSessionCreated = { session ->
-//      },
-//      // The session has been resumed.
-//      onSessionResumed = { session ->
-//      },
-//      // The session has been paused
-//      onSessionPaused = { session ->
-//      },
-//      // Updates of the state of the ARCore system.
-//      // This includes: receiving a new camera frame, updating the location of the device, updating
-//      // the location of tracking anchors, updating detected planes, etc.
-//      // This call may update the pose of all created anchors and detected planes. The set of updated
-//      // objects is accessible through [Frame.getUpdatedTrackables].
-//      // Invoked once per [Frame] immediately before the Scene is updated.
-//      onSessionUpdated = { session, updatedFrame ->
-//      },
-//      // Invoked when an ARCore error occurred.
-//      // Registers a callback to be invoked when the ARCore Session cannot be initialized because
-//      // ARCore is not available on the device or the camera permission has been denied.
-//      onSessionFailed = { exception ->
-//      },
-//      // Listen for camera tracking failure.
-//      // The reason that [Camera.getTrackingState] is [TrackingState.PAUSED] or `null` if it is
-//      // [TrackingState.TRACKING]
-//      onTrackingFailureChanged = { trackingFailureReason ->
-//      }
-//    )
+
 
     val engine = rememberEngine()
     val modelLoader = rememberModelLoader(engine)
@@ -132,8 +63,8 @@ fun ArScreen() {
     var frame by remember { mutableStateOf<Frame?>(null) }
     ARScene(
       modifier = Modifier
-          .fillMaxSize()
-          .padding(innerPadding),
+        .fillMaxSize()
+        .padding(innerPadding),
       childNodes = childNodes,
       engine = engine,
       view = view,

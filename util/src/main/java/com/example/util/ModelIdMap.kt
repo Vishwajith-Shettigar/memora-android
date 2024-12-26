@@ -32,6 +32,6 @@ private val modelIdMapIconsMap = mapOf(
   "400" to "capsulesmap_icons/model4_map_icon.png",
 )
 
-fun getModelMapIcon(id: String): String {
-  return modelIdMapIconsMap.get(id) ?: "capsulesmap_icons/model1_map_icon.png"
+fun getModelMapIcon(id: String?): String {
+  return modelIdMapIconsMap[id] ?: "capsulesmap_icons/model1_map_icon.png"
 }

@@ -57,7 +57,8 @@ class NearByCapsulesDataSource @Inject constructor(
                   capsuleImageUrl = doc.getString("imageUrl")!!,
                   capsuleTitle = doc.getString("title")!!,
                   modelId = doc.get("modelId").toString(),
-                  description = doc.getString("description")!!
+                  description = doc.getString("description")!!,
+                  time = doc.getTimestamp("time")!!
                 )
               )
             }

@@ -1,6 +1,7 @@
 package com.example.model
 
 import android.location.Location
+import com.google.firebase.Timestamp
 import com.google.firebase.firestore.GeoPoint
 
 data class NearByCapsule(
@@ -9,5 +10,6 @@ data class NearByCapsule(
   val capsuleTitle: String,
   val description: String,
   val capsuleImageUrl: String,
-  val location: GeoPoint
+  val location: GeoPoint,
+  val time:Timestamp
 )

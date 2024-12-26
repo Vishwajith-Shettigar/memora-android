@@ -122,7 +122,8 @@ fun FindCapsuleScreenV1(
     NearByCapsule(
       capsuleId = capsuleDetails.id, location = capsuleDetails.location!!,
       capsuleTitle = capsuleDetails.title, capsuleImageUrl = capsuleDetails.imageUrl,
-      modelId = capsuleDetails.modelId.toString(), description = capsuleDetails.description
+      modelId = capsuleDetails.modelId.toString(), description = capsuleDetails.description,
+      time = capsuleDetails.time
     )
   }
 

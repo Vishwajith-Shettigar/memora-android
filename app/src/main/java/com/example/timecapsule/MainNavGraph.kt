@@ -25,6 +25,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.navigation
 import com.example.model.Profile
+import com.example.timecapsule.ui.ar.ArScreen
 import com.example.timecapsule.ui.capsuledetails.CapsuleDetailsScreen
 import com.example.timecapsule.ui.capsuledetails.CapsuleDetailsScreenv1
 import com.example.timecapsule.ui.nearbycapsules.NearbyCapsulesScreen
@@ -39,6 +40,7 @@ import com.example.timecapsule.ui.setting.options.TermsAndServiceScreen
 import com.example.timecapsule.ui.setting.options.UpdateScreen
 import com.example.timecapsule.ui.viewprofile.ViewProfileScreen
 import com.example.timecapsule.viewmodel.NotificatioViewModel
+import io.github.sceneview.ar.ARScene
 
 fun getNavigationItems(): List<NavItem> {
   return listOf(
@@ -153,9 +155,11 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
       })
     }
     composable(Screen.NearByCapsules.route) {
-      NearbyCapsulesScreen { route ->
+      NearbyCapsulesScreen(navigate =  { route ->
         navController.navigate(route)
-      }
+      }, onArViewclicked ={modelId->
+        navController.navigate(Screen.ArScreen.createRoute(modelId))
+      })
     }
     composable(Screen.Notification.route) {
       val viewmodel: NotificatioViewModel = hiltViewModel(it)
@@ -217,8 +221,8 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
         })
     }
 
-    composable(Screen.Privacy.route) { backStackEntry ->
-
+    composable(Screen.ArScreen.route) { backStackEntry ->
+      ArScreen()
     }
 
 

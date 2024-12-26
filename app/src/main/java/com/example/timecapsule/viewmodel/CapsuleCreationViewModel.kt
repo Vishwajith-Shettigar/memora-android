@@ -115,7 +115,6 @@ class CapsuleCreationViewModel @Inject constructor(
         val userDetailsResponse = getUsersDetailsUseCase(it)
         if (userDetailsResponse is Response.Success) {
           ownerUserDetails = userDetailsResponse.data!!
-          Log.e("pokemon",ownerUserDetails.toString())
           selectedPeoples.add(userDetailsResponse.data!!)
         }
       }
@@ -426,7 +425,6 @@ class CapsuleCreationViewModel @Inject constructor(
             it != ownerUserDetails.email
           }
 
-          Log.e("pokemon",filteredEmails.toString())
           val emailSharingCapsuleDto = EmailSharingCapsuleDto(
             emails = filteredEmails,
             capsuleId = CAPSULE_ID,
