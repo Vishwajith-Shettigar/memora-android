@@ -1,5 +1,7 @@
 package com.example.timecapsule
 
+import android.content.Intent
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -19,7 +21,9 @@ import com.example.timecapsule.ui.profile.ProfileScreen
 import androidx.compose.material3.*
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
@@ -100,8 +104,8 @@ fun BottomNavigationBar(navController: NavController) {
   BottomNavigation(
     backgroundColor = MaterialTheme.colorScheme.primary,
     modifier = Modifier
-        .background(MaterialTheme.colorScheme.primary)
-        .windowInsetsPadding(WindowInsets.navigationBars.only(WindowInsetsSides.Bottom))
+      .background(MaterialTheme.colorScheme.primary)
+      .windowInsetsPadding(WindowInsets.navigationBars.only(WindowInsetsSides.Bottom))
 
   ) {
     val currentRoute = navController.currentDestination?.route
@@ -145,6 +149,7 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
     startDestination = Screen.Home.route,
     route = Screen.MainScreens.route
   ) {
+
     composable(Screen.Home.route) {
       com.example.timecapsule.ui.capsulelist.v2.CapsuleCardListScreen(addCapsuleBtnClicked = {
         navController.navigate(Screen.AddCapsuleScreens.route) // Start AddCapsule flow
@@ -155,10 +160,15 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
       })
     }
     composable(Screen.NearByCapsules.route) {
+      val context = LocalContext.current
       NearbyCapsulesScreen(navigate = { route ->
         navController.navigate(route)
       }, onArViewclicked = { modelId ->
-        navController.navigate(Screen.ArScreen.createRoute(modelId))
+
+        val intent = Intent(context, ArActivity::class.java).apply {
+          putExtra("modelId", modelId)
+        }
+        context.startActivity(intent)
       })
     }
     composable(Screen.Notification.route) {
@@ -222,12 +232,7 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
     }
 
     composable(Screen.ArScreen.route) { backStackEntry ->
-      val modelId = backStackEntry.arguments?.getString("modelId")
-      if (modelId != null) {
-        ArScreen(modelId)
-      }
     }
-
 
     composable(Screen.ContactUs.route) { backStackEntry ->
       ContactUsScreen {

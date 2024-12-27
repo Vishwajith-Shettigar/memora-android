@@ -55,10 +55,6 @@ fun ArScreen(modelId: String, viewModel: ArViewModel = hiltViewModel()) {
 
   val state by viewModel.loadingLoad3dModelState.collectAsState()
 
-  LaunchedEffect(state) {
-    if (state is Load3dModelState.Success)
-  }
-
   val engine = rememberEngine()
   val modelLoader = rememberModelLoader(engine)
   val materialLoader = rememberMaterialLoader(engine)

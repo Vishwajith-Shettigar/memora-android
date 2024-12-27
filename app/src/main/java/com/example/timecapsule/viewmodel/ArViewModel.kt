@@ -13,12 +13,15 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-@HiltViewModel
 class ArViewModel @Inject constructor(
   private val load3dModelUseCase: Load3dModelUseCase
 ) : ViewModel() {
+
   private val _loading3dModelState = MutableStateFlow<Load3dModelState>(Load3dModelState.Idle)
   val loadingLoad3dModelState: StateFlow<Load3dModelState> = _loading3dModelState
+
+  private val _modelPath = MutableStateFlow<String?>(null)
+  val modelPath: StateFlow<String?> = _modelPath
 
   fun loadModel(modelId: String) {
     _loading3dModelState.value = Load3dModelState.Loading
@@ -27,13 +30,14 @@ class ArViewModel @Inject constructor(
       when (res) {
         is Response.Success -> {
           _loading3dModelState.value = Load3dModelState.Success(path = res.data!!)
+          _modelPath.value = res.data // Set the model path dynamically
         }
-
         is Response.Error -> {
           _loading3dModelState.value = Load3dModelState.Error
         }
-
-        null -> {}
+        null -> {
+          _loading3dModelState.value = Load3dModelState.Error
+        }
       }
     }
   }
