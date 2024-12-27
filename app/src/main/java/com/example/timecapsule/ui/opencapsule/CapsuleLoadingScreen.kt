@@ -88,8 +88,8 @@ fun CapsuleLoadingScreen(
 
   Column(
     modifier = Modifier
-      .fillMaxSize()
-      .background(MaterialTheme.colorScheme.primary),
+        .fillMaxSize()
+        .background(MaterialTheme.colorScheme.primary),
     horizontalAlignment = Alignment.CenterHorizontally,
     verticalArrangement = Arrangement.Center
   ) {

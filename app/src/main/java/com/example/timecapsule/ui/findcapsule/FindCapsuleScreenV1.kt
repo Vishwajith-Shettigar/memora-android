@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.location.Location
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -24,6 +25,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -38,6 +40,7 @@ import com.example.model.NearByCapsule
 import com.example.timecapsule.BuildConfig
 import com.example.timecapsule.R
 import com.example.timecapsule.routes.Screen
+import com.example.timecapsule.ui.nearbycapsules.calculateDistance
 import com.example.timecapsule.ui.util.checkARCoreAvailability
 import com.example.timecapsule.viewmodel.DisplayCapsuleDetailsState
 import com.example.timecapsule.viewmodel.Load3dModelState
@@ -49,6 +52,7 @@ import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.firebase.firestore.GeoPoint
 import com.mapbox.geojson.Feature
+import com.mapbox.geojson.FeatureCollection
 import com.mapbox.geojson.Point
 import com.mapbox.maps.CameraOptions
 import com.mapbox.maps.MapboxExperimental
@@ -61,11 +65,14 @@ import com.mapbox.maps.extension.compose.style.DoubleValue
 import com.mapbox.maps.extension.compose.style.layers.ModelIdValue
 import com.mapbox.maps.extension.compose.style.layers.generated.ModelLayer
 import com.mapbox.maps.extension.compose.style.layers.generated.ModelTypeValue
+import com.mapbox.maps.extension.compose.style.layers.generated.SymbolLayer
 import com.mapbox.maps.extension.compose.style.sources.GeoJSONData
 import com.mapbox.maps.extension.compose.style.sources.generated.rememberGeoJsonSourceState
 import com.mapbox.maps.extension.style.expressions.generated.Expression
 import com.mapbox.maps.extension.style.model.addModel
 import com.mapbox.maps.extension.style.model.model
+import com.mapbox.maps.extension.style.sources.addSource
+import com.mapbox.maps.extension.style.sources.generated.GeoJsonSource
 import com.mapbox.maps.plugin.animation.MapAnimationOptions
 import com.mapbox.maps.plugin.annotation.annotations
 import com.mapbox.maps.plugin.annotation.generated.PointAnnotationManager
@@ -201,7 +208,7 @@ fun FindCapsuleScreenV1(
       userLocationPoint,
       capsulePoint,
       modelId.toString(),
-      modelUri!!,
+      modelUri,
       selectedCapsule = selectedCapsule,
       isCapsuleSelected = viewModel.isCapsuleSelected,
       loadModelState = loadModelState,
@@ -234,7 +241,7 @@ fun MapView(
   locationPoint: Point?,
   capsulePoint: Point,
   modelId: String,
-  modelUri: String,
+  modelUri: String?,
   selectedCapsule: NearByCapsule,
   isCapsuleSelected: Boolean,
   loadModelState: Load3dModelState,
@@ -274,8 +281,18 @@ fun MapView(
     }
   ) {
     MapEffect(this) { mapView ->
-      mapView.mapboxMap.apply {
-        addModel(model(modelId) { uri("file://${modelUri}") })
+
+
+      if (modelUri != null) {
+        mapView.mapboxMap.apply {
+          addModel(model(modelId) { uri("file://${modelUri}") })
+
+        }
+      } else {
+        mapView.mapboxMap.apply {
+          addModel(model(modelId) { uri("asset://testmodel.glb") })
+
+        }
       }
       mapView.mapboxMap.loadStyle(BuildConfig.MAPBOX_STYLE_URI_DAY)
 
@@ -309,6 +326,7 @@ fun MapView(
     AddPointer(
       context = context,
       point = locationPoint,
+      capsulePoint = capsulePoint,
       pointAnnotationManager = pointAnnotationManager
     )
   }
@@ -390,7 +408,12 @@ fun animateCamera(initialCamera: MapViewportState, center: Point) {
   )
 }
 
-fun AddPointer(context: Context, point: Point?, pointAnnotationManager: PointAnnotationManager?) {
+fun AddPointer(
+  context: Context,
+  point: Point?,
+  capsulePoint: Point,
+  pointAnnotationManager: PointAnnotationManager?
+) {
 
   pointAnnotationManager?.deleteAll()
 
@@ -408,7 +431,16 @@ fun AddPointer(context: Context, point: Point?, pointAnnotationManager: PointAnn
     if (annotationOptions != null) {
       pointAnnotationManager?.create(annotationOptions)
     }
-  } ?: run {
+  }
+  point?.let {
+    val textAnnotation = PointAnnotationOptions()
+      .withPoint(capsulePoint)
+      .withTextField(String.format("%.2f m", calculateDistance(point, capsulePoint)))
+      .withTextSize(14.0)
+      .withTextColor(Color.GRAY)
+
+      .withTextOffset(listOf(0.0, -7.5)) // Offset to position above model
+    pointAnnotationManager?.create(textAnnotation)
   }
 }
 
