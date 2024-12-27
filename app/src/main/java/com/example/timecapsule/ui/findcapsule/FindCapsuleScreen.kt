@@ -226,9 +226,10 @@ fun getScaledBitmapDescriptor(
 fun ShowDialog(
   selectedCapsule: NearByCapsule? = null,
   modelState: Load3dModelState = Load3dModelState.Idle,
+  flag: Boolean = false,
   closeDialog: () -> Unit = {},
   openCapsule: () -> Unit = {},
-  viewAr: () -> Unit = {}, load3dModel: () -> Unit = {}
+  viewAr: () -> Unit = {}, load3dModel: () -> Unit = {},
 ) {
   val isTablet = DeviceType.isTablet()
 
@@ -253,7 +254,7 @@ fun ShowDialog(
   }
 
   LaunchedEffect(modelState) {
-    if (modelState is Load3dModelState.Success)
+    if (modelState is Load3dModelState.Success && flag == false)
       viewAr()
 
   }
@@ -363,13 +364,16 @@ fun ShowDialog(
         ) {
           OutlinedButton(
             onClick = {
-              if (!(modelState is Load3dModelState.Success))
+              if (!(modelState is Load3dModelState.Success) && flag == false)
                 load3dModel()
+
+              if (modelState is Load3dModelState.Success && flag)
+                viewAr()
             },
             colors = ButtonDefaults.outlinedButtonColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
           ) {
 
-            if (modelState is Load3dModelState.Idle) {
+            if (modelState is Load3dModelState.Idle || flag) {
               Icon(
                 painter = painterResource(id = com.example.timecapsule.R.drawable.icon_view_in_ar),
                 contentDescription = "ar icon",

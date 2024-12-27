@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.location.Location
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -37,7 +38,9 @@ import com.example.model.NearByCapsule
 import com.example.timecapsule.BuildConfig
 import com.example.timecapsule.R
 import com.example.timecapsule.routes.Screen
+import com.example.timecapsule.ui.util.checkARCoreAvailability
 import com.example.timecapsule.viewmodel.DisplayCapsuleDetailsState
+import com.example.timecapsule.viewmodel.Load3dModelState
 import com.example.timecapsule.viewmodel.OpenCapsuleViewModel
 import com.example.util.getModel
 import com.google.android.gms.location.LocationCallback
@@ -110,13 +113,15 @@ fun getInitialLocation(context: Context, onLocationFetched: (Point) -> Unit) {
 fun FindCapsuleScreenV1(
   navController: NavController = rememberNavController(),
   viewModel: OpenCapsuleViewModel = hiltViewModel(),
-  navigate: (String) -> Unit = {}
+  navigate: (String) -> Unit = {}, onViewAr: (String) -> Unit
 ) {
 
   val capsuleDetails = remember {
     (viewModel.capsuleDetailsState.value
       as DisplayCapsuleDetailsState.Success).capsuleDetails
   }
+
+  val loadModelState by viewModel.loadingLoad3dModelState.collectAsState()
 
   val selectedCapsule = remember {
     NearByCapsule(
@@ -140,7 +145,7 @@ fun FindCapsuleScreenV1(
   }
 
   val modelUri by remember {
-    mutableStateOf(getModel(modelId.toString()))
+    mutableStateOf(viewModel.modelPath)
   }
 
   LaunchedEffect(Unit) {
@@ -196,12 +201,24 @@ fun FindCapsuleScreenV1(
       userLocationPoint,
       capsulePoint,
       modelId.toString(),
-      modelUri,
+      modelUri!!,
       selectedCapsule = selectedCapsule,
-      navigate = navigate
-    ) {
-      userLocationPoint = it
-    }
+      isCapsuleSelected = viewModel.isCapsuleSelected,
+      loadModelState = loadModelState,
+      navigate = navigate, updateLocation = {
+        userLocationPoint = it
+      }, onCapsuleSelected = { it ->
+        viewModel.isCapsuleSelected = it
+      },
+      onArViewClicked = {
+        onViewAr(selectedCapsule.modelId)
+      },
+      setModelLoadingStateIdle = {
+        viewModel.setModelLoadingStateIdle()
+      },
+      loadModel = {
+        viewModel.loadModel(selectedCapsule.modelId)
+      })
   }
 }
 
@@ -219,37 +236,46 @@ fun MapView(
   modelId: String,
   modelUri: String,
   selectedCapsule: NearByCapsule,
+  isCapsuleSelected: Boolean,
+  loadModelState: Load3dModelState,
   navigate: (String) -> Unit,
   updateLocation: (Point) -> Unit,
+  onCapsuleSelected: (Boolean) -> Unit,
+  onArViewClicked: () -> Unit,
+  setModelLoadingStateIdle: () -> Unit,
+  loadModel: () -> Unit
 ) {
   var pointAnnotationManager by remember { mutableStateOf<PointAnnotationManager?>(null) }
 
-  var is3dModelSelected by remember {
-    mutableStateOf(false)
-  }
-
-  if (is3dModelSelected)
-    ShowDialog(selectedCapsule = selectedCapsule, openCapsule = {
-      is3dModelSelected = false
-      navigate(Screen.OpenCapsuleContentScreen.route)
-    }, closeDialog = {
-      is3dModelSelected = false
-    })
+  if (isCapsuleSelected)
+    ShowDialog(selectedCapsule = selectedCapsule, modelState = loadModelState,
+      flag = true,
+      openCapsule = {
+        onCapsuleSelected(false)
+        navigate(Screen.OpenCapsuleContentScreen.route)
+      }, closeDialog = {
+        onCapsuleSelected(false)
+      }, viewAr = {
+        if (checkARCoreAvailability(context))
+          onArViewClicked()
+      }, load3dModel = {
+      })
 
   MapboxMap(
     modifier.fillMaxSize(),
     mapViewportState = cameraView,
     onMapClickListener = { point ->
       if (is3dModelClicked(point, modelCoordinates = capsulePoint)) {
-        if (arePointsWithin10Meters(locationPoint, capsulePoint))
-          is3dModelSelected = true
+        if (arePointsWithin10Meters(locationPoint, capsulePoint)) {
+          onCapsuleSelected(true)
+        }
       }
       false
     }
   ) {
     MapEffect(this) { mapView ->
       mapView.mapboxMap.apply {
-        addModel(model(modelId) { uri("asset://$modelUri") })
+        addModel(model(modelId) { uri("file://${modelUri}") })
       }
       mapView.mapboxMap.loadStyle(BuildConfig.MAPBOX_STYLE_URI_DAY)
 
@@ -291,7 +317,7 @@ fun MapView(
 fun is3dModelClicked(
   point: Point,
   modelCoordinates: Point,
-  radiusInMeters: Double = 10.0
+  radiusInMeters: Double = 200.0
 ): Boolean {
   // Function to calculate distance between two geographical points
   fun calculateDistance(point1: Point, point2: Point): Double {
