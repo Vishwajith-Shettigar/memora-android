@@ -73,6 +73,7 @@ import com.example.timecapsule.ui.findcapsule.ShowDialog
 import com.example.timecapsule.ui.findcapsule.VerticalFABs
 import com.example.timecapsule.ui.theme.LightBlue
 import com.example.timecapsule.ui.theme.openSansExtraBold
+import com.example.timecapsule.ui.util.checkARCoreAvailability
 import com.example.timecapsule.viewmodel.Load3dModelState
 import com.example.timecapsule.viewmodel.NearByCapsulesViewModel
 import com.example.util.getModelMapIcon
@@ -204,7 +205,9 @@ fun NearbyCapsulesScreen(
               onArViewclicked(it)
             }
           }, load3dModel = {
-            viewModel.loadModel()
+
+            if (checkARCoreAvailability(context))
+              viewModel.loadModel()
           })
 
         MapEffect(this) { mapView ->
