@@ -84,6 +84,7 @@ import com.example.util.NetWorkException
 import com.google.accompanist.placeholder.PlaceholderHighlight
 import com.google.accompanist.placeholder.material.shimmer
 import com.google.accompanist.placeholder.placeholder
+import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.mapbox.maps.extension.style.layers.generated.backgroundLayer
 import kotlinx.coroutines.CoroutineScope
@@ -181,35 +182,35 @@ fun CapsuleCardListScreen(
     if (isError) {
       Box(
         modifier = Modifier
-            .fillMaxSize()
-            .zIndex(5.0F)
+          .fillMaxSize()
+          .zIndex(5.0F)
       ) {
         Column(
           modifier = Modifier
-              .fillMaxWidth()
-              .fillMaxHeight()
-              .align(Alignment.Center)
-              .padding(top = 20.dp),
+            .fillMaxWidth()
+            .fillMaxHeight()
+            .align(Alignment.Center)
+            .padding(top = 20.dp),
           verticalArrangement = Arrangement.Center,
           horizontalAlignment = Alignment.CenterHorizontally
         ) {
           Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier
-                .padding(vertical = 20.dp)
-                .size(220.dp)
-                .background(
-                    brush = Brush.radialGradient(
-                        colors = listOf(
-                            Color.Red,
-                            Color.Red,
-                            Color.LightGray.copy(0.1f)
-                        ),
-                        center = Offset.Unspecified,
-                        radius = 220f
-                    ),
-                    shape = CircleShape
-                )
+              .padding(vertical = 20.dp)
+              .size(220.dp)
+              .background(
+                brush = Brush.radialGradient(
+                  colors = listOf(
+                    Color.Red,
+                    Color.Red,
+                    Color.LightGray.copy(0.1f)
+                  ),
+                  center = Offset.Unspecified,
+                  radius = 220f
+                ),
+                shape = CircleShape
+              )
           ) {
             Image(
               painter = painterResource(id = com.example.timecapsule.R.drawable.nonetwork_graphic),
@@ -466,9 +467,11 @@ fun CapsuleCardListScreen(
             }
           }
 
-        if (isSuccess) {
-          items((0..<capsuleList.size).chunked(2)) { rowItems ->
 
+
+        if (isSuccess) {
+
+          items((0..<capsuleList.size).chunked(2)) { rowItems ->
             var p = false
             if (rowItems[0] == expandedCardIndex) {
               p = true
