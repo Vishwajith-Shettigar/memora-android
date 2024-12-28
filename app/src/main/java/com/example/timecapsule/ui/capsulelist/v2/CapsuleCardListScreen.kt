@@ -5,6 +5,7 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.repeatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -20,6 +21,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeContentPadding
 import androidx.compose.foundation.layout.size
@@ -29,8 +31,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
 import androidx.compose.material.Chip
 import androidx.compose.material.ChipDefaults
@@ -182,35 +186,35 @@ fun CapsuleCardListScreen(
     if (isError) {
       Box(
         modifier = Modifier
-          .fillMaxSize()
-          .zIndex(5.0F)
+            .fillMaxSize()
+            .zIndex(5.0F)
       ) {
         Column(
           modifier = Modifier
-            .fillMaxWidth()
-            .fillMaxHeight()
-            .align(Alignment.Center)
-            .padding(top = 20.dp),
+              .fillMaxWidth()
+              .fillMaxHeight()
+              .align(Alignment.Center)
+              .padding(top = 20.dp),
           verticalArrangement = Arrangement.Center,
           horizontalAlignment = Alignment.CenterHorizontally
         ) {
           Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier
-              .padding(vertical = 20.dp)
-              .size(220.dp)
-              .background(
-                brush = Brush.radialGradient(
-                  colors = listOf(
-                    Color.Red,
-                    Color.Red,
-                    Color.LightGray.copy(0.1f)
-                  ),
-                  center = Offset.Unspecified,
-                  radius = 220f
-                ),
-                shape = CircleShape
-              )
+                .padding(vertical = 20.dp)
+                .size(220.dp)
+                .background(
+                    brush = Brush.radialGradient(
+                        colors = listOf(
+                            Color.Red,
+                            Color.Red,
+                            Color.LightGray.copy(0.1f)
+                        ),
+                        center = Offset.Unspecified,
+                        radius = 220f
+                    ),
+                    shape = CircleShape
+                )
           ) {
             Image(
               painter = painterResource(id = com.example.timecapsule.R.drawable.nonetwork_graphic),
@@ -287,273 +291,284 @@ fun CapsuleCardListScreen(
           .fillMaxSize()
           .background(MaterialTheme.colorScheme.primary)
           .padding(top = innerPadding.calculateTopPadding())
+          .verticalScroll(rememberScrollState())
     ) {
 
       var expandedCardIndex by remember { mutableStateOf(-1) }
 
-      LazyColumn(
+      Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(horizontal = 3.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
-        contentPadding = PaddingValues(0.dp),
       ) {
-        item {
-          Row(
+
+        Row(
+          modifier = Modifier
+              .fillMaxWidth()
+              .height(100.dp)
+              .padding(start = 12.dp, end = 17.dp),
+          verticalAlignment = Alignment.CenterVertically,
+          horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+          Text(
+            "Time Capsule",
+            style = MaterialTheme.typography.titleLarge.copy(
+              fontSize = 30.sp,
+              fontWeight = FontWeight.ExtraBold,
+              fontFamily = openSansExtraBold
+            )
+          )
+          AsyncImage(
+            model = R.drawable.onboarding_image,
+            contentDescription = "Profile Picture",
             modifier = Modifier
-                .fillMaxWidth()
-                .height(100.dp)
-                .padding(start = 12.dp, end = 17.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-          ) {
-            Text(
-              "Time Capsule",
-              style = MaterialTheme.typography.titleLarge.copy(
-                fontSize = 30.sp,
-                fontWeight = FontWeight.ExtraBold,
-                fontFamily = openSansExtraBold
-              )
-            )
-            AsyncImage(
-              model = R.drawable.onboarding_image,
-              contentDescription = "Profile Picture",
-              modifier = Modifier
-                  .size(50.dp)
-                  .clip(CircleShape)
-                  .padding(end = 1.dp)
-                  .graphicsLayer(rotationZ = rotation.value),
-              contentScale = ContentScale.Crop
-            )
-          }
+                .size(50.dp)
+                .clip(CircleShape)
+                .padding(end = 1.dp)
+                .graphicsLayer(rotationZ = rotation.value),
+            contentScale = ContentScale.Crop
+          )
         }
 
-        item {
-          Row(
+        Row(
+          modifier = Modifier
+              .fillMaxWidth()
+              .height(50.dp)
+              .padding(horizontal = 10.dp),
+          verticalAlignment = Alignment.CenterVertically,
+          horizontalArrangement = Arrangement.Start,
+        ) {
+          Chip(
+            colors = ChipDefaults.chipColors(backgroundColor = LightBlue),
+            onClick = {
+              filter = Filter.ALL
+              if (isSuccess) {
+                capsuleList.clear()
+                capsuleList.addAll((state as CapsuleListScreenState.Success).capsuleList)
+              }
+            },
             modifier = Modifier
-                .fillMaxWidth()
-                .height(50.dp)
-                .padding(horizontal = 10.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Start,
+                .padding(horizontal = 3.dp)
+                .height(40.dp)
+                .animateContentSize()
           ) {
-            Chip(
-              colors = ChipDefaults.chipColors(backgroundColor = LightBlue),
-              onClick = {
-                filter = Filter.ALL
-                if (isSuccess) {
-                  capsuleList.clear()
-                  capsuleList.addAll((state as CapsuleListScreenState.Success).capsuleList)
-                }
-              },
-              modifier = Modifier
-                  .padding(horizontal = 3.dp)
-                  .height(40.dp)
-                  .animateContentSize()
-            ) {
-              Icon(
-                modifier = Modifier.padding(end = 3.dp),
-                painter = painterResource(id = com.example.timecapsule.R.drawable.ic_view_list),
-                contentDescription = "all icon",
-                tint =
-                if (filter == Filter.ALL)
-                  Color.Black
-                else
-                  Color.White
-              )
+            Icon(
+              modifier = Modifier.padding(end = 3.dp),
+              painter = painterResource(id = com.example.timecapsule.R.drawable.ic_view_list),
+              contentDescription = "all icon",
+              tint =
               if (filter == Filter.ALL)
-                Text(text = "All", color = Color.Black)
-            }
-            Chip(
-              colors = ChipDefaults.chipColors(backgroundColor = LightBlue),
-              onClick = {
-                filter = Filter.ACTIVE
-                if (isSuccess) {
-                  val list = ((state as CapsuleListScreenState.Success).capsuleList).filter {
-                    it.isOpened == false
-                  }
-                  capsuleList.clear()
-                  capsuleList.addAll(list)
+                Color.Black
+              else
+                Color.White
+            )
+            if (filter == Filter.ALL)
+              Text(text = "All", color = Color.Black)
+          }
+          Chip(
+            colors = ChipDefaults.chipColors(backgroundColor = LightBlue),
+            onClick = {
+              filter = Filter.ACTIVE
+              if (isSuccess) {
+                val list = ((state as CapsuleListScreenState.Success).capsuleList).filter {
+                  it.isOpened == false
                 }
-              },
-              modifier = Modifier
-                  .padding(horizontal = 3.dp)
-                  .height(40.dp)
-                  .animateContentSize()
-            ) {
-              Icon(
-                modifier = Modifier.padding(end = 3.dp),
-                painter = painterResource(id = com.example.timecapsule.R.drawable.ic_time_range),
-                contentDescription = "active icon",
-                tint =
-                if (filter == Filter.ACTIVE)
-                  Color.Black
-                else
-                  Color.White
-              )
+                capsuleList.clear()
+                capsuleList.addAll(list)
+              }
+            },
+            modifier = Modifier
+                .padding(horizontal = 3.dp)
+                .height(40.dp)
+                .animateContentSize()
+          ) {
+            Icon(
+              modifier = Modifier.padding(end = 3.dp),
+              painter = painterResource(id = com.example.timecapsule.R.drawable.ic_time_range),
+              contentDescription = "active icon",
+              tint =
               if (filter == Filter.ACTIVE)
-                Text(
-                  text = "Active",
-                  color = Color.Black
-                )
-            }
-            Chip(
-              colors = ChipDefaults.chipColors(backgroundColor = LightBlue),
-              onClick = {
-                filter = Filter.OPENED
-                if (isSuccess) {
-                  val list = ((state as CapsuleListScreenState.Success).capsuleList).filter {
-                    it.isOpened == true
-                  }
-                  capsuleList.clear()
-                  capsuleList.addAll(list)
-                }
-              },
-              modifier = Modifier
-                  .padding(horizontal = 3.dp)
-                  .height(40.dp)
-                  .animateContentSize()
-            ) {
-              Icon(
-                modifier = Modifier.padding(end = 3.dp),
-                painter = painterResource(id = com.example.timecapsule.R.drawable.ic_history),
-                contentDescription = "opened icon",
-                tint =
-                if (filter == Filter.OPENED)
-                  Color.Black
-                else
-                  Color.White
+                Color.Black
+              else
+                Color.White
+            )
+            if (filter == Filter.ACTIVE)
+              Text(
+                text = "Active",
+                color = Color.Black
               )
+          }
+          Chip(
+            colors = ChipDefaults.chipColors(backgroundColor = LightBlue),
+            onClick = {
+              filter = Filter.OPENED
+              if (isSuccess) {
+                val list = ((state as CapsuleListScreenState.Success).capsuleList).filter {
+                  it.isOpened == true
+                }
+                capsuleList.clear()
+                capsuleList.addAll(list)
+              }
+            },
+            modifier = Modifier
+                .padding(horizontal = 3.dp)
+                .height(40.dp)
+                .animateContentSize()
+          ) {
+            Icon(
+              modifier = Modifier.padding(end = 3.dp),
+              painter = painterResource(id = com.example.timecapsule.R.drawable.ic_history),
+              contentDescription = "opened icon",
+              tint =
               if (filter == Filter.OPENED)
+                Color.Black
+              else
+                Color.White
+            )
+            if (filter == Filter.OPENED)
 
-                Text(text = "Opened", color = Color.Black)
-            }
+              Text(text = "Opened", color = Color.Black)
           }
         }
 
         if (isLoading)
-          items(3) {
-            Row(
-              modifier = Modifier
-                  .fillMaxWidth()
-                  .wrapContentHeight(),
-              horizontalArrangement = Arrangement.spacedBy(8.dp)
-
-            ) {
-              Box(
+          Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .height(1000.dp)
+          ) {
+            repeat(7) {
+              Row(
                 modifier = Modifier
-                    .weight(0.5F)
-                    .height(200.dp)
-                    .placeholder(
-                        visible = true,
-                        shape = RoundedCornerShape(30.dp),
-                        highlight = PlaceholderHighlight.shimmer(),
-                        color = Color.Gray.copy(alpha = 0.3f),
-                    )
-                    .clip(shape = RoundedCornerShape(30.dp))
-              )
-              Box(
-                modifier = Modifier
-                    .weight(0.5F)
-                    .height(200.dp)
-                    .placeholder(
-                        visible = true,
-                        shape = RoundedCornerShape(30.dp),
-                        highlight = PlaceholderHighlight.shimmer(),
-                        color = Color.Gray.copy(alpha = 0.3f),
-                    )
-                    .clip(shape = RoundedCornerShape(30.dp))
-              )
-            }
-          }
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+                    .padding(vertical = 3.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
 
-
-
-        if (isSuccess) {
-
-          items((0..<capsuleList.size).chunked(2)) { rowItems ->
-            var p = false
-            if (rowItems[0] == expandedCardIndex) {
-              p = true
-            } else if (rowItems.size == 2) {
-              if (rowItems[1] == expandedCardIndex)
-                p = true
-            }
-
-            Row(
-              modifier = Modifier.fillMaxWidth(),
-              horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-              rowItems.forEachIndexed { index, item ->
-                val isExpanded = expandedCardIndex == item
-                if (p && isExpanded != true) {
-                } else
-                  Box(
-                    modifier = Modifier
-                        .then(
-                            if (rowItems.size == 2 || isExpanded)
-                                Modifier
-                                    .weight(
-                                        if (isExpanded) 1f else 0.5f,
-                                        fill = false
-                                    )
-                            else
-                                Modifier.fillMaxWidth(0.5F)
-                        )
-                        .animateContentSize()
-                  ) {
-                    CapsuleCard(
-                      capsuleDetails = capsuleList[item],
-                      isExpanded = isExpanded,
-                      bgColor = ColorsMap.getColor(item),
-                      onClick = {
-                        expandedCardIndex = if (isExpanded) -1 else item
-                      }, onCapsuleDetailsClicked = onCapsuleClicked,
-                      openCapule = openCapule
-                    )
-                  }
-              }
-            }
-            if (p)
-              if (rowItems[0] != expandedCardIndex)
+                ) {
                 Box(
                   modifier = Modifier
-                      .fillMaxWidth(0.5F)
-                      .padding(top = 8.dp)
-                ) {
-                  CapsuleCard(
-                    capsuleDetails = capsuleList[rowItems[0]],
-                    isExpanded = expandedCardIndex == rowItems[0],
-                    bgColor = ColorsMap.getColor(rowItems[0]),
-                    onClick = {
-                      if (expandedCardIndex == rowItems[0])
-                        expandedCardIndex = -1
-                      else
-                        expandedCardIndex = rowItems[0]
-                    }, onCapsuleDetailsClicked = onCapsuleClicked,
-                    openCapule = openCapule
-                  )
+                      .weight(0.5F)
+                      .height(200.dp)
+                      .placeholder(
+                          visible = true,
+                          shape = RoundedCornerShape(30.dp),
+                          highlight = PlaceholderHighlight.shimmer(),
+                          color = Color.Gray.copy(alpha = 0.3f),
+                      )
+                      .clip(shape = RoundedCornerShape(30.dp))
+                )
+                Box(
+                  modifier = Modifier
+                      .weight(0.5F)
+                      .height(200.dp)
+                      .placeholder(
+                          visible = true,
+                          shape = RoundedCornerShape(30.dp),
+                          highlight = PlaceholderHighlight.shimmer(),
+                          color = Color.Gray.copy(alpha = 0.3f),
+                      )
+                      .clip(shape = RoundedCornerShape(30.dp))
+                )
+              }
+            }
+          }
+        if (isSuccess) {
+          LazyColumn(
+            modifier = Modifier
+                .fillMaxWidth()
+                .heightIn(max = 12000.dp)
+                .padding(horizontal = 3.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            contentPadding = PaddingValues(0.dp),
+            userScrollEnabled = false
+          ) {
+
+            items((0..<capsuleList.size).chunked(2)) { rowItems ->
+              var p = false
+              if (rowItems[0] == expandedCardIndex) {
+                p = true
+              } else if (rowItems.size == 2) {
+                if (rowItems[1] == expandedCardIndex)
+                  p = true
+              }
+
+              Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+              ) {
+                rowItems.forEachIndexed { index, item ->
+                  val isExpanded = expandedCardIndex == item
+                  if (p && isExpanded != true) {
+                  } else
+                    Box(
+                      modifier = Modifier
+                          .then(
+                              if (rowItems.size == 2 || isExpanded)
+                                  Modifier
+                                      .weight(
+                                          if (isExpanded) 1f else 0.5f,
+                                          fill = false
+                                      )
+                              else
+                                  Modifier.fillMaxWidth(0.5F)
+                          )
+                          .animateContentSize()
+                    ) {
+                      CapsuleCard(
+                        capsuleDetails = capsuleList[item],
+                        isExpanded = isExpanded,
+                        bgColor = ColorsMap.getColor(item),
+                        onClick = {
+                          expandedCardIndex = if (isExpanded) -1 else item
+                        }, onCapsuleDetailsClicked = onCapsuleClicked,
+                        openCapule = openCapule
+                      )
+                    }
                 }
-              else
-                if (rowItems.size == 2)
+              }
+              if (p)
+                if (rowItems[0] != expandedCardIndex)
                   Box(
                     modifier = Modifier
                         .fillMaxWidth(0.5F)
                         .padding(top = 8.dp)
                   ) {
                     CapsuleCard(
-                      capsuleDetails =
-                      capsuleList[rowItems[1]],
-                      isExpanded = expandedCardIndex == rowItems[1],
-                      bgColor = ColorsMap.getColor(rowItems[1]),
+                      capsuleDetails = capsuleList[rowItems[0]],
+                      isExpanded = expandedCardIndex == rowItems[0],
+                      bgColor = ColorsMap.getColor(rowItems[0]),
                       onClick = {
-                        if (expandedCardIndex == rowItems[1])
+                        if (expandedCardIndex == rowItems[0])
                           expandedCardIndex = -1
-                        expandedCardIndex = rowItems[1]
+                        else
+                          expandedCardIndex = rowItems[0]
                       }, onCapsuleDetailsClicked = onCapsuleClicked,
                       openCapule = openCapule
                     )
                   }
+                else
+                  if (rowItems.size == 2)
+                    Box(
+                      modifier = Modifier
+                          .fillMaxWidth(0.5F)
+                          .padding(top = 8.dp)
+                    ) {
+                      CapsuleCard(
+                        capsuleDetails =
+                        capsuleList[rowItems[1]],
+                        isExpanded = expandedCardIndex == rowItems[1],
+                        bgColor = ColorsMap.getColor(rowItems[1]),
+                        onClick = {
+                          if (expandedCardIndex == rowItems[1])
+                            expandedCardIndex = -1
+                          expandedCardIndex = rowItems[1]
+                        }, onCapsuleDetailsClicked = onCapsuleClicked,
+                        openCapule = openCapule
+                      )
+                    }
+            }
           }
         }
       }

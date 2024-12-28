@@ -76,14 +76,6 @@ fun CapsuleCard(
     mutableStateOf(false)
   }
 
-  var sliceUserList by remember {
-    mutableStateOf<Boolean>((capsuleDetails.users).size > 3)
-  }
-
-  LaunchedEffect(capsuleDetails) {
-    sliceUserList = (capsuleDetails.users).size > 3
-  }
-
   // Logic to update the timer every second
   LaunchedEffect(capsuleDetails.time) {
     while (true) {
@@ -260,8 +252,8 @@ fun CapsuleCard(
               horizontalArrangement = Arrangement.Start,
               verticalAlignment = Alignment.CenterVertically
             ) {
-              
-              if (sliceUserList) {
+
+              if (capsuleDetails.users.size > 3) {
                 (capsuleDetails.users).slice(0..2).forEach {
                   Profile(
                     userName = it["userName"] as String,
