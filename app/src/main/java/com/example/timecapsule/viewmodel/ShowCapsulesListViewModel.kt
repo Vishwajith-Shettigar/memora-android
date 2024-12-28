@@ -61,12 +61,13 @@ class ShowCapsulesListViewModel @Inject constructor(
     syncLocalDBUpdateDetailsWithRemote()
   }
 
-  fun getCapsulesList() {
+  fun getCapsulesList(onComplete: () -> Unit = {}) {
     _capsuleListState.value = CapsuleListScreenState.Loading
     viewModelScope.launch(Dispatchers.IO) {
       val result = getCapsuleListUseCase()
       _capsuleListState.value = when (result) {
         is Response.Success -> {
+          onComplete()
           CapsuleListScreenState.Success(result.data!!)
         }
 

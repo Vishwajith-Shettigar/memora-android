@@ -9,6 +9,7 @@ import androidx.compose.animation.core.repeatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -60,6 +61,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -152,6 +154,29 @@ fun CapsuleCardListScreen(
     mutableStateOf(Filter.ALL)
   }
 
+  var refresh by remember {
+    mutableStateOf(false)
+  }
+
+
+  LaunchedEffect(refresh) {
+    if (refresh) {
+      viewModel.getCapsulesList() {
+        refresh = false
+      }
+      rotation.snapTo(0f)
+      coroutineScope.launch {
+        rotation.animateTo(
+          targetValue = 360f * 100F,
+          animationSpec = tween(
+            durationMillis = 1000,
+            easing = LinearOutSlowInEasing
+          )
+        )
+      }
+    }
+
+  }
   // Trigger the animation
   LaunchedEffect(filter) {
     rotation.snapTo(0f)
@@ -319,16 +344,30 @@ fun CapsuleCardListScreen(
               fontFamily = openSansExtraBold
             )
           )
-          AsyncImage(
-            model = R.drawable.onboarding_image,
-            contentDescription = "Profile Picture",
+          Box(
             modifier = Modifier
-                .size(50.dp)
-                .clip(CircleShape)
-                .padding(end = 1.dp)
-                .graphicsLayer(rotationZ = rotation.value),
-            contentScale = ContentScale.Crop
+                .wrapContentSize()
+                .clip(shape = CircleShape)
+                .zIndex(20.0F)
+                .shadow(10.dp, shape = CircleShape)
+                .clickable(true) {
+                    refresh = true
+                }
           )
+          {
+            AsyncImage(
+              model = R.drawable.onboarding_image,
+              contentDescription = "capsule icon",
+              modifier = Modifier
+                  .size(50.dp)
+                  .clip(CircleShape)
+                  .align(Alignment.Center)
+                  .padding(1.dp)
+                  .graphicsLayer(rotationZ = rotation.value),
+              contentScale = ContentScale.Crop,
+
+              )
+          }
         }
 
         Row(
