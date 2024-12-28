@@ -14,6 +14,7 @@ class SharedPreferencesHelper(context: Context) {
     private const val SELECTED_LANGUAGE = "selected_language"
     private const val IS_RECEIVE_NOTIFICATIONS = "is_receive_notification"
     private const val CAN_SHARE_CAPSULES = "can_share_capsules"
+    private const val LOCAL_FCM_TOKEN = "local_fcm_token"
   }
 
   private val sharedPreferences: SharedPreferences =

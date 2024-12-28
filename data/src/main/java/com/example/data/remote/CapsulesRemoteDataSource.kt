@@ -6,6 +6,7 @@ import com.example.model.CapsuleDetails
 import com.example.model.UserDetails
 import com.example.util.InValidUserException
 import com.example.util.NetWorkException
+import com.example.util.NoAuthException
 import com.example.util.Response
 import com.example.util.UnspecifiedException
 import com.firebase.geofire.GeoFireUtils
@@ -237,6 +238,31 @@ class CapsulesRemoteDataSource @Inject constructor(
       return Response.Success(capsuleAssets)
     } catch (e: Exception) {
       Response.Error(UnspecifiedException())
+    }
+  }
+
+  suspend fun setCapsuleOpened(capsuleId: String): Response<Unit> {
+    return try {
+      val userId = authRemoteDataSource.getAuth()?.uid ?: throw NoAuthException()
+      val docref = firestore.collection("users").document(userId)
+
+      val doc = docref.get().await()
+      val capsuleList = doc.get("capsuleList") as? List<Map<String, Any>> ?: emptyList()
+
+      val capsule = capsuleList.find {
+        it["id"] == capsuleId
+      }
+
+      if (capsule != null && !(capsule.get("isOpened") as Boolean)) {
+        val updatedCapsule = capsule.toMutableMap()
+        updatedCapsule["isOpened"] = true
+        docref.update("capsuleList", FieldValue.arrayRemove(capsule)).await()
+        docref.update("capsuleList", FieldValue.arrayUnion(updatedCapsule)).await()
+      }
+
+      Response.Success()
+    } catch (e: Exception) {
+      Response.Error(exception = e)
     }
   }
 }

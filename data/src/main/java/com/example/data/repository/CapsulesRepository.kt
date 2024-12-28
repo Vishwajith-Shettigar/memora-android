@@ -15,6 +15,7 @@ interface CapsulesRepository {
   suspend fun getCapsuleAssets(): Response<List<CapsuleAsset>>
   suspend fun createCapsule(capsuleDetails: CapsuleDetails): Response<Unit>
   suspend fun getCapsuleDetails(capsuleId: String): Response<CapsuleDetails>
+  suspend fun setCapsuleOpened(capsuleId: String): Response<Unit>
   suspend fun sendEmailCaspuleSharing(emailSharingCapsuleDto: EmailSharingCapsuleDto): Response<Unit>
 }
 
@@ -36,6 +37,10 @@ class CapsulesRepositoryImpl @Inject constructor(
 
   override suspend fun getCapsuleDetails(capsuleId: String): Response<CapsuleDetails> {
     return capsulesRemoteDataSource.getCapsuleDetails(capsuleId)
+  }
+
+  override suspend fun setCapsuleOpened(capsuleId: String): Response<Unit> {
+    return capsulesRemoteDataSource.setCapsuleOpened(capsuleId)
   }
 
   override suspend fun sendEmailCaspuleSharing(emailSharingCapsuleDto: EmailSharingCapsuleDto): Response<Unit> {

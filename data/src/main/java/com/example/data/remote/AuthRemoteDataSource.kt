@@ -11,6 +11,8 @@ import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.messaging.FirebaseMessaging
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -20,7 +22,9 @@ import kotlinx.coroutines.tasks.await
 
 // AuthRemoteDataSource.kt
 class AuthRemoteDataSource @Inject constructor(
-  private val firebaseAuth: FirebaseAuth
+  private val firebaseAuth: FirebaseAuth,
+  val firestore: FirebaseFirestore,
+  private val firebaseMessaging: FirebaseMessaging,
 ) {
   suspend fun signInDeprecated(
     email: String,
@@ -60,13 +64,13 @@ class AuthRemoteDataSource @Inject constructor(
     }
   }
 
-
   suspend fun signIn(email: String, password: String): Response<String> {
     return try {
       firebaseAuth.signInWithEmailAndPassword(email, password).await()
       val user = firebaseAuth.currentUser
       if (user != null) {
         if (user.isEmailVerified) {
+          saveTokenToFirestore(null)
           Response.Success(user.uid)
         } else {
           // Sign out if email is not verified
@@ -166,5 +170,23 @@ class AuthRemoteDataSource @Inject constructor(
       return null
     }
   }
-}
 
+  suspend fun saveTokenToFirestore(token: String?) {
+    try {
+
+      val user = getAuth()
+
+      val fcmtoken: String =
+        token ?: firebaseMessaging.token.await()
+
+      val tokenData = mapOf("fcmToken" to fcmtoken)
+
+      user?.uid?.let {
+        firestore.collection("users").document(it)
+          .update(tokenData).await()
+      }
+
+    } catch (_: Exception) {
+    }
+  }
+}

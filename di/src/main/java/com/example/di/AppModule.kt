@@ -148,9 +148,15 @@ abstract class AppModule {
     @Provides
     @Singleton
     fun provideAuthRemoteDataSource(
-      firebaseAuth: FirebaseAuth
+      firebaseAuth: FirebaseAuth,
+      firestore: FirebaseFirestore,
+      firebaseMessaging: FirebaseMessaging
     ): AuthRemoteDataSource {
-      return AuthRemoteDataSource(firebaseAuth)
+      return AuthRemoteDataSource(
+        firestore = firestore,
+        firebaseAuth = firebaseAuth,
+        firebaseMessaging = firebaseMessaging
+      )
     }
 
     @Provides

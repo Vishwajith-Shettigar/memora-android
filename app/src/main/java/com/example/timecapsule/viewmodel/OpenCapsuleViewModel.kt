@@ -15,6 +15,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.domain.usecase.GetCapsuleDetailsUseCase
 import com.example.domain.usecase.Load3dModelUseCase
 import com.example.domain.usecase.OpenCapsuleScreenCheckPointUseCase
+import com.example.domain.usecase.SetCapsuleOpenedUseCase
 import com.example.model.CapsuleDetails
 import com.example.model.DownloadFile
 import com.example.model.NearByCapsule
@@ -48,6 +49,7 @@ class OpenCapsuleViewModel @Inject constructor(
   private val openCapsuleScreenCheckPointUseCase: OpenCapsuleScreenCheckPointUseCase,
   private val getCapsuleDetailsUseCase: GetCapsuleDetailsUseCase,
   private val load3dModelUseCase: Load3dModelUseCase,
+  private val setCapsuleOpenedUseCase: SetCapsuleOpenedUseCase,
   @ApplicationContext private val context: Context
 ) : ViewModel() {
 
@@ -168,6 +170,15 @@ class OpenCapsuleViewModel @Inject constructor(
       route,
       capsuleId = CAPSULE_ID!!
     )
+  }
+
+  fun setCapsuleOpened() {
+    viewModelScope.launch(Dispatchers.IO) {
+      val capsuleDetails =
+        (_capsuleDetailsState.value as DisplayCapsuleDetailsState.Success).capsuleDetails
+      if (capsuleDetails.isOpened == false)
+        setCapsuleOpenedUseCase(capsuleDetails.id)
+    }
   }
 
   private val _progress = MutableStateFlow(0)
