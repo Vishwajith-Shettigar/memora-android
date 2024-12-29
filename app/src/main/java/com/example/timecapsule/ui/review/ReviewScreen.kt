@@ -66,6 +66,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.max
 import androidx.compose.ui.unit.sp
@@ -428,7 +429,7 @@ fun ReviewScreen(
 fun SharedPeople(
   selectedPeoples: MutableList<UserDetails>,
   addedEmails: List<String>,
-  sharedWithALl: Boolean
+  sharedWithALl: Boolean,
 ) {
   Column(
     modifier = Modifier
@@ -447,7 +448,8 @@ fun SharedPeople(
     ShowSelectedPeople(
       disableCrossBtn = true,
       selectedPeoples = selectedPeoples,
-      showSharedWithALl = sharedWithALl
+      showSharedWithALl = sharedWithALl,
+      isReviewScreen = true
     )
     ShowAddedEmails(
       addedEmails = addedEmails, hideRemoveIcon = true
@@ -660,18 +662,37 @@ fun MapPreviewCard(latlang: LatLng) {
 
 @Preview
 @Composable
-fun SharedWithALlIcon(text: String = "All", modifier: Modifier = Modifier.size(40.dp)) {
-  Box(
-    modifier =
-    modifier
-        .clip(shape = CircleShape)
-        .border(1.dp, Color.LightGray, CircleShape)
-        .padding(2.dp)
-  ) {
-    Text(
-      text = "+${text}", modifier = Modifier.align(Alignment.Center),
-      style = MaterialTheme.typography.titleLarge.copy(fontSize = 20.sp),
-      color = MaterialTheme.colorScheme.onSurfaceVariant
+fun SharedWithALlIcon(
+  text: String = "All",
+  modifier: Modifier = Modifier.size(40.dp), textFontSize: TextUnit = 26.sp,
+  isReviewScreen: Boolean = false
+) {
+  if (isReviewScreen)
+    Column(
+      modifier = Modifier
+          .fillMaxHeight()
+          .wrapContentWidth(),
+      verticalArrangement = Arrangement.Center
     )
-  }
+    {
+      Text(
+        text = "+${text}",
+        style = MaterialTheme.typography.titleLarge.copy(fontSize = textFontSize),
+        color = MaterialTheme.colorScheme.onSurfaceVariant
+      )
+    }
+  else
+    Box(
+      modifier =
+      modifier
+          .clip(shape = CircleShape)
+          .border(1.dp, Color.LightGray, CircleShape)
+          .padding(2.dp)
+    ) {
+      Text(
+        text = "+${text}", modifier = Modifier.align(Alignment.Center),
+        style = MaterialTheme.typography.titleLarge.copy(fontSize = textFontSize),
+        color = MaterialTheme.colorScheme.onSurfaceVariant
+      )
+    }
 }

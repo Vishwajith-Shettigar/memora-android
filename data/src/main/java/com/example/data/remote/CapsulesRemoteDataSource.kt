@@ -143,7 +143,8 @@ class CapsulesRemoteDataSource @Inject constructor(
             ownerUserName = capsuleDoc.get("ownerUserName") as String,
             location = location,
             fileUrls = capsuleDoc.get("fileUrls") as List<Map<String, String>>,
-            isOpened = capsule["isOpened"] as Boolean
+            isOpened = capsule["isOpened"] as Boolean,
+            isSharedWithAll = capsuleDoc.get("sharedWithAll") as Boolean
           )
           capsulesDetailsList.add(capsuleDetails)
         }

@@ -254,6 +254,7 @@ fun CapsuleCard(
             ) {
 
               if (capsuleDetails.users.size > 3) {
+
                 (capsuleDetails.users).slice(0..2).forEach {
                   Profile(
                     userId = it["userId"] as String,
@@ -280,6 +281,9 @@ fun CapsuleCard(
                     hideUserName = true,
                     remove = {}
                   )
+                }
+                if (capsuleDetails.isSharedWithAll) {
+                  SharedWithALlIcon(textFontSize = 15.sp)
                 }
               }
             }
