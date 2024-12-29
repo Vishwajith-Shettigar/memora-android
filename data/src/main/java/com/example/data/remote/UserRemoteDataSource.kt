@@ -1,5 +1,6 @@
 package com.example.data.remote
 
+import android.util.Log
 import androidx.room.Update
 import com.example.data.local.entity.Review
 import com.example.data.local.entity.UpdateDetails
@@ -208,6 +209,7 @@ class UserRemoteDataSource @Inject constructor(
     val coverImageUrl = document.get("coverImageUrl") as String
     val aboutMe = document.get("aboutMe") as String
     val email = document.get("email") as String
+    val receiveCapsule = document.get("shareCapsules") as Boolean
 
     val user = UserDetails(
       userId = userId,
@@ -221,6 +223,7 @@ class UserRemoteDataSource @Inject constructor(
       userNameLowerCase = "",
       firstNameLowerCase = "",
       aboutMe = aboutMe,
+      shareCapsules = receiveCapsule
     )
     return user
   }

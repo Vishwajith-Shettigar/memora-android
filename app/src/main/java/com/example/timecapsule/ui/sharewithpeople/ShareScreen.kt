@@ -1,5 +1,7 @@
 package com.example.timecapsule.ui.sharewithpeople
 
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -57,6 +59,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -120,7 +123,6 @@ fun ShareScreen(
             fontWeight = FontWeight.Bold,
             modifier = Modifier
               .padding(start = 15.dp, top = 50.dp, bottom = 8.dp)
-
           )
         }
 
@@ -324,6 +326,8 @@ fun UserInfo(
   addSelectedPeople: (UserDetails) -> Unit = {},
   onViewProfileClick: (String) -> Unit
 ) {
+
+  val context = LocalContext.current
   val isTablet = DeviceType.isTablet()
   val interactionSource = remember { MutableInteractionSource() }
 
@@ -392,11 +396,21 @@ fun UserInfo(
     }
 
     IconButton(
-      onClick = { addSelectedPeople(user) },
+      onClick = {
+        if (user.shareCapsules)
+          addSelectedPeople(user)
+        else
+          Toast.makeText(context, "The user has disabled receiving capsules.", Toast.LENGTH_SHORT)
+            .show()
+      },
     ) {
       Icon(
-        painter = painterResource(id = com.example.timecapsule.R.drawable.ic_add),
-        contentDescription = "add icon",
+        painter =
+        if (user.shareCapsules)
+          painterResource(id = com.example.timecapsule.R.drawable.ic_add)
+        else
+          painterResource(id = com.example.timecapsule.R.drawable.ic_info),
+        contentDescription = "add icon or info icon",
         tint = MaterialTheme.colorScheme.onSurfaceVariant
       )
     }
