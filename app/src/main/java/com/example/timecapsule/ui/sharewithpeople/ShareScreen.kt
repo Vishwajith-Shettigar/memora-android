@@ -89,25 +89,25 @@ fun ShareScreen(
 
   Scaffold(
     modifier = Modifier
-      .fillMaxSize()
-      .padding(scaffoldPadding)
-      .background(MaterialTheme.colorScheme.primary),
+        .fillMaxSize()
+        .padding(scaffoldPadding)
+        .background(MaterialTheme.colorScheme.primary),
     containerColor = MaterialTheme.colorScheme.primary,
   ) { innerPadding ->
     Box(
       modifier = Modifier
-        .padding(
-          start = innerPadding.calculateStartPadding(LayoutDirection.Ltr),
-          end = innerPadding.calculateEndPadding(LayoutDirection.Ltr),
-          top = innerPadding.calculateTopPadding()
-        )
-        .fillMaxSize()
+          .padding(
+              start = innerPadding.calculateStartPadding(LayoutDirection.Ltr),
+              end = innerPadding.calculateEndPadding(LayoutDirection.Ltr),
+              top = innerPadding.calculateTopPadding()
+          )
+          .fillMaxSize()
     ) {
       Column(
         modifier = Modifier
-          .fillMaxSize()
-          .verticalScroll(rememberScrollState())
-          .padding(bottom = 30.dp), verticalArrangement = Arrangement.Top
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(bottom = 30.dp), verticalArrangement = Arrangement.Top
       ) {
         // Visibility Text
         AnimatedVisibility(
@@ -126,9 +126,9 @@ fun ShareScreen(
 
         // Content Section
         Column(
-          Modifier
-            .wrapContentSize()
-            .padding(16.dp),
+            Modifier
+                .wrapContentSize()
+                .padding(16.dp),
           verticalArrangement = Arrangement.Top,
           horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -163,10 +163,10 @@ fun ShareScreen(
       // Bottom Navigation Row
       Box(
         modifier = Modifier
-          .fillMaxWidth()
-          .padding(0.dp)
-          .align(Alignment.BottomCenter)
-          .zIndex(2f)
+            .fillMaxWidth()
+            .padding(0.dp)
+            .align(Alignment.BottomCenter)
+            .zIndex(2f)
       ) {
         NavigationRow { navigationFlow ->
           onNavigate(navigationFlow)
@@ -225,8 +225,8 @@ fun SearchPeople(
 
     Row(
       modifier = Modifier
-        .fillMaxWidth()
-        .padding(vertical = 10.dp),
+          .fillMaxWidth()
+          .padding(vertical = 10.dp),
       horizontalArrangement = Arrangement.SpaceBetween,
       verticalAlignment = Alignment.CenterVertically
     ) {
@@ -236,13 +236,13 @@ fun SearchPeople(
           isEmailEnabled = !isEmailEnabled
           searchValue = ""
         }, modifier = Modifier
-          .clip(RoundedCornerShape(20.dp))
-          .border(
-            1.dp,
-            shape = RoundedCornerShape(20.dp),
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-          )
-          .padding(horizontal = 5.dp)
+              .clip(RoundedCornerShape(20.dp))
+              .border(
+                  1.dp,
+                  shape = RoundedCornerShape(20.dp),
+                  color = MaterialTheme.colorScheme.onSurfaceVariant
+              )
+              .padding(horizontal = 5.dp)
       ) {
         Icon(
           painter = painterResource(id = com.example.timecapsule.R.drawable.ic_email),
@@ -299,11 +299,11 @@ fun SearchPeople(
     // Search Results (Non-scrollable LazyColumn)
     Column(
       modifier = Modifier
-        .fillMaxWidth()
-        .heightIn(max = 200.dp) // Limit LazyColumn height
-        .clip(shape = RoundedCornerShape(10.dp))
-        .padding(top = 20.dp)
-        .background(MaterialTheme.colorScheme.primary),
+          .fillMaxWidth()
+          .heightIn(max = 200.dp) // Limit LazyColumn height
+          .clip(shape = RoundedCornerShape(10.dp))
+          .padding(top = 20.dp)
+          .background(MaterialTheme.colorScheme.primary),
     ) {
       searchResult.forEach { user ->
         UserInfo(
@@ -331,20 +331,20 @@ fun UserInfo(
       .fillMaxWidth()
 
   Row(
-    rowMod
-      .wrapContentHeight()
-      .padding(5.dp)
-      .clickable(
-        onClick = {}, interactionSource = interactionSource,
-        indication = ripple()
-      ),
+      rowMod
+          .wrapContentHeight()
+          .padding(5.dp)
+          .clickable(
+              onClick = {}, interactionSource = interactionSource,
+              indication = ripple()
+          ),
     verticalAlignment = Alignment.CenterVertically,
     horizontalArrangement = Arrangement.SpaceBetween,
   ) {
     Row(
-      Modifier
-        .wrapContentWidth()
-        .wrapContentHeight(),
+        Modifier
+            .wrapContentWidth()
+            .wrapContentHeight(),
       verticalAlignment = Alignment.CenterVertically,
       horizontalArrangement = Arrangement.Start,
     ) {
@@ -352,22 +352,22 @@ fun UserInfo(
         model = user.imageUrl,
         contentDescription = "seleccted people",
         modifier = Modifier
-          .height(50.dp)
-          .width(50.dp)
-          .clip(shape = CircleShape),
+            .height(50.dp)
+            .width(50.dp)
+            .clip(shape = CircleShape),
         contentScale = ContentScale.Crop
       )
       Column(
         modifier = if (!isTablet) {
-          Modifier
-            .wrapContentWidth()
-            .wrapContentHeight()
-            .padding(horizontal = 10.dp)
+            Modifier
+                .wrapContentWidth()
+                .wrapContentHeight()
+                .padding(horizontal = 10.dp)
         } else {
-          Modifier
-            .widthIn(min = 500.dp, max = 900.dp)
-            .wrapContentHeight()
-            .padding(horizontal = 10.dp)
+            Modifier
+                .widthIn(min = 500.dp, max = 900.dp)
+                .wrapContentHeight()
+                .padding(horizontal = 10.dp)
 
         }
       ) {
@@ -402,27 +402,31 @@ fun UserInfo(
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun ShowAddedEmails(addedEmails: List<String>, onRemoveCLicked: (String) -> Unit) {
+fun ShowAddedEmails(
+  addedEmails: List<String>,
+  hideRemoveIcon: Boolean = false,
+  onRemoveCLicked: (String) -> Unit
+) {
   LazyVerticalGrid(
     columns = GridCells.Fixed(2),
     modifier = Modifier
-      .padding(vertical = 10.dp)
-      .fillMaxWidth()
-      .heightIn(max = 300.dp)
+        .padding(vertical = 10.dp)
+        .fillMaxWidth()
+        .heightIn(max = 300.dp),
   ) {
     items(addedEmails) {
-      EmailChip(email = it, onRemoveCLicked)
+      EmailChip(email = it, hideRemoveIcon, onRemoveCLicked)
     }
   }
 }
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun EmailChip(email: String, onRemoveClick: (String) -> Unit) {
+fun EmailChip(email: String, hideRemoveIcon: Boolean = false, onRemoveClick: (String) -> Unit) {
   Chip(
     modifier = Modifier
-      .fillMaxWidth()
-      .padding(1.dp),
+        .fillMaxWidth()
+        .padding(1.dp),
     onClick = { /*TODO*/ },
     colors = ChipDefaults.chipColors(backgroundColor = Color.LightGray)
   ) {
@@ -438,13 +442,14 @@ fun EmailChip(email: String, onRemoveClick: (String) -> Unit) {
         modifier = Modifier.weight(0.8F),
         color = Color.Black
       )
-      IconButton(onClick = { onRemoveClick(email) }, modifier = Modifier.weight(0.2F)) {
-        Icon(
-          painter = painterResource(id = com.example.timecapsule.R.drawable.ic_close),
-          contentDescription = "close icon", Modifier.size(20.dp),
-          tint = Color.Black
-        )
-      }
+      if (!hideRemoveIcon)
+        IconButton(onClick = { onRemoveClick(email) }, modifier = Modifier.weight(0.2F)) {
+          Icon(
+            painter = painterResource(id = com.example.timecapsule.R.drawable.ic_close),
+            contentDescription = "close icon", Modifier.size(20.dp),
+            tint = Color.Black
+          )
+        }
     }
   }
 }
@@ -462,8 +467,8 @@ fun ShowSelectedPeople(
 
   LazyHorizontalGrid(
     modifier = modifier
-      .wrapContentSize()
-      .heightIn(max = 105.dp),
+        .wrapContentSize()
+        .heightIn(max = 105.dp),
     rows = GridCells.Fixed(1)
   ) {
     items(selectedPeoples) { user ->
@@ -495,33 +500,33 @@ fun Profile(
 ) {
 
   val imageModifier = if (isOwner)
-    Modifier
-      .height(size)
-      .width(size)
-      .clip(shape = CircleShape)
-      .border(2.dp, color = Color.Red, shape = CircleShape)
+      Modifier
+          .height(size)
+          .width(size)
+          .clip(shape = CircleShape)
+          .border(2.dp, color = Color.Red, shape = CircleShape)
   else
-    Modifier
-      .height(size)
-      .width(size)
-      .clip(shape = CircleShape)
+      Modifier
+          .height(size)
+          .width(size)
+          .clip(shape = CircleShape)
 
 
   Column(
     modifier = Modifier
-      .wrapContentHeight()
-      .wrapContentWidth()
-      .padding(horizontal = 4.dp)
-      .background(Color.Transparent),
+        .wrapContentHeight()
+        .wrapContentWidth()
+        .padding(horizontal = 4.dp)
+        .background(Color.Transparent),
     horizontalAlignment = Alignment.CenterHorizontally
   ) {
 
     Box(
       modifier = Modifier
-        .wrapContentHeight()
-        .wrapContentWidth()
-        .padding(horizontal = 4.dp)
-        .background(Color.Transparent),
+          .wrapContentHeight()
+          .wrapContentWidth()
+          .padding(horizontal = 4.dp)
+          .background(Color.Transparent),
     )
     {
       AsyncImage(
@@ -533,17 +538,17 @@ fun Profile(
       if (!disableCrossBtn)
         IconButton(
           onClick = { remove(userName) }, modifier = Modifier
-            .height(30.dp)
-            .width(30.dp)
-            .align(Alignment.TopEnd)
+                .height(30.dp)
+                .width(30.dp)
+                .align(Alignment.TopEnd)
         ) {
           Icon(
             painter = painterResource(id = R.drawable.ic_close),
             contentDescription = "seleccted people",
             tint = Color.Gray, modifier = Modifier
-              .height(30.dp)
-              .width(30.dp)
-              .align(Alignment.Center)
+                  .height(30.dp)
+                  .width(30.dp)
+                  .align(Alignment.Center)
           )
         }
 
