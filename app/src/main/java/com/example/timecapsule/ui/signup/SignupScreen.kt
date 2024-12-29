@@ -42,7 +42,9 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.timecapsule.R
 import com.example.timecapsule.routes.Screen
+import com.example.timecapsule.ui.theme.LightBlue
 import com.example.timecapsule.ui.theme.SignUpBackground
+import com.example.timecapsule.ui.theme.openSansExtraBold
 import com.example.timecapsule.ui.util.Device
 import com.example.timecapsule.ui.util.DeviceType
 import com.example.timecapsule.viewmodel.AuthState
@@ -102,7 +104,7 @@ fun CustomTextField(
       }
     },
     supportingText = {
-      if (isError && errorText!=null)
+      if (isError && errorText != null)
         Text(
           text = errorText,
           color = Color.Red
@@ -175,17 +177,17 @@ fun SignUpScreenMobile(
     modifier = modifier
         .fillMaxSize()
         .background(
-            Brush.verticalGradient(
-                SignUpBackground
-            )
+            LightBlue.copy(alpha = 0.6f)
+
         )
         .padding(horizontal = 16.dp)
+        .systemBarsPadding()
   ) {
 
     Spacer(modifier = Modifier.height(5.dp))
 
     // Top Decorative Image
-    TopImage()
+//    TopImage()
 
     Spacer(modifier = Modifier.height(5.dp))
     BodyPart(
@@ -309,28 +311,21 @@ fun BodyPart(
     verticalArrangement =
     if (isTablet) Arrangement.Center
     else
-      Arrangement.Top,
+      Arrangement.Center,
     modifier = Modifier.fillMaxSize()
   ) {
     // Title
     Text(
       text = stringResource(id = R.string.register_headline),
-      fontSize = 32.sp,
+      modifier = Modifier.fillMaxWidth(),
+      fontSize = 62.sp,
       fontWeight = FontWeight.Bold,
       color = Color.White,
-      textAlign = TextAlign.Center
+      textAlign = TextAlign.Start,
+      fontFamily = openSansExtraBold
     )
 
-    // Subtitle
-    Text(
-      text = stringResource(id = R.string.register_subheadline),
-      fontSize = 16.sp,
-      color = Color.White.copy(alpha = 0.8f),
-      textAlign = TextAlign.Center,
-      modifier = Modifier.padding(vertical = 8.dp)
-    )
-
-    Spacer(modifier = Modifier.height(5.dp))
+    Spacer(modifier = Modifier.height(35.dp))
 
     // Input Fields
     com.example.timecapsule.ui.login.CustomTextField(

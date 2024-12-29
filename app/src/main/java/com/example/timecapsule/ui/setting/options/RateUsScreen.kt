@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -153,8 +154,8 @@ fun RateUsScreen(viewModel: ReviewViewModel = hiltViewModel(), onBackClick: () -
   Column(
     modifier = Modifier
         .fillMaxSize()
-        .background(bgColor)
-        .padding(top = 10.dp),
+        .background(bgColor).systemBarsPadding()
+        .padding(top = 20.dp),
   ) {
     BackRow() {
       onBackClick()

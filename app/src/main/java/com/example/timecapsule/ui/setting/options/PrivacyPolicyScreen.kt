@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -32,7 +33,7 @@ fun PrivacyPolicyScreen(onBackClick: () -> Unit) {
   LazyColumn(
     modifier = Modifier
         .fillMaxWidth()
-        .background(MaterialTheme.colorScheme.primary)
+        .background(MaterialTheme.colorScheme.primary).systemBarsPadding()
         .padding(top = 16.dp),
     verticalArrangement = Arrangement.spacedBy(8.dp)
   ) {

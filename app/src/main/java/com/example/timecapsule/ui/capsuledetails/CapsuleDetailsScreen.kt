@@ -44,6 +44,7 @@ import com.google.android.gms.maps.model.LatLng
 @Composable
 fun previewProfile() {
   Profile(
+    userId = "",
     userName = "dark6v",
     "https://firebasestorage.googleapis.com/v0/b/time-capsule-android.appspot.com/o/default_profile_pictures%2Ftestimg3.jpg?alt=media&token=0f8ad9af-9661-462f-9dfd-d99612109170",
     true,
@@ -311,11 +312,13 @@ fun BottomPart(
           capsuleDetails?.users?.let {
             items(it) { user ->
               Profile(
+                userId = user["userId"] as String,
                 isOwner = user["isOwner"] as Boolean,
                 userName = user["userName"] as String,
                 imageUrl = user["imageUrl"] as String,
                 disableCrossBtn = true,
-                remove = {})
+                remove = {},
+                onClick = {})
             }
           }
           if (capsuleDetails?.isSharedWithAll == true) {

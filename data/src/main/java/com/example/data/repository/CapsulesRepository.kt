@@ -1,7 +1,9 @@
 package com.example.data.repository
 
+import com.example.data.dto.EmailSharingCapsuleDto
 import com.example.data.remote.CapsulesRemoteDataSource
 import com.example.data.remote.UserRemoteDataSource
+import com.example.data.retrofilApi.EmailSharingCapsuleApi
 import com.example.model.CapsuleAsset
 import com.example.model.CapsuleDetails
 import com.example.util.Response
@@ -13,10 +15,13 @@ interface CapsulesRepository {
   suspend fun getCapsuleAssets(): Response<List<CapsuleAsset>>
   suspend fun createCapsule(capsuleDetails: CapsuleDetails): Response<Unit>
   suspend fun getCapsuleDetails(capsuleId: String): Response<CapsuleDetails>
+  suspend fun setCapsuleOpened(capsuleId: String): Response<Unit>
+  suspend fun sendEmailCaspuleSharing(emailSharingCapsuleDto: EmailSharingCapsuleDto): Response<Unit>
 }
 
 class CapsulesRepositoryImpl @Inject constructor(
-  val capsulesRemoteDataSource: CapsulesRemoteDataSource
+  val capsulesRemoteDataSource: CapsulesRemoteDataSource,
+  val emailSharingCapsuleApi: EmailSharingCapsuleApi
 ) : CapsulesRepository {
   override suspend fun getCapsulesList(): Response<List<CapsuleDetails>> {
     return capsulesRemoteDataSource.getCapsulesList()
@@ -32,5 +37,18 @@ class CapsulesRepositoryImpl @Inject constructor(
 
   override suspend fun getCapsuleDetails(capsuleId: String): Response<CapsuleDetails> {
     return capsulesRemoteDataSource.getCapsuleDetails(capsuleId)
+  }
+
+  override suspend fun setCapsuleOpened(capsuleId: String): Response<Unit> {
+    return capsulesRemoteDataSource.setCapsuleOpened(capsuleId)
+  }
+
+  override suspend fun sendEmailCaspuleSharing(emailSharingCapsuleDto: EmailSharingCapsuleDto): Response<Unit> {
+    return try {
+      emailSharingCapsuleApi.shareCapsuleWithEmails(emailSharingCapsuleDto)
+      Response.Success()
+    } catch (e: Exception) {
+      Response.Error(exception = e)
+    }
   }
 }

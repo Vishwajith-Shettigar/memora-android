@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Scaffold
@@ -58,7 +59,7 @@ fun ChangeLanguageScreen(
   Column(
     modifier = Modifier
         .fillMaxSize()
-        .background(MaterialTheme.colorScheme.primary)
+        .background(MaterialTheme.colorScheme.primary).systemBarsPadding()
         .padding(top = 20.dp),
     verticalArrangement = Arrangement.Top
   ) {

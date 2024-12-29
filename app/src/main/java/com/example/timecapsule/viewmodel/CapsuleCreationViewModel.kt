@@ -13,12 +13,14 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.data.dto.EmailSharingCapsuleDto
 import com.example.data.dto.NotificationDto
 import com.example.domain.usecase.CreateCapsuleUseCase
 import com.example.domain.usecase.GetCapsuleAssetsUseCase
 import com.example.domain.usecase.GetUserDetailsUseCase
 import com.example.domain.usecase.SearchUsersUseCase
 import com.example.domain.usecase.SendCapsuleCreationNotificationUseCase
+import com.example.domain.usecase.SendEmailCaspuleSharingUseCase
 import com.example.domain.usecase.UploadFilesUseCase
 import com.example.domain.usecase.getUserIDUseCase
 import com.example.model.CapsuleAsset
@@ -95,6 +97,7 @@ class CapsuleCreationViewModel @Inject constructor(
   private val createCapsuleUseCase: CreateCapsuleUseCase,
   private val getUsersDetailsUseCase: GetUserDetailsUseCase,
   private val sendCapsuleCreationNotificationUseCase: SendCapsuleCreationNotificationUseCase,
+  private val sendEmailCaspuleSharingUseCase: SendEmailCaspuleSharingUseCase,
   @ApplicationContext private val context: Context
 ) : ViewModel() {
 
@@ -154,6 +157,7 @@ class CapsuleCreationViewModel @Inject constructor(
   val capsuleCreationState: StateFlow<CapsuleCreationState> = _capsuleCreationState
 
   val selectedPeoples = mutableStateListOf<UserDetails>()
+  val addedEmails = mutableStateListOf<String>()
 
   var userLetterText by mutableStateOf("")
 
@@ -210,28 +214,36 @@ class CapsuleCreationViewModel @Inject constructor(
 
   fun sendCapsuleCreationNotifications() {
 
-    val selectedUserIds = selectedPeoples.filter {
-      it.userId != ownerUserDetails.userId
-    }.map {
-      it.userId
-    }
-
-    if (selectedUserIds.size == 0)
-      return
-
-    val notificationDto = NotificationDto(
-      userIds = selectedUserIds.toList(),
-      title = "📢 New Capsule Alert! 🚀",
-      body = "has shared new capsule with you.",
-      capsuleId = CAPSULE_ID,
-      username = ownerUserDetails.userName,
-      userImageUrl = ownerUserDetails.imageUrl
-    )
-
-    viewModelScope.launch {
-      withContext(Dispatchers.IO) {
-        sendCapsuleCreationNotificationUseCase(notificationDto)
+    try {
+      val selectedUserIds = selectedPeoples.filter {
+        it.userId != ownerUserDetails.userId
+      }.map {
+        it.userId
       }
+
+      if (selectedUserIds.size == 0)
+        return
+
+      val notificationDto = NotificationDto(
+        userIds = selectedUserIds.toList(),
+        title = "📢 New Capsule Alert! 🚀",
+        body = "has shared new capsule with you.",
+        capsuleId = CAPSULE_ID,
+        username = ownerUserDetails.userName,
+        userImageUrl = ownerUserDetails.imageUrl
+      )
+
+      viewModelScope.launch {
+        withContext(Dispatchers.IO) {
+
+          try {
+
+            sendCapsuleCreationNotificationUseCase(notificationDto)
+          } catch (e: Exception) {
+          }
+        }
+      }
+    } catch (e: Exception) {
     }
   }
 
@@ -409,13 +421,26 @@ class CapsuleCreationViewModel @Inject constructor(
             isSharedWithAll = shareWithPeopleOption == ShareWithPeopleOption.SHARE_ALL
           )
 
+          val filteredEmails = addedEmails.toList().filter {
+            it != ownerUserDetails.email
+          }
+
+          val emailSharingCapsuleDto = EmailSharingCapsuleDto(
+            emails = filteredEmails,
+            capsuleId = CAPSULE_ID,
+            username = ownerUserDetails.userName
+          )
+
+          val emailResponse = sendEmailCaspuleSharingUseCase(emailSharingCapsuleDto)
+          if (emailResponse is Response.Error)
+            return@withContext
+
           val response = createCapsuleUseCase(capsuleDetails)
           withContext(Dispatchers.Main)
           {
             when (response) {
               is Response.Success -> {
                 sendCapsuleCreationNotifications()
-                delay(2000)
                 _capsuleCreationState.value = CapsuleCreationState.Success
               }
 

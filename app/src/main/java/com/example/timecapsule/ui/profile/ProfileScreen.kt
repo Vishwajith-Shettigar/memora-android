@@ -23,8 +23,10 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.ripple
@@ -72,7 +74,7 @@ import com.example.timecapsule.viewmodel.ProfileViewModel
 @Composable
 fun ProfileScreen(
   viewModel: ProfileViewModel = hiltViewModel(),
-  onViewProfileClick: (Profile) -> Unit = {}, onSettingClick: () -> Unit,
+  onViewProfileClick: (String) -> Unit = {}, onSettingClick: () -> Unit,
   onContactUsClicked: () -> Unit, onPrivacyClicked: () -> Unit
 ) {
 
@@ -155,7 +157,8 @@ fun ProfileScreen(
                   shape = RoundedCornerShape(topStart = 36.dp, topEnd = 36.dp)
               )
               .padding(top = 10.dp)
-              .weight(1.0f),
+              .weight(1.0f)
+              .verticalScroll(rememberScrollState()),
           horizontalAlignment = Alignment.CenterHorizontally,
           verticalArrangement = Arrangement.Center
         ) {
@@ -174,7 +177,7 @@ fun ProfileScreen(
                     color = MaterialTheme.colorScheme.primaryContainer
                 ), onClick = {
               if (profileState is ProfileState.Success)
-                onViewProfileClick((profileState as ProfileState.Success).data)
+                onViewProfileClick((profileState as ProfileState.Success).data.userId)
             }) {
               Icon(
                 painter = painterResource(id = com.example.timecapsule.R.drawable.icon_face),

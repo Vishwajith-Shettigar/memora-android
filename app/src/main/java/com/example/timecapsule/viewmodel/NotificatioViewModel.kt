@@ -9,6 +9,7 @@ import com.example.domain.usecase.SendCapsuleCreationNotificationUseCase
 import com.example.model.CapsuleDetails
 import com.example.model.NotificationDetails
 import com.example.util.Response
+import com.example.util.UnspecifiedException
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.scopes.ViewModelScoped
 import java.lang.Exception

@@ -72,7 +72,6 @@ class ProfileViewModel @Inject constructor(
   fun getProfile() {
     viewModelScope.launch(Dispatchers.IO) {
       val response = getProfileUseCase()
-
       withContext(Dispatchers.Main) {
         when (response) {
           is Response.Success -> {

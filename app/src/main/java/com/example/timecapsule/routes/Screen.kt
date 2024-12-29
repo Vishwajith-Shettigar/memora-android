@@ -23,20 +23,15 @@ sealed class Screen(val route: String) {
   }
 
   object ViewProfile :
-    Screen("view_profile/{username}/{firstName}/{lastName}/{aboutMe}/{profileImageUrl}/{coverImageUrl}") {
+    Screen("view_profile/{userId}") {
     fun createRoute(
-      username: String,
-      firstName: String,
-      lastName: String,
-      aboutMe: String,
-      profileImageUrl: String,
-      coverImageUrl: String
+    userId:String
     ) =
-      "view_profile/${username}/${firstName}/${lastName}/${aboutMe}/${Uri.encode(profileImageUrl)}/${
-        Uri.encode(
-          coverImageUrl
-        )
-      }"
+      "view_profile/${userId}"
+  }
+
+  object ArScreen : Screen("ar_screen/{modelId}") {
+    fun createRoute(modelId: String) = "ar_screen/${modelId}"
   }
 
   // Sub screens in profile

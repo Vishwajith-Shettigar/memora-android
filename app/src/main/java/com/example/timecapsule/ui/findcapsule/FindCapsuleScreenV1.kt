@@ -4,7 +4,9 @@ import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.location.Location
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -23,6 +25,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -37,7 +40,10 @@ import com.example.model.NearByCapsule
 import com.example.timecapsule.BuildConfig
 import com.example.timecapsule.R
 import com.example.timecapsule.routes.Screen
+import com.example.timecapsule.ui.nearbycapsules.calculateDistance
+import com.example.timecapsule.ui.util.checkARCoreAvailability
 import com.example.timecapsule.viewmodel.DisplayCapsuleDetailsState
+import com.example.timecapsule.viewmodel.Load3dModelState
 import com.example.timecapsule.viewmodel.OpenCapsuleViewModel
 import com.example.util.getModel
 import com.google.android.gms.location.LocationCallback
@@ -46,6 +52,7 @@ import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.firebase.firestore.GeoPoint
 import com.mapbox.geojson.Feature
+import com.mapbox.geojson.FeatureCollection
 import com.mapbox.geojson.Point
 import com.mapbox.maps.CameraOptions
 import com.mapbox.maps.MapboxExperimental
@@ -58,11 +65,14 @@ import com.mapbox.maps.extension.compose.style.DoubleValue
 import com.mapbox.maps.extension.compose.style.layers.ModelIdValue
 import com.mapbox.maps.extension.compose.style.layers.generated.ModelLayer
 import com.mapbox.maps.extension.compose.style.layers.generated.ModelTypeValue
+import com.mapbox.maps.extension.compose.style.layers.generated.SymbolLayer
 import com.mapbox.maps.extension.compose.style.sources.GeoJSONData
 import com.mapbox.maps.extension.compose.style.sources.generated.rememberGeoJsonSourceState
 import com.mapbox.maps.extension.style.expressions.generated.Expression
 import com.mapbox.maps.extension.style.model.addModel
 import com.mapbox.maps.extension.style.model.model
+import com.mapbox.maps.extension.style.sources.addSource
+import com.mapbox.maps.extension.style.sources.generated.GeoJsonSource
 import com.mapbox.maps.plugin.animation.MapAnimationOptions
 import com.mapbox.maps.plugin.annotation.annotations
 import com.mapbox.maps.plugin.annotation.generated.PointAnnotationManager
@@ -110,7 +120,7 @@ fun getInitialLocation(context: Context, onLocationFetched: (Point) -> Unit) {
 fun FindCapsuleScreenV1(
   navController: NavController = rememberNavController(),
   viewModel: OpenCapsuleViewModel = hiltViewModel(),
-  navigate: (String) -> Unit = {}
+  navigate: (String) -> Unit = {}, onViewAr: (String) -> Unit
 ) {
 
   val capsuleDetails = remember {
@@ -118,11 +128,14 @@ fun FindCapsuleScreenV1(
       as DisplayCapsuleDetailsState.Success).capsuleDetails
   }
 
+  val loadModelState by viewModel.loadingLoad3dModelState.collectAsState()
+
   val selectedCapsule = remember {
     NearByCapsule(
       capsuleId = capsuleDetails.id, location = capsuleDetails.location!!,
       capsuleTitle = capsuleDetails.title, capsuleImageUrl = capsuleDetails.imageUrl,
-      modelId = capsuleDetails.modelId.toString()
+      modelId = capsuleDetails.modelId.toString(), description = capsuleDetails.description,
+      time = capsuleDetails.time
     )
   }
 
@@ -139,7 +152,7 @@ fun FindCapsuleScreenV1(
   }
 
   val modelUri by remember {
-    mutableStateOf(getModel(modelId.toString()))
+    mutableStateOf(viewModel.modelPath)
   }
 
   LaunchedEffect(Unit) {
@@ -160,10 +173,10 @@ fun FindCapsuleScreenV1(
   val context = LocalContext.current
   val initialCamera = rememberMapViewportState {
     (setCameraOptions {
-      zoom(17.0)
+      zoom(90.0)
       center(initialCameraPoint)
-      pitch(60.0)
-      bearing(16.0)
+      pitch(360.0)
+      bearing(200.0)
     })
   }
 
@@ -197,10 +210,22 @@ fun FindCapsuleScreenV1(
       modelId.toString(),
       modelUri,
       selectedCapsule = selectedCapsule,
-      navigate = navigate
-    ) {
-      userLocationPoint = it
-    }
+      isCapsuleSelected = viewModel.isCapsuleSelected,
+      loadModelState = loadModelState,
+      navigate = navigate, updateLocation = {
+        userLocationPoint = it
+      }, onCapsuleSelected = { it ->
+        viewModel.isCapsuleSelected = it
+      },
+      onArViewClicked = {
+        onViewAr(selectedCapsule.modelId)
+      },
+      setModelLoadingStateIdle = {
+        viewModel.setModelLoadingStateIdle()
+      },
+      loadModel = {
+        viewModel.loadModel(selectedCapsule.modelId)
+      })
   }
 }
 
@@ -216,41 +241,60 @@ fun MapView(
   locationPoint: Point?,
   capsulePoint: Point,
   modelId: String,
-  modelUri: String,
+  modelUri: String?,
   selectedCapsule: NearByCapsule,
+  isCapsuleSelected: Boolean,
+  loadModelState: Load3dModelState,
   navigate: (String) -> Unit,
   updateLocation: (Point) -> Unit,
+  onCapsuleSelected: (Boolean) -> Unit,
+  onArViewClicked: () -> Unit,
+  setModelLoadingStateIdle: () -> Unit,
+  loadModel: () -> Unit
 ) {
   var pointAnnotationManager by remember { mutableStateOf<PointAnnotationManager?>(null) }
 
-  var is3dModelSelected by remember {
-    mutableStateOf(false)
-  }
-
-  if (is3dModelSelected)
-    ShowDialog(selectedCapsule = selectedCapsule, openCapsule = {
-      is3dModelSelected = false
-      navigate(Screen.OpenCapsuleContentScreen.route)
-    }, closeDialog = {
-      is3dModelSelected = false
-    })
+  if (isCapsuleSelected)
+    ShowDialog(selectedCapsule = selectedCapsule, modelState = loadModelState,
+      flag = true,
+      openCapsule = {
+        onCapsuleSelected(false)
+        navigate(Screen.OpenCapsuleContentScreen.route)
+      }, closeDialog = {
+        onCapsuleSelected(false)
+      }, viewAr = {
+        if (checkARCoreAvailability(context))
+          onArViewClicked()
+      }, load3dModel = {
+      })
 
   MapboxMap(
     modifier.fillMaxSize(),
     mapViewportState = cameraView,
     onMapClickListener = { point ->
       if (is3dModelClicked(point, modelCoordinates = capsulePoint)) {
-        if (arePointsWithin10Meters(locationPoint, capsulePoint))
-          is3dModelSelected = true
+        if (arePointsWithin10Meters(locationPoint, capsulePoint)) {
+          onCapsuleSelected(true)
+        }
       }
       false
     }
   ) {
     MapEffect(this) { mapView ->
-      mapView.mapboxMap.apply {
-        addModel(model(modelId) { uri("asset://$modelUri") })
+
+
+      if (modelUri != null) {
+        mapView.mapboxMap.apply {
+          addModel(model(modelId) { uri("file://${modelUri}") })
+
+        }
+      } else {
+        mapView.mapboxMap.apply {
+          addModel(model(modelId) { uri("asset://testmodel.glb") })
+
+        }
       }
-      mapView.mapboxMap.loadStyle(BuildConfig.STYLE_URI)
+      mapView.mapboxMap.loadStyle(BuildConfig.MAPBOX_STYLE_URI_DAY)
 
       startLocationUpdates(context) {
         updateLocation(Point.fromLngLat(it.longitude, it.latitude))
@@ -270,8 +314,8 @@ fun MapView(
     ) {
       this.modelId = ModelIdValue(Expression.get(MODEL_ID_KEY))
       modelType = ModelTypeValue.COMMON_3D
-      modelScale = DoubleListValue(listOf(10.0, 10.0, 10.0))
-      modelTranslation = DoubleListValue(listOf(0.0, 0.0, 0.0))
+      modelScale = DoubleListValue(listOf(7.0, 7.0, 7.0))
+      modelTranslation = DoubleListValue(listOf(0.0, 0.0, 10.0))
       modelRotation = DoubleListValue(listOf(0.0, 0.0, 90.0))
       modelOpacity = DoubleValue(1.0)
       modelAmbientOcclusionIntensity = DoubleValue(1.0)
@@ -282,6 +326,7 @@ fun MapView(
     AddPointer(
       context = context,
       point = locationPoint,
+      capsulePoint = capsulePoint,
       pointAnnotationManager = pointAnnotationManager
     )
   }
@@ -290,7 +335,7 @@ fun MapView(
 fun is3dModelClicked(
   point: Point,
   modelCoordinates: Point,
-  radiusInMeters: Double = 10.0
+  radiusInMeters: Double = 200.0
 ): Boolean {
   // Function to calculate distance between two geographical points
   fun calculateDistance(point1: Point, point2: Point): Double {
@@ -363,7 +408,12 @@ fun animateCamera(initialCamera: MapViewportState, center: Point) {
   )
 }
 
-fun AddPointer(context: Context, point: Point?, pointAnnotationManager: PointAnnotationManager?) {
+fun AddPointer(
+  context: Context,
+  point: Point?,
+  capsulePoint: Point,
+  pointAnnotationManager: PointAnnotationManager?
+) {
 
   pointAnnotationManager?.deleteAll()
 
@@ -381,7 +431,16 @@ fun AddPointer(context: Context, point: Point?, pointAnnotationManager: PointAnn
     if (annotationOptions != null) {
       pointAnnotationManager?.create(annotationOptions)
     }
-  } ?: run {
+  }
+  point?.let {
+    val textAnnotation = PointAnnotationOptions()
+      .withPoint(capsulePoint)
+      .withTextField(String.format("%.2f m", calculateDistance(point, capsulePoint)))
+      .withTextSize(14.0)
+      .withTextColor(Color.GRAY)
+
+      .withTextOffset(listOf(0.0, -7.5)) // Offset to position above model
+    pointAnnotationManager?.create(textAnnotation)
   }
 }
 

@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.LaunchedEffect
+import androidx.core.view.WindowCompat
 import androidx.navigation.compose.rememberNavController
 import com.example.timecapsule.routes.Screen
 import com.example.timecapsule.service.CAPSULE_SHARED_NOTIFICATION
@@ -44,6 +45,7 @@ class MainActivity : ComponentActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     enableEdgeToEdge()
+    WindowCompat.setDecorFitsSystemWindows(window, false)
     setContent {
       MapboxOptions.accessToken = BuildConfig.MAP_BOX_PUBLIC_ACCESS_TOKEN
       TimeCapsuleTheme {

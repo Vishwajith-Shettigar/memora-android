@@ -1,8 +1,10 @@
 package com.example.timecapsule.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.domain.usecase.GetCapsuleDetailsUseCase
+import com.example.domain.usecase.Load3dModelUseCase
 import com.example.model.CapsuleDetails
 import com.example.util.Response
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,12 +24,16 @@ sealed class DisplayCapsuleDetailsState {
 
 @HiltViewModel
 class DisplayCapsuleDetailsViewModel @Inject constructor(
-  private val getCapsuleDetailsUseCase: GetCapsuleDetailsUseCase
+  private val getCapsuleDetailsUseCase: GetCapsuleDetailsUseCase,
+  private val load3dModelUseCase: Load3dModelUseCase
 ) : ViewModel() {
 
   private val _capsuleDetailsState =
     MutableStateFlow<DisplayCapsuleDetailsState>(DisplayCapsuleDetailsState.Loading)
   val capsuleDetailsState: StateFlow<DisplayCapsuleDetailsState> = _capsuleDetailsState
+
+  private val _loading3dModelState = MutableStateFlow<Load3dModelState>(Load3dModelState.Idle)
+  val loadingLoad3dModelState: StateFlow<Load3dModelState> = _loading3dModelState
 
   fun getCapsuleDetails(capsuleId: String) {
     viewModelScope.launch {
@@ -44,6 +50,22 @@ class DisplayCapsuleDetailsViewModel @Inject constructor(
             _capsuleDetailsState.value =
               DisplayCapsuleDetailsState.Error(response.exception)
           }
+        }
+      }
+    }
+  }
+
+  fun load3dModel(modelId: String) {
+    _loading3dModelState.value = Load3dModelState.Loading
+    viewModelScope.launch(Dispatchers.IO) {
+      val res = load3dModelUseCase(modelId = modelId)
+      when (res) {
+        is Response.Success -> {
+          _loading3dModelState.value = Load3dModelState.Success(path = res.data!!)
+        }
+
+        is Response.Error -> {
+          _loading3dModelState.value = Load3dModelState.Error
         }
       }
     }

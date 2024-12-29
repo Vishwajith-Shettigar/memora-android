@@ -1,6 +1,8 @@
 package com.example.timecapsule.ui.selectcapsule
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
@@ -28,6 +30,8 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
@@ -40,12 +44,15 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -58,15 +65,20 @@ import androidx.compose.ui.unit.max
 import androidx.compose.ui.unit.min
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.model.CapsuleAsset
 import com.example.timecapsule.R
 import com.example.timecapsule.ui.selecttime.BackRow
 import com.example.timecapsule.ui.theme.Inter
+import com.example.timecapsule.ui.theme.LightBlue
 import com.example.timecapsule.ui.theme.darkCardBackground
 import com.example.timecapsule.ui.theme.darkPrimaryBackground
 import com.example.timecapsule.ui.theme.overSeer
 import com.example.timecapsule.ui.util.DeviceType
+import com.example.timecapsule.viewmodel.Load3dModelState
+import com.example.timecapsule.viewmodel.ViewCapsuleViewModel
 import com.example.util.getModel
+import com.example.util.getModelImage
 import com.mapbox.maps.extension.style.expressions.dsl.generated.heatmapDensity
 import com.mapbox.maps.extension.style.expressions.dsl.generated.mod
 import com.mapbox.maps.extension.style.model.model
@@ -83,6 +95,8 @@ import io.github.sceneview.rememberEngine
 import io.github.sceneview.rememberEnvironmentLoader
 import io.github.sceneview.rememberModelLoader
 import io.github.sceneview.rememberNode
+import java.io.File
+import java.io.FileInputStream
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.DurationUnit
 import kotlinx.coroutines.CoroutineScope
@@ -90,10 +104,15 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @Composable
-fun ViewCapsule(capsuleAsset: CapsuleAsset, onBackClick: () -> Unit = {}) {
+fun ViewCapsule(
+  capsuleAsset: CapsuleAsset,
+  viewModel: ViewCapsuleViewModel = hiltViewModel(),
+  onBackClick: () -> Unit = {}
+) {
   val isTablet = DeviceType.isTablet()
 
-  val modelName = getModel(capsuleAsset.capsule_id)
+  val loading3dModelState by viewModel.loadingLoad3dModelState.collectAsState()
+
   Scaffold(
     modifier = Modifier
         .fillMaxSize()
@@ -121,7 +140,9 @@ fun ViewCapsule(capsuleAsset: CapsuleAsset, onBackClick: () -> Unit = {}) {
       )
       {
         BackRow(Modifier.padding(innerPadding), onBackClick)
-        Display3DModel(Modifier.padding(innerPadding), modelName)
+        Display3DModel(capsuleAsset, loading3dModelState) {
+          viewModel.load3dModel(capsuleAsset.capsule_id)
+        }
       }
 
       val colMod = if (isTablet) {
@@ -130,7 +151,6 @@ fun ViewCapsule(capsuleAsset: CapsuleAsset, onBackClick: () -> Unit = {}) {
               .width(500.dp)
       } else {
         Modifier.fillMaxSize()
-
       }
 
       Column(
@@ -299,45 +319,112 @@ fun BackRow(modifier: Modifier, onBackClick: () -> Unit = {}) {
 
 @Composable
 fun Display3DModel(
-  modifier: Modifier = Modifier,
-  modelFileName: String
+  capsuleAsset: CapsuleAsset,
+  loading3dModelState: Load3dModelState, onViewIn3dClick: () -> Unit
 ) {
+
+  val context = LocalContext.current
 
   Box(
     modifier = Modifier
-      .fillMaxSize()
+        .fillMaxSize()
+        .background(Color.Black)
   ) {
-    val engine = rememberEngine()
-    val modelLoader = rememberModelLoader(engine)
 
-    val cameraNode = rememberCameraNode(engine).apply {
-      position = Position(z = 4.0f)
-    }
-    val centerNode = rememberNode(engine).apply {
-      addChildNode(cameraNode)
-    }
+    if (!(loading3dModelState is Load3dModelState.Success))
+      Load3dModelButton(
+        modifier = Modifier
+            .align(Alignment.BottomCenter)
+            .zIndex(10.0F)
+            .padding(5.dp), loading3dModelState, onViewIn3dClick
+      )
 
-    Scene(
-      modifier = Modifier
-          .fillMaxSize()
-          .align(Alignment.Center),
-      engine = engine,
-      modelLoader = modelLoader,
-      cameraNode = cameraNode,
-      childNodes = listOf(
-        centerNode,
-        rememberNode {
-          ModelNode(
-            modelInstance = modelLoader.createModelInstance(
-              assetFileLocation = modelFileName
-            ),
-            scaleToUnits = 1.7f
+    if (loading3dModelState is Load3dModelState.Idle
+      || loading3dModelState is Load3dModelState.Error
+      || loading3dModelState is Load3dModelState.Loading
+    ) {
+      val flagBitmap: Bitmap? = remember() {
+        try {
+          val inputStream =
+            context.assets.open(getModelImage(capsuleAsset.capsule_id))
+          BitmapFactory.decodeStream(inputStream)
+        } catch (e: Exception) {
+          null
+        }
+      }
+      Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .align(Alignment.Center)
+      ) {
+        if (flagBitmap != null) {
+          Image(
+            modifier = Modifier.align(Alignment.Center),
+            bitmap = flagBitmap.asImageBitmap(),
+            contentDescription = "capsule_image"
           )
         }
-      ),
-      onFrame = {
-        cameraNode.lookAt(centerNode)
       }
-    )
+    } else {
+      val modelFilePath = (loading3dModelState as Load3dModelState.Success).path
+
+      val modelFile = File(modelFilePath)
+      val engine = rememberEngine()
+      val modelLoader = rememberModelLoader(engine)
+
+      val cameraNode = rememberCameraNode(engine).apply {
+        position = Position(z = 4.0f)
+      }
+      val centerNode = rememberNode(engine).apply {
+        addChildNode(cameraNode)
+      }
+      Scene(
+        modifier = Modifier
+            .fillMaxSize()
+            .align(Alignment.Center),
+        engine = engine,
+        modelLoader = modelLoader,
+        cameraNode = cameraNode,
+        childNodes = listOf(
+          centerNode,
+          rememberNode {
+            ModelNode(
+              modelInstance = modelLoader.createModelInstance(
+                file = modelFile
+              ),
+              scaleToUnits = 1.7f
+            )
+          }
+        ),
+        onFrame = {
+          cameraNode.lookAt(centerNode)
+        }
+      )
+    }
+  }
+}
+
+
+@Composable
+fun Load3dModelButton(
+  modifier: Modifier,
+  loading3dModelState: Load3dModelState,
+  onViewIn3dClick: () -> Unit
+) {
+  Button(
+    modifier = modifier, colors = ButtonDefaults.buttonColors(containerColor = Color.Black),
+    onClick = { onViewIn3dClick() }) {
+    Row {
+      Icon(
+        modifier = Modifier.padding(horizontal = 5.dp), tint = LightBlue,
+        painter = painterResource(id = com.example.timecapsule.R.drawable.icon_view_in_ar),
+        contentDescription = "view 3d icon"
+      )
+      Text(
+        text =
+        if (loading3dModelState is Load3dModelState.Loading) "Loading..." else
+          "View 3D", color = Color.White
+      )
+    }
   }
 }

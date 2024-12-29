@@ -66,6 +66,7 @@ fun ShowContentScreen(viewModel: OpenCapsuleViewModel = hiltViewModel()) {
 
   LaunchedEffect(Unit) {
     viewModel.saveScreenCheckPoint(Screen.OpenCapsuleContentScreen.route)
+    viewModel.setCapsuleOpened()
   }
 
   Scaffold(

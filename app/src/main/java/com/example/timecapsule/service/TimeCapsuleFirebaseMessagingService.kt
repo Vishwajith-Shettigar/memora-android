@@ -16,6 +16,7 @@ import com.example.timecapsule.MainActivity
 import com.example.timecapsule.R
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -24,6 +25,7 @@ import kotlinx.coroutines.launch
 
 const val CAPSULE_SHARED_NOTIFICATION = "CAPSULE_SHARED_NOTIFICATION"
 
+@AndroidEntryPoint
 class TimeCapsuleFirebaseMessagingService : FirebaseMessagingService() {
 
   val channelId = "capsule_notifications"
@@ -43,7 +45,7 @@ class TimeCapsuleFirebaseMessagingService : FirebaseMessagingService() {
   override fun onNewToken(token: String) {
     super.onNewToken(token)
     serviceScope.launch {
-      updateFCMTokenUseCase()
+      updateFCMTokenUseCase(token)
     }
   }
 

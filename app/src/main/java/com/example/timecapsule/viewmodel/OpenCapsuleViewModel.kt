@@ -7,12 +7,18 @@ import android.content.IntentFilter
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.domain.usecase.GetCapsuleDetailsUseCase
+import com.example.domain.usecase.Load3dModelUseCase
 import com.example.domain.usecase.OpenCapsuleScreenCheckPointUseCase
+import com.example.domain.usecase.SetCapsuleOpenedUseCase
 import com.example.model.CapsuleDetails
 import com.example.model.DownloadFile
+import com.example.model.NearByCapsule
 import com.example.timecapsule.routes.Screen
 import com.example.timecapsule.service.FileDownloadService
 import com.example.util.Response
@@ -42,14 +48,24 @@ data class CombinedState(
 class OpenCapsuleViewModel @Inject constructor(
   private val openCapsuleScreenCheckPointUseCase: OpenCapsuleScreenCheckPointUseCase,
   private val getCapsuleDetailsUseCase: GetCapsuleDetailsUseCase,
+  private val load3dModelUseCase: Load3dModelUseCase,
+  private val setCapsuleOpenedUseCase: SetCapsuleOpenedUseCase,
   @ApplicationContext private val context: Context
 ) : ViewModel() {
+
+  var isCapsuleSelected by
+  mutableStateOf(false)
 
   private var CAPSULE_ID: String? = null
 
   private val _screenCheckPoint = MutableStateFlow<String?>(null)
 
   private val files: ArrayList<DownloadFile> = ArrayList<DownloadFile>()
+
+  private val _loading3dModelState = MutableStateFlow<Load3dModelState>(Load3dModelState.Idle)
+  val loadingLoad3dModelState: StateFlow<Load3dModelState> = _loading3dModelState
+
+  var modelPath: String? = null
 
   private val _capsuleDetailsState =
     MutableStateFlow<DisplayCapsuleDetailsState?>(null)
@@ -84,6 +100,7 @@ class OpenCapsuleViewModel @Inject constructor(
           is Response.Success -> {
             _capsuleDetailsState.value =
               DisplayCapsuleDetailsState.Success(response.data!!)
+            loadModel((_capsuleDetailsState.value as DisplayCapsuleDetailsState.Success).capsuleDetails.modelId.toString())
             response.data!!.fileUrls.forEach {
               val downloadFile =
                 DownloadFile(
@@ -101,6 +118,29 @@ class OpenCapsuleViewModel @Inject constructor(
               DisplayCapsuleDetailsState.Error(response.exception)
           }
         }
+      }
+    }
+  }
+
+  fun setModelLoadingStateIdle() {
+    _loading3dModelState.value = Load3dModelState.Idle
+  }
+
+  fun loadModel(modelId: String) {
+    _loading3dModelState.value = Load3dModelState.Loading
+    viewModelScope.launch(Dispatchers.IO) {
+      val res = load3dModelUseCase(modelId)
+      when (res) {
+        is Response.Success -> {
+          _loading3dModelState.value = Load3dModelState.Success(path = res.data!!)
+          modelPath = res.data!!
+        }
+
+        is Response.Error -> {
+          _loading3dModelState.value = Load3dModelState.Error
+        }
+
+        null -> {}
       }
     }
   }
@@ -130,6 +170,15 @@ class OpenCapsuleViewModel @Inject constructor(
       route,
       capsuleId = CAPSULE_ID!!
     )
+  }
+
+  fun setCapsuleOpened() {
+    viewModelScope.launch(Dispatchers.IO) {
+      val capsuleDetails =
+        (_capsuleDetailsState.value as DisplayCapsuleDetailsState.Success).capsuleDetails
+      if (capsuleDetails.isOpened == false)
+        setCapsuleOpenedUseCase(capsuleDetails.id)
+    }
   }
 
   private val _progress = MutableStateFlow(0)

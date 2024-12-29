@@ -6,6 +6,7 @@ import com.example.model.CapsuleDetails
 import com.example.model.UserDetails
 import com.example.util.InValidUserException
 import com.example.util.NetWorkException
+import com.example.util.NoAuthException
 import com.example.util.Response
 import com.example.util.UnspecifiedException
 import com.firebase.geofire.GeoFireUtils
@@ -15,13 +16,15 @@ import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.GeoPoint
+import com.google.firebase.firestore.snapshots
 import javax.inject.Inject
 import kotlinx.coroutines.tasks.await
 
 class CapsulesRemoteDataSource @Inject constructor(
   val firestore: FirebaseFirestore,
   val authRemoteDataSource: AuthRemoteDataSource,
-  val userRemoteDataSource: UserRemoteDataSource
+  val userRemoteDataSource: UserRemoteDataSource,
+  val threeDModelsDataSource: ThreeDModelsDataSource
 ) {
 
   suspend fun createCapsule(capsuleDetails: CapsuleDetails): Response<Unit> {
@@ -90,6 +93,16 @@ class CapsulesRemoteDataSource @Inject constructor(
       val ref = firestore.collection("capsules").document(capsuleDetails.id)
       capsuleDetails.ownerUserName = userName
 
+      val snapShot = ref.get().await()
+      var users: List<Map<String, Any>> = listOf()
+      if (snapShot.exists()) {
+        users = snapShot.data?.get("users") as List<Map<String, Any>>
+      }
+
+      val combinedUsers = (capsuleDetails.users + users)
+        .distinctBy { it["userId"] }
+
+      capsuleDetails.users = combinedUsers
       ref.set(capsuleDetails).await()
       Response.Success()
     } catch (e: Exception) {
@@ -225,6 +238,31 @@ class CapsulesRemoteDataSource @Inject constructor(
       return Response.Success(capsuleAssets)
     } catch (e: Exception) {
       Response.Error(UnspecifiedException())
+    }
+  }
+
+  suspend fun setCapsuleOpened(capsuleId: String): Response<Unit> {
+    return try {
+      val userId = authRemoteDataSource.getAuth()?.uid ?: throw NoAuthException()
+      val docref = firestore.collection("users").document(userId)
+
+      val doc = docref.get().await()
+      val capsuleList = doc.get("capsuleList") as? List<Map<String, Any>> ?: emptyList()
+
+      val capsule = capsuleList.find {
+        it["id"] == capsuleId
+      }
+
+      if (capsule != null && !(capsule.get("isOpened") as Boolean)) {
+        val updatedCapsule = capsule.toMutableMap()
+        updatedCapsule["isOpened"] = true
+        docref.update("capsuleList", FieldValue.arrayRemove(capsule)).await()
+        docref.update("capsuleList", FieldValue.arrayUnion(updatedCapsule)).await()
+      }
+
+      Response.Success()
+    } catch (e: Exception) {
+      Response.Error(exception = e)
     }
   }
 }

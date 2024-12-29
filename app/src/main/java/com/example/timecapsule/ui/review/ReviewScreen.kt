@@ -13,9 +13,11 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -23,8 +25,10 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.BottomAppBarDefaults
 import androidx.compose.material3.Button
@@ -52,8 +56,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -61,6 +67,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.max
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
@@ -73,6 +80,7 @@ import com.example.timecapsule.R
 import com.example.timecapsule.ui.theme.ReviewScreenCommondColor
 import com.example.timecapsule.ui.theme.RubikBubble
 import com.example.timecapsule.ui.selecttime.NavigationAddCapsule
+import com.example.timecapsule.ui.sharewithpeople.ShowAddedEmails
 import com.example.timecapsule.ui.sharewithpeople.ShowSelectedPeople
 import com.example.timecapsule.ui.theme.LightBlue
 import com.example.timecapsule.ui.uploadfiles.UploadedFileItem
@@ -127,8 +135,9 @@ fun CustomerDetailsBottomSheet(
   ) {
     Column(
       modifier = Modifier
-        .fillMaxWidth()
-        .padding(16.dp),
+          .fillMaxWidth()
+          .padding(16.dp)
+          .verticalScroll(rememberScrollState()),
       verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
       Text(text = "Enter Details", style = MaterialTheme.typography.titleLarge)
@@ -352,16 +361,16 @@ fun ReviewScreen(
 
   Scaffold(
     modifier = Modifier
-      .fillMaxSize()
-      .background(MaterialTheme.colorScheme.primary),
+        .fillMaxSize()
+        .background(MaterialTheme.colorScheme.primary),
     containerColor = MaterialTheme.colorScheme.primary,
     bottomBar = {
       BottomAppBar(
         containerColor = Color.Transparent,
         modifier = Modifier
-          .fillMaxWidth()
-          .wrapContentHeight()
-          .background(Color.Transparent),
+            .fillMaxWidth()
+            .wrapContentHeight()
+            .background(Color.Transparent),
         content = {
           BottomRow(onNavigate) {
             showDetails = true
@@ -369,71 +378,70 @@ fun ReviewScreen(
         },
       )
     },
-    topBar = {
-      TopAppBar(
-        colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.primary),
-        title = {
-          Text(
-            modifier = Modifier.padding(vertical = 40.dp),
-            text = stringResource(id = R.string.review_your_details),
-            style = MaterialTheme.typography.titleLarge.copy(
-              fontSize = if (isTablet) 26.sp else 20.sp,
-              fontWeight = FontWeight.Bold
-            ),
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-          )
-        },
-        scrollBehavior = scrollBehavior
-      )
-    }
   ) { innerPadding ->
 
-    LazyColumn(
+    Column(
       modifier = Modifier
-        .padding(
-          start = innerPadding.calculateStartPadding(LayoutDirection.Ltr),
-          end = innerPadding.calculateEndPadding(LayoutDirection.Ltr),
-          top = innerPadding.calculateTopPadding()
-        )
-        .padding(horizontal = 10.dp)
-        .nestedScroll(scrollBehavior.nestedScrollConnection)
-        .nestedScroll(bottomScrollBehavior.nestedScrollConnection),
-    ) {
-      item {
-        SharedPeople(
-          viewModel.selectedPeoples,
-          viewModel.shareWithPeopleOption == ShareWithPeopleOption.SHARE_ALL
-        )
-      }
-      item { DateAndTime(DisplayTimestamp(timestamp = viewModel.selectedTimeStamp!!)) }
-      item { SelectedCapsule(viewModel.selectedCapsuleImageUrl!!) }
-      item {
-        viewModel.latLang?.let {
-          SelectedLocation(
-            latlang = it, modifier = Modifier
-              .fillMaxWidth()
-              .wrapContentHeight()
-              .padding(vertical = 10.dp)
+          .fillMaxWidth()
+          .fillMaxHeight()
+          .padding(
+              start = innerPadding.calculateStartPadding(LayoutDirection.Ltr),
+              end = innerPadding.calculateEndPadding(LayoutDirection.Ltr),
+              top = innerPadding.calculateTopPadding()
           )
-        }
+          .padding(horizontal = 10.dp)
+          .verticalScroll(
+              rememberScrollState()
+          ),
+    ) {
+      Text(
+        modifier = Modifier.padding(top = 40.dp, bottom = 20.dp),
+        text = stringResource(id = R.string.review_your_details),
+        style = MaterialTheme.typography.titleLarge.copy(
+          fontSize = if (isTablet) 26.sp else 25.sp,
+          fontWeight = FontWeight.Bold
+        ),
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+      )
 
+      SharedPeople(
+        viewModel.selectedPeoples, viewModel.addedEmails,
+        viewModel.shareWithPeopleOption == ShareWithPeopleOption.SHARE_ALL
+      )
+      DateAndTime(DisplayTimestamp(timestamp = viewModel.selectedTimeStamp!!))
+      SelectedCapsule(viewModel.selectedCapsuleImageUrl!!)
+
+      viewModel.latLang?.let {
+        SelectedLocation(
+          latlang = it, modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight()
+                .padding(vertical = 10.dp)
+        )
       }
-      item { SharedContent(uploadedFile) }
+      SharedContent(uploadedFile)
     }
   }
 }
 
 @Composable
-fun SharedPeople(selectedPeoples: MutableList<UserDetails>, sharedWithALl: Boolean) {
+fun SharedPeople(
+  selectedPeoples: MutableList<UserDetails>,
+  addedEmails: List<String>,
+  sharedWithALl: Boolean
+) {
   Column(
     modifier = Modifier
-      .fillMaxWidth()
-      .wrapContentHeight()
-      .padding(vertical = 10.dp)
+        .fillMaxWidth()
+        .wrapContentHeight()
+        .padding(vertical = 10.dp)
   ) {
     Text(
       text = stringResource(id = R.string.shared_with),
-      style = MaterialTheme.typography.titleLarge.copy(fontSize = 20.sp),
+      style = MaterialTheme.typography.titleLarge.copy(
+        fontSize = 20.sp,
+        fontWeight = FontWeight.Bold
+      ),
       color = MaterialTheme.colorScheme.onSurfaceVariant
     )
     ShowSelectedPeople(
@@ -441,6 +449,10 @@ fun SharedPeople(selectedPeoples: MutableList<UserDetails>, sharedWithALl: Boole
       selectedPeoples = selectedPeoples,
       showSharedWithALl = sharedWithALl
     )
+    ShowAddedEmails(
+      addedEmails = addedEmails, hideRemoveIcon = true
+    ) {
+    }
   }
 }
 
@@ -448,30 +460,32 @@ fun SharedPeople(selectedPeoples: MutableList<UserDetails>, sharedWithALl: Boole
 fun DateAndTime(dateAndTime: String) {
   Column(
     modifier = Modifier
-      .fillMaxWidth()
-      .wrapContentHeight()
-      .padding(vertical = 10.dp)
+        .fillMaxWidth()
+        .wrapContentHeight()
+        .padding(vertical = 10.dp)
   ) {
     Text(
       text = stringResource(id = R.string.date_and_time),
-      style = MaterialTheme.typography.titleLarge.copy(fontSize = 20.sp),
+      style = MaterialTheme.typography.titleLarge.copy(
+        fontSize = 20.sp,
+        fontWeight = FontWeight.Bold
+      ),
       color = MaterialTheme.colorScheme.onSurfaceVariant
     )
   }
   Row(
     modifier = Modifier
-      .fillMaxWidth()
-      .wrapContentHeight()
+        .fillMaxWidth()
+        .wrapContentHeight()
   ) {
     Text(
       modifier = Modifier.padding(10.dp),
       text = dateAndTime,
       style = MaterialTheme.typography.titleLarge.copy(
-        fontSize = 25.sp,
-        fontWeight = FontWeight.ExtraBold,
-        fontFamily = RubikBubble
+        fontSize = 22.sp,
+        fontWeight = FontWeight.SemiBold,
       ),
-      color = ReviewScreenCommondColor
+      color = MaterialTheme.colorScheme.onSurfaceVariant
     )
   }
 }
@@ -480,22 +494,29 @@ fun DateAndTime(dateAndTime: String) {
 fun SelectedCapsule(imageUrl: String) {
   Column(
     modifier = Modifier
-      .fillMaxWidth()
-      .wrapContentHeight()
-      .padding(vertical = 10.dp)
+        .fillMaxWidth()
+        .wrapContentHeight()
+        .padding(vertical = 10.dp)
   ) {
     Text(
       text = stringResource(id = R.string.selected_capsule),
-      style = MaterialTheme.typography.titleLarge.copy(fontSize = 20.sp),
+      style = MaterialTheme.typography.titleLarge.copy(
+        fontSize = 20.sp,
+        fontWeight = FontWeight.Bold
+      ),
       color = MaterialTheme.colorScheme.onSurfaceVariant
     )
     Box(
-      Modifier
-        .height(200.dp)
-        .width(200.dp)
-        .align(Alignment.CenterHorizontally)
+        Modifier
+            .height(200.dp)
+            .width(200.dp)
+            .align(Alignment.CenterHorizontally)
     ) {
       AsyncImage(
+        modifier = Modifier
+            .size(200.dp)
+            .align(Alignment.Center),
+        contentScale = ContentScale.Crop,
         model = imageUrl,
         contentDescription = stringResource(id = R.string.selected_capsule)
       )
@@ -510,7 +531,10 @@ fun SelectedLocation(latlang: LatLng, modifier: Modifier = Modifier) {
   ) {
     Text(
       text = stringResource(id = R.string.selected_location),
-      style = MaterialTheme.typography.titleLarge.copy(fontSize = 20.sp),
+      style = MaterialTheme.typography.titleLarge.copy(
+        fontSize = 20.sp,
+        fontWeight = FontWeight.Bold
+      ),
       color = MaterialTheme.colorScheme.onSurfaceVariant
     )
     MapPreviewCard(latlang = latlang)
@@ -521,14 +545,17 @@ fun SelectedLocation(latlang: LatLng, modifier: Modifier = Modifier) {
 fun SharedContent(fileUploaded: List<FileUploaded>) {
   Column(
     modifier = Modifier
-      .fillMaxWidth()
-      .wrapContentHeight()
-      .padding(vertical = 10.dp)
+        .fillMaxWidth()
+        .wrapContentHeight()
+        .padding(vertical = 10.dp)
   ) {
     Text(
       modifier = Modifier.padding(bottom = 10.dp),
       text = stringResource(id = R.string.shared_content),
-      style = MaterialTheme.typography.titleLarge.copy(fontSize = 20.sp),
+      style = MaterialTheme.typography.titleLarge.copy(
+        fontSize = 20.sp,
+        fontWeight = FontWeight.Bold
+      ),
       color = MaterialTheme.colorScheme.onSurfaceVariant
     )
 
@@ -549,10 +576,10 @@ fun SharedContent(fileUploaded: List<FileUploaded>) {
 fun BottomRow(onNavigate: (NavigationAddCapsule) -> Unit = {}, onClick: () -> Unit) {
   Row(
     modifier = Modifier
-      .fillMaxWidth()
-      .wrapContentHeight()
-      .background(Color.Transparent)
-      .padding(horizontal = 30.dp),
+        .fillMaxWidth()
+        .wrapContentHeight()
+        .background(Color.Transparent)
+        .padding(horizontal = 30.dp),
     horizontalArrangement = Arrangement.SpaceBetween,
     verticalAlignment = Alignment.Top
   ) {
@@ -561,8 +588,8 @@ fun BottomRow(onNavigate: (NavigationAddCapsule) -> Unit = {}, onClick: () -> Un
       shape = RoundedCornerShape(10.dp),
       border = BorderStroke(1.dp, MaterialTheme.colorScheme.onSurfaceVariant),
       modifier = Modifier
-        .wrapContentWidth()
-        .height(46.dp),
+          .wrapContentWidth()
+          .height(46.dp),
       colors = ButtonDefaults.buttonColors(containerColor = ReviewScreenCommondColor.copy(alpha = 0.6F))
 
     ) {
@@ -579,8 +606,8 @@ fun BottomRow(onNavigate: (NavigationAddCapsule) -> Unit = {}, onClick: () -> Un
       },
       border = BorderStroke(1.dp, Color.Black),
       modifier = Modifier
-        .wrapContentWidth()
-        .height(46.dp),
+          .wrapContentWidth()
+          .height(46.dp),
       shape = RoundedCornerShape(10.dp),
       colors = ButtonDefaults.buttonColors(containerColor = ReviewScreenCommondColor)
     ) {
@@ -609,9 +636,9 @@ fun MapPreviewCard(latlang: LatLng) {
   // Card layout with rounded corners
   Card(
     modifier = Modifier
-      .fillMaxWidth()
-      .height(200.dp)
-      .padding(vertical = 10.dp),  // Adjust height to make it look like a preview
+        .fillMaxWidth()
+        .height(200.dp)
+        .padding(vertical = 10.dp),  // Adjust height to make it look like a preview
     shape = RoundedCornerShape(8.dp)
   ) {
     // GoogleMap composable for the map preview
@@ -637,9 +664,9 @@ fun SharedWithALlIcon(text: String = "All", modifier: Modifier = Modifier.size(4
   Box(
     modifier =
     modifier
-      .clip(shape = CircleShape)
-      .border(1.dp, Color.LightGray, CircleShape)
-      .padding(2.dp)
+        .clip(shape = CircleShape)
+        .border(1.dp, Color.LightGray, CircleShape)
+        .padding(2.dp)
   ) {
     Text(
       text = "+${text}", modifier = Modifier.align(Alignment.Center),

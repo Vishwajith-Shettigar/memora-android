@@ -76,10 +76,6 @@ fun CapsuleCard(
     mutableStateOf(false)
   }
 
-  val sliceUserList by remember {
-    mutableStateOf<Boolean>((capsuleDetails.users).size > 3)
-  }
-
   // Logic to update the timer every second
   LaunchedEffect(capsuleDetails.time) {
     while (true) {
@@ -256,9 +252,11 @@ fun CapsuleCard(
               horizontalArrangement = Arrangement.Start,
               verticalAlignment = Alignment.CenterVertically
             ) {
-              if (sliceUserList) {
+
+              if (capsuleDetails.users.size > 3) {
                 (capsuleDetails.users).slice(0..2).forEach {
                   Profile(
+                    userId = it["userId"] as String,
                     userName = it["userName"] as String,
                     imageUrl = it["imageUrl"] as String,
                     true,
@@ -268,10 +266,12 @@ fun CapsuleCard(
                     remove = {}
                   )
                 }
-                SharedWithALlIcon(text = ((capsuleDetails.users).size - 3).toString())
+                if (((capsuleDetails.users).size - 3) > 0)
+                  SharedWithALlIcon(text = ((capsuleDetails.users).size - 3).toString())
               } else {
                 capsuleDetails.users.forEach {
                   Profile(
+                    userId = it["userId"] as String,
                     userName = it["userName"] as String,
                     imageUrl = it["imageUrl"] as String,
                     true,

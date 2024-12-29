@@ -77,7 +77,10 @@ fun CapsuleLoadingScreen(
         val checkpoint = combinedState!!.checkpoint
         val capsuleDetailsState = combinedState!!.capsuleDetailsState
         if (capsuleDetailsState is DisplayCapsuleDetailsState.Success) {
-          navigate(checkpoint!!)
+          if (capsuleDetailsState.capsuleDetails.isOpened == true)
+            navigate(Screen.OpenCapsuleContentScreen.route)
+          else
+            navigate(checkpoint!!)
         } else {
           Toast.makeText(context, "Something went wrong!", Toast.LENGTH_SHORT).show()
           popBack()
@@ -88,8 +91,8 @@ fun CapsuleLoadingScreen(
 
   Column(
     modifier = Modifier
-      .fillMaxSize()
-      .background(MaterialTheme.colorScheme.primary),
+        .fillMaxSize()
+        .background(MaterialTheme.colorScheme.primary),
     horizontalAlignment = Alignment.CenterHorizontally,
     verticalArrangement = Arrangement.Center
   ) {

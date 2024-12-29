@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -18,7 +19,7 @@ import com.example.timecapsule.routes.Screen
 import com.example.timecapsule.ui.util.DeviceType
 
 @Composable
-fun NavGraph(  navController :NavHostController) {
+fun NavGraph(navController: NavHostController) {
   val isTablet = DeviceType.isTablet()
   if (isTablet)
     TabletLayoutV1(navController)
@@ -27,7 +28,7 @@ fun NavGraph(  navController :NavHostController) {
 }
 
 @Composable
-fun MobileLayoutV1( navController :NavHostController) {
+fun MobileLayoutV1(navController: NavHostController) {
   val activity = (LocalContext.current as Activity)
 
   // List of screens that should display the Bottom Navigation Bar
@@ -47,8 +48,8 @@ fun MobileLayoutV1( navController :NavHostController) {
     }
   ) { paddingValues ->
     NavHost(
+      modifier = Modifier.padding(bottom = paddingValues.calculateBottomPadding()),
       navController = navController,
-      modifier = Modifier.padding(paddingValues),
       startDestination = Screen.OnboardingScreens.route,
     ) {
       onboardingNavGraph(navController)
@@ -60,7 +61,7 @@ fun MobileLayoutV1( navController :NavHostController) {
 }
 
 @Composable
-fun TabletLayoutV1(navController :NavHostController) {
+fun TabletLayoutV1(navController: NavHostController) {
   val activity = (LocalContext.current as Activity)
 
   // List of screens that should display the Bottom Navigation Bar

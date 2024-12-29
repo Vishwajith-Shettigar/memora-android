@@ -123,7 +123,7 @@ fun NavGraphBuilder.addCapsuleNavGraph(navController: NavController, activity: A
       val sharedViewModel =
         backstackentry.sharedViewModel<CapsuleCreationViewModel>(navController = navController)
 
-      ShareScreen(sharedViewModel) { navigationFlow ->
+      ShareScreen(sharedViewModel, onNavigate = { navigationFlow ->
         handleNavigation(
           activity = activity,
           navController = navController,
@@ -132,7 +132,9 @@ fun NavGraphBuilder.addCapsuleNavGraph(navController: NavController, activity: A
           navigateToScreenRouteNext = Screen.LocationSelectionOptions,
           popScreenRoute = Screen.ShareWithPeople
         )
-      }
+      }, onViewProfileClick = { userId ->
+        navController.navigate(Screen.ViewProfile.createRoute(userId = userId))
+      })
     }
     composable(route = Screen.LocationSelectionOptions.route) { backstackentry ->
       val sharedViewModel =

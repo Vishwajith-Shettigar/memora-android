@@ -1,5 +1,6 @@
 package com.example.data.remote
 
+import android.util.Log
 import androidx.room.Update
 import com.example.data.local.entity.Review
 import com.example.data.local.entity.UpdateDetails
@@ -11,9 +12,11 @@ import com.example.util.NoAuthException
 import com.example.util.Response
 import com.example.util.UnspecifiedException
 import com.example.util.UsernameAlreadyExistsException
+import com.example.util.defaultCoverImages
 import com.example.util.defaultPictures
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.storage.FirebaseStorage
@@ -54,8 +57,22 @@ class UserRemoteDataSource @Inject constructor(
 
       val user = authRemoteDataSource.getAuth() ?: throw UnspecifiedException()
 
+      val emailExists = usersCollection.whereEqualTo("email", user.email).get().await()
+
+      var capsuleList: List<Map<String, Any>> = listOf()
+
+      if (!emailExists.isEmpty) {
+        val data = emailExists.documents[0].data?.get("capsuleList")
+        if (data is List<*>) {
+          capsuleList = data.filterIsInstance<Map<String, Any>>()
+        }
+        usersCollection.document(emailExists.documents[0].id).delete().await()
+      }
+
       val size = defaultPictures.size
       val defaultImageUrl = defaultPictures.get(Random.nextInt(0, size))
+      val coverImagesSize = defaultPictures.size
+      val defaultCoverImageUrl = defaultCoverImages.get(Random.nextInt(0, coverImagesSize))
       val newUserDetails = UserDetails(
         userId = user.uid,
         email = user.email.toString(),
@@ -63,14 +80,32 @@ class UserRemoteDataSource @Inject constructor(
         firstName = fName,
         lastName = lName,
         imageUrl = defaultImageUrl,
+        coverImageUrl = defaultCoverImageUrl,
         userNameLowerCase = userName.toLowerCase(),
         firstNameLowerCase = fName.toLowerCase(),
+        aboutMe = "",
+        capsuleList = capsuleList
       )
 
       firestore.collection("users").document(newUserDetails.userId)
         .set(newUserDetails).await()
+      saveTokenToFirestore(null)
 
-      saveTokenToFirestore()
+      val capsuleCollection = firestore.collection("capsules")
+
+      capsuleList.forEach {
+        val capsuleId = it.get("id").toString()
+        val newUserDetails = mapOf(
+          "imageUrl" to defaultImageUrl,
+          "isOwner" to false,
+          "userId" to user.uid,
+          "userName" to userName
+        )
+
+        capsuleCollection.document(capsuleId).update(
+          "users", FieldValue.arrayUnion(newUserDetails)
+        )
+      }
 
       Response.Success(Unit)
     } catch (e: Exception) {
@@ -109,14 +144,15 @@ class UserRemoteDataSource @Inject constructor(
     }
   }
 
-  suspend fun saveTokenToFirestore() {
+  suspend fun saveTokenToFirestore(token: String?) {
     try {
 
       val user = authRemoteDataSource.getAuth()
 
-      val token: String = firebaseMessaging.token.await()
+      val fcmtoken: String =
+        token ?: firebaseMessaging.token.await()
 
-      val tokenData = mapOf("fcmToken" to token)
+      val tokenData = mapOf("fcmToken" to fcmtoken)
 
       user?.uid?.let {
         firestore.collection("users").document(it)
@@ -164,13 +200,16 @@ class UserRemoteDataSource @Inject constructor(
     return Response.Success(users)
   }
 
-
   private fun parseUser(document: DocumentSnapshot): UserDetails {
     val userName = document.get("userName") as String
     val userId = document.get("userId") as String
     val fname = document.get("firstName") as String
     val lname = document.get("lastName") as String
     val imageUrl = document.get("imageUrl") as String
+    val coverImageUrl = document.get("coverImageUrl") as String
+    val aboutMe = document.get("aboutMe") as String
+    val email = document.get("email") as String
+    val receiveCapsule = document.get("shareCapsules") as Boolean
 
     val user = UserDetails(
       userId = userId,
@@ -178,10 +217,13 @@ class UserRemoteDataSource @Inject constructor(
       firstName = fname,
       lastName = lname,
       imageUrl = imageUrl,
-      email = "",
+      coverImageUrl = coverImageUrl,
+      email = email,
       capsuleList = emptyList(),
       userNameLowerCase = "",
-      firstNameLowerCase = ""
+      firstNameLowerCase = "",
+      aboutMe = aboutMe,
+      shareCapsules = receiveCapsule
     )
     return user
   }

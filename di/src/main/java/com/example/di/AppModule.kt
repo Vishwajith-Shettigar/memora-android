@@ -2,6 +2,7 @@ package com.example.di
 
 import android.content.Context
 import androidx.room.Room
+import com.example.data.cache.ThreeModelsCache
 import com.example.data.local.AppDatabase
 import com.example.data.local.ReviewDao
 import com.example.data.remote.AuthRemoteDataSource
@@ -9,6 +10,7 @@ import com.example.data.remote.CapsulesRemoteDataSource
 import com.example.data.remote.FilesRemoteDataSource
 import com.example.data.remote.NearByCapsulesDataSource
 import com.example.data.remote.NotificationDataSource
+import com.example.data.remote.ThreeDModelsDataSource
 import com.example.data.remote.UserRemoteDataSource
 import com.example.data.repository.AuthRepository
 import com.example.data.repository.AuthRepositoryImpl
@@ -20,12 +22,15 @@ import com.example.data.repository.NotificationRepository
 import com.example.data.repository.NotificationRepositoryImpl
 import com.example.data.repository.ReviewRepository
 import com.example.data.repository.ReviewRepositoryImpl
+import com.example.data.repository.ThreeDModelRepository
+import com.example.data.repository.ThreeDModelRepositoryImpl
 import com.example.data.repository.UpdateDetailsRepository
 import com.example.data.repository.UpdateDetailsRepositoryImpl
 import com.example.data.repository.UploadFileRepository
 import com.example.data.repository.UploadFileRepositoryImpl
 import com.example.data.repository.UserRepository
 import com.example.data.repository.UserRepositoryImpl
+import com.example.data.retrofilApi.EmailSharingCapsuleApi
 import com.example.data.retrofilApi.NotificationApi
 import com.example.data.sharedpreference.SharedPreferencesHelper
 import com.example.domain.usecase.OnBoardingDataUseCase
@@ -73,8 +78,11 @@ abstract class AppModule {
 
   @Binds
   @Singleton
-  abstract fun bindNotificationRepository(notificationRepositoryImpl: NotificationRepositoryImpl): NotificationRepository
+  abstract fun bindThreeDModelRepository(threeDModelRepositoryImpl: ThreeDModelRepositoryImpl): ThreeDModelRepository
 
+  @Binds
+  @Singleton
+  abstract fun bindNotificationRepository(notificationRepositoryImpl: NotificationRepositoryImpl): NotificationRepository
 
   @Binds
   @Singleton
@@ -94,6 +102,11 @@ abstract class AppModule {
     @Provides
     fun provideNotificationApi(retrofit: Retrofit): NotificationApi {
       return retrofit.create(NotificationApi::class.java)
+    }
+
+    @Provides
+    fun provideEmailSharingCapsuleApi(retrofit: Retrofit): EmailSharingCapsuleApi {
+      return retrofit.create(EmailSharingCapsuleApi::class.java)
     }
 
     @Provides
@@ -135,9 +148,15 @@ abstract class AppModule {
     @Provides
     @Singleton
     fun provideAuthRemoteDataSource(
-      firebaseAuth: FirebaseAuth
+      firebaseAuth: FirebaseAuth,
+      firestore: FirebaseFirestore,
+      firebaseMessaging: FirebaseMessaging
     ): AuthRemoteDataSource {
-      return AuthRemoteDataSource(firebaseAuth)
+      return AuthRemoteDataSource(
+        firestore = firestore,
+        firebaseAuth = firebaseAuth,
+        firebaseMessaging = firebaseMessaging
+      )
     }
 
     @Provides
@@ -179,6 +198,23 @@ abstract class AppModule {
 
     @Provides
     @Singleton
+    fun provideThreeDModelsDataSource(
+      @ApplicationContext context: Context,
+      firebaseStorage: FirebaseStorage,
+    ): ThreeDModelsDataSource {
+      return ThreeDModelsDataSource(context, firebaseStorage)
+    }
+
+    @Provides
+    @Singleton
+    fun provideThreeModelsCache(
+      @ApplicationContext context: Context,
+    ): ThreeModelsCache {
+      return ThreeModelsCache(context)
+    }
+
+    @Provides
+    @Singleton
     fun provideNotificationRemoteDataSource(
       firestore: FirebaseFirestore,
       remoteDataSource: AuthRemoteDataSource,
@@ -191,9 +227,13 @@ abstract class AppModule {
     fun provideCapsulesRemoteDataSource(
       firestore: FirebaseFirestore,
       remoteDataSource: AuthRemoteDataSource,
-      userRemoteDataSource: UserRemoteDataSource
+      userRemoteDataSource: UserRemoteDataSource,
+      threeDModelsDataSource: ThreeDModelsDataSource
     ): CapsulesRemoteDataSource {
-      return CapsulesRemoteDataSource(firestore, remoteDataSource, userRemoteDataSource)
+      return CapsulesRemoteDataSource(
+        firestore, remoteDataSource, userRemoteDataSource,
+        threeDModelsDataSource
+      )
     }
 
     @Provides

@@ -1,7 +1,9 @@
 package com.example.timecapsule
 
+import android.content.Intent
 import android.util.Log
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
@@ -75,15 +77,21 @@ fun NavGraphBuilder.openCapsuleNavGraph(navController: NavController) {
       }
     }
     composable(Screen.OpenCapsuleFindCapsuleScreen.route) { backstackentry ->
+      val context = LocalContext.current
       val sharedViewModel =
         backstackentry.sharedViewModel<OpenCapsuleViewModel>(navController = navController)
-      FindCapsuleScreenV1(viewModel = sharedViewModel) { route ->
+      FindCapsuleScreenV1(viewModel = sharedViewModel, navigate = { route ->
         navController.navigate(route) {
           popUpTo(Screen.OpenCapsuleFindCapsuleScreen.route) {
             inclusive = true
           }
         }
-      }
+      }, onViewAr = { modelId ->
+        val intent = Intent(context, ArActivity::class.java).apply {
+          putExtra("modelId", modelId)
+        }
+        context.startActivity(intent)
+      })
     }
     composable(Screen.OpenCapsuleContentScreen.route) { backstackentry ->
       val sharedViewModel =

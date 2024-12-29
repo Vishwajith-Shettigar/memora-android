@@ -48,6 +48,7 @@ import com.example.timecapsule.R
 import com.example.timecapsule.routes.Screen
 import com.example.timecapsule.ui.signup.CustomTextField
 import com.example.timecapsule.ui.theme.DMSerifText
+import com.example.timecapsule.ui.theme.LightBlue
 import com.example.timecapsule.ui.theme.SignUpBackground
 import com.example.timecapsule.ui.util.DeviceType
 import com.example.timecapsule.viewmodel.AuthState
@@ -234,7 +235,7 @@ fun BackgroundObjects(isTablet: Boolean = false) {
   Box(
     modifier = Modifier
       .fillMaxSize()
-      .background(Brush.verticalGradient(SignUpBackground))
+      .background(LightBlue.copy(alpha = 0.6f))
 
   )
   {
