@@ -74,7 +74,7 @@ import com.example.timecapsule.viewmodel.ProfileViewModel
 @Composable
 fun ProfileScreen(
   viewModel: ProfileViewModel = hiltViewModel(),
-  onViewProfileClick: (Profile) -> Unit = {}, onSettingClick: () -> Unit,
+  onViewProfileClick: (String) -> Unit = {}, onSettingClick: () -> Unit,
   onContactUsClicked: () -> Unit, onPrivacyClicked: () -> Unit
 ) {
 
@@ -177,7 +177,7 @@ fun ProfileScreen(
                     color = MaterialTheme.colorScheme.primaryContainer
                 ), onClick = {
               if (profileState is ProfileState.Success)
-                onViewProfileClick((profileState as ProfileState.Success).data)
+                onViewProfileClick((profileState as ProfileState.Success).data.userId)
             }) {
               Icon(
                 painter = painterResource(id = com.example.timecapsule.R.drawable.icon_face),

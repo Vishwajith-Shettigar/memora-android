@@ -256,6 +256,7 @@ fun CapsuleCard(
               if (capsuleDetails.users.size > 3) {
                 (capsuleDetails.users).slice(0..2).forEach {
                   Profile(
+                    userId = it["userId"] as String,
                     userName = it["userName"] as String,
                     imageUrl = it["imageUrl"] as String,
                     true,
@@ -270,6 +271,7 @@ fun CapsuleCard(
               } else {
                 capsuleDetails.users.forEach {
                   Profile(
+                    userId = it["userId"] as String,
                     userName = it["userName"] as String,
                     imageUrl = it["imageUrl"] as String,
                     true,

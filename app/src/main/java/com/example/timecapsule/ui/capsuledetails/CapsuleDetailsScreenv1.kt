@@ -67,7 +67,8 @@ import java.io.File
 fun CapsuleDetailsScreenv1(
   capsuleId: String = "",
   viewModel: DisplayCapsuleDetailsViewModel = hiltViewModel(),
-  onBack: () -> Unit = {}
+  onBack: () -> Unit = {},
+  onUserProfileClick: (String) -> Unit
 ) {
 
   val capsuleDetailsState by viewModel.capsuleDetailsState.collectAsState()
@@ -100,24 +101,31 @@ fun CapsuleDetailsScreenv1(
   androidx.compose.material3.Scaffold { innerPadding ->
     Box(
       modifier = Modifier
-        .fillMaxSize()
-        .background(androidx.compose.material3.MaterialTheme.colorScheme.primary)
+          .fillMaxSize()
+          .background(androidx.compose.material3.MaterialTheme.colorScheme.primary)
     ) {
       LazyColumn(
         modifier = Modifier
-          .fillMaxSize()
-          .zIndex(0f),
+            .fillMaxSize()
+            .zIndex(0f),
         contentPadding = PaddingValues(top = 20.dp),
       ) {
         item {
           BackRow(onBack)
         }
         item {
-          CapsuleDetailsSection(capsuleDetails, isSuccess, isLoading, loading3dModelState) {
-            capsuleDetails?.let {
-              viewModel.load3dModel(it.modelId.toString())
-            }
-          }
+          CapsuleDetailsSection(
+            capsuleDetails,
+            isSuccess,
+            isLoading,
+            loading3dModelState,
+            onViewIn3dClick = {
+              capsuleDetails?.let {
+                viewModel.load3dModel(it.modelId.toString())
+              }
+            },
+            onUserProfileClick = onUserProfileClick
+          )
         }
       }
     }
@@ -149,50 +157,50 @@ fun TopImageSection(
     }
     Row(
       modifier = Modifier
-        .fillMaxWidth()
-        .wrapContentHeight()
-        .padding(horizontal = 5.dp, vertical = 15.dp)
-        .padding(bottom = 25.dp),
+          .fillMaxWidth()
+          .wrapContentHeight()
+          .padding(horizontal = 5.dp, vertical = 15.dp)
+          .padding(bottom = 25.dp),
       horizontalArrangement = Arrangement.SpaceBetween
 
     ) {
 
       Box(
         modifier = Modifier
-          .fillMaxWidth(0.6F)
-          .height(300.dp)
-          .zIndex(10.0F)
-          .drawBehind {
-            val shadowColor = getModelColor(modelId = modelId.toString())
-            val paint = android.graphics
-              .Paint()
-              .apply {
-                color = shadowColor.toArgb()
-                setShadowLayer(35f, 0f, 0f, color)
-              }
-            drawContext.canvas.nativeCanvas.apply {
-              save()
-              drawRoundRect(
-                0f,
-                0f,
-                size.width,
-                size.height,
-                30f,
-                30f,
-                paint
-              )
-              restore()
+            .fillMaxWidth(0.6F)
+            .height(300.dp)
+            .zIndex(10.0F)
+            .drawBehind {
+                val shadowColor = getModelColor(modelId = modelId.toString())
+                val paint = android.graphics
+                    .Paint()
+                    .apply {
+                        color = shadowColor.toArgb()
+                        setShadowLayer(35f, 0f, 0f, color)
+                    }
+                drawContext.canvas.nativeCanvas.apply {
+                    save()
+                    drawRoundRect(
+                        0f,
+                        0f,
+                        size.width,
+                        size.height,
+                        30f,
+                        30f,
+                        paint
+                    )
+                    restore()
+                }
             }
-          }
       ) {
 
         if (!(load3dModelState is Load3dModelState.Success))
           Load3dModelButton(
             modifier = Modifier
-              .align(Alignment.BottomCenter)
-              .zIndex(10.0F)
-              .background(Color.Black)
-              .padding(5.dp), load3dModelState, onViewIn3dClick
+                .align(Alignment.BottomCenter)
+                .zIndex(10.0F)
+                .background(Color.Black)
+                .padding(5.dp), load3dModelState, onViewIn3dClick
           )
 
         if (load3dModelState is Load3dModelState.Success) {
@@ -209,9 +217,9 @@ fun TopImageSection(
           }
           Scene(
             modifier = Modifier
-              .fillMaxSize()
-              .clip(shape = RoundedCornerShape(16.dp))
-              .align(Alignment.Center),
+                .fillMaxSize()
+                .clip(shape = RoundedCornerShape(16.dp))
+                .align(Alignment.Center),
             engine = engine,
             modelLoader = modelLoader,
             cameraNode = cameraNode,
@@ -235,8 +243,8 @@ fun TopImageSection(
             elevation = 0.dp,
             shape = RoundedCornerShape(16.dp),
             modifier = Modifier
-              .fillMaxSize()
-              .zIndex(3.0f),
+                .fillMaxSize()
+                .zIndex(3.0f),
             backgroundColor = Color.Black
           ) {
             if (flagBitmap != null) {
@@ -261,14 +269,14 @@ fun TopImageSection(
         elevation = 8.dp,
         shape = RoundedCornerShape(16.dp),
         modifier = Modifier
-          .padding(vertical = 10.dp, horizontal = 10.dp)
-          .fillMaxWidth(0.8F)
-          .height(100.dp)
+            .padding(vertical = 10.dp, horizontal = 10.dp)
+            .fillMaxWidth(0.8F)
+            .height(100.dp)
       ) {
         Box(
           modifier = Modifier
-            .fillMaxSize()
-            .background(Color.Black),
+              .fillMaxSize()
+              .background(Color.Black),
           contentAlignment = Alignment.Center
         ) {
           androidx.compose.material3.Text(
@@ -289,12 +297,13 @@ fun CapsuleDetailsSection(
   capsuleDetails: CapsuleDetails?,
   isSuccess: Boolean,
   isLoading: Boolean,
-  load3dModelState: Load3dModelState, onViewIn3dClick: () -> Unit
+  load3dModelState: Load3dModelState, onViewIn3dClick: () -> Unit,
+  onUserProfileClick: (String) -> Unit
 ) {
   Column(
     modifier = Modifier
-      .fillMaxSize()
-      .padding(vertical = 5.dp, horizontal = 10.dp)
+        .fillMaxSize()
+        .padding(vertical = 5.dp, horizontal = 10.dp)
   ) {
     if (isSuccess)
       capsuleDetails?.let {
@@ -309,17 +318,17 @@ fun CapsuleDetailsSection(
     if (isLoading) {
       Box(
         modifier = Modifier
-          .fillMaxWidth()
-          .height(300.dp)
+            .fillMaxWidth()
+            .height(300.dp)
 
-          .padding(horizontal = 16.dp, vertical = 15.dp)
-          .padding(bottom = 25.dp)
-          .clip(RoundedCornerShape(20.dp))
-          .placeholder(
-            visible = isLoading,
-            color = Color.Gray.copy(alpha = 0.1f),
-            highlight = PlaceholderHighlight.shimmer()
-          )
+            .padding(horizontal = 16.dp, vertical = 15.dp)
+            .padding(bottom = 25.dp)
+            .clip(RoundedCornerShape(20.dp))
+            .placeholder(
+                visible = isLoading,
+                color = Color.Gray.copy(alpha = 0.1f),
+                highlight = PlaceholderHighlight.shimmer()
+            )
       )
     }
 
@@ -336,14 +345,14 @@ fun CapsuleDetailsSection(
     if (isLoading) {
       Box(
         modifier = Modifier
-          .fillMaxWidth()
-          .height(80.dp)
-          .clip(RoundedCornerShape(10.dp))
-          .placeholder(
-            visible = isLoading,
-            color = Color.Gray.copy(alpha = 0.1f),
-            highlight = PlaceholderHighlight.shimmer()
-          )
+            .fillMaxWidth()
+            .height(80.dp)
+            .clip(RoundedCornerShape(10.dp))
+            .placeholder(
+                visible = isLoading,
+                color = Color.Gray.copy(alpha = 0.1f),
+                highlight = PlaceholderHighlight.shimmer()
+            )
       )
     }
 
@@ -367,14 +376,14 @@ fun CapsuleDetailsSection(
     if (isLoading) {
       Box(
         modifier = Modifier
-          .fillMaxWidth()
-          .height(80.dp)
-          .clip(RoundedCornerShape(60.dp))
-          .placeholder(
-            visible = isLoading,
-            color = Color.Gray.copy(alpha = 0.1f),
-            highlight = PlaceholderHighlight.shimmer()
-          )
+            .fillMaxWidth()
+            .height(80.dp)
+            .clip(RoundedCornerShape(60.dp))
+            .placeholder(
+                visible = isLoading,
+                color = Color.Gray.copy(alpha = 0.1f),
+                highlight = PlaceholderHighlight.shimmer()
+            )
       )
     }
 
@@ -385,21 +394,26 @@ fun CapsuleDetailsSection(
         items(4) {
           Box(
             modifier = Modifier
-              .size(70.dp)
-              .placeholder(
-                visible = isLoading,
-                shape = CircleShape,
-                highlight = PlaceholderHighlight.shimmer(),
-                color = Color.Gray.copy(alpha = 0.3f),
-              )
-              .clip(shape = CircleShape)
+                .size(70.dp)
+                .placeholder(
+                    visible = isLoading,
+                    shape = CircleShape,
+                    highlight = PlaceholderHighlight.shimmer(),
+                    color = Color.Gray.copy(alpha = 0.3f),
+                )
+                .clip(shape = CircleShape)
           )
           Spacer(modifier = Modifier.width(10.dp))
         }
       }
 
     // Shared Profiles Section
-    SharedProfilesSection(isSuccess, capsuleDetails?.isSharedWithAll, capsuleDetails?.users)
+    SharedProfilesSection(
+      isSuccess,
+      capsuleDetails?.isSharedWithAll,
+      capsuleDetails?.users,
+      onUserProfileClick
+    )
 
     Spacer(modifier = Modifier.height(26.dp))
 
@@ -415,12 +429,12 @@ fun CapsuleOpeningTime(isSuccess: Boolean, timestamp: Timestamp?) {
     timestamp?.let {
       Row(
         modifier = Modifier
-          .fillMaxWidth()
-          .background(
-            LightBlue.copy(alpha = 0.1f),
-            shape = RoundedCornerShape(50)
-          )
-          .padding(16.dp),
+            .fillMaxWidth()
+            .background(
+                LightBlue.copy(alpha = 0.1f),
+                shape = RoundedCornerShape(50)
+            )
+            .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically
       ) {
         Icon(
@@ -443,7 +457,8 @@ fun CapsuleOpeningTime(isSuccess: Boolean, timestamp: Timestamp?) {
 fun SharedProfilesSection(
   isSuccess: Boolean,
   isSharedWithAll: Boolean?,
-  users: List<Map<String, Any>>?
+  users: List<Map<String, Any>>?,
+  onUserProfileClick: (String) -> Unit
 ) {
   if (isSuccess) {
     users?.let {
@@ -465,11 +480,14 @@ fun SharedProfilesSection(
         users.let {
           items(it) { user ->
             Profile(
+              userId = user["userId"] as String,
               isOwner = user["isOwner"] as Boolean,
               userName = user["userName"] as String,
               imageUrl = user["imageUrl"] as String,
               disableCrossBtn = true,
-              remove = {})
+              remove = {},
+              onClick = onUserProfileClick
+            )
           }
         }
         if (isSharedWithAll == true) {

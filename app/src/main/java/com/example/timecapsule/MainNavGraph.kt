@@ -3,6 +3,7 @@ package com.example.timecapsule
 import android.content.Intent
 import android.graphics.drawable.shapes.OvalShape
 import android.util.Log
+import android.view.View
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -226,15 +227,10 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
       }
     }
     composable(Screen.Profile.route) {
-      ProfileScreen(onViewProfileClick = { profile ->
+      ProfileScreen(onViewProfileClick = { userId ->
         navController.navigate(
           Screen.ViewProfile.createRoute(
-            username = profile.username,
-            firstName = profile.firstName,
-            lastName = profile.lastName,
-            aboutMe = profile.aboutMe,
-            profileImageUrl = profile.profileImageUrl,
-            coverImageUrl = profile.coverImageUrl
+            userId = userId
           )
         )
       },
@@ -250,16 +246,13 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
     }
 
     composable(Screen.ViewProfile.route) { backStackEntry ->
-      val profile = Profile(
-        userId = "",
-        username = backStackEntry.arguments!!.getString("username")!!,
-        firstName = backStackEntry.arguments!!.getString("firstName")!!,
-        lastName = backStackEntry.arguments!!.getString("lastName")!!,
-        aboutMe = backStackEntry.arguments!!.getString("aboutMe")!!,
-        profileImageUrl = (backStackEntry.arguments?.getString("profileImageUrl") ?: ""),
-        coverImageUrl = (backStackEntry.arguments?.getString("coverImageUrl") ?: "")
-      )
-      ViewProfileScreen(profile)
+      val userId = backStackEntry.arguments?.getString("userId")
+      if (userId != null) {
+        ViewProfileScreen(userId = userId) {
+          navController.popBackStack()
+        }
+      }
+
     }
 
     composable(Screen.Setting.route) { backStackEntry ->
@@ -332,9 +325,12 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
     composable(Screen.CapsuleDetails.route) { navBackStackEntry ->
       val capsuleId = navBackStackEntry.arguments?.getString("id")
       if (capsuleId != null) {
-        CapsuleDetailsScreenv1(capsuleId) {
+        CapsuleDetailsScreenv1(capsuleId, onBack = {
           navController.popBackStack()
-        }
+        },
+          onUserProfileClick = { userId ->
+            navController.navigate(Screen.ViewProfile.createRoute(userId = userId))
+          })
       }
     }
   }

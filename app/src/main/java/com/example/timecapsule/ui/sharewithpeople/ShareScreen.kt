@@ -82,7 +82,7 @@ import com.example.timecapsule.viewmodel.SearchPeopleState
 @Composable
 fun ShareScreen(
   viewModel: CapsuleCreationViewModel = hiltViewModel(),
-  onNavigate: (NavigationAddCapsule) -> Unit = {}
+  onNavigate: (NavigationAddCapsule) -> Unit = {}, onViewProfileClick: (String) -> Unit
 ) {
   val isTablet = DeviceType.isTablet()
   val scaffoldPadding = if (isTablet) PaddingValues(30.dp) else PaddingValues(0.dp)
@@ -137,10 +137,11 @@ fun ShareScreen(
             ShowSelectedPeople(
               modifier = Modifier,
               selectedPeoples = viewModel.selectedPeoples,
-              ownerUserId = viewModel.userId
-            ) { userName ->
-              viewModel.selectedPeoples.removeIf { it.userName == userName }
-            }
+              ownerUserId = viewModel.userId,
+              remove = { userName ->
+                viewModel.selectedPeoples.removeIf { it.userName == userName }
+              }, onViewProfileClick = onViewProfileClick
+            )
           }
 
           AnimatedVisibility(visible = viewModel.addedEmails.size > 0)
@@ -152,11 +153,11 @@ fun ShareScreen(
             }
           }
           // Non-scrollable SearchPeople
-          SearchPeople(viewModel) { user ->
+          SearchPeople(viewModel, addSelectedPeople = { user ->
             if (!viewModel.selectedPeoples.contains(user)) {
               viewModel.selectedPeoples.add(user)
             }
-          }
+          }, onViewProfileClick = onViewProfileClick)
         }
       }
 
@@ -180,7 +181,8 @@ fun ShareScreen(
 @Composable
 fun SearchPeople(
   viewModel: CapsuleCreationViewModel,
-  addSelectedPeople: (UserDetails) -> Unit = {}
+  addSelectedPeople: (UserDetails) -> Unit = {},
+  onViewProfileClick: (String) -> Unit
 ) {
 
   var isEmailEnabled by remember {
@@ -308,7 +310,7 @@ fun SearchPeople(
       searchResult.forEach { user ->
         UserInfo(
           user = user,
-          addSelectedPeople
+          addSelectedPeople, onViewProfileClick = onViewProfileClick
         )
       }
     }
@@ -319,7 +321,8 @@ fun SearchPeople(
 @Composable
 fun UserInfo(
   user: UserDetails,
-  addSelectedPeople: (UserDetails) -> Unit = {}
+  addSelectedPeople: (UserDetails) -> Unit = {},
+  onViewProfileClick: (String) -> Unit
 ) {
   val isTablet = DeviceType.isTablet()
   val interactionSource = remember { MutableInteractionSource() }
@@ -335,7 +338,7 @@ fun UserInfo(
           .wrapContentHeight()
           .padding(5.dp)
           .clickable(
-              onClick = {}, interactionSource = interactionSource,
+              onClick = { onViewProfileClick(user.userId) }, interactionSource = interactionSource,
               indication = ripple()
           ),
     verticalAlignment = Alignment.CenterVertically,
@@ -463,6 +466,7 @@ fun ShowSelectedPeople(
   ownerUserId: String? = null,
   showSharedWithALl: Boolean = false,
   remove: (String) -> Unit = {},
+  onViewProfileClick: (String) -> Unit = {}
 ) {
 
   LazyHorizontalGrid(
@@ -474,10 +478,12 @@ fun ShowSelectedPeople(
     items(selectedPeoples) { user ->
       if (disableCrossBtn || user.userId != ownerUserId)
         Profile(
+          userId = user.userId,
           userName = user.userName,
           user.imageUrl,
           disableCrossBtn,
-          remove = remove
+          remove = remove,
+          onClick = onViewProfileClick
         )
     }
     if (showSharedWithALl)
@@ -490,13 +496,14 @@ fun ShowSelectedPeople(
 @Preview
 @Composable
 fun Profile(
+  userId: String = "",
   userName: String = "",
   imageUrl: String = "",
   disableCrossBtn: Boolean = false,
   isOwner: Boolean = false,
   size: Dp = 70.dp,
   hideUserName: Boolean = false,
-  remove: (String) -> Unit = {}
+  remove: (String) -> Unit = {}, onClick: (String) -> Unit = {}
 ) {
 
   val imageModifier = if (isOwner)
@@ -517,7 +524,10 @@ fun Profile(
         .wrapContentHeight()
         .wrapContentWidth()
         .padding(horizontal = 4.dp)
-        .background(Color.Transparent),
+        .background(Color.Transparent)
+        .clickable(true) {
+            onClick(userId)
+        },
     horizontalAlignment = Alignment.CenterHorizontally
   ) {
 
