@@ -20,7 +20,8 @@ data class CapsuleDetails(
   val fileUrls: List<Map<String, String>>,
   val isOpened: Boolean? = null,
   val letter: String? = null,
-  val isSharedWithAll: Boolean = false
+  val isSharedWithAll: Boolean = false,
+  val isSurpriseCapsule:Boolean = false
 )
 
 data class CapsuleAsset(

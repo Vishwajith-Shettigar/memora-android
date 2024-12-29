@@ -8,7 +8,11 @@ import javax.inject.Inject
 class GetCapsuleDetailsUseCase @Inject constructor(
   private val capsulesRepository: CapsulesRepository
 ) {
-  suspend operator fun invoke(capsuleId:String):Response<CapsuleDetails>{
+  suspend operator fun invoke(capsuleId: String): Response<CapsuleDetails> {
     return capsulesRepository.getCapsuleDetails(capsuleId)
+  }
+
+  suspend fun getSurpriseCapsuleDetails(capsuleId: String): Response<CapsuleDetails> {
+    return capsulesRepository.getSurpriseCapsuleDetails(capsuleId)
   }
 }

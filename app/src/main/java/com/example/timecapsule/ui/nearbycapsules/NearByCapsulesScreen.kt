@@ -196,7 +196,7 @@ fun NearbyCapsulesScreen(
             navigate(
               Screen.OpenCapsuleLoadingScreen.createRoute(
                 id = viewModel.selectedCapsule!!.capsuleId,
-                isCapsuleHunt = true
+                isCapsuleHunt = true, isSurpriseCapsule = false
               )
             )
           }, viewAr = {

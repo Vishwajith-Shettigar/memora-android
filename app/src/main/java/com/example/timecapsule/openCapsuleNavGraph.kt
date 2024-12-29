@@ -25,13 +25,16 @@ fun NavGraphBuilder.openCapsuleNavGraph(navController: NavController) {
   ) {
     composable(Screen.OpenCapsuleLoadingScreen.route) { backstackentry ->
       val capsuleId = backstackentry.arguments?.getString("id")!!
-      val isCapsuleHunt = backstackentry.arguments?.getString("isCapsuleHunt").toBoolean() ?: false
+      val isCapsuleHunt = backstackentry.arguments?.getString("isCapsuleHunt").toBoolean()
+      val isSurpriseCapsule = backstackentry.arguments?.getString("isSurpriseCapsule").toBoolean()
+
       val sharedViewModel =
         backstackentry.sharedViewModel<OpenCapsuleViewModel>(navController = navController)
       CapsuleLoadingScreen(
         sharedViewModel,
         capsuleId,
         isCapsuleHunt = isCapsuleHunt,
+        isSurpriseCapsule=isSurpriseCapsule,
         navigate = { route ->
           navController.navigate(route) {
             popUpTo(Screen.OpenCapsuleLoadingScreen.route) {

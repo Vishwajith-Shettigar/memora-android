@@ -112,7 +112,7 @@ fun CapsuleCardListScreen(
   viewModel: ShowCapsulesListViewModel = hiltViewModel(),
   addCapsuleBtnClicked: () -> Unit = {},
   onCapsuleClicked: (id: String) -> Unit = {},
-  openCapule: (id: String) -> Unit = {}
+  openCapule: (id: String,isSurPriseCapsule:Boolean) -> Unit = {_,_->}
 ) {
 
   val state by viewModel.capsuleListState.collectAsState()

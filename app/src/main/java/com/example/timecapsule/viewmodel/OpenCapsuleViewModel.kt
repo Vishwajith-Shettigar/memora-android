@@ -91,6 +91,38 @@ class OpenCapsuleViewModel @Inject constructor(
     return files
   }
 
+  fun getSurpriseCapsuleDetails(capsuleId: String) {
+    CAPSULE_ID = capsuleId
+    viewModelScope.launch {
+      withContext(Dispatchers.IO) {
+        val response = getCapsuleDetailsUseCase.getSurpriseCapsuleDetails(capsuleId)
+        when (response) {
+          is Response.Success -> {
+            _capsuleDetailsState.value =
+              DisplayCapsuleDetailsState.Success(response.data!!)
+            loadModel((_capsuleDetailsState.value as DisplayCapsuleDetailsState.Success).capsuleDetails.modelId.toString())
+            response.data!!.fileUrls.forEach {
+              val downloadFile =
+                DownloadFile(
+                  url = it["url"]!!,
+                  name = it["fileName"]!!,
+                  fileType = it["fileType"]!!,
+                  size = it["size"]!!
+                )
+              files.add(downloadFile)
+            }
+          }
+
+          is Response.Error -> {
+            Log.e("pokemon",response.exception.toString())
+            _capsuleDetailsState.value =
+              DisplayCapsuleDetailsState.Error(response.exception)
+          }
+        }
+      }
+    }
+  }
+
   fun getCapsuleDetails(capsuleId: String) {
     CAPSULE_ID = capsuleId
     viewModelScope.launch {
