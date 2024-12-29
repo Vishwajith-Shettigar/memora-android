@@ -87,9 +87,7 @@ fun NavGraphBuilder.addCapsuleNavGraph(navController: NavController, activity: A
             navController.navigate(Screen.SelectTime.route) {
               popUpTo(route = Screen.ShareWithPeopleOptions.route) {
                 inclusive = true
-                saveState = true
               }
-              restoreState = true
               launchSingleTop = true
             }
           }
@@ -100,18 +98,14 @@ fun NavGraphBuilder.addCapsuleNavGraph(navController: NavController, activity: A
               {
                 popUpTo(route = Screen.ShareWithPeopleOptions.route) {
                   inclusive = true
-                  saveState = true
                 }
-                restoreState = true
                 launchSingleTop = true
               }
             } else {
               navController.navigate(Screen.LocationSelectionOptions.route) {
                 popUpTo(route = Screen.ShareWithPeopleOptions.route) {
                   inclusive = true
-                  saveState = true
                 }
-                restoreState = true
                 launchSingleTop = true
               }
             }
@@ -152,9 +146,7 @@ fun NavGraphBuilder.addCapsuleNavGraph(navController: NavController, activity: A
             navController.navigate(previousRoute) {
               popUpTo(route = Screen.LocationSelectionOptions.route) {
                 inclusive = true
-                saveState = true
               }
-              restoreState = true
               launchSingleTop = true
             }
           }
@@ -164,18 +156,14 @@ fun NavGraphBuilder.addCapsuleNavGraph(navController: NavController, activity: A
               navController.navigate(Screen.SelectLocation.route) {
                 popUpTo(route = Screen.LocationSelectionOptions.route) {
                   inclusive = true
-                  saveState = true
                 }
-                restoreState = true
                 launchSingleTop = true
               }
             } else {
               navController.navigate(Screen.ChooseCapsuleModel.route) {
                 popUpTo(route = Screen.LocationSelectionOptions.route) {
                   inclusive = true
-                  saveState = true
                 }
-                restoreState = true
                 launchSingleTop = true
               }
             }
@@ -327,9 +315,7 @@ fun handleNavigation(
         navController.navigate(navigateToScreenRouteBack.route) {
           popUpTo(route = popScreenRoute.route) {
             inclusive = true
-            saveState = true
           }
-          restoreState = true
           launchSingleTop = true
         }
       }
@@ -342,9 +328,7 @@ fun handleNavigation(
         navController.navigate(navigateToScreenRouteNext.route) {
           popUpTo(route = popScreenRoute.route) {
             inclusive = true
-            saveState = true
           }
-          restoreState = true
           launchSingleTop = true
         }
       }

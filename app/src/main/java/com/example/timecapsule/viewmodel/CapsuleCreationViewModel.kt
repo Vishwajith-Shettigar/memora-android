@@ -9,6 +9,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -29,6 +30,8 @@ import com.example.model.FileUploadProgress
 import com.example.model.FileUploaded
 import com.example.model.UserDetails
 import com.example.timecapsule.routes.Screen
+import com.example.timecapsule.ui.selectlocation.LocationOptions
+import com.example.timecapsule.ui.sharewithpeople.SharePeopleOptions
 import com.example.util.Response
 import com.example.util.bytesToMegabytes
 import com.example.util.getFileSizeAndName
@@ -105,6 +108,12 @@ class CapsuleCreationViewModel @Inject constructor(
 
   lateinit var ownerUserDetails: UserDetails
 
+  var selectedShareOption by   mutableStateOf(SharePeopleOptions.NONE)
+
+  var selectedLocationOptionRadio by  mutableStateOf(LocationOptions.NONE)
+
+
+
   init {
     CoroutineScope(Dispatchers.IO).launch {
       val response = getUserIDUseCase.invoke()
@@ -128,7 +137,7 @@ class CapsuleCreationViewModel @Inject constructor(
   private val capsuleSizeInMB: Double = 5.0
   private var contentSizeInMB: Double = 0.0
 
-  var selectedCapsuleModelId: String? = null
+  var selectedCapsuleModelId: MutableStateFlow<String?> = MutableStateFlow(null)
   var selectedCapsuleImageUrl: String? = null
 
   private var totalFiles: Int = 0
@@ -406,7 +415,7 @@ class CapsuleCreationViewModel @Inject constructor(
 
           val capsuleDetails = CapsuleDetails(
             id = CAPSULE_ID,
-            modelId = selectedCapsuleModelId?.toIntOrNull() ?: 100,
+            modelId = selectedCapsuleModelId.value?.toIntOrNull() ?: 100,
             imageUrl = selectedCapsuleImageUrl!!,
             title = capsuleName,
             description = capsuleDescription,
@@ -458,6 +467,7 @@ class CapsuleCreationViewModel @Inject constructor(
 
   override fun onCleared() {
     super.onCleared()
+    Log.e("pokemon","cleared")
     uploadFilesUseCase.cancelAllFilesUploading()
   }
 }

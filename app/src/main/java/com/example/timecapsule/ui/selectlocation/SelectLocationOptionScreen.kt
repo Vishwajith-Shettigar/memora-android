@@ -48,7 +48,6 @@ fun SelectLocationOptionScreen(
   viewModel: CapsuleCreationViewModel = hiltViewModel(),
   onNavigate: (NavigationAddCapsule, LocationOptions) -> Unit = { _, _ -> }
 ) {
-  var selectedOption by rememberSaveable { mutableStateOf(LocationOptions.NONE) }
 
   Scaffold(
     modifier = Modifier
@@ -60,20 +59,23 @@ fun SelectLocationOptionScreen(
 
     Box(
       modifier = Modifier
-        .padding(
-          start = innerPadding.calculateStartPadding(LayoutDirection.Ltr),
-          end = innerPadding.calculateEndPadding(LayoutDirection.Ltr),
-          top = innerPadding.calculateTopPadding()
-        )
+          .padding(
+              start = innerPadding.calculateStartPadding(LayoutDirection.Ltr),
+              end = innerPadding.calculateEndPadding(LayoutDirection.Ltr),
+              top = innerPadding.calculateTopPadding()
+          )
           .fillMaxSize()
     ) {
-      SelectionScreen(modifier = Modifier.padding(innerPadding), selectedOption) {
-        if (it==LocationOptions.NONE)
+      SelectionScreen(
+        modifier = Modifier.padding(innerPadding),
+        viewModel.selectedLocationOptionRadio
+      ) {
+        if (it == LocationOptions.NONE)
           viewModel.setLocationOption(LocationOption.DONT_SELECT_LOCATION)
         else
           viewModel.setLocationOption(LocationOption.SELECT_LOCATION)
 
-        selectedOption = it
+        viewModel.selectedLocationOptionRadio = it
       }
       Box(
         modifier = Modifier
@@ -83,7 +85,7 @@ fun SelectLocationOptionScreen(
             .zIndex(2f)
       ) {
         NavigationRow { navigationFlow ->
-          onNavigate(navigationFlow, selectedOption)
+          onNavigate(navigationFlow, viewModel.selectedLocationOptionRadio)
         }
       }
     }

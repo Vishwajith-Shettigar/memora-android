@@ -52,7 +52,6 @@ fun ShareOptionScreen(
   viewModel: CapsuleCreationViewModel = hiltViewModel(),
   onNavigate: (NavigationAddCapsule, SharePeopleOptions) -> Unit = { _, _ -> }
 ) {
-  var selectedOption by rememberSaveable { mutableStateOf(SharePeopleOptions.NONE) }
   Scaffold(
     modifier = Modifier
         .fillMaxSize()
@@ -69,7 +68,7 @@ fun ShareOptionScreen(
         )
           .fillMaxSize()
     ) {
-      SelectionScreen(modifier = Modifier, selectedOption) {
+      SelectionScreen(modifier = Modifier, viewModel.selectedShareOption) {
         if (it == SharePeopleOptions.NONE)
           viewModel.setShareWithPeople(ShareWithPeopleOption.DONT_SHARE)
         else if (it == SharePeopleOptions.SELECTED_PEOPLE)
@@ -77,7 +76,7 @@ fun ShareOptionScreen(
         else
           viewModel.setShareWithPeople(ShareWithPeopleOption.SHARE_ALL)
 
-        selectedOption = it
+        viewModel.selectedShareOption = it
 
       }
       Box(
@@ -88,7 +87,7 @@ fun ShareOptionScreen(
             .zIndex(2f)
       ) {
         NavigationRow() { navigationFlow ->
-          onNavigate(navigationFlow, selectedOption)
+          onNavigate(navigationFlow, viewModel.selectedShareOption)
         }
       }
     }

@@ -93,6 +93,8 @@ fun SelectCapsuleScreen(
   }
   val capsuleAssetsState by viewModel.capsuleSelectionState.collectAsState()
 
+  val selectedCapsuleId by viewModel.selectedCapsuleModelId.collectAsState()
+
   var isLoading: Boolean = capsuleAssetsState is CapsuleSelectionState.Loading
   var isSuccess: Boolean = capsuleAssetsState is CapsuleSelectionState.Success
 
@@ -170,23 +172,24 @@ fun SelectCapsuleScreen(
       if (isSuccess)
         CapsuleList(
           Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+         selectedCapsuleId,
           capsuleAssets,
           onViewCapsuleClick
         ) { capsuleModelId, imageUrl ->
-          viewModel.selectedCapsuleModelId = capsuleModelId
+          viewModel.selectedCapsuleModelId.value = capsuleModelId
           viewModel.selectedCapsuleImageUrl = imageUrl
         }
 
       Box(
         modifier = Modifier
-          .fillMaxWidth()
-          .padding(0.dp)
-          .align(Alignment.BottomCenter)
-          .zIndex(2f)
+            .fillMaxWidth()
+            .padding(0.dp)
+            .align(Alignment.BottomCenter)
+            .zIndex(2f)
       ) {
         NavigationRow { navigationFlow ->
-          if (viewModel.selectedCapsuleModelId == null)
-            Toast.makeText(context, "Please select capsule", Toast.LENGTH_SHORT).show()
+          if (viewModel.selectedCapsuleModelId.value == null)
+            Toast.makeText(context, "Please select a capsule", Toast.LENGTH_SHORT).show()
           else
             onNavigate(navigationFlow)
         }
@@ -198,6 +201,7 @@ fun SelectCapsuleScreen(
 @Composable
 fun CapsuleList(
   modifier: Modifier,
+  selectedCapsuleModelId: String? = null,
   capsuleAssets: List<CapsuleAsset>,
   onViewCapsuleClick: (CapsuleAsset) -> Unit = {},
   setCapsuleModelIdAndImageUrl: (String, String) -> Unit = { _, _ -> }
@@ -213,6 +217,7 @@ fun CapsuleList(
   } else {
     CapsuleListMobile(
       modifier = modifier,
+      selectedCapsuleModelId,
       capsuleAssets,
       onViewCapsuleClick,
       setCapsuleModelIdAndImageUrl
@@ -223,18 +228,11 @@ fun CapsuleList(
 @Composable
 fun CapsuleListMobile(
   modifier: Modifier = Modifier,
+  selectedCapsuleModelId: String? = null,
   capsuleAssets: List<CapsuleAsset>,
   onViewCapsuleClick: (CapsuleAsset) -> Unit = {},
   setCapsuleModelIdAndImageUrl: (String, String) -> Unit = { _, _ -> }
 ) {
-  var selectedCapsuleId by rememberSaveable { mutableStateOf("") }
-
-  LaunchedEffect(selectedCapsuleId) {
-    val imageUrl = getCapsuleImageUrl(selectedCapsuleId, capsuleAssets)
-    if (imageUrl != null) {
-      setCapsuleModelIdAndImageUrl(selectedCapsuleId, imageUrl)
-    }
-  }
 
   LazyVerticalStaggeredGrid(
     modifier = modifier
@@ -245,8 +243,16 @@ fun CapsuleListMobile(
     verticalItemSpacing = 8.dp,
     content = {
       items(capsuleAssets) {
-        Capsule(it, selectedCapsuleId == it.capsule_id, onViewCapsuleClick = onViewCapsuleClick) {
-          selectedCapsuleId = it.capsule_id
+        Capsule(
+          it,
+          selectedCapsuleModelId == it.capsule_id,
+          onViewCapsuleClick = onViewCapsuleClick
+        ) {
+
+          val imageUrl = it.capsule_id.let { getCapsuleImageUrl(it, capsuleAssets) }
+          if (imageUrl != null) {
+            setCapsuleModelIdAndImageUrl(it.capsule_id, imageUrl)
+          }
         }
       }
     }
@@ -274,8 +280,8 @@ fun CapsuleListTablet(
   LazyVerticalStaggeredGrid(
     columns = StaggeredGridCells.Adaptive(minSize = 400.dp),
     modifier = modifier
-      .fillMaxSize()
-      .background(Color.Transparent),
+        .fillMaxSize()
+        .background(Color.Transparent),
     contentPadding = PaddingValues(8.dp),
     horizontalArrangement = Arrangement.spacedBy(10.dp),
     verticalItemSpacing = 8.dp,
@@ -304,8 +310,8 @@ fun Capsule(
 
     },
     modifier = Modifier
-      .wrapContentHeight()
-      .fillMaxWidth(),
+        .wrapContentHeight()
+        .fillMaxWidth(),
     elevation = CardDefaults.cardElevation(4.dp),
     shape = RoundedCornerShape(6.dp),
     onClick = {
@@ -316,10 +322,10 @@ fun Capsule(
       horizontalAlignment = Alignment.CenterHorizontally,
       verticalArrangement = Arrangement.Center,
       modifier = Modifier
-        .padding(vertical = 15.dp)
-        .fillMaxSize()
-        .clip(shape = RoundedCornerShape(6.dp))
-        .background(Color.Transparent)
+          .padding(vertical = 15.dp)
+          .fillMaxSize()
+          .clip(shape = RoundedCornerShape(6.dp))
+          .background(Color.Transparent)
     ) {
       AsyncImage(
         modifier = Modifier.heightIn(min = 200.dp),
@@ -329,8 +335,8 @@ fun Capsule(
       OutlinedButton(
         onClick = { onViewCapsuleClick(capsuleAssets) },
         modifier = Modifier
-          .height(40.dp)
-          .width(100.dp),
+            .height(40.dp)
+            .width(100.dp),
         colors = ButtonDefaults.outlinedButtonColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
       ) {
         Text(
