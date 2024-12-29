@@ -163,16 +163,19 @@ fun DateTimePicker(modifier: Modifier = Modifier, viewModel: CapsuleCreationView
   }
 
   val datePickerState = rememberDatePickerState()
-  val timePickerState = rememberTimePickerState()
-  val selectedDate = datePickerState.selectedDateMillis?.let {
-    convertMillisToDate(it)
-  } ?: ""
+  val timePickerState = rememberTimePickerState(
+    initialHour = viewModel.selectedHour, initialMinute = viewModel.selectedMinute,
+    is24Hour = false
+  )
 
-  val selectedTime = timePickerState.let {
-    convertToTimeFormat(it.hour, it.minute)
+  LaunchedEffect(Unit) {
+    datePickerState.selectedDateMillis = viewModel.selectedDateInMilis
   }
 
-  LaunchedEffect(selectedDate, selectedTime) {
+  LaunchedEffect(datePickerState.selectedDateMillis, timePickerState.hour, timePickerState.minute) {
+    viewModel.selectedDateInMilis = datePickerState.selectedDateMillis!!
+    viewModel.selectedHour = timePickerState.hour
+    viewModel.selectedMinute = timePickerState.minute
     val selectedTimestamp = getSelectedTimestamp(
       datePickerState.selectedDateMillis,
       timePickerState.hour,
@@ -181,6 +184,14 @@ fun DateTimePicker(modifier: Modifier = Modifier, viewModel: CapsuleCreationView
     if (selectedTimestamp != null) {
       viewModel.setTimeStamp(selectedTimestamp)
     }
+
+    viewModel.selectedDate = datePickerState.selectedDateMillis?.let {
+      convertMillisToDate(it)
+    } ?: ""
+
+    viewModel.selectedTime = timePickerState.let {
+      convertToTimeFormat(it.hour, it.minute)
+    }
   }
 
   Column(
@@ -188,11 +199,11 @@ fun DateTimePicker(modifier: Modifier = Modifier, viewModel: CapsuleCreationView
         .fillMaxSize()
         .padding(horizontal = 15.dp)
         .background(MaterialTheme.colorScheme.primary),
-    ) {
+  ) {
 
     Row {
       OutlinedTextField(
-        value = selectedDate,
+        value = viewModel.selectedDate,
         onValueChange = { },
         label = { Text("D/M/Y ") },
         readOnly = true,
@@ -225,7 +236,7 @@ fun DateTimePicker(modifier: Modifier = Modifier, viewModel: CapsuleCreationView
       )
 
       OutlinedTextField(
-        value = selectedTime,
+        value = viewModel.selectedTime,
         onValueChange = { },
         label = { Text("H:M") },
         readOnly = true,

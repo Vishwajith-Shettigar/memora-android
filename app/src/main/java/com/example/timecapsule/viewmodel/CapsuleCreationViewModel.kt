@@ -41,6 +41,7 @@ import com.google.firebase.firestore.GeoPoint
 import com.google.firebase.util.nextAlphanumericString
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import java.sql.Date
 import javax.inject.Inject
 import kotlin.Exception
 import kotlin.random.Random
@@ -108,10 +109,9 @@ class CapsuleCreationViewModel @Inject constructor(
 
   lateinit var ownerUserDetails: UserDetails
 
-  var selectedShareOption by   mutableStateOf(SharePeopleOptions.NONE)
+  var selectedShareOption by mutableStateOf(SharePeopleOptions.NONE)
 
-  var selectedLocationOptionRadio by  mutableStateOf(LocationOptions.NONE)
-
+  var selectedLocationOptionRadio by mutableStateOf(LocationOptions.NONE)
 
 
   init {
@@ -131,6 +131,21 @@ class CapsuleCreationViewModel @Inject constructor(
   }
 
   val amount = 500
+
+  var selectedDate by
+  mutableStateOf("")
+
+  var selectedTime by
+  mutableStateOf("")
+
+  var selectedDateInMilis by
+  mutableStateOf(0L)
+
+  var selectedHour by
+  mutableStateOf(0)
+
+  var selectedMinute by
+  mutableStateOf(0)
 
   private val CAPSULE_ID: String = Random.nextAlphanumericString(10)
 
@@ -467,7 +482,6 @@ class CapsuleCreationViewModel @Inject constructor(
 
   override fun onCleared() {
     super.onCleared()
-    Log.e("pokemon","cleared")
     uploadFilesUseCase.cancelAllFilesUploading()
   }
 }
