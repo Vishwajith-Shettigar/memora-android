@@ -61,8 +61,10 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import androidx.palette.graphics.Palette
 import coil.compose.AsyncImage
+import com.example.data.sharedpreference.ThemePreferences
 import com.example.model.Profile
 import com.example.timecapsule.R
+import com.example.timecapsule.ThemeManager
 import com.example.timecapsule.ui.editprofile.EditProfileContent
 import com.example.timecapsule.ui.editprofile.EditProfileScreen
 import com.example.timecapsule.ui.login.TitleSubtitleWithOkayButtonDialog
@@ -71,13 +73,14 @@ import com.example.timecapsule.ui.theme.SubTitleFontColor
 import com.example.timecapsule.ui.util.DeviceType
 import com.example.timecapsule.viewmodel.ProfileState
 import com.example.timecapsule.viewmodel.ProfileViewModel
+import kotlinx.coroutines.CoroutineScope
 
 @Composable
 fun ProfileScreen(
   viewModel: ProfileViewModel = hiltViewModel(),
   onViewProfileClick: (String) -> Unit = {}, onSettingClick: () -> Unit,
   onContactUsClicked: () -> Unit, onPrivacyClicked: () -> Unit,
-  signOut:()->Unit
+  signOut: () -> Unit
 ) {
 
   var showSignOutDialog by remember {
@@ -259,7 +262,7 @@ fun ProfileScreen(
 
           Spacer(modifier = Modifier.height(16.dp))
 
-          SettingsOption(icon = R.drawable.ic_darkmode, text = "Dark Mode", true) {}
+          DarkModeSettingsOption(icon = R.drawable.ic_darkmode, text = "Dark Mode") {}
           SettingsOption(icon = com.example.timecapsule.R.drawable.ic_setting, text = "Setting") {
             onSettingClick()
           }
@@ -316,9 +319,9 @@ fun ProfileScreen(
 fun SettingsOption(
   icon: Int,
   text: String,
-  isDarkModeOption: Boolean = false,
   onClick: () -> Unit
 ) {
+
   val interactionSource = remember { MutableInteractionSource() }
   val isTablet = DeviceType.isTablet()
   Row(
@@ -352,18 +355,12 @@ fun SettingsOption(
           .wrapContentHeight(),
       verticalAlignment = Alignment.CenterVertically,
     ) {
-      if (isDarkModeOption)
-        Image(
-          painterResource(id = icon),
-          contentDescription = text,
-          modifier = Modifier.size(24.dp),
-        ) else
-        Icon(
-          painterResource(id = icon),
-          contentDescription = text,
-          modifier = Modifier.size(24.dp),
-          tint = LightBlue.copy(alpha = 0.8F)
-        )
+      Icon(
+        painterResource(id = icon),
+        contentDescription = text,
+        modifier = Modifier.size(24.dp),
+        tint = LightBlue.copy(alpha = 0.8F)
+      )
       Spacer(modifier = Modifier.width(16.dp))
       Text(
         text, style = MaterialTheme.typography.titleLarge.copy(
@@ -373,12 +370,89 @@ fun SettingsOption(
         )
       )
     }
-    if (isDarkModeOption)
-      Switch(checked = true, onCheckedChange = {})
+    Icon(
+      painter = painterResource(id = R.drawable.ic_forward), contentDescription = "open option",
+      tint = Color.LightGray
+    )
+  }
+}
+
+@Composable
+fun DarkModeSettingsOption(
+  icon: Int,
+  text: String,
+  onClick: () -> Unit
+) {
+
+
+  val context = LocalContext.current
+
+  var darkModeState by remember {
+    mutableStateOf(ThemePreferences.isDarkMode(context))
+  }
+
+  LaunchedEffect(darkModeState) {
+    ThemeManager.toggleTheme(context, darkModeState)
+  }
+
+  val interactionSource = remember { MutableInteractionSource() }
+  val isTablet = DeviceType.isTablet()
+  Row(
+    modifier =
+    if (isTablet)
+        Modifier
+            .width(600.dp)
+            .height(55.dp)
+            .clickable(
+                onClick = { onClick() },
+                interactionSource = interactionSource,
+                indication = ripple()
+            )
+            .padding(horizontal = 16.dp)
     else
-      Icon(
-        painter = painterResource(id = R.drawable.ic_forward), contentDescription = "open option",
-        tint = Color.LightGray
+        Modifier
+            .fillMaxWidth()
+            .height(55.dp)
+            .padding(horizontal = 16.dp)
+            .clickable(
+                onClick = { onClick() },
+                interactionSource = interactionSource,
+                indication = ripple()
+            ),
+    verticalAlignment = Alignment.CenterVertically,
+    horizontalArrangement = Arrangement.SpaceBetween
+  ) {
+    Row(
+      modifier = Modifier
+          .wrapContentWidth()
+          .wrapContentHeight(),
+      verticalAlignment = Alignment.CenterVertically,
+    ) {
+      Image(
+        painterResource(id = icon),
+        contentDescription = text,
+        modifier = Modifier.size(24.dp),
       )
+      Spacer(modifier = Modifier.width(16.dp))
+      Text(
+        text, style = MaterialTheme.typography.titleLarge.copy(
+          fontWeight = FontWeight.Bold,
+          color = MaterialTheme.colorScheme.onSurfaceVariant,
+          fontSize = 16.sp
+        )
+      )
+    }
+
+    Switch(
+      checked = darkModeState, onCheckedChange = {
+        darkModeState = it
+      },
+      colors = androidx.compose.material3.SwitchDefaults.colors(
+        checkedThumbColor = MaterialTheme.colorScheme.primary,
+        uncheckedThumbColor = Color.White,
+        uncheckedTrackColor = Color.Gray,
+        checkedTrackColor = LightBlue
+      )
+    )
   }
 }
