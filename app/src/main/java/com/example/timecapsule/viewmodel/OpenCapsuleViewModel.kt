@@ -114,7 +114,6 @@ class OpenCapsuleViewModel @Inject constructor(
           }
 
           is Response.Error -> {
-            Log.e("pokemon",response.exception.toString())
             _capsuleDetailsState.value =
               DisplayCapsuleDetailsState.Error(response.exception)
           }

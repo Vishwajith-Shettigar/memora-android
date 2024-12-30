@@ -52,7 +52,6 @@ fun CapsuleLoadingScreen(
       viewModel.getScreenCheckPoint(capsuleId)
     }
     if (isSurpriseCapsule) {
-      Log.e("pokemon","yeee")
       viewModel.getSurpriseCapsuleDetails(capsuleId)
     } else
       viewModel.getCapsuleDetails(capsuleId)

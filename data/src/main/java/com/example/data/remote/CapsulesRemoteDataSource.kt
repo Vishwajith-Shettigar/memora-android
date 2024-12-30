@@ -303,7 +303,6 @@ class CapsulesRemoteDataSource @Inject constructor(
 
   suspend fun getSurpriseCapsuleDetails(capsuleId: String): Response<CapsuleDetails> {
     return try {
-      Log.e("pokemon", capsuleId)
       val snapshot = firestore.collection("surprise_capsules").document(capsuleId).get().await()
 
       val document = snapshot.data!!
@@ -329,7 +328,6 @@ class CapsulesRemoteDataSource @Inject constructor(
       Response.Success(data = capsuleDetails)
 
     } catch (e: Exception) {
-      Log.e("pokemon", e.toString())
       Response.Error(exception = e)
     }
   }
