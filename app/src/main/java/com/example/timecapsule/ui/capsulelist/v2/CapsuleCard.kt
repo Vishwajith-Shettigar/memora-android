@@ -63,7 +63,7 @@ fun CapsuleCard(
   bgColor: Color,
   onClick: () -> Unit,
   onCapsuleDetailsClicked: (String) -> Unit,
-  openCapule: (id: String,isSurPriseCapsule:Boolean) -> Unit = {_,_->}
+  openCapule: (id: String, isSurPriseCapsule: Boolean) -> Unit = { _, _ -> }
 ) {
 
   val isTablet = DeviceType.isTablet()
@@ -161,33 +161,29 @@ fun CapsuleCard(
           horizontalArrangement = Arrangement.SpaceBetween,
           verticalAlignment = Alignment.CenterVertically
         ) {
-          Row(
+
+          Text(
             modifier = Modifier.weight(0.7F),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Start
+            text = capsuleDetails.title,
+            style = MaterialTheme.typography.titleLarge.copy(
+              fontSize = if (isExpanded) 25.sp else 20.sp,
+              color = Color.Black,
+              fontWeight = FontWeight.ExtraBold,
+            ),
+            softWrap = true
+          )
+
+          Box(
+            modifier = Modifier
+              .weight(0.3F)
           ) {
-            Text(
-              text = capsuleDetails.title,
-              style = MaterialTheme.typography.titleLarge.copy(
-                fontSize = if (isExpanded) 25.sp else 20.sp,
-                color = Color.Black,
-                fontWeight = FontWeight.ExtraBold,
-              ),
-              softWrap = true
-            )
             if (capsuleDetails.isSurpriseCapsule)
               Image(
                 painter = painterResource(id = com.example.timecapsule.R.drawable.capsule_creation_confirmation),
                 contentDescription = "Official icon",
                 modifier = Modifier.size(50.dp)
               )
-          }
-
-          if (!capsuleDetails.isSurpriseCapsule)
-            Box(
-              modifier = Modifier
-                .weight(0.3F)
-            ) {
+            else
               IconButton(modifier = Modifier
                   .align(Alignment.Center)
                   .size(25.dp)
@@ -205,7 +201,7 @@ fun CapsuleCard(
                   tint = Color.Black
                 )
               }
-            }
+          }
         }
 
         Row(
@@ -310,7 +306,7 @@ fun CapsuleCard(
               )
               {
                 Button(
-                  onClick = { openCapule(capsuleDetails.id,capsuleDetails.isSurpriseCapsule) },
+                  onClick = { openCapule(capsuleDetails.id, capsuleDetails.isSurpriseCapsule) },
                   colors = ButtonDefaults.buttonColors(containerColor = LightBlue)
                 ) {
                   Text(
