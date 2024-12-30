@@ -115,15 +115,27 @@ fun SplashScreen(navController: NavController, viewModel: SplashViewModel = hilt
         )
       }
 
-      Text(
-        "Time Capsule",
-        style = MaterialTheme.typography.titleLarge.copy(
-          fontSize = 24.sp,
-          fontWeight = FontWeight.Light,
-          fontFamily = openSansExtraBold,
-          color = MaterialTheme.colorScheme.onSurfaceVariant
+      Column {
+        Text(
+          text = "memora",
+          style = MaterialTheme.typography.titleLarge.copy(
+            fontSize = 30.sp,
+            fontWeight = FontWeight.ExtraBold,
+            fontFamily = openSansExtraBold
+          )
         )
-      )
+        Text(
+          text =
+          "beta",
+          modifier = Modifier.align(Alignment.End),
+          style = MaterialTheme.typography.titleLarge.copy(
+            fontSize = 10.sp,
+            fontWeight = FontWeight.Light,
+            fontFamily = openSansExtraBold,
+            color = LightBlue
+          )
+        )
+      }
     }
   }
 }

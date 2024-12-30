@@ -175,10 +175,11 @@ fun SelectCapsuleScreen(
          selectedCapsuleId,
           capsuleAssets,
           onViewCapsuleClick
-        ) { capsuleModelId, imageUrl,cost ->
+        ) { capsuleModelId, imageUrl,cost,storage ->
           viewModel.selectedCapsuleModelId.value = capsuleModelId
           viewModel.selectedCapsuleImageUrl = imageUrl
           viewModel.amount=cost
+          viewModel.capsuleSizeInMB=storage
         }
 
       Box(
@@ -205,7 +206,7 @@ fun CapsuleList(
   selectedCapsuleModelId: String? = null,
   capsuleAssets: List<CapsuleAsset>,
   onViewCapsuleClick: (CapsuleAsset) -> Unit = {},
-  setCapsuleModelIdAndImageUrlAmount: (String, String,Int) -> Unit
+  setCapsuleModelIdAndImageUrlAmount: (String, String,Int,Double) -> Unit
 ) {
   val isTablet = DeviceType.isTablet()
   if (isTablet) {
@@ -232,7 +233,7 @@ fun CapsuleListMobile(
   selectedCapsuleModelId: String? = null,
   capsuleAssets: List<CapsuleAsset>,
   onViewCapsuleClick: (CapsuleAsset) -> Unit = {},
-  setCapsuleModelIdAndImageUrl: (String, String,Int) -> Unit
+  setCapsuleModelIdAndImageUrl: (String, String,Int,Double) -> Unit
 ) {
 
   LazyVerticalStaggeredGrid(
@@ -252,7 +253,7 @@ fun CapsuleListMobile(
 
           val imageUrl = it.capsule_id.let { getCapsuleImageUrl(it, capsuleAssets) }
           if (imageUrl != null) {
-            setCapsuleModelIdAndImageUrl(it.capsule_id, imageUrl,it.cost.toInt())
+            setCapsuleModelIdAndImageUrl(it.capsule_id, imageUrl,it.cost.toInt(),it.storage.toDouble())
           }
         }
       }
@@ -265,16 +266,18 @@ fun CapsuleListTablet(
   modifier: Modifier = Modifier,
   capsuleAssets: List<CapsuleAsset>,
   onViewCapsuleClick: (CapsuleAsset) -> Unit = {},
-  setCapsuleModelIdAndImageUrl: (String, String,Int) -> Unit
+  setCapsuleModelIdAndImageUrl: (String, String,Int,Double) -> Unit
 ) {
   var selectedCapsuleId by rememberSaveable { mutableStateOf<String>("") }
 
   LaunchedEffect(selectedCapsuleId) {
 
-    val cost = capsuleAssets.find { it.capsule_id==selectedCapsuleId }?.cost?:0
+    val capsule = capsuleAssets.find { it.capsule_id==selectedCapsuleId }
+    val cost=capsule!!.cost
+    val storage=capsule!!.storage
     val imageUrl = getCapsuleImageUrl(selectedCapsuleId, capsuleAssets)
     if (imageUrl != null) {
-      setCapsuleModelIdAndImageUrl(selectedCapsuleId, imageUrl, cost.toInt())
+      setCapsuleModelIdAndImageUrl(selectedCapsuleId, imageUrl, cost.toInt(),storage.toDouble())
     }
 
   }

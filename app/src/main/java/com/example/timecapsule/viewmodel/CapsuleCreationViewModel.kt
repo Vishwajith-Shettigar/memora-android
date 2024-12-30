@@ -149,7 +149,7 @@ class CapsuleCreationViewModel @Inject constructor(
 
   private val CAPSULE_ID: String = Random.nextAlphanumericString(10)
 
-  private val capsuleSizeInMB: Double = 5.0
+  public var capsuleSizeInMB: Double = 5.0
   private var contentSizeInMB: Double = 0.0
 
   var selectedCapsuleModelId: MutableStateFlow<String?> = MutableStateFlow(null)

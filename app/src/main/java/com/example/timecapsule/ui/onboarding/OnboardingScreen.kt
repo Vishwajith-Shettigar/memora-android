@@ -51,6 +51,7 @@ import com.example.timecapsule.ui.theme.DMSerifText
 import com.example.timecapsule.ui.theme.LoginBtnLeft
 import com.example.timecapsule.ui.theme.LoginBtnRight
 import com.example.timecapsule.ui.theme.TopOnboarding
+import com.example.timecapsule.ui.theme.openSansExtraBold
 import com.example.timecapsule.ui.util.Device
 import com.example.timecapsule.ui.util.DeviceType
 import com.example.timecapsule.ui.theme.white
@@ -198,7 +199,7 @@ fun TitleAndSubtitle(modifier: Modifier = Modifier) {
     Text(
       text = stringResource(id = R.string.app_name),
       style = MaterialTheme.typography.titleLarge.copy(
-        fontFamily = DMSerifText,
+        fontFamily = openSansExtraBold,
         fontSize = 40.sp,
         fontWeight = FontWeight.Bold,
         color = Color.White

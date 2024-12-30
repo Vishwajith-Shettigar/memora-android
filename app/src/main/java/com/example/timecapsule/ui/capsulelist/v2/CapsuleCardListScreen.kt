@@ -226,35 +226,35 @@ fun CapsuleCardListScreen(
     if (isError) {
       Box(
         modifier = Modifier
-          .fillMaxSize()
-          .zIndex(5.0F)
+            .fillMaxSize()
+            .zIndex(5.0F)
       ) {
         Column(
           modifier = Modifier
-            .fillMaxWidth()
-            .fillMaxHeight()
-            .align(Alignment.Center)
-            .padding(top = 20.dp),
+              .fillMaxWidth()
+              .fillMaxHeight()
+              .align(Alignment.Center)
+              .padding(top = 20.dp),
           verticalArrangement = Arrangement.Center,
           horizontalAlignment = Alignment.CenterHorizontally
         ) {
           Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier
-              .padding(vertical = 20.dp)
-              .size(220.dp)
-              .background(
-                brush = Brush.radialGradient(
-                  colors = listOf(
-                    Color.Red,
-                    Color.Red,
-                    Color.LightGray.copy(0.1f)
-                  ),
-                  center = Offset.Unspecified,
-                  radius = 220f
-                ),
-                shape = CircleShape
-              )
+                .padding(vertical = 20.dp)
+                .size(220.dp)
+                .background(
+                    brush = Brush.radialGradient(
+                        colors = listOf(
+                            Color.Red,
+                            Color.Red,
+                            Color.LightGray.copy(0.1f)
+                        ),
+                        center = Offset.Unspecified,
+                        radius = 220f
+                    ),
+                    shape = CircleShape
+                )
           ) {
             Image(
               painter = painterResource(id = com.example.timecapsule.R.drawable.nonetwork_graphic),
@@ -292,22 +292,22 @@ fun CapsuleCardListScreen(
       if ((state as CapsuleListScreenState.Success).capsuleList.size == 0) {
         Box(
           modifier = Modifier
-            .fillMaxSize()
-            .zIndex(5.0F)
+              .fillMaxSize()
+              .zIndex(5.0F)
         ) {
           Column(
-            Modifier
-              .fillMaxSize()
-              .align(Alignment.Center),
+              Modifier
+                  .fillMaxSize()
+                  .align(Alignment.Center),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
           ) {
             Image(
               painter = painterResource(id = com.example.timecapsule.R.drawable.empty_capsule),
               contentDescription = "No capsules icon",
-              Modifier
-                .size(200.dp)
-                .padding(10.dp)
+                Modifier
+                    .size(200.dp)
+                    .padding(10.dp)
             )
             Text(
               text = "No capsules found",
@@ -328,57 +328,71 @@ fun CapsuleCardListScreen(
 
     Column(
       modifier = Modifier
-        .fillMaxSize()
-        .background(MaterialTheme.colorScheme.primary)
-        .padding(top = innerPadding.calculateTopPadding())
-        .verticalScroll(rememberScrollState())
+          .fillMaxSize()
+          .background(MaterialTheme.colorScheme.primary)
+          .padding(top = innerPadding.calculateTopPadding())
+          .verticalScroll(rememberScrollState())
     ) {
 
       var expandedCardIndex by remember { mutableStateOf(-1) }
 
       Column(
         modifier = Modifier
-          .fillMaxSize()
-          .padding(horizontal = 3.dp),
+            .fillMaxSize()
+            .padding(horizontal = 3.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
       ) {
 
         Row(
           modifier = Modifier
-            .fillMaxWidth()
-            .height(100.dp)
-            .padding(start = 12.dp, end = 17.dp),
+              .fillMaxWidth()
+              .height(100.dp)
+              .padding(start = 12.dp, end = 17.dp),
           verticalAlignment = Alignment.CenterVertically,
           horizontalArrangement = Arrangement.SpaceBetween
         ) {
-          Text(
-            "Time Capsule",
-            style = MaterialTheme.typography.titleLarge.copy(
-              fontSize = 30.sp,
-              fontWeight = FontWeight.ExtraBold,
-              fontFamily = openSansExtraBold
+          Column {
+            Text(
+              text = "memora",
+              style = MaterialTheme.typography.titleLarge.copy(
+                fontSize = 30.sp,
+                fontWeight = FontWeight.ExtraBold,
+                fontFamily = openSansExtraBold
+              )
             )
-          )
+            Text(
+              text =
+              "beta",
+              modifier = Modifier.align(Alignment.End),
+              style = MaterialTheme.typography.titleLarge.copy(
+                fontSize = 10.sp,
+                fontWeight = FontWeight.Light,
+                fontFamily = openSansExtraBold,
+                color = LightBlue
+              )
+            )
+          }
+
           Box(
             modifier = Modifier
-              .wrapContentSize()
-              .clip(shape = CircleShape)
-              .zIndex(20.0F)
-              .shadow(10.dp, shape = CircleShape)
-              .clickable(true) {
-                refresh = true
-              }
+                .wrapContentSize()
+                .clip(shape = CircleShape)
+                .zIndex(20.0F)
+                .shadow(10.dp, shape = CircleShape)
+                .clickable(true) {
+                    refresh = true
+                }
           )
           {
             AsyncImage(
               model = R.drawable.onboarding_image,
               contentDescription = "capsule icon",
               modifier = Modifier
-                .size(50.dp)
-                .clip(CircleShape)
-                .align(Alignment.Center)
-                .padding(1.dp)
-                .graphicsLayer(rotationZ = rotation.value),
+                  .size(50.dp)
+                  .clip(CircleShape)
+                  .align(Alignment.Center)
+                  .padding(1.dp)
+                  .graphicsLayer(rotationZ = rotation.value),
               contentScale = ContentScale.Crop,
 
               )
@@ -387,9 +401,9 @@ fun CapsuleCardListScreen(
 
         Row(
           modifier = Modifier
-            .fillMaxWidth()
-            .height(50.dp)
-            .padding(horizontal = 10.dp),
+              .fillMaxWidth()
+              .height(50.dp)
+              .padding(horizontal = 10.dp),
           verticalAlignment = Alignment.CenterVertically,
           horizontalArrangement = Arrangement.Start,
         ) {
@@ -403,9 +417,9 @@ fun CapsuleCardListScreen(
               }
             },
             modifier = Modifier
-              .padding(horizontal = 3.dp)
-              .height(40.dp)
-              .animateContentSize()
+                .padding(horizontal = 3.dp)
+                .height(40.dp)
+                .animateContentSize()
           ) {
             Icon(
               modifier = Modifier.padding(end = 3.dp),
@@ -433,9 +447,9 @@ fun CapsuleCardListScreen(
               }
             },
             modifier = Modifier
-              .padding(horizontal = 3.dp)
-              .height(40.dp)
-              .animateContentSize()
+                .padding(horizontal = 3.dp)
+                .height(40.dp)
+                .animateContentSize()
           ) {
             Icon(
               modifier = Modifier.padding(end = 3.dp),
@@ -466,9 +480,9 @@ fun CapsuleCardListScreen(
               }
             },
             modifier = Modifier
-              .padding(horizontal = 3.dp)
-              .height(40.dp)
-              .animateContentSize()
+                .padding(horizontal = 3.dp)
+                .height(40.dp)
+                .animateContentSize()
           ) {
             Icon(
               modifier = Modifier.padding(end = 3.dp),
@@ -489,41 +503,41 @@ fun CapsuleCardListScreen(
         if (isLoading)
           Column(
             modifier = Modifier
-              .fillMaxSize()
-              .height(1000.dp)
+                .fillMaxSize()
+                .height(1000.dp)
           ) {
             repeat(7) {
               Row(
                 modifier = Modifier
-                  .fillMaxWidth()
-                  .wrapContentHeight()
-                  .padding(vertical = 3.dp),
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+                    .padding(vertical = 3.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
 
                 ) {
                 Box(
                   modifier = Modifier
-                    .weight(0.5F)
-                    .height(200.dp)
-                    .placeholder(
-                      visible = true,
-                      shape = RoundedCornerShape(30.dp),
-                      highlight = PlaceholderHighlight.shimmer(),
-                      color = Color.Gray.copy(alpha = 0.3f),
-                    )
-                    .clip(shape = RoundedCornerShape(30.dp))
+                      .weight(0.5F)
+                      .height(200.dp)
+                      .placeholder(
+                          visible = true,
+                          shape = RoundedCornerShape(30.dp),
+                          highlight = PlaceholderHighlight.shimmer(),
+                          color = Color.Gray.copy(alpha = 0.3f),
+                      )
+                      .clip(shape = RoundedCornerShape(30.dp))
                 )
                 Box(
                   modifier = Modifier
-                    .weight(0.5F)
-                    .height(200.dp)
-                    .placeholder(
-                      visible = true,
-                      shape = RoundedCornerShape(30.dp),
-                      highlight = PlaceholderHighlight.shimmer(),
-                      color = Color.Gray.copy(alpha = 0.3f),
-                    )
-                    .clip(shape = RoundedCornerShape(30.dp))
+                      .weight(0.5F)
+                      .height(200.dp)
+                      .placeholder(
+                          visible = true,
+                          shape = RoundedCornerShape(30.dp),
+                          highlight = PlaceholderHighlight.shimmer(),
+                          color = Color.Gray.copy(alpha = 0.3f),
+                      )
+                      .clip(shape = RoundedCornerShape(30.dp))
                 )
               }
             }
@@ -531,9 +545,9 @@ fun CapsuleCardListScreen(
         if (isSuccess) {
           LazyColumn(
             modifier = Modifier
-              .fillMaxWidth()
-              .heightIn(max = 12000.dp)
-              .padding(horizontal = 3.dp),
+                .fillMaxWidth()
+                .heightIn(max = 12000.dp)
+                .padding(horizontal = 3.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
             contentPadding = PaddingValues(0.dp),
             userScrollEnabled = false
@@ -558,17 +572,17 @@ fun CapsuleCardListScreen(
                   } else
                     Box(
                       modifier = Modifier
-                        .then(
-                          if (rowItems.size == 2 || isExpanded)
-                            Modifier
-                              .weight(
-                                if (isExpanded) 1f else 0.5f,
-                                fill = false
-                              )
-                          else
-                            Modifier.fillMaxWidth(0.5F)
-                        )
-                        .animateContentSize()
+                          .then(
+                              if (rowItems.size == 2 || isExpanded)
+                                  Modifier
+                                      .weight(
+                                          if (isExpanded) 1f else 0.5f,
+                                          fill = false
+                                      )
+                              else
+                                  Modifier.fillMaxWidth(0.5F)
+                          )
+                          .animateContentSize()
                     ) {
                       CapsuleCard(
                         capsuleDetails = capsuleList[item],
@@ -586,8 +600,8 @@ fun CapsuleCardListScreen(
                 if (rowItems[0] != expandedCardIndex)
                   Box(
                     modifier = Modifier
-                      .fillMaxWidth(0.5F)
-                      .padding(top = 8.dp)
+                        .fillMaxWidth(0.5F)
+                        .padding(top = 8.dp)
                   ) {
                     CapsuleCard(
                       capsuleDetails = capsuleList[rowItems[0]],
@@ -606,8 +620,8 @@ fun CapsuleCardListScreen(
                   if (rowItems.size == 2)
                     Box(
                       modifier = Modifier
-                        .fillMaxWidth(0.5F)
-                        .padding(top = 8.dp)
+                          .fillMaxWidth(0.5F)
+                          .padding(top = 8.dp)
                     ) {
                       CapsuleCard(
                         capsuleDetails =
