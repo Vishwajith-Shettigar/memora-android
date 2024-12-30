@@ -452,12 +452,17 @@ class CapsuleCreationViewModel @Inject constructor(
           val emailSharingCapsuleDto = EmailSharingCapsuleDto(
             emails = filteredEmails,
             capsuleId = CAPSULE_ID,
-            username = ownerUserDetails.userName
+            username = ownerUserDetails.userName,
+            fullName = ownerUserDetails.firstName+" "+ownerUserDetails.lastName,
+            capsuleTitle = capsuleName
           )
 
           val emailResponse = sendEmailCaspuleSharingUseCase(emailSharingCapsuleDto)
-          if (emailResponse is Response.Error)
+          if (emailResponse is Response.Error) {
+            _capsuleCreationState.value =
+              CapsuleCreationState.Error("", emailResponse.exception)
             return@withContext
+          }
 
           val response = createCapsuleUseCase(capsuleDetails)
           withContext(Dispatchers.Main)
