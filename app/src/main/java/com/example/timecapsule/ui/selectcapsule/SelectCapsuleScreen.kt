@@ -1,9 +1,6 @@
 package com.example.timecapsule.ui.selectcapsule
 
-import CapsuleImage
-import android.util.Log
 import android.widget.Toast
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -11,7 +8,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -50,7 +46,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
@@ -60,12 +55,9 @@ import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.example.model.CapsuleAsset
-import com.example.model.CapsuleDetails
-import com.example.timecapsule.R
 import com.example.timecapsule.ui.selecttime.NavigationAddCapsule
 import com.example.timecapsule.ui.selecttime.NavigationRow
 import com.example.timecapsule.ui.util.DeviceType
-import com.example.timecapsule.ui.util.createCapsuleImageList
 import com.example.timecapsule.viewmodel.CapsuleCreationViewModel
 import com.example.timecapsule.viewmodel.CapsuleSelectionState
 
@@ -145,12 +137,12 @@ fun SelectCapsuleScreen(
   ) { innerPadding ->
     Box(
       modifier = modifier
-        .padding(
-          start = innerPadding.calculateStartPadding(LayoutDirection.Ltr),
-          end = innerPadding.calculateEndPadding(LayoutDirection.Ltr),
-          top = innerPadding.calculateTopPadding()
-        )
-        .fillMaxSize()
+          .padding(
+              start = innerPadding.calculateStartPadding(LayoutDirection.Ltr),
+              end = innerPadding.calculateEndPadding(LayoutDirection.Ltr),
+              top = innerPadding.calculateTopPadding()
+          )
+          .fillMaxSize()
 
     ) {
       if (isLoading)
@@ -172,14 +164,14 @@ fun SelectCapsuleScreen(
       if (isSuccess)
         CapsuleList(
           Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-         selectedCapsuleId,
+          selectedCapsuleId,
           capsuleAssets,
           onViewCapsuleClick
-        ) { capsuleModelId, imageUrl,cost,storage ->
+        ) { capsuleModelId, imageUrl, cost, storage ->
           viewModel.selectedCapsuleModelId.value = capsuleModelId
           viewModel.selectedCapsuleImageUrl = imageUrl
-          viewModel.amount=cost
-          viewModel.capsuleSizeInMB=storage
+          viewModel.amount = cost
+          viewModel.capsuleSizeInMB = storage
         }
 
       Box(
@@ -206,7 +198,7 @@ fun CapsuleList(
   selectedCapsuleModelId: String? = null,
   capsuleAssets: List<CapsuleAsset>,
   onViewCapsuleClick: (CapsuleAsset) -> Unit = {},
-  setCapsuleModelIdAndImageUrlAmount: (String, String,Int,Double) -> Unit
+  setCapsuleModelIdAndImageUrlAmount: (String, String, Int, Double) -> Unit
 ) {
   val isTablet = DeviceType.isTablet()
   if (isTablet) {
@@ -233,7 +225,7 @@ fun CapsuleListMobile(
   selectedCapsuleModelId: String? = null,
   capsuleAssets: List<CapsuleAsset>,
   onViewCapsuleClick: (CapsuleAsset) -> Unit = {},
-  setCapsuleModelIdAndImageUrl: (String, String,Int,Double) -> Unit
+  setCapsuleModelIdAndImageUrl: (String, String, Int, Double) -> Unit
 ) {
 
   LazyVerticalStaggeredGrid(
@@ -253,7 +245,12 @@ fun CapsuleListMobile(
 
           val imageUrl = it.capsule_id.let { getCapsuleImageUrl(it, capsuleAssets) }
           if (imageUrl != null) {
-            setCapsuleModelIdAndImageUrl(it.capsule_id, imageUrl,it.cost.toInt(),it.storage.toDouble())
+            setCapsuleModelIdAndImageUrl(
+              it.capsule_id,
+              imageUrl,
+              it.cost.toInt(),
+              it.storage.toDouble()
+            )
           }
         }
       }
@@ -266,18 +263,18 @@ fun CapsuleListTablet(
   modifier: Modifier = Modifier,
   capsuleAssets: List<CapsuleAsset>,
   onViewCapsuleClick: (CapsuleAsset) -> Unit = {},
-  setCapsuleModelIdAndImageUrl: (String, String,Int,Double) -> Unit
+  setCapsuleModelIdAndImageUrl: (String, String, Int, Double) -> Unit
 ) {
   var selectedCapsuleId by rememberSaveable { mutableStateOf<String>("") }
 
   LaunchedEffect(selectedCapsuleId) {
 
-    val capsule = capsuleAssets.find { it.capsule_id==selectedCapsuleId }
-    val cost=capsule!!.cost
-    val storage=capsule!!.storage
+    val capsule = capsuleAssets.find { it.capsule_id == selectedCapsuleId }
+    val cost = capsule!!.cost
+    val storage = capsule!!.storage
     val imageUrl = getCapsuleImageUrl(selectedCapsuleId, capsuleAssets)
     if (imageUrl != null) {
-      setCapsuleModelIdAndImageUrl(selectedCapsuleId, imageUrl, cost.toInt(),storage.toDouble())
+      setCapsuleModelIdAndImageUrl(selectedCapsuleId, imageUrl, cost.toInt(), storage.toDouble())
     }
 
   }
