@@ -493,7 +493,7 @@ fun ReviewBottomSheet(
         )
 
         Text(
-          text = "Your review will be sent to us through email.",
+          text = "Your review matters :)",
           style = MaterialTheme.typography.titleLarge.copy(
             fontSize = 15.sp,
             fontWeight = FontWeight.SemiBold,
