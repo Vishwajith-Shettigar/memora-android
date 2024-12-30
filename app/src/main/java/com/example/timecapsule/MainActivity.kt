@@ -72,10 +72,7 @@ class MainActivity : ComponentActivity() {
       LaunchedEffect(isDarkMode) {
         systemUiController.setSystemBarsColor(
           color =
-          if (isDarkMode)
-            Color.Black
-          else
-            Color.White,
+          Color.Transparent,
           darkIcons = !isDarkMode
         )
       }
