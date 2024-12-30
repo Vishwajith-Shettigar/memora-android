@@ -102,14 +102,13 @@ fun ContactUsScreen(onBackClick: () -> Unit) {
           )
         }
         Text(
-          text = "zekromvishwa12345@gmail.com",
+          text = "memorabeta@gmail.com",
           style = MaterialTheme.typography.labelSmall.copy(
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             fontSize = 17.sp
           )
         )
       }
-
     }
   }
 }
