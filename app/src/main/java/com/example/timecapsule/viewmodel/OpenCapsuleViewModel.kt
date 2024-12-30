@@ -19,6 +19,7 @@ import com.example.domain.usecase.SetCapsuleOpenedUseCase
 import com.example.model.CapsuleDetails
 import com.example.model.DownloadFile
 import com.example.model.NearByCapsule
+import com.example.timecapsule.DownloadProgressEventBus
 import com.example.timecapsule.routes.Screen
 import com.example.timecapsule.service.FileDownloadService
 import com.example.util.Response
@@ -31,6 +32,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterNotNull
@@ -215,6 +217,17 @@ class OpenCapsuleViewModel @Inject constructor(
   private val _progress = MutableStateFlow(0)
   val progress: StateFlow<Int> get() = _progress
 
+
+  init {
+
+    viewModelScope.launch {
+      DownloadProgressEventBus.send(0)
+      DownloadProgressEventBus.progressFlow.collectLatest {
+        _progress.value = it
+      }
+    }
+  }
+
   fun startDownloadService() {
     val intent = Intent(context, FileDownloadService::class.java).apply {
       putParcelableArrayListExtra("files", files)
@@ -225,11 +238,11 @@ class OpenCapsuleViewModel @Inject constructor(
       Context.RECEIVER_EXPORTED
     )
   }
+}
 
-  inner class DownloadProgressReceiver : BroadcastReceiver() {
-    override fun onReceive(context: Context?, intent: Intent?) {
-      val progress = intent?.getIntExtra("progress", 0) ?: 0
-      _progress.value = progress
-    }
+class DownloadProgressReceiver : BroadcastReceiver() {
+  override fun onReceive(context: Context?, intent: Intent?) {
+    val progress = intent?.getIntExtra("progress", 0) ?: 0
+    DownloadProgressEventBus.send(progress)
   }
 }

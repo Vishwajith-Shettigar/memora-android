@@ -142,7 +142,7 @@ fun ShowContentScreen(viewModel: OpenCapsuleViewModel = hiltViewModel()) {
         }
       ) {
         Text(
-          text = if (isDownloadClicked) "$progress%" else "Download All",
+          text = if (isDownloadClicked && progress!=0) "$progress%" else "Download All",
           color = Color.Black,
           style = MaterialTheme.typography.titleMedium,
           modifier = Modifier
