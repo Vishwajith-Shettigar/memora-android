@@ -31,6 +31,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.ripple
 import androidx.compose.material.ripple.rememberRipple
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -74,6 +77,52 @@ import com.example.timecapsule.ui.util.DeviceType
 import com.example.timecapsule.viewmodel.ProfileState
 import com.example.timecapsule.viewmodel.ProfileViewModel
 import kotlinx.coroutines.CoroutineScope
+
+@Composable
+fun SignOutDialog(
+  title: String, subtitle: String, buttonColor: Color = LightBlue,
+  onDismiss: () -> Unit = {}, onOkay: () -> Unit
+) {
+  // The dialog content with the message and buttons
+  AlertDialog(
+    onDismissRequest = onDismiss, // Close the dialog when dismissed
+    title = {
+      Text(
+        text = title,
+        style = MaterialTheme.typography.titleLarge.copy(
+          fontSize = 20.sp,
+          fontWeight = FontWeight.Bold,
+          color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+      )
+    },
+    text = {
+      Text(
+        text = subtitle,
+        style = MaterialTheme.typography.titleLarge.copy(
+          fontSize = 16.sp,
+          color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+      )
+    },
+    confirmButton = {
+    },
+    dismissButton = {
+      Button(colors = ButtonDefaults.buttonColors(containerColor = buttonColor),
+        onClick = {
+          onOkay()
+        }
+      ) {
+        Text(
+          "Ok", style = MaterialTheme.typography.titleLarge.copy(
+            fontSize = 15.sp,
+            color = Color.White
+          )
+        )
+      }
+    }
+  )
+}
 
 @Composable
 fun ProfileScreen(
@@ -127,10 +176,12 @@ fun ProfileScreen(
   }
 
   if (showSignOutDialog) {
-    TitleSubtitleWithOkayButtonDialog(
+    SignOutDialog(
       title = "Sign out",
       subtitle = "Are you sure ?",
-      buttonColor = Color.Red
+      buttonColor = Color.Red, {
+        showSignOutDialog = false
+      }
     ) {
       showSignOutDialog = false
       viewModel.signOut()
@@ -383,7 +434,6 @@ fun DarkModeSettingsOption(
   text: String,
   onClick: () -> Unit
 ) {
-
 
   val context = LocalContext.current
 
