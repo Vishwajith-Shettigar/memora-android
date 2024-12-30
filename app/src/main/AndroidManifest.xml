@@ -32,7 +32,8 @@
         android:label="@string/app_name"
         android:roundIcon="@drawable/onboarding_image"
         android:supportsRtl="true"
-        android:theme="@style/Theme.TimeCapsule">
+        android:theme="@style/Theme.TimeCapsule"
+        android:extractNativeLibs="true" >
 
         <receiver
             android:name=".viewmodel.OpenCapsuleViewModel$DownloadProgressReceiver"
