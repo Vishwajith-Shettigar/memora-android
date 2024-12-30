@@ -122,17 +122,17 @@ fun BottomNavigationBar(navController: NavController) {
   BottomNavigation(
     backgroundColor = MaterialTheme.colorScheme.primary,
     modifier = Modifier
-      .background(MaterialTheme.colorScheme.primary)
-      .windowInsetsPadding(WindowInsets.navigationBars.only(WindowInsetsSides.Bottom))
-      .height(60.dp)
+        .background(MaterialTheme.colorScheme.primary)
+        .windowInsetsPadding(WindowInsets.navigationBars.only(WindowInsetsSides.Bottom))
+        .height(60.dp)
 
   ) {
     val currentRoute = navController.currentDestination?.route
     items.forEach { item ->
       BottomNavigationItem(
         modifier = Modifier
-          .align(Alignment.CenterVertically)
-          .wrapContentSize(),
+            .align(Alignment.CenterVertically)
+            .wrapContentSize(),
         icon = {
           val icon: Int =
             item.icon
@@ -142,11 +142,11 @@ fun BottomNavigationBar(navController: NavController) {
               verticalAlignment = Alignment.CenterVertically,
               horizontalArrangement = Arrangement.Center,
               modifier = Modifier
-                .wrapContentWidth()
-                .height(40.dp)
-                .clip(RoundedCornerShape(100.dp))
-                .background(LightBlue.copy(alpha = 0.4F))
-                .padding(horizontal = 10.dp)
+                  .wrapContentWidth()
+                  .height(40.dp)
+                  .clip(RoundedCornerShape(100.dp))
+                  .background(LightBlue.copy(alpha = 0.4F))
+                  .padding(horizontal = 10.dp)
             ) {
               Icon(
                 painter = painterResource(id = icon),
@@ -248,6 +248,12 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
         },
         onContactUsClicked = {
           navController.navigate(Screen.ContactUs.route)
+        }, signOut = {
+          navController.navigate(Screen.WelCome.route) {
+            popUpTo(Screen.Home.route) {
+              inclusive = true
+            }
+          }
         })
     }
 

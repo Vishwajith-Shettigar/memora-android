@@ -65,6 +65,7 @@ import com.example.model.Profile
 import com.example.timecapsule.R
 import com.example.timecapsule.ui.editprofile.EditProfileContent
 import com.example.timecapsule.ui.editprofile.EditProfileScreen
+import com.example.timecapsule.ui.login.TitleSubtitleWithOkayButtonDialog
 import com.example.timecapsule.ui.theme.LightBlue
 import com.example.timecapsule.ui.theme.SubTitleFontColor
 import com.example.timecapsule.ui.util.DeviceType
@@ -75,8 +76,13 @@ import com.example.timecapsule.viewmodel.ProfileViewModel
 fun ProfileScreen(
   viewModel: ProfileViewModel = hiltViewModel(),
   onViewProfileClick: (String) -> Unit = {}, onSettingClick: () -> Unit,
-  onContactUsClicked: () -> Unit, onPrivacyClicked: () -> Unit
+  onContactUsClicked: () -> Unit, onPrivacyClicked: () -> Unit,
+  signOut:()->Unit
 ) {
+
+  var showSignOutDialog by remember {
+    mutableStateOf(false)
+  }
 
   val profileState by viewModel.profile.collectAsState()
 
@@ -114,6 +120,18 @@ fun ProfileScreen(
       }
 
       else -> {}
+    }
+  }
+
+  if (showSignOutDialog) {
+    TitleSubtitleWithOkayButtonDialog(
+      title = "Sign out",
+      subtitle = "Are you sure ?",
+      buttonColor = Color.Red
+    ) {
+      showSignOutDialog = false
+      viewModel.signOut()
+      signOut()
     }
   }
 
@@ -254,7 +272,9 @@ fun ProfileScreen(
           ) {
             onPrivacyClicked()
           }
-          SettingsOption(icon = com.example.timecapsule.R.drawable.ic_logout, text = "Sign Out") {}
+          SettingsOption(icon = com.example.timecapsule.R.drawable.ic_logout, text = "Sign Out") {
+            showSignOutDialog = true
+          }
         }
       }
 

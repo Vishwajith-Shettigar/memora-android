@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.domain.usecase.GetProfileUseCase
+import com.example.domain.usecase.SignOutUseCase
 import com.example.domain.usecase.UpdateProfileUseCase
 import com.example.model.Profile
 import com.example.model.UpdateProfile
@@ -11,6 +12,7 @@ import com.example.model.UserDetails
 import com.example.util.Response
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlin.math.sign
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -34,7 +36,8 @@ sealed class EditProfileState {
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
   private val getProfileUseCase: GetProfileUseCase,
-  private val updateProfileUseCase: UpdateProfileUseCase
+  private val updateProfileUseCase: UpdateProfileUseCase,
+  private val signOutUseCase: SignOutUseCase
 ) : ViewModel() {
   private val _profile = MutableStateFlow<ProfileState>(ProfileState.Loading)
   val profile: StateFlow<ProfileState> = _profile
@@ -88,6 +91,12 @@ class ProfileViewModel @Inject constructor(
           }
         }
       }
+    }
+  }
+
+  fun signOut() {
+    viewModelScope.launch {
+      signOutUseCase()
     }
   }
 }
