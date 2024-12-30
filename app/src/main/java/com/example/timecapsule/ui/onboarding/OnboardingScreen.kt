@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -171,7 +172,7 @@ fun TopImage(modifier: Modifier = Modifier) {
   Box(
     modifier = modifier
         .padding(4.dp)
-        .size(240.dp)
+        .wrapContentSize()
         .clip(CircleShape)
         .background(Color.Transparent),
     contentAlignment = Alignment.Center
@@ -179,8 +180,9 @@ fun TopImage(modifier: Modifier = Modifier) {
     Image(
       painter = painterResource(id = R.drawable.onboarding_image),
       contentDescription = null,
-      contentScale = ContentScale.Crop,
-      modifier = Modifier.clip(CircleShape)
+      modifier = Modifier
+          .clip(CircleShape)
+          .size(300.dp)
     )
   }
 }

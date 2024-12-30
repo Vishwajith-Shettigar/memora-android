@@ -175,9 +175,10 @@ fun SelectCapsuleScreen(
          selectedCapsuleId,
           capsuleAssets,
           onViewCapsuleClick
-        ) { capsuleModelId, imageUrl ->
+        ) { capsuleModelId, imageUrl,cost ->
           viewModel.selectedCapsuleModelId.value = capsuleModelId
           viewModel.selectedCapsuleImageUrl = imageUrl
+          viewModel.amount=cost
         }
 
       Box(
@@ -204,7 +205,7 @@ fun CapsuleList(
   selectedCapsuleModelId: String? = null,
   capsuleAssets: List<CapsuleAsset>,
   onViewCapsuleClick: (CapsuleAsset) -> Unit = {},
-  setCapsuleModelIdAndImageUrl: (String, String) -> Unit = { _, _ -> }
+  setCapsuleModelIdAndImageUrlAmount: (String, String,Int) -> Unit
 ) {
   val isTablet = DeviceType.isTablet()
   if (isTablet) {
@@ -212,7 +213,7 @@ fun CapsuleList(
       modifier = modifier,
       capsuleAssets,
       onViewCapsuleClick,
-      setCapsuleModelIdAndImageUrl
+      setCapsuleModelIdAndImageUrlAmount
     )
   } else {
     CapsuleListMobile(
@@ -220,7 +221,7 @@ fun CapsuleList(
       selectedCapsuleModelId,
       capsuleAssets,
       onViewCapsuleClick,
-      setCapsuleModelIdAndImageUrl
+      setCapsuleModelIdAndImageUrlAmount
     )
   }
 }
@@ -231,7 +232,7 @@ fun CapsuleListMobile(
   selectedCapsuleModelId: String? = null,
   capsuleAssets: List<CapsuleAsset>,
   onViewCapsuleClick: (CapsuleAsset) -> Unit = {},
-  setCapsuleModelIdAndImageUrl: (String, String) -> Unit = { _, _ -> }
+  setCapsuleModelIdAndImageUrl: (String, String,Int) -> Unit
 ) {
 
   LazyVerticalStaggeredGrid(
@@ -251,7 +252,7 @@ fun CapsuleListMobile(
 
           val imageUrl = it.capsule_id.let { getCapsuleImageUrl(it, capsuleAssets) }
           if (imageUrl != null) {
-            setCapsuleModelIdAndImageUrl(it.capsule_id, imageUrl)
+            setCapsuleModelIdAndImageUrl(it.capsule_id, imageUrl,it.cost.toInt())
           }
         }
       }
@@ -264,15 +265,16 @@ fun CapsuleListTablet(
   modifier: Modifier = Modifier,
   capsuleAssets: List<CapsuleAsset>,
   onViewCapsuleClick: (CapsuleAsset) -> Unit = {},
-  setCapsuleModelIdAndImageUrl: (String, String) -> Unit = { _, _ -> }
+  setCapsuleModelIdAndImageUrl: (String, String,Int) -> Unit
 ) {
   var selectedCapsuleId by rememberSaveable { mutableStateOf<String>("") }
 
   LaunchedEffect(selectedCapsuleId) {
 
+    val cost = capsuleAssets.find { it.capsule_id==selectedCapsuleId }?.cost?:0
     val imageUrl = getCapsuleImageUrl(selectedCapsuleId, capsuleAssets)
     if (imageUrl != null) {
-      setCapsuleModelIdAndImageUrl(selectedCapsuleId, imageUrl)
+      setCapsuleModelIdAndImageUrl(selectedCapsuleId, imageUrl, cost.toInt())
     }
 
   }

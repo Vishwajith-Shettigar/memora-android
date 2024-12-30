@@ -130,7 +130,7 @@ class CapsuleCreationViewModel @Inject constructor(
     }
   }
 
-  val amount = 500
+  var amount = 0
 
   var selectedDate by
   mutableStateOf("")
