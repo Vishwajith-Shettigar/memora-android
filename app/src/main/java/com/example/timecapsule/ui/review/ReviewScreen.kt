@@ -766,7 +766,8 @@ fun MapPreviewCard(latlang: LatLng) {
 fun SharedWithALlIcon(
   text: String = "All",
   modifier: Modifier = Modifier.size(40.dp), textFontSize: TextUnit = 26.sp,
-  isReviewScreen: Boolean = false
+  isReviewScreen: Boolean = false,
+  fontColor:Color=MaterialTheme.colorScheme.onSurfaceVariant
 ) {
   if (isReviewScreen)
     Column(
@@ -779,7 +780,7 @@ fun SharedWithALlIcon(
       Text(
         text = "+${text}",
         style = MaterialTheme.typography.titleLarge.copy(fontSize = textFontSize),
-        color = MaterialTheme.colorScheme.onSurfaceVariant
+        color = fontColor
       )
     }
   else
@@ -793,7 +794,7 @@ fun SharedWithALlIcon(
       Text(
         text = "+${text}", modifier = Modifier.align(Alignment.Center),
         style = MaterialTheme.typography.titleLarge.copy(fontSize = textFontSize),
-        color = MaterialTheme.colorScheme.onSurfaceVariant
+        color = fontColor
       )
     }
 }

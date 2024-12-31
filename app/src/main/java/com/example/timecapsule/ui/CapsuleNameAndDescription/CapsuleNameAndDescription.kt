@@ -1,5 +1,6 @@
 package com.example.timecapsule.ui.CapsuleNameAndDescription
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -41,31 +42,36 @@ import com.example.timecapsule.ui.util.DeviceType
 import com.example.timecapsule.viewmodel.CapsuleCreationViewModel
 
 @Composable
-fun CapsuleNameAndDescription(viewModel:CapsuleCreationViewModel,onNavigate: (NavigationAddCapsule) -> Unit) {
+fun CapsuleNameAndDescription(
+  viewModel: CapsuleCreationViewModel,
+  onNavigate: (NavigationAddCapsule) -> Unit
+) {
 
   val isTablet = DeviceType.isTablet()
+  val context = LocalContext.current
 
   Scaffold(
     modifier = Modifier
-      .fillMaxSize()
-      .background(MaterialTheme.colorScheme.primary)
-      .padding(top = 30.dp),
+        .fillMaxSize()
+        .background(MaterialTheme.colorScheme.primary)
+        .padding(top = 30.dp),
     containerColor = MaterialTheme.colorScheme.primary,
   ) { innerPadding ->
     Box(
       modifier = Modifier
-        .fillMaxSize()
-        .padding(
-          start = innerPadding.calculateStartPadding(LayoutDirection.Ltr),
-          end = innerPadding.calculateEndPadding(LayoutDirection.Ltr),
-          top = innerPadding.calculateTopPadding()
-        )
+          .fillMaxSize()
+          .padding(
+              start = innerPadding.calculateStartPadding(LayoutDirection.Ltr),
+              end = innerPadding.calculateEndPadding(LayoutDirection.Ltr),
+              top = innerPadding.calculateTopPadding()
+          )
     ) {
       Column(
-        Modifier
-          .fillMaxWidth()
-          .padding(16.dp).padding(top = 50.dp)
-          .align(Alignment.TopCenter)
+          Modifier
+              .fillMaxWidth()
+              .padding(16.dp)
+              .padding(top = 50.dp)
+              .align(Alignment.TopCenter)
       ) {
         Text(
           text = "Please name your capsule and provide a brief description.",
@@ -96,13 +102,23 @@ fun CapsuleNameAndDescription(viewModel:CapsuleCreationViewModel,onNavigate: (Na
 
       Box(
         modifier = Modifier
-          .fillMaxWidth()
-          .padding(0.dp)
-          .align(Alignment.BottomCenter)
-          .zIndex(2f)
+            .fillMaxWidth()
+            .padding(0.dp)
+            .align(Alignment.BottomCenter)
+            .zIndex(2f)
       ) {
         NavigationRow() { navigationFlow ->
-          onNavigate(navigationFlow)
+
+          if (viewModel.capsuleName.trim().isEmpty() || viewModel.capsuleDescription.trim()
+              .isEmpty()
+          )
+            Toast.makeText(
+              context,
+              "Please enter capsule title and description.",
+              Toast.LENGTH_SHORT
+            ).show()
+          else
+            onNavigate(navigationFlow)
         }
       }
     }
@@ -122,13 +138,13 @@ fun CustomTextField(
 ) {
   Column(
     modifier = if (!isTablet) {
-      modifier
-        .fillMaxWidth()
-        .padding(vertical = 3.dp)
+        modifier
+            .fillMaxWidth()
+            .padding(vertical = 3.dp)
     } else {
-      modifier
-        .width(600.dp)
-        .padding(vertical = 3.dp)
+        modifier
+            .width(600.dp)
+            .padding(vertical = 3.dp)
     }
   ) {
     TextField(

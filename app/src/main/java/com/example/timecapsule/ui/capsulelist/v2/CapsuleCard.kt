@@ -39,6 +39,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
@@ -243,8 +244,11 @@ fun CapsuleCard(
               fontSize = 15.sp,
               color = Color.Black,
               fontWeight = FontWeight.Bold,
-              lineHeight = TextUnit(20F, TextUnitType.Sp)
-            )
+              lineHeight = TextUnit(20F, TextUnitType.Sp),
+            ),
+            maxLines = 3,
+            overflow = TextOverflow.Ellipsis
+
           )
         }
         if (isExpanded || isTablet)
@@ -278,7 +282,7 @@ fun CapsuleCard(
                   )
                 }
                 if (((capsuleDetails.users).size - 3) > 0)
-                  SharedWithALlIcon(text = ((capsuleDetails.users).size - 3).toString())
+                  SharedWithALlIcon(text = ((capsuleDetails.users).size - 3).toString(), fontColor = Color.White)
               } else {
                 capsuleDetails.users.forEach {
                   Profile(
@@ -293,7 +297,7 @@ fun CapsuleCard(
                   )
                 }
                 if (capsuleDetails.isSharedWithAll) {
-                  SharedWithALlIcon(textFontSize = 15.sp)
+                  SharedWithALlIcon(textFontSize = 15.sp, fontColor = Color.White)
                 }
               }
             }
