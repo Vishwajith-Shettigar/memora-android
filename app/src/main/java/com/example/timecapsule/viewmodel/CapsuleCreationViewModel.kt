@@ -113,6 +113,7 @@ class CapsuleCreationViewModel @Inject constructor(
 
   var selectedLocationOptionRadio by mutableStateOf(LocationOptions.NONE)
 
+  var showSensitiveFileDialog by mutableStateOf(true)
 
   init {
     CoroutineScope(Dispatchers.IO).launch {

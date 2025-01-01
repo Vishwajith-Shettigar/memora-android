@@ -67,6 +67,7 @@ import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.model.FileUploadProgress
 import com.example.model.FileUploaded
+import com.example.timecapsule.ui.login.TitleSubtitleWithOkayButtonDialog
 import com.example.timecapsule.ui.theme.LightBlue
 import com.example.timecapsule.ui.theme.NavigatioButtons
 import com.example.timecapsule.ui.theme.SubTitleFontColor
@@ -185,6 +186,15 @@ fun UploadFilesScreen(
   if (storageWarningState == StorageWarningState.Warning) {
     StorageWarningDialog() {
       viewModel.setStorageNoWaringState()
+    }
+  }
+
+  if (viewModel.showSensitiveFileDialog){
+    TitleSubtitleWithOkayButtonDialog(
+      title = "Attention!!",
+      subtitle = "Please avoid sharing sensitive information. This app is currently in the testing phase."
+    ) {
+      viewModel.showSensitiveFileDialog = false
     }
   }
 
