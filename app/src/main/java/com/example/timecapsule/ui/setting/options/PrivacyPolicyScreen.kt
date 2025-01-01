@@ -154,7 +154,7 @@ fun getPrivacyPolicyHtml(): String {
             <p>We do not currently use third-party services for data collection, advertising, or analytics. However, this may change in the future, and if it does, we will update this Privacy Policy accordingly.</p>
             
             <h2>5. Data Security</h2>
-            <p>While we strive to protect your information, please note that, as an app in development, we cannot guarantee absolute security. Use the app at your own risk.</p>
+            <p>While we strive to protect your information, please note that as this app is still in the testing phase, please avoid sharing sensitive files.</p>
             
             <h2>6. Changes to the Privacy Policy</h2>
             <p>We may update this Privacy Policy from time to time. When we do, we will post the revised version within the app with the updated date. We encourage you to review this Privacy Policy periodically to stay informed.</p>
