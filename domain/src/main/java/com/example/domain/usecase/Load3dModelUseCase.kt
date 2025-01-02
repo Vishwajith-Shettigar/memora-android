@@ -7,7 +7,7 @@ import javax.inject.Inject
 class Load3dModelUseCase @Inject constructor(
   private val repository: ThreeDModelRepository
 ) {
-  suspend operator fun invoke(modelId: String): Response<String> {
-    return repository.get3dModelPath(modelId)
+  suspend operator fun invoke(modelId: String,retry:Boolean=false): Response<String> {
+    return repository.get3dModelPath(modelId,retry)
   }
 }

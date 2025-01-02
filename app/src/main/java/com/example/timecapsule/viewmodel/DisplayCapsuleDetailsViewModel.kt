@@ -55,10 +55,14 @@ class DisplayCapsuleDetailsViewModel @Inject constructor(
     }
   }
 
-  fun load3dModel(modelId: String) {
+  fun set3dModelLoadingStateError(){
+    _loading3dModelState.value = Load3dModelState.Error
+  }
+
+  fun load3dModel(modelId: String,retry:Boolean=false) {
     _loading3dModelState.value = Load3dModelState.Loading
     viewModelScope.launch(Dispatchers.IO) {
-      val res = load3dModelUseCase(modelId = modelId)
+      val res = load3dModelUseCase(modelId = modelId,retry=retry)
       when (res) {
         is Response.Success -> {
           _loading3dModelState.value = Load3dModelState.Success(path = res.data!!)

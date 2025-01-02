@@ -6,17 +6,17 @@ import com.example.util.Response
 import javax.inject.Inject
 
 interface ThreeDModelRepository {
-  suspend fun get3dModelPath(modelId: String): Response<String>
+  suspend fun get3dModelPath(modelId: String,retry:Boolean): Response<String>
 }
 
 class ThreeDModelRepositoryImpl @Inject constructor(
   private val threeDModelsDataSource: ThreeDModelsDataSource,
   private val threeModelsCache: ThreeModelsCache
 ) : ThreeDModelRepository {
-  override suspend fun get3dModelPath(modelId: String): Response<String> {
+  override suspend fun get3dModelPath(modelId: String,retry: Boolean): Response<String> {
     // Decide whether to fetch from cache or download from Firebase
     val cachedModelPath = threeModelsCache.getModelFromCache("model_$modelId.glb")
-    return if (cachedModelPath != null) {
+    return if (cachedModelPath != null && !retry) {
       Response.Success(cachedModelPath)
     } else {
       threeDModelsDataSource.downloadModelToCache(modelId)

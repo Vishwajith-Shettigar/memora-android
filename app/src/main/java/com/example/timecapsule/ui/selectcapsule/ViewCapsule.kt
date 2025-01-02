@@ -44,6 +44,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -115,28 +116,28 @@ fun ViewCapsule(
 
   Scaffold(
     modifier = Modifier
-        .fillMaxSize()
-        .background(MaterialTheme.colorScheme.primary)
-        .padding(vertical = 30.dp),
+      .fillMaxSize()
+      .background(MaterialTheme.colorScheme.primary)
+      .padding(vertical = 30.dp),
   ) { innerPadding ->
     Column(
       modifier = Modifier
-          .fillMaxSize()
-          .background(MaterialTheme.colorScheme.onSecondaryContainer),
+        .fillMaxSize()
+        .background(MaterialTheme.colorScheme.onSecondaryContainer),
       verticalArrangement = Arrangement.Center,
       horizontalAlignment = Alignment.CenterHorizontally
     ) {
       Box(
         modifier = Modifier
-            .fillMaxWidth()
-            .height(400.dp)
-            .shadow(
-                2.dp,
-                ambientColor = Color.White,
-                spotColor = Color.White,
-                shape = RoundedCornerShape(bottomEnd = 50.dp, bottomStart = 50.dp)
-            )
-            .clip(shape = RoundedCornerShape(bottomEnd = 50.dp, bottomStart = 50.dp))
+          .fillMaxWidth()
+          .height(400.dp)
+          .shadow(
+            2.dp,
+            ambientColor = Color.White,
+            spotColor = Color.White,
+            shape = RoundedCornerShape(bottomEnd = 50.dp, bottomStart = 50.dp)
+          )
+          .clip(shape = RoundedCornerShape(bottomEnd = 50.dp, bottomStart = 50.dp))
       )
       {
         BackRow(Modifier.padding(innerPadding), onBackClick)
@@ -409,8 +410,9 @@ fun Display3DModel(
 fun Load3dModelButton(
   modifier: Modifier,
   loading3dModelState: Load3dModelState,
-  onViewIn3dClick: () -> Unit
+  onViewIn3dClick: () -> Unit,
 ) {
+
   Button(
     modifier = modifier, colors = ButtonDefaults.buttonColors(containerColor = Color.Black),
     onClick = { onViewIn3dClick() }) {
@@ -422,7 +424,9 @@ fun Load3dModelButton(
       )
       Text(
         text =
-        if (loading3dModelState is Load3dModelState.Loading) "Loading..." else
+        if (loading3dModelState is Load3dModelState.Loading) "Loading..."
+        else if (loading3dModelState is Load3dModelState.Error) "Retry"
+        else
           "View 3D", color = Color.White
       )
     }
