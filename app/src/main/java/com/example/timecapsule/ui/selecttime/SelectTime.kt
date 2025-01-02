@@ -23,6 +23,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TimePicker
+import androidx.compose.material3.TimePickerColors
+import androidx.compose.material3.TimePickerDefaults
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
@@ -42,6 +44,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.example.timecapsule.R
+import com.example.timecapsule.ui.theme.LightBlue
 import com.example.timecapsule.ui.theme.NavigatioButtons
 import com.example.timecapsule.ui.util.DeviceType
 import com.example.timecapsule.viewmodel.CapsuleCreationViewModel
@@ -163,16 +166,19 @@ fun DateTimePicker(modifier: Modifier = Modifier, viewModel: CapsuleCreationView
   }
 
   val datePickerState = rememberDatePickerState()
-  val timePickerState = rememberTimePickerState()
-  val selectedDate = datePickerState.selectedDateMillis?.let {
-    convertMillisToDate(it)
-  } ?: ""
+  val timePickerState = rememberTimePickerState(
+    initialHour = viewModel.selectedHour, initialMinute = viewModel.selectedMinute,
+    is24Hour = false
+  )
 
-  val selectedTime = timePickerState.let {
-    convertToTimeFormat(it.hour, it.minute)
+  LaunchedEffect(Unit) {
+    datePickerState.selectedDateMillis = viewModel.selectedDateInMilis
   }
 
-  LaunchedEffect(selectedDate, selectedTime) {
+  LaunchedEffect(datePickerState.selectedDateMillis, timePickerState.hour, timePickerState.minute) {
+    viewModel.selectedDateInMilis = datePickerState.selectedDateMillis!!
+    viewModel.selectedHour = timePickerState.hour
+    viewModel.selectedMinute = timePickerState.minute
     val selectedTimestamp = getSelectedTimestamp(
       datePickerState.selectedDateMillis,
       timePickerState.hour,
@@ -181,6 +187,14 @@ fun DateTimePicker(modifier: Modifier = Modifier, viewModel: CapsuleCreationView
     if (selectedTimestamp != null) {
       viewModel.setTimeStamp(selectedTimestamp)
     }
+
+    viewModel.selectedDate = datePickerState.selectedDateMillis?.let {
+      convertMillisToDate(it)
+    } ?: ""
+
+    viewModel.selectedTime = timePickerState.let {
+      convertToTimeFormat(it.hour, it.minute)
+    }
   }
 
   Column(
@@ -188,11 +202,11 @@ fun DateTimePicker(modifier: Modifier = Modifier, viewModel: CapsuleCreationView
         .fillMaxSize()
         .padding(horizontal = 15.dp)
         .background(MaterialTheme.colorScheme.primary),
-    ) {
+  ) {
 
     Row {
       OutlinedTextField(
-        value = selectedDate,
+        value = viewModel.selectedDate,
         onValueChange = { },
         label = { Text("D/M/Y ") },
         readOnly = true,
@@ -225,7 +239,7 @@ fun DateTimePicker(modifier: Modifier = Modifier, viewModel: CapsuleCreationView
       )
 
       OutlinedTextField(
-        value = selectedTime,
+        value = viewModel.selectedTime,
         onValueChange = { },
         label = { Text("H:M") },
         readOnly = true,
@@ -281,11 +295,15 @@ fun DateTimePicker(modifier: Modifier = Modifier, viewModel: CapsuleCreationView
                   .padding(vertical = 0.dp)
 
           },
-          colors = DatePickerDefaults.colors(selectedDayContainerColor = NavigatioButtons.get(0))
+          colors = DatePickerDefaults.colors(
+            selectedDayContainerColor = NavigatioButtons.get(0),
+            todayDateBorderColor = LightBlue, todayContentColor = LightBlue
+          )
         )
       } else {
         TimePicker(
           state = timePickerState,
+          colors = TimePickerDefaults.colors(clockDialSelectedContentColor = LightBlue),
           modifier =
           if (isTablet) {
               Modifier

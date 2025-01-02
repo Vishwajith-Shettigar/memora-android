@@ -3,6 +3,7 @@ package com.example.timecapsule.ui.sharewithpeople
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -479,15 +480,17 @@ fun ShowSelectedPeople(
   selectedPeoples: MutableList<UserDetails> = mutableListOf(),
   ownerUserId: String? = null,
   showSharedWithALl: Boolean = false,
+  isReviewScreen:Boolean= false,
   remove: (String) -> Unit = {},
   onViewProfileClick: (String) -> Unit = {}
 ) {
 
   LazyHorizontalGrid(
     modifier = modifier
-        .wrapContentSize()
+        .fillMaxWidth()
         .heightIn(max = 105.dp),
-    rows = GridCells.Fixed(1)
+    rows = GridCells.Fixed(1),
+    verticalArrangement = Arrangement.Center
   ) {
     items(selectedPeoples) { user ->
       if (disableCrossBtn || user.userId != ownerUserId)
@@ -502,7 +505,7 @@ fun ShowSelectedPeople(
     }
     if (showSharedWithALl)
       item {
-        SharedWithALlIcon()
+        SharedWithALlIcon(isReviewScreen =isReviewScreen)
       }
   }
 }

@@ -18,7 +18,15 @@ import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.GeoPoint
 import com.google.firebase.firestore.snapshots
 import javax.inject.Inject
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
+import org.jetbrains.annotations.Async
 
 class CapsulesRemoteDataSource @Inject constructor(
   val firestore: FirebaseFirestore,
@@ -110,52 +118,79 @@ class CapsulesRemoteDataSource @Inject constructor(
     }
   }
 
+
+  @OptIn(ExperimentalCoroutinesApi::class)
   suspend fun getCapsulesList(): Response<List<CapsuleDetails>> {
-    val userId = authRemoteDataSource.getAuth()?.uid
-    if (userId != null) {
-      return try {
-        val capsulesDetailsList = mutableListOf<CapsuleDetails>()
-        val doc = firestore.collection("users").document(userId).get().await()
-        val capsules = doc.data?.get("capsuleList") as? List<Map<*, *>> ?: emptyList()
+    val userId =
+      authRemoteDataSource.getAuth()?.uid ?: return Response.Error(InValidUserException())
 
-        capsules.forEach { capsule ->
-          val capsuleDoc =
-            firestore.collection("capsules").document(capsule["id"].toString()).get().await().data
+    return try {
+      val capsulesDetailsList = mutableListOf<CapsuleDetails>()
 
-          if (capsuleDoc.isNullOrEmpty())
-            return@forEach
+      val doc = firestore.collection("users").document(userId).get().await()
+      val capsules = doc.data?.get("capsuleList") as? List<Map<*, *>> ?: emptyList()
 
-          var location: GeoPoint? = null
-          capsuleDoc?.get("location")?.let {
-            location = it as GeoPoint
+      withContext(Dispatchers.IO.limitedParallelism(20)) {
+        val capsuleDeferreds = capsules.map { capsule ->
+          async {
+            try {
+              val capsuleDoc = firestore.collection("capsules")
+                .document(capsule["id"].toString())
+                .get()
+                .await()
+                .data
+
+              if (!capsuleDoc.isNullOrEmpty()) {
+                val location = capsuleDoc["location"] as? GeoPoint
+
+                CapsuleDetails(
+                  id = capsule["id"] as String,
+                  title = capsuleDoc["title"] as? String ?: "",
+                  description = capsuleDoc["description"] as? String ?: "",
+                  isDeleted = capsuleDoc["deleted"] as? Boolean ?: false,
+                  modelId = capsuleDoc["modelId"] as? Number ?: 0,
+                  time = capsuleDoc["time"] as? Timestamp ?: Timestamp.now(),
+                  users = capsuleDoc["users"] as? List<Map<String, Any>> ?: emptyList(),
+                  isOwner = capsule["isOwner"] as? Boolean ?: false,
+                  imageUrl = capsuleDoc["imageUrl"] as? String ?: "",
+                  ownerUserName = capsuleDoc["ownerUserName"] as? String ?: "",
+                  location = location,
+                  fileUrls = capsuleDoc["fileUrls"] as? List<Map<String, String>> ?: emptyList(),
+                  isOpened = capsule["isOpened"] as? Boolean ?: false,
+                  isSharedWithAll = capsuleDoc["sharedWithAll"] as? Boolean ?: false
+                )
+              } else {
+                null // Skip empty or invalid capsules
+              }
+            } catch (e: Exception) {
+              null // Log or handle specific errors if needed
+            }
           }
-
-          val capsuleDetails = CapsuleDetails(
-            id = capsule["id"] as String,
-            title = capsuleDoc?.get("title") as String,
-            description = capsuleDoc.get("description") as String,
-            isDeleted = capsuleDoc.get("deleted") as Boolean,
-            modelId = capsuleDoc.get("modelId") as Number,
-            time = capsuleDoc.get("time") as Timestamp,
-            users = capsuleDoc.get("users") as List<Map<String, Any>>,
-            isOwner = capsule["isOwner"] as Boolean,
-            imageUrl = capsuleDoc.get("imageUrl") as String,
-            ownerUserName = capsuleDoc.get("ownerUserName") as String,
-            location = location,
-            fileUrls = capsuleDoc.get("fileUrls") as List<Map<String, String>>,
-            isOpened = capsule["isOpened"] as Boolean
-          )
-          capsulesDetailsList.add(capsuleDetails)
         }
-        Response.Success(capsulesDetailsList)
-      } catch (e: FirebaseFirestoreException) {
-        Response.Error(NetWorkException())
-      } catch (e: Exception) {
-        Response.Error(UnspecifiedException())
+
+        // Await all tasks and add non-null results to the list
+        capsulesDetailsList.addAll(capsuleDeferreds.awaitAll().filterNotNull())
+
+        // Process surprise capsules
+        val surpriseCapsuleResponse = async {
+          getSurpriseCapsule()
+        }
+
+        // Add surprise capsules if successful
+        val surpriseCapsuleResult = surpriseCapsuleResponse.await()
+        if (surpriseCapsuleResult is Response.Success) {
+          surpriseCapsuleResult.data?.let { capsulesDetailsList.addAll(it) }
+        }
       }
+
+      Response.Success(capsulesDetailsList)
+    } catch (e: FirebaseFirestoreException) {
+      Response.Error(NetWorkException())
+    } catch (e: Exception) {
+      Response.Error(UnspecifiedException())
     }
-    return Response.Error(exception = InValidUserException())
   }
+
 
   suspend fun getCapsuleDetails(capsuleId: String): Response<CapsuleDetails> {
     return try {
@@ -261,6 +296,71 @@ class CapsulesRemoteDataSource @Inject constructor(
       }
 
       Response.Success()
+    } catch (e: Exception) {
+      Response.Error(exception = e)
+    }
+  }
+
+  suspend fun getSurpriseCapsuleDetails(capsuleId: String): Response<CapsuleDetails> {
+    return try {
+      val snapshot = firestore.collection("surprise_capsules").document(capsuleId).get().await()
+
+      val document = snapshot.data!!
+      val capsuleDetails = CapsuleDetails(
+        id = snapshot.id,
+        title = document.get("title") as String,
+        description = document.get("description") as String,
+        isDeleted = document.get("deleted") as Boolean,
+        modelId = document.get("modelId") as Number,
+        time = document.get("time") as Timestamp,
+        users = emptyList(),
+        isOwner = false,
+        imageUrl = "",
+        ownerUserName = "",
+        location = null,
+        fileUrls = document.get("fileUrls") as? List<Map<String, String>>
+          ?: emptyList<Map<String, String>>(),
+        isOpened = false,
+        letter = document.get("letter") as String,
+        isSharedWithAll = document.get("sharedWithAll") as Boolean,
+        isSurpriseCapsule = true
+      )
+      Response.Success(data = capsuleDetails)
+
+    } catch (e: Exception) {
+      Response.Error(exception = e)
+    }
+  }
+
+  suspend fun getSurpriseCapsule(): Response<List<CapsuleDetails>> {
+    return try {
+      val surpriseCapsuleList = mutableListOf<CapsuleDetails>()
+      val docs = firestore.collection("surprise_capsules").get().await().documents
+
+      docs.forEach { document ->
+        val capsuleDetails = CapsuleDetails(
+          id = document.id,
+          title = document.get("title") as String,
+          description = document.get("description") as String,
+          isDeleted = document.get("deleted") as Boolean,
+          modelId = document.get("modelId") as Number,
+          time = document.get("time") as Timestamp,
+          users = document.get("users") as List<Map<String, Any>>,
+          isOwner = false,
+          imageUrl = document.get("imageUrl") as String,
+          ownerUserName = "",
+          location = null,
+          fileUrls = document.get("fileUrls") as List<Map<String, String>>,
+          isOpened = false,
+          letter = document.get("letter") as String,
+          isSharedWithAll = document.get("sharedWithAll") as Boolean,
+          isSurpriseCapsule = true
+        )
+
+        surpriseCapsuleList.add(capsuleDetails)
+      }
+
+      Response.Success(surpriseCapsuleList.toList())
     } catch (e: Exception) {
       Response.Error(exception = e)
     }

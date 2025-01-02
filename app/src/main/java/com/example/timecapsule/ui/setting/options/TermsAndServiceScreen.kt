@@ -34,7 +34,8 @@ fun TermsAndServiceScreen(onBackClick: () -> Unit) {
   LazyColumn(
     modifier = Modifier
         .fillMaxWidth()
-        .background(MaterialTheme.colorScheme.primary).systemBarsPadding()
+        .background(MaterialTheme.colorScheme.primary)
+        .systemBarsPadding()
         .padding(top = 16.dp),
     verticalArrangement = Arrangement.spacedBy(8.dp)
   ) {
@@ -150,13 +151,13 @@ fun getTermsAndServicesHtml(): String {
         </head>
         <body>
          
-            <p>By downloading, installing, or using the <strong>Time Capsule</strong> app ("the App"), you agree to be bound by the following Terms and Conditions. These terms are subject to change, and we recommend that you review them periodically.</p>
+            <p>By downloading, installing, or using the <strong>memora</strong> app ("the App"), you agree to be bound by the following Terms and Conditions. These terms are subject to change, and we recommend that you review them periodically.</p>
 
             <h2>1. Purpose of the App</h2>
-            <p>The <strong>Time Capsule</strong> app is a mobile application intended for users to store digital "time capsules" that they can access in the future. However, please be aware that this app is currently in testing, and its functionality may change or be discontinued at any time.</p>
+            <p>The <strong>memora</strong> app is a mobile application intended for users to store digital "time capsules" that they can access in the future. However, please be aware that this app is currently in testing, and its functionality may change or be discontinued at any time.</p>
 
             <h2>2. Testing Phase Disclaimer</h2>
-            <p>As the <strong>Time Capsule</strong> app is still in the testing phase, we do not guarantee that the service will remain operational, or that time capsules will be preserved. The app may undergo modifications, and your data could be deleted permanently without warning.</p>
+            <p>As the <strong>memora</strong> app is still in the testing phase, we do not guarantee that the service will remain operational, or that time capsules will be preserved. The app may undergo modifications, and your data could be deleted permanently without warning.</p>
             <p>By using this app, you acknowledge and accept that:</p>
             <ul>
                 <li>Your time capsules (data) may be deleted at any time, even during the testing phase.</li>
@@ -184,7 +185,7 @@ fun getTermsAndServicesHtml(): String {
             <p>We reserve the right to modify, suspend, or discontinue the app at any time, with or without notice. This includes the potential deletion of user data or the cessation of service altogether.</p>
 
             <h2>7. No Guarantees</h2>
-            <p>While we aim to offer a functional and useful app, there are no guarantees regarding the performance, longevity, or data storage capabilities of the <strong>Time Capsule</strong> app. It is possible that the app will be shut down at any point, and your data may be permanently lost.</p>
+            <p>While we aim to offer a functional and useful app, there are no guarantees regarding the performance, longevity, or data storage capabilities of the <strong>memora</strong> app. It is possible that the app will be shut down at any point, and your data may be permanently lost.</p>
 
             <h2>8. Limitation of Liability</h2>
             <p>We are not liable for any direct, indirect, incidental, special, or consequential damages arising out of your use or inability to use the app, including but not limited to any loss of data, lost profits, or damage to your device.</p>
@@ -192,13 +193,10 @@ fun getTermsAndServicesHtml(): String {
             <h2>9. Changes to the Terms and Conditions</h2>
             <p>We may update these Terms and Conditions at any time. If we make significant changes, we will notify users via the app or email (if applicable). By continuing to use the app after updates are made, you accept the new terms.</p>
 
-            <h2>10. Governing Law</h2>
-            <p>These Terms and Conditions shall be governed by and construed in accordance with the laws of [Your Country/State]. Any disputes will be subject to the jurisdiction of the courts in [Your Location].</p>
-
-            <h2>11. Contact Us</h2>
+            <h2>10. Contact Us</h2>
             <p>If you have any questions about these Terms and Conditions, please contact us at:</p>
             <ul>
-                <li>Email: timecapsuleshelp@gmail.com</li>
+                <li>Email: memorabeta@gmail.com</li>
             </ul>
         </body>
         </html>

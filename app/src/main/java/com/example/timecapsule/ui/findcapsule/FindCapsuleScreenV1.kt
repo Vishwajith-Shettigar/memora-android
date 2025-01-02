@@ -4,19 +4,34 @@ import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.location.Location
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -24,11 +39,18 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
@@ -41,15 +63,20 @@ import com.example.timecapsule.BuildConfig
 import com.example.timecapsule.R
 import com.example.timecapsule.routes.Screen
 import com.example.timecapsule.ui.nearbycapsules.calculateDistance
+import com.example.timecapsule.ui.theme.LightBlue
+import com.example.timecapsule.ui.theme.openSansExtraBold
+import com.example.timecapsule.ui.util.DeviceType
 import com.example.timecapsule.ui.util.checkARCoreAvailability
 import com.example.timecapsule.viewmodel.DisplayCapsuleDetailsState
 import com.example.timecapsule.viewmodel.Load3dModelState
 import com.example.timecapsule.viewmodel.OpenCapsuleViewModel
 import com.example.util.getModel
+import com.example.util.getModelMapIcon
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
+import com.google.firebase.Timestamp
 import com.google.firebase.firestore.GeoPoint
 import com.mapbox.geojson.Feature
 import com.mapbox.geojson.FeatureCollection
@@ -78,11 +105,13 @@ import com.mapbox.maps.plugin.annotation.annotations
 import com.mapbox.maps.plugin.annotation.generated.PointAnnotationManager
 import com.mapbox.maps.plugin.annotation.generated.PointAnnotationOptions
 import com.mapbox.maps.plugin.annotation.generated.createPointAnnotationManager
+import java.util.concurrent.TimeUnit
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.pow
 import kotlin.math.sin
 import kotlin.math.sqrt
+import kotlinx.coroutines.delay
 
 fun getInitialLocation(context: Context, onLocationFetched: (Point) -> Unit) {
   if (ActivityCompat.checkSelfPermission(
@@ -228,6 +257,205 @@ fun FindCapsuleScreenV1(
       })
   }
 }
+
+@Preview
+@Composable
+fun ShowDialog(
+  selectedCapsule: NearByCapsule? = null,
+  modelState: Load3dModelState = Load3dModelState.Idle,
+  flag: Boolean = false,
+  closeDialog: () -> Unit = {},
+  openCapsule: () -> Unit = {},
+  viewAr: () -> Unit = {}, load3dModel: () -> Unit = {},
+) {
+  val isTablet = DeviceType.isTablet()
+
+  val context = LocalContext.current
+
+  val path: String = remember {
+    getModelMapIcon(selectedCapsule?.modelId)
+  }
+
+  val imageBitmap: Bitmap? = remember(path) {
+    try {
+      val inputStream = context.assets.open(path)
+      BitmapFactory.decodeStream(inputStream)
+    } catch (e: Exception) {
+      null
+    }
+  }
+
+  var remainingTime by remember { mutableStateOf("") }
+  var isReadyToOpen by remember {
+    mutableStateOf(false)
+  }
+
+  LaunchedEffect(modelState) {
+    if (modelState is Load3dModelState.Success && flag == false)
+      viewAr()
+
+  }
+
+  LaunchedEffect(selectedCapsule?.time) {
+    while (true) {
+      val currentTime = Timestamp.now()
+      val diffInMillis = selectedCapsule?.time?.toDate()?.time?.minus(currentTime.toDate().time)
+
+      if (diffInMillis != null) {
+        if (diffInMillis > 0) {
+          val daysLeft = diffInMillis.let { TimeUnit.MILLISECONDS.toDays(it) }
+          val hoursLeft = diffInMillis.let { TimeUnit.MILLISECONDS.toHours(it) } % 24
+          val minutesLeft = diffInMillis.let { TimeUnit.MILLISECONDS.toMinutes(it) } % 60
+          val secondsLeft = diffInMillis.let { TimeUnit.MILLISECONDS.toSeconds(it) } % 60
+
+          if (isReadyToOpen)
+            isReadyToOpen = false
+
+          remainingTime = when {
+            daysLeft > 0 -> {
+              if (daysLeft > 100) {
+              }
+              "${daysLeft}d"
+            } // If more than 1 day is left, show in days
+            hoursLeft > 0 -> {
+              if (hoursLeft < 24) {
+
+              }
+              "${hoursLeft}h"
+            }// If more than 1 hour is left, show in hours
+            minutesLeft > 0 -> "${minutesLeft}m ${secondsLeft}s" // Less than an hour, show minutes and seconds
+            else -> "${secondsLeft}s" // Less than a minute, show in seconds
+          }
+        } else {
+          remainingTime = "000:00"
+          isReadyToOpen = true
+          break
+        }
+      }
+      delay(1000) // Update every second
+    }
+  }
+
+  Dialog(onDismissRequest = { closeDialog() }) {
+    Box(
+      modifier = Modifier
+        .fillMaxWidth()
+        .clip(shape = RoundedCornerShape(30.dp))
+        .background(MaterialTheme.colorScheme.primary)
+        .padding(16.dp)
+        .fillMaxWidth(0.8f)
+        .wrapContentHeight()
+    ) {
+      Column(
+        modifier = Modifier.align(Alignment.Center),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+      ) {
+        // Close Button
+        IconButton(
+          onClick = { closeDialog() },
+          modifier = Modifier
+            .align(Alignment.End)
+            .padding(bottom = 16.dp)
+        ) {
+          Icon(Icons.Filled.Close, contentDescription = "Close")
+        }
+
+        imageBitmap?.asImageBitmap()?.let {
+          Image(
+            bitmap = it,
+            contentDescription = null,
+            modifier = if (isTablet) {
+              Modifier
+                .fillMaxSize(0.5f)
+                .padding(bottom = 16.dp)
+                .size(200.dp)
+            } else {
+              Modifier
+                .padding(bottom = 16.dp)
+                .size(200.dp)
+            }
+          )
+        }
+        Text(
+          text = remainingTime,
+          style = MaterialTheme.typography.titleLarge.copy(
+            fontSize = 33.sp,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            fontWeight = FontWeight.ExtraBold,
+            fontFamily = openSansExtraBold
+          )
+        )
+        Text(
+          text = selectedCapsule?.capsuleTitle ?: "No information",
+          style = MaterialTheme.typography.titleLarge.copy(
+            fontWeight = FontWeight.Bold
+          ),
+          modifier = Modifier.padding(bottom = 16.dp, top = 10.dp)
+        )
+
+        Row(
+          modifier = Modifier.fillMaxWidth(),
+          horizontalArrangement = Arrangement.SpaceBetween,
+          verticalAlignment = Alignment.CenterVertically,
+        ) {
+          OutlinedButton(
+            onClick = {
+              if (!(modelState is Load3dModelState.Success) && flag == false)
+                load3dModel()
+
+              if (modelState is Load3dModelState.Success && flag)
+                viewAr()
+            },
+            colors = ButtonDefaults.outlinedButtonColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
+          ) {
+
+            if (modelState is Load3dModelState.Idle || flag) {
+              Icon(
+                painter = painterResource(id = com.example.timecapsule.R.drawable.icon_view_in_ar),
+                contentDescription = "ar icon",
+                tint = LightBlue,
+                modifier = Modifier.padding(horizontal = 2.dp)
+              )
+              Text(
+                "View AR",
+                style = MaterialTheme.typography.titleSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+              )
+            }
+            if (modelState is Load3dModelState.Loading)
+              Text(
+                "loading..",
+                style = MaterialTheme.typography.titleSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+              )
+
+            if (modelState is Load3dModelState.Error)
+              Text(
+                "can't load",
+                style = MaterialTheme.typography.titleSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+              )
+          }
+          Button(
+            onClick = {
+              if (isReadyToOpen)
+                openCapsule()
+            },
+            colors = ButtonDefaults.outlinedButtonColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
+          ) {
+            Text(
+              "Open",
+              style = MaterialTheme.typography.titleSmall,
+              color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+          }
+        }
+      }
+    }
+  }
+}
+
 
 val MODEL_ID_KEY = "model-id-key"
 

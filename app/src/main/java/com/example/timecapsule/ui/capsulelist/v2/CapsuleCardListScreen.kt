@@ -1,6 +1,7 @@
 package com.example.timecapsule.ui.capsulelist.v2
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearEasing
@@ -68,6 +69,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -76,6 +78,7 @@ import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.example.model.CapsuleDetails
+import com.example.timecapsule.PermissionHandler
 import com.example.timecapsule.R
 import com.example.timecapsule.ui.theme.DMSerifText
 import com.example.timecapsule.ui.theme.Inter
@@ -112,7 +115,7 @@ fun CapsuleCardListScreen(
   viewModel: ShowCapsulesListViewModel = hiltViewModel(),
   addCapsuleBtnClicked: () -> Unit = {},
   onCapsuleClicked: (id: String) -> Unit = {},
-  openCapule: (id: String) -> Unit = {}
+  openCapule: (id: String, isSurPriseCapsule: Boolean) -> Unit = { _, _ -> }
 ) {
 
   val state by viewModel.capsuleListState.collectAsState()
@@ -146,6 +149,7 @@ fun CapsuleCardListScreen(
     }
   }
 
+  val context = LocalContext.current
 
   val rotation = remember { Animatable(0f) }
   val coroutineScope = rememberCoroutineScope()
@@ -207,7 +211,18 @@ fun CapsuleCardListScreen(
     }
   )
   { innerPadding ->
+    PermissionHandler(
+      onPermissionsGranted = {
 
+      },
+      onPermissionsDenied = {
+        Toast.makeText(
+          context,
+          "To access all features, please enable permissions in the settings.",
+          Toast.LENGTH_SHORT
+        ).show()
+      }
+    )
     if (isError) {
       Box(
         modifier = Modifier
@@ -336,14 +351,28 @@ fun CapsuleCardListScreen(
           verticalAlignment = Alignment.CenterVertically,
           horizontalArrangement = Arrangement.SpaceBetween
         ) {
-          Text(
-            "Time Capsule",
-            style = MaterialTheme.typography.titleLarge.copy(
-              fontSize = 30.sp,
-              fontWeight = FontWeight.ExtraBold,
-              fontFamily = openSansExtraBold
+          Column {
+            Text(
+              text = "memora",
+              style = MaterialTheme.typography.titleLarge.copy(
+                fontSize = 30.sp,
+                fontWeight = FontWeight.ExtraBold,
+                fontFamily = openSansExtraBold
+              )
             )
-          )
+            Text(
+              text =
+              "beta",
+              modifier = Modifier.align(Alignment.End),
+              style = MaterialTheme.typography.titleLarge.copy(
+                fontSize = 10.sp,
+                fontWeight = FontWeight.Light,
+                fontFamily = openSansExtraBold,
+                color = LightBlue
+              )
+            )
+          }
+
           Box(
             modifier = Modifier
                 .wrapContentSize()

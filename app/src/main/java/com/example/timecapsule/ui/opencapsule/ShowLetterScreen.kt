@@ -131,7 +131,6 @@ fun Letter(letterText: String) {
         fontFamily = FontFamily.Cursive
       ),
       text = loremIpsum,
-      color = MaterialTheme.colorScheme.onSurfaceVariant,
       fontWeight = FontWeight.Bold,
       modifier = Modifier
           .align(Alignment.TopStart)

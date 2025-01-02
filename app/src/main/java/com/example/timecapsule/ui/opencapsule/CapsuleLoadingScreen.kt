@@ -39,7 +39,7 @@ import com.example.timecapsule.viewmodel.OpenCapsuleViewModel
 @Composable
 fun CapsuleLoadingScreen(
   viewModel: OpenCapsuleViewModel = hiltViewModel(), capsuleId: String,
-  isCapsuleHunt: Boolean = false,
+  isCapsuleHunt: Boolean = false, isSurpriseCapsule: Boolean = false,
   navigate: (String) -> Unit = {}, popBack: () -> Unit = {}
 ) {
   val context = LocalContext.current
@@ -51,7 +51,10 @@ fun CapsuleLoadingScreen(
     if (!isCapsuleHunt) {
       viewModel.getScreenCheckPoint(capsuleId)
     }
-    viewModel.getCapsuleDetails(capsuleId)
+    if (isSurpriseCapsule) {
+      viewModel.getSurpriseCapsuleDetails(capsuleId)
+    } else
+      viewModel.getCapsuleDetails(capsuleId)
   }
 
   LaunchedEffect(capsuleDetailsState) {
@@ -91,8 +94,8 @@ fun CapsuleLoadingScreen(
 
   Column(
     modifier = Modifier
-        .fillMaxSize()
-        .background(MaterialTheme.colorScheme.primary),
+      .fillMaxSize()
+      .background(MaterialTheme.colorScheme.primary),
     horizontalAlignment = Alignment.CenterHorizontally,
     verticalArrangement = Arrangement.Center
   ) {

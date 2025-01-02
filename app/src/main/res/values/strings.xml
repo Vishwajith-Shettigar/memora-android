@@ -1,6 +1,6 @@
 <resources>
     <!--    Onboarding screen-->
-    <string name="app_name">Time Capsule</string>
+    <string name="app_name">memora</string>
     <string name="app_subtitle">Relive the moments with your loved ones.</string>
     <string name="login_btn"> LOG IN </string>
     <string name="signup_btn"> SIGN UP </string>

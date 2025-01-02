@@ -2,6 +2,7 @@ package com.example.timecapsule.ui.capsulelist.v2
 
 import android.util.Log
 import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -38,6 +39,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
@@ -62,7 +64,7 @@ fun CapsuleCard(
   bgColor: Color,
   onClick: () -> Unit,
   onCapsuleDetailsClicked: (String) -> Unit,
-  openCapule: (id: String) -> Unit = {}
+  openCapule: (id: String, isSurPriseCapsule: Boolean) -> Unit = { _, _ -> }
 ) {
 
   val isTablet = DeviceType.isTablet()
@@ -160,6 +162,7 @@ fun CapsuleCard(
           horizontalArrangement = Arrangement.SpaceBetween,
           verticalAlignment = Alignment.CenterVertically
         ) {
+
           Text(
             modifier = Modifier.weight(0.7F),
             text = capsuleDetails.title,
@@ -175,22 +178,30 @@ fun CapsuleCard(
             modifier = Modifier
               .weight(0.3F)
           ) {
-            IconButton(modifier = Modifier
-                .align(Alignment.Center)
-                .size(30.dp)
-                .border(
-                    width = 1.dp,
-                    shape = CircleShape,
-                    color = MaterialTheme.colorScheme.primaryContainer
-                ), onClick = {
-              onCapsuleDetailsClicked(capsuleDetails.id)
-            }) {
-              Icon(
-                painter = painterResource(id = com.example.timecapsule.R.drawable.ic_open_in_new),
-                contentDescription = "Open",
-                tint = Color.Black
+            if (capsuleDetails.isSurpriseCapsule)
+              Image(
+                painter = painterResource(id = com.example.timecapsule.R.drawable.capsule_creation_confirmation),
+                contentDescription = "Official icon",
+                modifier = Modifier.size(50.dp)
               )
-            }
+            else
+              IconButton(modifier = Modifier
+                  .align(Alignment.Center)
+                  .size(25.dp)
+                  .border(
+                      width = 1.dp,
+                      shape = CircleShape,
+                      color = MaterialTheme.colorScheme.primaryContainer
+                  ), onClick = {
+                onCapsuleDetailsClicked(capsuleDetails.id)
+              }) {
+                Icon(
+                  modifier = Modifier.size(25.dp),
+                  painter = painterResource(id = com.example.timecapsule.R.drawable.ic_open_in_new),
+                  contentDescription = "Open",
+                  tint = Color.Black
+                )
+              }
           }
         }
 
@@ -233,8 +244,11 @@ fun CapsuleCard(
               fontSize = 15.sp,
               color = Color.Black,
               fontWeight = FontWeight.Bold,
-              lineHeight = TextUnit(20F, TextUnitType.Sp)
-            )
+              lineHeight = TextUnit(20F, TextUnitType.Sp),
+            ),
+            maxLines = 3,
+            overflow = TextOverflow.Ellipsis
+
           )
         }
         if (isExpanded || isTablet)
@@ -254,6 +268,7 @@ fun CapsuleCard(
             ) {
 
               if (capsuleDetails.users.size > 3) {
+
                 (capsuleDetails.users).slice(0..2).forEach {
                   Profile(
                     userId = it["userId"] as String,
@@ -267,7 +282,7 @@ fun CapsuleCard(
                   )
                 }
                 if (((capsuleDetails.users).size - 3) > 0)
-                  SharedWithALlIcon(text = ((capsuleDetails.users).size - 3).toString())
+                  SharedWithALlIcon(text = ((capsuleDetails.users).size - 3).toString(), fontColor = Color.White)
               } else {
                 capsuleDetails.users.forEach {
                   Profile(
@@ -281,6 +296,9 @@ fun CapsuleCard(
                     remove = {}
                   )
                 }
+                if (capsuleDetails.isSharedWithAll) {
+                  SharedWithALlIcon(textFontSize = 15.sp, fontColor = Color.White)
+                }
               }
             }
 
@@ -292,7 +310,7 @@ fun CapsuleCard(
               )
               {
                 Button(
-                  onClick = { openCapule(capsuleDetails.id) },
+                  onClick = { openCapule(capsuleDetails.id, capsuleDetails.isSurpriseCapsule) },
                   colors = ButtonDefaults.buttonColors(containerColor = LightBlue)
                 ) {
                   Text(

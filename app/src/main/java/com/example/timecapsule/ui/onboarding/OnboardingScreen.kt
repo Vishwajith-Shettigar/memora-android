@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -50,6 +51,7 @@ import com.example.timecapsule.ui.theme.DMSerifText
 import com.example.timecapsule.ui.theme.LoginBtnLeft
 import com.example.timecapsule.ui.theme.LoginBtnRight
 import com.example.timecapsule.ui.theme.TopOnboarding
+import com.example.timecapsule.ui.theme.openSansExtraBold
 import com.example.timecapsule.ui.util.Device
 import com.example.timecapsule.ui.util.DeviceType
 import com.example.timecapsule.ui.theme.white
@@ -171,7 +173,7 @@ fun TopImage(modifier: Modifier = Modifier) {
   Box(
     modifier = modifier
         .padding(4.dp)
-        .size(240.dp)
+        .wrapContentSize()
         .clip(CircleShape)
         .background(Color.Transparent),
     contentAlignment = Alignment.Center
@@ -179,8 +181,9 @@ fun TopImage(modifier: Modifier = Modifier) {
     Image(
       painter = painterResource(id = R.drawable.onboarding_image),
       contentDescription = null,
-      contentScale = ContentScale.Crop,
-      modifier = Modifier.clip(CircleShape)
+      modifier = Modifier
+          .clip(CircleShape)
+          .size(300.dp)
     )
   }
 }
@@ -196,7 +199,7 @@ fun TitleAndSubtitle(modifier: Modifier = Modifier) {
     Text(
       text = stringResource(id = R.string.app_name),
       style = MaterialTheme.typography.titleLarge.copy(
-        fontFamily = DMSerifText,
+        fontFamily = openSansExtraBold,
         fontSize = 40.sp,
         fontWeight = FontWeight.Bold,
         color = Color.White

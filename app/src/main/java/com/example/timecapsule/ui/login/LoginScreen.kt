@@ -234,7 +234,7 @@ fun LogInScreenMobile(
 
 @Composable
 fun TitleSubtitleWithOkayButtonDialog(
-  title: String, subtitle: String,
+  title: String, subtitle: String,buttonColor:Color= LightBlue,
   onDismiss: () -> Unit = {}
 ) {
   // The dialog content with the message and buttons
@@ -262,7 +262,7 @@ fun TitleSubtitleWithOkayButtonDialog(
     confirmButton = {
     },
     dismissButton = {
-      Button(colors = ButtonDefaults.buttonColors(containerColor = LightBlue),
+      Button(colors = ButtonDefaults.buttonColors(containerColor = buttonColor),
         onClick = {
           onDismiss()
         }

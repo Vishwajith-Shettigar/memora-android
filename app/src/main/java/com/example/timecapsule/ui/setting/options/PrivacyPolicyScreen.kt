@@ -135,7 +135,7 @@ fun getPrivacyPolicyHtml(): String {
             </style>
         </head>
         <body>
-            <p>This Privacy Policy explains how your personal data is handled by <b>Time Capsule</b> ("we", "us", "our"), an Android app currently in testing. By using this app, you consent to the collection, use, and storage of your information as described below.</p>
+            <p>This Privacy Policy explains how your personal data is handled by <b>memora</b> ("we", "us", "our"), an Android app currently in testing. By using this app, you consent to the collection, use, and storage of your information as described below.</p>
             
             <h2>1. Information We Collect</h2>
             <ul>
@@ -148,13 +148,13 @@ fun getPrivacyPolicyHtml(): String {
             <p>The data we collect is used for the purpose of improving the app, troubleshooting issues, and enhancing the user experience. We may also use your data for internal analysis to improve the service.</p>
             
             <h2>3. Data Storage and Retention</h2>
-            <p>Please note that <b>Time Capsule</b> is currently in a testing phase and does not have guaranteed long-term storage. Your time capsules (data) may be deleted or become inaccessible at any time without notice. We do not guarantee the preservation or accessibility of your data beyond the testing period.</p>
+            <p>Please note that <b>memora</b> is currently in a testing phase and does not have guaranteed long-term storage. Your time capsules (data) may be deleted or become inaccessible at any time without notice. We do not guarantee the preservation or accessibility of your data beyond the testing period.</p>
             
             <h2>4. Third-Party Services</h2>
             <p>We do not currently use third-party services for data collection, advertising, or analytics. However, this may change in the future, and if it does, we will update this Privacy Policy accordingly.</p>
             
             <h2>5. Data Security</h2>
-            <p>While we strive to protect your information, please note that, as an app in development, we cannot guarantee absolute security. Use the app at your own risk.</p>
+            <p>While we strive to protect your information, please note that as this app is still in the testing phase, please avoid sharing sensitive files.</p>
             
             <h2>6. Changes to the Privacy Policy</h2>
             <p>We may update this Privacy Policy from time to time. When we do, we will post the revised version within the app with the updated date. We encourage you to review this Privacy Policy periodically to stay informed.</p>
@@ -162,7 +162,7 @@ fun getPrivacyPolicyHtml(): String {
             <h2>7. Contact Us</h2>
             <p>If you have any questions or concerns about this Privacy Policy, please contact us at:</p>
             <ul>
-                <li>Email: timecapsuleshelp@gmail.com</li>
+                <li>Email: memorabeta@gmail.com</li>
             </ul>
         </body>
         </html>

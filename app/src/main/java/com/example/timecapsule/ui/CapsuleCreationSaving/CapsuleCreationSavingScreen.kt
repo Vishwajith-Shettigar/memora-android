@@ -69,8 +69,8 @@ fun CapsuleCreationSavingScreen(
   Scaffold { innerPading ->
     Column(
       modifier = Modifier
-          .fillMaxSize()
-          .padding(innerPading),
+        .fillMaxSize()
+        .padding(innerPading),
       verticalArrangement = Arrangement.Center,
       horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -91,35 +91,35 @@ fun CapsuleCreationSavingScreen(
 fun ErrorScreen(onRetryClick: () -> Unit) {
   Box(
     modifier = Modifier
-        .fillMaxSize()
-        .zIndex(5.0F)
+      .fillMaxSize()
+      .zIndex(5.0F)
   ) {
     Column(
       modifier = Modifier
-          .fillMaxWidth()
-          .fillMaxHeight()
-          .align(Alignment.Center)
-          .padding(top = 20.dp),
+        .fillMaxWidth()
+        .fillMaxHeight()
+        .align(Alignment.Center)
+        .padding(top = 20.dp),
       verticalArrangement = Arrangement.Center,
       horizontalAlignment = Alignment.CenterHorizontally
     ) {
       Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier
-            .padding(vertical = 20.dp)
-            .size(220.dp)
-            .background(
-                brush = Brush.radialGradient(
-                    colors = listOf(
-                        Color.Red,
-                        Color.Red,
-                        Color.LightGray.copy(0.1f)
-                    ),
-                    center = Offset.Unspecified,
-                    radius = 220f
-                ),
-                shape = CircleShape
-            )
+          .padding(vertical = 20.dp)
+          .size(220.dp)
+          .background(
+            brush = Brush.radialGradient(
+              colors = listOf(
+                Color.Red,
+                Color.Red,
+                Color.LightGray.copy(0.1f)
+              ),
+              center = Offset.Unspecified,
+              radius = 220f
+            ),
+            shape = CircleShape
+          )
       ) {
         Image(
           painter = painterResource(id = com.example.timecapsule.R.drawable.nonetwork_graphic),
@@ -176,8 +176,8 @@ fun SuccessScreen(onNavigate: (NavigationAddCapsule) -> Unit = {}) {
     contentDescription = null,
     contentScale = ContentScale.Crop,
     modifier = Modifier
-        .size(200.dp) // Image size, adjust as needed
-        .padding(16.dp)
+      .size(200.dp) // Image size, adjust as needed
+      .padding(16.dp)
   )
 
   Text(
@@ -200,7 +200,7 @@ fun LoadingScreen() {
   RotatingPicture(image = painterResource(id = R.drawable.capsule_image3))
   Text(
     modifier = Modifier.padding(10.dp),
-    text = "Please dont close the app or press back.",
+    text = "Please don't close the app or press back.",
     style = MaterialTheme.typography.titleLarge.copy(fontSize = 15.sp),
     color = MaterialTheme.colorScheme.onSurfaceVariant
   )
@@ -227,8 +227,8 @@ fun RotatingPicture(image: Painter) {
     contentDescription = null,
     contentScale = ContentScale.Crop,
     modifier = Modifier
-        .size(200.dp) // Image size, adjust as needed
-        .rotate(rotationAngle) // Apply the rotating animation
-        .padding(16.dp)
+      .size(200.dp) // Image size, adjust as needed
+      .rotate(rotationAngle) // Apply the rotating animation
+      .padding(16.dp)
   )
 }

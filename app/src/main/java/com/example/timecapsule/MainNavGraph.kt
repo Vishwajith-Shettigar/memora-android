@@ -204,8 +204,14 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
         navController.navigate(Screen.AddCapsuleScreens.route) // Start AddCapsule flow
       }, onCapsuleClicked = { id ->
         navController.navigate(Screen.CapsuleDetails.createRoute(id)) // Capsule details
-      }, openCapule = { capsuleId ->
-        navController.navigate(Screen.OpenCapsuleLoadingScreen.createRoute(capsuleId, false))
+      }, openCapule = { capsuleId, isSurpriseCapsule ->
+        navController.navigate(
+          Screen.OpenCapsuleLoadingScreen.createRoute(
+            capsuleId,
+            false,
+            isSurpriseCapsule = isSurpriseCapsule
+          )
+        )
       })
     }
     composable(Screen.NearByCapsules.route) {
@@ -242,6 +248,12 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
         },
         onContactUsClicked = {
           navController.navigate(Screen.ContactUs.route)
+        }, signOut = {
+          navController.navigate(Screen.WelCome.route) {
+            popUpTo(Screen.Home.route) {
+              inclusive = true
+            }
+          }
         })
     }
 

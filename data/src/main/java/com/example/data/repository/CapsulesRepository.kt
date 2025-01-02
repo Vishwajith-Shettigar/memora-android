@@ -17,6 +17,7 @@ interface CapsulesRepository {
   suspend fun getCapsuleDetails(capsuleId: String): Response<CapsuleDetails>
   suspend fun setCapsuleOpened(capsuleId: String): Response<Unit>
   suspend fun sendEmailCaspuleSharing(emailSharingCapsuleDto: EmailSharingCapsuleDto): Response<Unit>
+  suspend fun getSurpriseCapsuleDetails(capsuleId: String):Response<CapsuleDetails>
 }
 
 class CapsulesRepositoryImpl @Inject constructor(
@@ -50,5 +51,9 @@ class CapsulesRepositoryImpl @Inject constructor(
     } catch (e: Exception) {
       Response.Error(exception = e)
     }
+  }
+
+  override suspend fun getSurpriseCapsuleDetails(capsuleId: String): Response<CapsuleDetails> {
+    return capsulesRemoteDataSource.getSurpriseCapsuleDetails(capsuleId)
   }
 }

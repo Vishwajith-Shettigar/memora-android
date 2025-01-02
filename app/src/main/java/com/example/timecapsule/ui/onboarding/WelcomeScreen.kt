@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.timecapsule.ui.theme.LightBlue
+import com.example.timecapsule.ui.theme.openSansExtraBold
 import com.example.timecapsule.ui.util.DeviceType
 
 @Composable
@@ -62,17 +63,31 @@ fun WelcomeScreen(onClick: () -> Unit) {
         ),
         modifier = Modifier.padding(top = 50.dp),
       )
-      Text(
-        text = "Time Capsule",
-        style = MaterialTheme.typography.titleLarge.copy(
-          color = Color.Red.copy(alpha = 0.5F),
-          fontSize = 50.sp,
-          fontWeight = FontWeight.ExtraBold,
-          fontFamily = FontFamily.SansSerif,
-          lineHeight = TextUnit(50.0F, TextUnitType.Sp)
-        ),
-        modifier = Modifier.padding(vertical = 1.dp),
-      )
+      Column {
+        Text(
+          text = "memora",
+          style = MaterialTheme.typography.titleLarge.copy(
+            color = Color.Red.copy(alpha = 0.5F),
+            fontSize = 50.sp,
+            fontWeight = FontWeight.ExtraBold,
+            fontFamily = openSansExtraBold,
+            lineHeight = TextUnit(50.0F, TextUnitType.Sp)
+          ),
+          modifier = Modifier.padding(vertical = 1.dp),
+        )
+        Text(
+          text =
+          "beta",
+          modifier = Modifier.align(Alignment.End),
+          style = MaterialTheme.typography.titleLarge.copy(
+            fontSize = 10.sp,
+            fontWeight = FontWeight.Light,
+            fontFamily = openSansExtraBold,
+            color = Color.White
+          )
+        )
+      }
+
 
       Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Start) {
         Image(

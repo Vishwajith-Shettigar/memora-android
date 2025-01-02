@@ -1,5 +1,7 @@
 package com.example.timecapsule.ui.review
 
+import android.content.ClipboardManager
+import android.content.Context
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
@@ -28,6 +30,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.BottomAppBarDefaults
@@ -41,12 +44,14 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -60,15 +65,21 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.modifier.modifierLocalMapOf
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.max
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
+import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -168,7 +179,7 @@ fun CustomerDetailsBottomSheet(
         onValueChange = {
           viewModel.updatePostalCode(it)
         },
-        label = { Text("Postal Code") },
+        label = { Text("Postal Code / Zip Code") },
         modifier = Modifier.fillMaxWidth(),
         colors = TextFieldDefaults.outlinedTextFieldColors(
           focusedBorderColor = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -249,11 +260,86 @@ fun detailsInputValidation(viewModel: CapsuleCreationViewModel): Boolean {
   return true
 }
 
+@Composable
+fun TestingDialog(close: () -> Unit) {
+  // You can use a state to control dialog visibility
+  val clipboardManager =
+    LocalContext.current.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+
+  if (true) {
+    Dialog(
+      onDismissRequest = { },
+      properties = DialogProperties(dismissOnBackPress = false, dismissOnClickOutside = false)
+    ) {
+      Surface(
+        shape = MaterialTheme.shapes.extraLarge,
+        color = MaterialTheme.colorScheme.primaryContainer,
+        modifier = Modifier
+            .padding(16.dp)
+            .zIndex(20.0F)
+      ) {
+        Column(
+          modifier = Modifier.padding(16.dp)
+        ) {
+          Text(
+            text = "Attention - Payment details.",
+            style = MaterialTheme.typography.titleMedium,
+            color = LightBlue
+          )
+          Spacer(modifier = Modifier.height(16.dp))
+          Text(
+            text = "Welcome, Early Access User! 🎉\n\n" +
+              "This app is currently in the testing stage, and we’re thrilled to have you on board! " +
+              "Please do not enter your real card details.\n\n" +
+              "For testing purposes, please use the following dummy card details:\n\n",
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+
+          )
+          Spacer(modifier = Modifier.height(8.dp))
+
+          // Clickable card number
+          Text(
+            text = "Card Number: 4242 4242 4242 4242",
+            style = MaterialTheme.typography.bodyMedium.copy(color = Color.Blue),
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+
+          )
+
+          Spacer(modifier = Modifier.height(8.dp))
+
+          Text(
+            text = "CVV: 123\nExpiry Date: Any valid future date (e.g., 12/25)",
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+
+          )
+
+          Spacer(modifier = Modifier.height(16.dp))
+          Button(
+            onClick = {
+              val clip = android.content.ClipData.newPlainText("Card Number", "4242 4242 4242 4242")
+              clipboardManager.setPrimaryClip(clip)
+              close()
+            },
+            modifier = Modifier.align(Alignment.End),
+            colors = ButtonDefaults.buttonColors(containerColor = LightBlue)
+          ) {
+            Text("Copy", color = Color.White)
+          }
+        }
+      }
+    }
+  }
+}
+
+
 private fun presentPaymentSheet(
   paymentSheet: PaymentSheet,
   customerConfig: PaymentSheet.CustomerConfiguration,
   paymentIntentClientSecret: String
 ) {
+
   paymentSheet.presentWithPaymentIntent(
     paymentIntentClientSecret,
     PaymentSheet.Configuration(
@@ -312,7 +398,23 @@ fun ReviewScreen(
   val context = LocalContext.current
 
 
+  var showFakeCardDetails by remember {
+    mutableStateOf(false)
+  }
+
+  var showPaymentSheet by remember {
+    mutableStateOf(false)
+  }
+
+  if (showFakeCardDetails)
+    TestingDialog() {
+      showFakeCardDetails = false
+      showDetails = true
+    }
+
   fun PaymentConfiguration(viewModel: CapsuleCreationViewModel) {
+    if (viewModel.amount == 0)
+      viewModel.amount = 1
 
     val jsonBody = """
       {
@@ -373,7 +475,7 @@ fun ReviewScreen(
             .background(Color.Transparent),
         content = {
           BottomRow(onNavigate) {
-            showDetails = true
+            showFakeCardDetails = true
           }
         },
       )
@@ -428,7 +530,7 @@ fun ReviewScreen(
 fun SharedPeople(
   selectedPeoples: MutableList<UserDetails>,
   addedEmails: List<String>,
-  sharedWithALl: Boolean
+  sharedWithALl: Boolean,
 ) {
   Column(
     modifier = Modifier
@@ -447,7 +549,8 @@ fun SharedPeople(
     ShowSelectedPeople(
       disableCrossBtn = true,
       selectedPeoples = selectedPeoples,
-      showSharedWithALl = sharedWithALl
+      showSharedWithALl = sharedWithALl,
+      isReviewScreen = true
     )
     ShowAddedEmails(
       addedEmails = addedEmails, hideRemoveIcon = true
@@ -660,18 +763,38 @@ fun MapPreviewCard(latlang: LatLng) {
 
 @Preview
 @Composable
-fun SharedWithALlIcon(text: String = "All", modifier: Modifier = Modifier.size(40.dp)) {
-  Box(
-    modifier =
-    modifier
-        .clip(shape = CircleShape)
-        .border(1.dp, Color.LightGray, CircleShape)
-        .padding(2.dp)
-  ) {
-    Text(
-      text = "+${text}", modifier = Modifier.align(Alignment.Center),
-      style = MaterialTheme.typography.titleLarge.copy(fontSize = 20.sp),
-      color = MaterialTheme.colorScheme.onSurfaceVariant
+fun SharedWithALlIcon(
+  text: String = "All",
+  modifier: Modifier = Modifier.size(40.dp), textFontSize: TextUnit = 26.sp,
+  isReviewScreen: Boolean = false,
+  fontColor:Color=MaterialTheme.colorScheme.onSurfaceVariant
+) {
+  if (isReviewScreen)
+    Column(
+      modifier = Modifier
+          .fillMaxHeight()
+          .wrapContentWidth(),
+      verticalArrangement = Arrangement.Center
     )
-  }
+    {
+      Text(
+        text = "+${text}",
+        style = MaterialTheme.typography.titleLarge.copy(fontSize = textFontSize),
+        color = fontColor
+      )
+    }
+  else
+    Box(
+      modifier =
+      modifier
+          .clip(shape = CircleShape)
+          .border(1.dp, Color.LightGray, CircleShape)
+          .padding(2.dp)
+    ) {
+      Text(
+        text = "+${text}", modifier = Modifier.align(Alignment.Center),
+        style = MaterialTheme.typography.titleLarge.copy(fontSize = textFontSize),
+        color = fontColor
+      )
+    }
 }
