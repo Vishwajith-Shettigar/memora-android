@@ -78,7 +78,7 @@ fun TabletLayoutV1(navController: NavHostController) {
       if (currentBackStackEntry?.destination?.route in bottomNavScreens) {
         NavigationRail(navController)
       }
-      Box(modifier = Modifier.fillMaxSize())
+      Box(modifier = Modifier.fillMaxSize().padding(bottom = paddingValues.calculateBottomPadding()))
       {
         NavHost(
           navController = navController,

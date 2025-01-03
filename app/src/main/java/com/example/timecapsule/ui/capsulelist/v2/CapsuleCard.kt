@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
@@ -54,6 +55,7 @@ import com.example.timecapsule.ui.theme.openSansExtraBold
 import com.example.timecapsule.ui.util.DeviceType
 import com.google.firebase.Timestamp
 import java.util.concurrent.TimeUnit
+import kotlin.math.max
 import kotlinx.coroutines.delay
 
 
@@ -176,27 +178,29 @@ fun CapsuleCard(
 
           Box(
             modifier = Modifier
-              .weight(0.3F)
+              .weight(0.3F).padding(end=5.dp)
           ) {
             if (capsuleDetails.isSurpriseCapsule)
               Image(
                 painter = painterResource(id = com.example.timecapsule.R.drawable.capsule_creation_confirmation),
                 contentDescription = "Official icon",
-                modifier = Modifier.size(50.dp)
+                modifier = Modifier.size(50.dp).align(Alignment.TopEnd)
               )
             else
               IconButton(modifier = Modifier
-                  .align(Alignment.Center)
-                  .size(25.dp)
-                  .border(
-                      width = 1.dp,
-                      shape = CircleShape,
-                      color = MaterialTheme.colorScheme.primaryContainer
-                  ), onClick = {
+                  .align(Alignment.TopEnd) .border(
+                  width = 0.5.dp,
+                  shape = CircleShape,
+                  color = MaterialTheme.colorScheme.primaryContainer
+                )
+                  .size(40.dp)
+                 ,
+
+                onClick = {
                 onCapsuleDetailsClicked(capsuleDetails.id)
               }) {
                 Icon(
-                  modifier = Modifier.size(25.dp),
+                  modifier = Modifier.size(20.dp),
                   painter = painterResource(id = com.example.timecapsule.R.drawable.ic_open_in_new),
                   contentDescription = "Open",
                   tint = Color.Black
@@ -325,7 +329,6 @@ fun CapsuleCard(
             }
           }
       }
-
     }
   )
 }

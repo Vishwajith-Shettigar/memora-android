@@ -200,15 +200,7 @@ fun CapsuleList(
   onViewCapsuleClick: (CapsuleAsset) -> Unit = {},
   setCapsuleModelIdAndImageUrlAmount: (String, String, Int, Double) -> Unit
 ) {
-  val isTablet = DeviceType.isTablet()
-  if (isTablet) {
-    CapsuleListTablet(
-      modifier = modifier,
-      capsuleAssets,
-      onViewCapsuleClick,
-      setCapsuleModelIdAndImageUrlAmount
-    )
-  } else {
+
     CapsuleListMobile(
       modifier = modifier,
       selectedCapsuleModelId,
@@ -216,7 +208,6 @@ fun CapsuleList(
       onViewCapsuleClick,
       setCapsuleModelIdAndImageUrlAmount
     )
-  }
 }
 
 @Composable
