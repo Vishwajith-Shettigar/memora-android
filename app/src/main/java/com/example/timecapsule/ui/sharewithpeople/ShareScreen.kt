@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -89,12 +90,10 @@ fun ShareScreen(
   onNavigate: (NavigationAddCapsule) -> Unit = {}, onViewProfileClick: (String) -> Unit
 ) {
   val isTablet = DeviceType.isTablet()
-  val scaffoldPadding = if (isTablet) PaddingValues(30.dp) else PaddingValues(0.dp)
 
   Scaffold(
     modifier = Modifier
         .fillMaxSize()
-        .padding(scaffoldPadding)
         .background(MaterialTheme.colorScheme.primary),
     containerColor = MaterialTheme.colorScheme.primary,
   ) { innerPadding ->
@@ -130,8 +129,11 @@ fun ShareScreen(
         // Content Section
         Column(
             Modifier
-                .wrapContentSize()
-                .padding(16.dp),
+                .then(if (isTablet)
+                Modifier.width(600.dp).fillMaxHeight()
+                else
+                Modifier.fillMaxSize())
+                .padding(16.dp).align(Alignment.CenterHorizontally),
           verticalArrangement = Arrangement.Top,
           horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -223,7 +225,7 @@ fun SearchPeople(
 
   Column(
     Modifier
-      .wrapContentSize(),
+      .fillMaxWidth(),
     horizontalAlignment = Alignment.CenterHorizontally,
     verticalArrangement = Arrangement.Top
   ) {
@@ -240,7 +242,7 @@ fun SearchPeople(
         onClick = {
           isEmailEnabled = !isEmailEnabled
           searchValue = ""
-        }, modifier = Modifier
+        }, modifier = Modifier.weight(0.2f).wrapContentWidth()
               .clip(RoundedCornerShape(20.dp))
               .border(
                   1.dp,
@@ -264,7 +266,7 @@ fun SearchPeople(
         value = searchValue,
         onValueChange = { searchValue = it },
         modifier = Modifier
-          .background(Color.White, RoundedCornerShape(30)),
+          .background(Color.White, RoundedCornerShape(30)).weight(0.8f),
         placeholder = {
           Text(
             if (isEmailEnabled)
@@ -309,6 +311,7 @@ fun SearchPeople(
           .clip(shape = RoundedCornerShape(10.dp))
           .padding(top = 20.dp)
           .background(MaterialTheme.colorScheme.primary),
+      horizontalAlignment = Alignment.CenterHorizontally
     ) {
       searchResult.forEach { user ->
         UserInfo(
@@ -333,7 +336,7 @@ fun UserInfo(
   val interactionSource = remember { MutableInteractionSource() }
 
   val rowMod = if (isTablet)
-    Modifier.widthIn(min = 500.dp, max = 800.dp)
+    Modifier.width(500.dp)
   else
     Modifier
       .fillMaxWidth()
@@ -373,7 +376,7 @@ fun UserInfo(
                 .padding(horizontal = 10.dp)
         } else {
             Modifier
-                .widthIn(min = 500.dp, max = 900.dp)
+                .wrapContentWidth()
                 .wrapContentHeight()
                 .padding(horizontal = 10.dp)
 
@@ -412,7 +415,8 @@ fun UserInfo(
         else
           painterResource(id = com.example.timecapsule.R.drawable.ic_info),
         contentDescription = "add icon or info icon",
-        tint = MaterialTheme.colorScheme.onSurfaceVariant
+        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+        modifier = Modifier.size(30.dp)
       )
     }
   }

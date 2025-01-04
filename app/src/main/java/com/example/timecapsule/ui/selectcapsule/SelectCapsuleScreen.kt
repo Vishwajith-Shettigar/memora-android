@@ -321,7 +321,7 @@ fun Capsule(
           .background(Color.Transparent)
     ) {
       AsyncImage(
-        modifier = Modifier.heightIn(min = 200.dp),
+        modifier = Modifier.height(200.dp),
         model = capsuleAssets.imageUrl,
         contentDescription = "capsule 1",
       )

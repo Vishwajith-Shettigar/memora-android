@@ -241,7 +241,7 @@ fun UploadFilesScreen(
         modifier = if (isTablet)
           Modifier
             .padding(horizontal = 10.dp)
-            .width(800.dp)
+            .width(600.dp).fillMaxHeight()
             .align(Alignment.Center)
         else
             Modifier

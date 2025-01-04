@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -68,10 +69,14 @@ fun CapsuleNameAndDescription(
     ) {
       Column(
           Modifier
-              .fillMaxWidth()
+              .wrapContentSize()
               .padding(16.dp)
-              .padding(top = 50.dp)
-              .align(Alignment.TopCenter)
+            .then(if (isTablet)
+              Modifier .align(Alignment.Center)
+              else
+              Modifier.align(Alignment.Center)
+            )
+
       ) {
         Text(
           text = "Please name your capsule and provide a brief description.",

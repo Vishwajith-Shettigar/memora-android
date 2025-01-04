@@ -332,4 +332,3 @@ fun CapsuleCard(
     }
   )
 }
-

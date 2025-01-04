@@ -88,7 +88,7 @@ fun NotificationScreen(
         modifier =
         Modifier
           .fillMaxWidth()
-          .systemBarsPadding(),
+        ,
         colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.primary),
         title = {
           Row(

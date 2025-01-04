@@ -87,6 +87,7 @@ fun TabletLayoutV1(navController: NavHostController) {
           onboardingNavGraph(navController)
           mainNavGraph(navController)
           addCapsuleNavGraph(navController, activity)
+          openCapsuleNavGraph(navController = navController)
         }
       }
     }
