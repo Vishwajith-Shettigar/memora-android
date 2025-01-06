@@ -181,6 +181,6 @@ fun UpdateScreen(viewModel: UpdateViewModel = hiltViewModel(), onBackClick: () -
 }
 
 fun redirectUserToWebSite(context: Context) {
-  val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.google.com"))
+  val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://memora-website.vercel.app/"))
   context.startActivity(intent)
 }
