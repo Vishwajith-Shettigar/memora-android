@@ -49,7 +49,6 @@ import com.mapbox.common.MapboxOptions
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
-
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -81,74 +80,7 @@ class MainActivity : ComponentActivity() {
       TimeCapsuleTheme(isDarkMode) {
         val navController = rememberNavController()
 
-
-//          OnboardingScreen(modifier = Modifier.padding(innerPadding))
-//          SignUpScreen(modifier = Modifier.padding(innerPadding))
-//          SignUpDetailsScreen(modifier = Modifier.padding(innerPadding))
-//          LogInScreen(modifier = Modifier.padding(innerPadding))
-//          CapsuleCardListScreen()
-//        Scaffold { innerPadding->
-//          SelectTime(Modifier.padding(innerPadding))
-//        SelectTimeScreen()
-//        ShareOptionScreen()
-//        ShareScreen()
-//        SelectLocationOptionScreen()
-//        SelectCapsuleScreen()
-//        ViewCapsule()
-//        UploadFilesScreen()
-//        FindCapsuleScreenV1()
-//        ReviewScreen()
-//        CapsuleDetailsScreen()
-//        ArScreen()
-//        ProfileScreen()
-//        NotificationScreen()
-//        WriteLetterScreen()
-//        OnBoardingNavGraph()
-
         NavGraph(navController)
-
-//        WelcomeScreen()
-
-//        SplashScreen(navController = navController)
-
-//        SlideOne()
-
-//        SlideTwo()
-
-//        SlideThree()
-
-//        SlidersScreen()
-
-//        CapsuleDetailsScreenv1()
-
-//        CapsuleCard()
-
-
-//        CapsuleCardListScreen()
-//        ContactUsScreen {
-//
-//        }
-
-//        PrivacyScreen(onBackClick = {}, onTermsAndServicesClicked = {}, onPrivacyPolicyClicked = {})
-
-//        PrivacyPolicyScreen {
-//
-//        }
-
-//        TermsAndServiceScreen {
-//
-//        }
-
-//        EditProfileScreen()
-//        ViewProfileScreen()
-//        SettingScreen()
-
-//        ChangePasswordScreen()
-//        ChangeLanguageScreen()
-
-//        ReviewScreen()
-
-//        UpdateScreen()
 
         val capsuleId = intent.getStringExtra("capsuleId")
         val notificationType = intent.getStringExtra("notificationType")
@@ -159,17 +91,6 @@ class MainActivity : ComponentActivity() {
             }
           }
         }
-
-//        CapsuleCreationSavingScreen()
-//        InstructionsScreen()
-//        MapInstructionsScreen()
-//        ShowLetterScreen()
-//        CapsuleLoadingScreen()
-//        CapsuleNameAndDescription {
-//
-//        }
-//        FileInfoDisplay()
-//        ShowContentScreen()
       }
     }
   }
