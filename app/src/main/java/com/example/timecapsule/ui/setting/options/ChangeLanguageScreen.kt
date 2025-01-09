@@ -18,7 +18,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Scaffold
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -41,8 +40,8 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.timecapsule.ui.selecttime.BackRow
 import com.example.timecapsule.ui.theme.LightBlue
-import com.example.timecapsule.ui.util.DeviceType
-import com.example.timecapsule.ui.util.languageList
+import com.example.timecapsule.util.DeviceType
+import com.example.timecapsule.util.languageList
 import com.example.timecapsule.viewmodel.LanguageSelectionViewModel
 
 private const val b = true

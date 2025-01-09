@@ -1,6 +1,5 @@
 package com.example.timecapsule.ui.capsulelist.v2
 
-import android.util.Log
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -12,12 +11,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -46,16 +42,13 @@ import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.model.CapsuleDetails
-import com.example.timecapsule.R
 import com.example.timecapsule.ui.review.SharedWithALlIcon
 import com.example.timecapsule.ui.sharewithpeople.Profile
 import com.example.timecapsule.ui.theme.LightBlue
-import com.example.timecapsule.ui.theme.fiveStarColor
 import com.example.timecapsule.ui.theme.openSansExtraBold
-import com.example.timecapsule.ui.util.DeviceType
+import com.example.timecapsule.util.DeviceType
 import com.google.firebase.Timestamp
 import java.util.concurrent.TimeUnit
-import kotlin.math.max
 import kotlinx.coroutines.delay
 
 

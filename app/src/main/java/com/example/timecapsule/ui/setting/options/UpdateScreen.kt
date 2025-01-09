@@ -38,7 +38,7 @@ import com.example.data.local.entity.UpdateDetails
 import com.example.timecapsule.BuildConfig
 import com.example.timecapsule.ui.selecttime.BackRow
 import com.example.timecapsule.ui.theme.LightBlue
-import com.example.timecapsule.ui.util.DeviceType
+import com.example.timecapsule.util.DeviceType
 import com.example.timecapsule.viewmodel.UpdateViewModel
 
 const val versionCode = BuildConfig.VERSION_CODE

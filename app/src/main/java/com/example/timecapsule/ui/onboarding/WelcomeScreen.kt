@@ -15,7 +15,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -31,7 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.timecapsule.ui.theme.LightBlue
 import com.example.timecapsule.ui.theme.openSansExtraBold
-import com.example.timecapsule.ui.util.DeviceType
+import com.example.timecapsule.util.DeviceType
 
 @Composable
 fun WelcomeScreen(onClick: () -> Unit) {

@@ -1,6 +1,5 @@
 package com.example.timecapsule.ui.setting.options
 
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -16,7 +15,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.Scaffold
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -27,7 +25,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -39,12 +36,11 @@ import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.timecapsule.R
 import com.example.timecapsule.ui.login.TitleSubtitleWithOkayButtonDialog
 import com.example.timecapsule.ui.selecttime.BackRow
 import com.example.timecapsule.ui.signup.CustomTextField
 import com.example.timecapsule.ui.theme.LightBlue
-import com.example.timecapsule.ui.util.DeviceType
+import com.example.timecapsule.util.DeviceType
 import com.example.timecapsule.viewmodel.ResetPasswordState
 import com.example.timecapsule.viewmodel.ResetPasswordViewModel
 import com.example.util.Response

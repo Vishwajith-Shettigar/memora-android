@@ -34,7 +34,7 @@ import coil.compose.AsyncImage
 import com.example.model.UserDetails
 import com.example.timecapsule.R
 import com.example.timecapsule.ui.theme.LightBlue
-import com.example.timecapsule.ui.util.DeviceType
+import com.example.timecapsule.util.DeviceType
 import com.example.timecapsule.viewmodel.ViewProfileState
 import com.example.timecapsule.viewmodel.ViewProfileViewModel
 import com.google.accompanist.placeholder.PlaceholderHighlight

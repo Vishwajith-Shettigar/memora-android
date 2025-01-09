@@ -61,7 +61,7 @@ import com.example.timecapsule.ui.theme.LightBlue
 import com.example.timecapsule.ui.theme.fiveStarColor
 import com.example.timecapsule.ui.theme.threeStarColor
 import com.example.timecapsule.ui.theme.zeroStarColor
-import com.example.timecapsule.ui.util.DeviceType
+import com.example.timecapsule.util.DeviceType
 import com.example.timecapsule.viewmodel.ReviewViewModel
 
 /**

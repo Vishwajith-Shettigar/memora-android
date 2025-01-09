@@ -34,6 +34,7 @@ protoliteWellKnownTypes = "18.0.0"
 roomCommon = "2.6.1"
 roomKtx = "2.6.1"
 roomCommonVersion = "2.6.1"
+runner = "1.6.2"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -74,7 +75,6 @@ androidx-navigation-compose = { group = "androidx.navigation", name = "navigatio
 stripe-android = { module = "com.stripe:stripe-android", version.ref = "stripeAndroid" }
 protolite-well-known-types = { group = "com.google.firebase", name = "protolite-well-known-types", version.ref = "protoliteWellKnownTypes" }
 androidx-room-common = { group = "androidx.room", name = "room-common", version.ref = "roomCommonVersion" }
-
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

@@ -34,7 +34,7 @@ import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.timecapsule.R
 import com.example.timecapsule.routes.Screen
-import com.example.timecapsule.ui.util.DeviceType
+import com.example.timecapsule.util.DeviceType
 import com.example.timecapsule.viewmodel.DisplayCapsuleDetailsState
 import com.example.timecapsule.viewmodel.OpenCapsuleViewModel
 

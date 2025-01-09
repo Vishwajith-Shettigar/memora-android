@@ -1,6 +1,5 @@
-package com.example.timecapsule.ui.util
+package com.example.timecapsule.util
 
-import android.util.Log
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest

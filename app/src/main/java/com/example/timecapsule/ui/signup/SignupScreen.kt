@@ -1,6 +1,5 @@
 package com.example.timecapsule.ui.signup
 
-import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -45,8 +44,8 @@ import com.example.timecapsule.routes.Screen
 import com.example.timecapsule.ui.theme.LightBlue
 import com.example.timecapsule.ui.theme.SignUpBackground
 import com.example.timecapsule.ui.theme.openSansExtraBold
-import com.example.timecapsule.ui.util.Device
-import com.example.timecapsule.ui.util.DeviceType
+import com.example.timecapsule.util.Device
+import com.example.timecapsule.util.DeviceType
 import com.example.timecapsule.viewmodel.AuthState
 import com.example.timecapsule.viewmodel.SignUpViewModel
 

@@ -1,6 +1,5 @@
 package com.example.timecapsule.ui.onboarding
 
-import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -12,7 +11,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -33,8 +31,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -47,13 +43,12 @@ import androidx.navigation.compose.rememberNavController
 import com.example.timecapsule.R
 import com.example.timecapsule.routes.Screen
 import com.example.timecapsule.ui.theme.BottomOnboarding
-import com.example.timecapsule.ui.theme.DMSerifText
 import com.example.timecapsule.ui.theme.LoginBtnLeft
 import com.example.timecapsule.ui.theme.LoginBtnRight
 import com.example.timecapsule.ui.theme.TopOnboarding
 import com.example.timecapsule.ui.theme.openSansExtraBold
-import com.example.timecapsule.ui.util.Device
-import com.example.timecapsule.ui.util.DeviceType
+import com.example.timecapsule.util.Device
+import com.example.timecapsule.util.DeviceType
 import com.example.timecapsule.ui.theme.white
 
 enum class ButtonName {

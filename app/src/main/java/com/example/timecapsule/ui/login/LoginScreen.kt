@@ -1,6 +1,5 @@
 package com.example.timecapsule.ui.login
 
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -46,21 +45,18 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.timecapsule.R
 import com.example.timecapsule.routes.Screen
 import com.example.timecapsule.ui.theme.LightBlue
 import com.example.timecapsule.ui.theme.SignUpBackground
 import com.example.timecapsule.ui.theme.openSansExtraBold
-import com.example.timecapsule.ui.util.Device
-import com.example.timecapsule.ui.util.DeviceType
+import com.example.timecapsule.util.Device
+import com.example.timecapsule.util.DeviceType
 import com.example.timecapsule.viewmodel.AuthState
 import com.example.timecapsule.viewmodel.LogInViewModel
-import com.example.timecapsule.viewmodel.SignUpViewModel
 import com.example.util.AskDetailsException
 import com.example.util.UnverifiedEmailException
 

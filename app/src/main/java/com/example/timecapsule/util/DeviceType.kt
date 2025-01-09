@@ -1,4 +1,4 @@
-package com.example.timecapsule.ui.util
+package com.example.timecapsule.util
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalConfiguration

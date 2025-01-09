@@ -3,7 +3,6 @@ package com.example.timecapsule.ui.capsuledetails
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -45,8 +44,8 @@ import com.example.timecapsule.ui.selecttime.BackRow
 import com.example.timecapsule.ui.sharewithpeople.Profile
 import com.example.timecapsule.ui.theme.LightBlue
 import com.example.timecapsule.ui.theme.overSeer
-import com.example.timecapsule.ui.util.DeviceType
-import com.example.timecapsule.ui.util.getModelColor
+import com.example.timecapsule.util.DeviceType
+import com.example.timecapsule.util.getModelColor
 import com.example.timecapsule.viewmodel.DisplayCapsuleDetailsState
 import com.example.timecapsule.viewmodel.DisplayCapsuleDetailsViewModel
 import com.example.timecapsule.viewmodel.Load3dModelState

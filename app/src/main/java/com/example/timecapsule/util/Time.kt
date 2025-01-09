@@ -1,14 +1,9 @@
-package com.example.timecapsule.ui.util
+package com.example.timecapsule.util
 
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import com.google.firebase.Timestamp
 import java.text.SimpleDateFormat
 import java.util.Locale
-import android.content.Context
-import android.location.Location
-import androidx.core.content.ContextCompat
-import java.util.Calendar
 
 @Composable
 fun DisplayTimestamp(timestamp: Timestamp) :String{

@@ -1,4 +1,4 @@
-package com.example.timecapsule.ui.util
+package com.example.timecapsule.util
 
 import android.content.Context
 import android.widget.Toast

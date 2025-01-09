@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.CircularProgressIndicator
@@ -49,15 +48,11 @@ import com.example.timecapsule.routes.Screen
 import com.example.timecapsule.ui.signup.CustomTextField
 import com.example.timecapsule.ui.theme.DMSerifText
 import com.example.timecapsule.ui.theme.LightBlue
-import com.example.timecapsule.ui.theme.SignUpBackground
-import com.example.timecapsule.ui.util.DeviceType
+import com.example.timecapsule.util.DeviceType
 import com.example.timecapsule.viewmodel.AuthState
 import com.example.timecapsule.viewmodel.OnBoardingDetailsViewModel
-import com.example.util.AskDetailsException
 import com.example.util.UnspecifiedException
-import com.example.util.UnverifiedEmailException
 import com.example.util.UsernameAlreadyExistsException
-import kotlin.math.ln
 
 @Preview
 @Composable

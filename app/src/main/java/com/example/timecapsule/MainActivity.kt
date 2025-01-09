@@ -47,10 +47,15 @@ import com.example.timecapsule.ui.viewprofile.ViewProfileScreen
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.mapbox.common.MapboxOptions
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+  @Inject
+  lateinit var themePreferences:ThemePreferences
+
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     lifecycleScope.launch {
@@ -59,7 +64,7 @@ class MainActivity : ComponentActivity() {
     enableEdgeToEdge()
     WindowCompat.setDecorFitsSystemWindows(window, false)
     setContent {
-      var isDarkMode by remember { mutableStateOf(ThemePreferences.isDarkMode(this)) }
+      var isDarkMode by remember { mutableStateOf(themePreferences.isDarkMode(this)) }
 
       LaunchedEffect(true) {
         ThemeManager.themeFlow.collect { newTheme ->

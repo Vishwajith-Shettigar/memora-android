@@ -33,6 +33,7 @@ import com.example.data.repository.UserRepositoryImpl
 import com.example.data.retrofilApi.EmailSharingCapsuleApi
 import com.example.data.retrofilApi.NotificationApi
 import com.example.data.sharedpreference.SharedPreferencesHelper
+import com.example.data.sharedpreference.ThemePreferences
 import com.example.domain.usecase.OnBoardingDataUseCase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -113,6 +114,12 @@ abstract class AppModule {
     @Singleton
     fun provideSharedPreferencesHelper(@ApplicationContext context: Context): SharedPreferencesHelper {
       return SharedPreferencesHelper(context)
+    }
+
+    @Provides
+    @Singleton
+    fun provideThemePreferences(): ThemePreferences {
+      return ThemePreferences
     }
 
     @Provides

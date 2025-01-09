@@ -1,4 +1,4 @@
-package com.example.timecapsule.ui.util
+package com.example.timecapsule.util
 
 import androidx.compose.ui.graphics.Color
 import com.example.timecapsule.ui.theme.cardGreen

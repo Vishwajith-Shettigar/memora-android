@@ -41,9 +41,8 @@ import coil.compose.AsyncImage
 import com.example.model.CapsuleDetails
 import com.example.timecapsule.R
 import com.example.timecapsule.ui.theme.LightBlue
-import com.example.timecapsule.ui.util.DeviceType
+import com.example.timecapsule.util.DeviceType
 import com.google.firebase.Timestamp
-import com.google.firebase.firestore.GeoPoint
 import java.text.SimpleDateFormat
 import java.util.Locale
 import java.util.concurrent.TimeUnit
