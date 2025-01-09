@@ -1,7 +1,15 @@
 package com.example.timecapsule.util
 
 import android.content.Context
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.test.junit4.createComposeRule
 import com.example.data.sharedpreference.ThemePreferences
+import com.example.timecapsule.ui.theme.model1Color
+import com.example.timecapsule.ui.theme.model2Color
+import com.example.timecapsule.ui.theme.model3Color
+import com.example.timecapsule.ui.theme.model4Color
+import com.example.timecapsule.util.DeviceType.getDeviceType
 import com.google.ar.core.ArCoreApk
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.testing.HiltAndroidRule
@@ -9,14 +17,16 @@ import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.HiltTestApplication
 import javax.inject.Inject
 import org.junit.Test
-
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Rule
 import org.junit.runner.RunWith
+import org.mockito.Mock
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.mockStatic
 import org.mockito.Mockito.`when`
+import org.mockito.kotlin.verify
+import org.mockito.kotlin.whenever
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
@@ -74,5 +84,18 @@ class UtilUnitTest {
       mockedStatic.`when`<ArCoreApk> { ArCoreApk.getInstance() }.thenReturn(mockArCoreApk)
       assertFalse(checkARCoreAvailability(context))
     }
+  }
+
+  @Test
+  fun getModelColor_ReturnsRightColor_WhenModelIdIsIsInList() {
+    assertTrue(getModelColor("100") == model1Color)
+    assertTrue(getModelColor("200") == model2Color)
+    assertTrue(getModelColor("300") == model3Color)
+    assertTrue(getModelColor("400") == model4Color)
+  }
+
+  @Test
+  fun getModelColor_ReturnsDefaulttColor_WhenModelIdIsNotInList() {
+    assertTrue(getModelColor("500") == model1Color)
   }
 }

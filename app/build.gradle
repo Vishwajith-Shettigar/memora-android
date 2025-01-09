@@ -193,4 +193,10 @@ dependencies {
     testImplementation "com.google.dagger:hilt-android-testing:2.50"
     kaptTest "com.google.dagger:hilt-android-compiler:2.50"
     testImplementation "org.mockito:mockito-inline:4.1.0"
+
+    androidTestImplementation "androidx.compose.ui:ui-test-junit4:1.6.8"
+    androidTestImplementation "androidx.compose.ui:ui-test-manifest:1.6.8" // Optional, for manifest support
+    debugImplementation "androidx.compose.ui:ui-tooling:1.6.8" // For preview support in tests
+    testImplementation "androidx.compose.ui:ui-test-junit4:1.6.8"
+
 }
