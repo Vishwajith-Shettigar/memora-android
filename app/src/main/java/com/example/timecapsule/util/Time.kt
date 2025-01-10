@@ -8,10 +8,7 @@ import java.util.Locale
 @Composable
 fun DisplayTimestamp(timestamp: Timestamp) :String{
   val date = timestamp.toDate()
-
   val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
-
   val formattedDate = formatter.format(date)
-
 return formattedDate
 }

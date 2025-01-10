@@ -1,6 +1,5 @@
 package com.example.timecapsule.util
 
-import android.util.Log
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest
@@ -8,8 +7,6 @@ import com.google.android.libraries.places.api.net.PlacesClient
 
 
 fun searchPlace(placesClient: PlacesClient, query: String, onPlaceFound: (LatLng?) -> Unit) {
-
-  Log.e("pokemon","hello")
   val request = FindAutocompletePredictionsRequest.builder()
     .setQuery(query)
     .build()
@@ -24,8 +21,6 @@ fun searchPlace(placesClient: PlacesClient, query: String, onPlaceFound: (LatLng
         ).build()
       ).addOnSuccessListener { fetchPlaceResponse ->
         val latLng = fetchPlaceResponse.place.latLng
-        Log.e("pokemon","hello "+latLng)
-
         onPlaceFound(latLng)
       }
     } else {
