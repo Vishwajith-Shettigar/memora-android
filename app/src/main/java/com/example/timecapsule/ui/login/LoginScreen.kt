@@ -38,6 +38,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -85,6 +86,7 @@ fun CustomTextField(
   modifier: Modifier = Modifier,
   isTablet: Boolean = false,
   value: String = "",
+  testTag:String="",
   onValueChanged: (String) -> Unit = {}
 ) {
   TextField(
@@ -116,11 +118,11 @@ fun CustomTextField(
     if (!isTablet)
       modifier
         .fillMaxWidth()
-        .padding(vertical = 3.dp)
+        .padding(vertical = 3.dp).testTag(testTag)
     else
       modifier
         .width(600.dp)
-        .padding(vertical = 3.dp)
+        .padding(vertical = 3.dp).testTag(testTag)
   )
 }
 
@@ -304,12 +306,14 @@ fun BodyPart(
     // Input Fields
     CustomTextField(
       value = email,
+      testTag = "email_field",
       hint = stringResource(id = R.string.email_hint),
       icon = R.drawable.ic_email,
       onValueChanged = onEmailChanged
     )
     CustomTextField(
       value = password,
+      testTag = "password_field",
       hint = stringResource(id = R.string.password_hint),
       icon = R.drawable.ic_password1, onValueChanged = onPasswordChanged
     )

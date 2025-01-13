@@ -30,7 +30,9 @@ class LogInViewModel @Inject constructor(
           onBoardingDataUseCase.setOnBoardingDetailsCompleted(true)
           AuthState.Success
         }
-        is Response.Error -> AuthState.Error(result.exception.message.toString(), result.exception)
+        is Response.Error -> {
+          AuthState.Error(result.exception.message.toString(), result.exception)
+        }
       }
     }
   }
