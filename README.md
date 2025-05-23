@@ -1,3 +1,5 @@
+## More about **memora** [here](https://github.com/Vishwajith-Shettigar/memora-android) 🔗
+
 ## 🔧 Setup
 
 1. **Create a `secrets.properties` file** in the **root directory** of your project.
