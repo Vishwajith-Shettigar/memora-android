@@ -1,4 +1,4 @@
-## More about **memora** [here](https://github.com/Vishwajith-Shettigar/memora-android) 🔗
+## More about **memora** [here](https://github.com/Vishwajith-Shettigar/memora-virtual-time-capsule) 🔗
 
 ## 🔧 Setup
 
